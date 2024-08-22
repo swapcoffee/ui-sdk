@@ -361,7 +361,7 @@ export default {
       }
     },
     tonproofSetConnect() {
-      const storedVerification = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
+      const storedVerification = JSON.parse(localStorage.getItem('tonProof_ver') || null);
       if (storedVerification) {
         return;
       }
@@ -550,6 +550,13 @@ button {
   font-family: Roboto, sans-serif;
   font-weight: 500;
   color: var(--main-text-color);
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+button:focus, button:active {
+	outline: none;
 }
 
 input {
