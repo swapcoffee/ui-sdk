@@ -1,0 +1,319 @@
+{
+  "dexSettings": {
+    "caption": "设置",
+    "cashback": {
+      "title": "现金返还",
+      "text": "启用此功能后，您同意获得您的奖励",
+      "colorText": [
+        "$KINGY",
+        "$DFC",
+        "$WEB3",
+        "$DYOR"
+      ]
+    },
+    "expert": {
+      "title": "专家模式",
+      "text": "请自行承担风险。"
+    },
+    "slippage": {
+      "title": "滑点容忍度",
+      "text": "如果价格变化不利于您超过此百分比，您的交易将被取消。"
+    },
+    "priceImpact": {
+      "title": "价格影响",
+      "text": "如果价格影响超过此百分比，我们将不允许您进行兑换。"
+    },
+    "intermediate": {
+      "title": "中间代币",
+      "text": "您可以设置最大中间代币数量，从而控制路径长度。路径越长，消耗的燃料越多，如果兑换通过非常波动的池子或滑点低的池子进行，获得中间代币的概率就越大。"
+    },
+    "volatility": {
+      "title": "池子的波动性",
+      "text": "您可以排除使用非常波动（因此风险较高）的池子的路径。波动性定义为池子中过去15分钟内的最高价格和最低价格之比。"
+    },
+    "parallel": {
+      "title": "并行交易",
+      "text": "您可以设置最大并行交易数，这允许创建更有利的路径。",
+      "textW5": "获取选择最多20个路径的机会，来自",
+      "colorText": "W5 钱包",
+      "tooltip": "但是，这也会增加消耗的燃料数量和在交易时获得中间代币而不是期望代币的可能性。"
+    }
+  },
+  "dexInterface": {
+    "selectToken": "选择代币",
+    "youSend": "您发送",
+    "youReceive": "您接收",
+    "balance": "余额: {currentBalance}",
+    "max": "最大",
+    "slippage": "{slippageCount}% 滑点",
+    "cashback": {
+      "name": "现金返还",
+      "status": "已启用"
+    }
+  },
+  "dexTokens": {
+    "searchPlaceholder": "按名称搜索",
+    "emptySearch": [
+      "我们没有找到任何资产。",
+      "尝试输入代币地址。"
+    ],
+    "validAddress": "请输入有效的代币地址",
+    "importNotice": "该代币未包含在活动代币列表中。请确保您了解与导入代币相关的风险。",
+    "importBtn": "接受并导入",
+    "titles": [
+      "您的代币",
+      "热门代币",
+      "搜索结果"
+    ],
+    "info": [
+      "价格",
+      "流动性",
+      "持有者数量"
+    ]
+  },
+  "stakeButton": {
+    "stake": "质押",
+    "tooltip": [
+      "• 您可以质押您的 TON 并获得 {output_amount} {symbol}",
+      "• 此外，质押还可以获得奖励"
+    ]
+  },
+  "unstakeButton": {
+    "unstake": "在 {hours} 小时后取消质押",
+    "unstakeNow": "立即取消质押",
+    "tooltip_later": [
+      "• 取消质押 {symbol} 后，您可以获得稍多的 TON",
+      "• 取消质押后，您将获得 {output_amount} TON",
+      "• 您的取消质押请求将在 {hours} 小时后处理",
+      "• 不过，您可以立即将您的 {symbol} 兑换为 TON，但会少一些"
+    ],
+    "tooltip_now": [
+      "• 取消质押 {symbol} 后，您可以获得稍多的 TON",
+      "• 取消质押后，您将获得 {output_amount} TON"
+    ]
+  },
+  "dexButton": {
+    "poolNotFound": "未找到流动性池",
+    "connectWallet": "连接钱包",
+    "highPriceImpact": "价格影响过大",
+    "notEnough": "余额不足",
+    "enterAmount": "输入金额",
+    "selectToken": "选择代币",
+    "sendTransaction": "兑换",
+    "tooltip": [
+      "• 尝试增加池子波动性的设置。",
+      "• 尝试增加中间代币的设置。",
+      "• 确保该池子存在，并告知客服。"
+    ]
+  },
+  "dexSidebar": {
+    "portfolio": "投资组合",
+    "claim": "申请中心",
+    "dex": "DEX 聚合器",
+    "benefits": "优势",
+    "launchpad": "启动平台",
+    "soon": "即将推出",
+    "settings": "设置",
+    "documentation": "文档",
+    "whitePaper": "白皮书"
+  },
+  "dexGlobal": {
+    "caption": "全球设置",
+    "theme": {
+      "name": [
+        "系统",
+        "暗黑",
+        "亮色",
+        "咖啡色"
+      ],
+      "text": "主题模式"
+    },
+    "lang": {
+      "name": "语言",
+      "text": "选择您喜欢的语言",
+      "caption": "选择语言"
+    }
+  },
+  "dexNavigation": {
+    "swap": "兑换",
+    "limit": "限额",
+    "referral": "推荐计划",
+    "cashback": "现金返还"
+  },
+  "dexInfo": {
+    "highPriceImpact": "价格影响过高 {priceImpact}% 下跌!",
+    "priceImpact": "兑换这些选定代币会导致显著的价格影响，并减少您的结果。",
+    "reverseSwap": [
+      "按精确输出进行的兑换支持流动性较低的地点和较少的路径。",
+      "这也可能提供更差的价格。"
+    ]
+  },
+  "dexWallet": {
+    "title": "账户",
+    "balance": "您的余额"
+  },
+  "dexDetails": {
+    "titles": [
+      "显示兑换详情",
+      "隐藏详情"
+    ],
+    "priceImpact": {
+      "name": "价格影响",
+      "tooltip": [
+        "市场价格和通过交易规模估算的价格之间的差异。"
+      ]
+    },
+    "minimumReceive": {
+      "name": "最低接收",
+      "tooltip": [
+        "如果在交易确认之前有较大不利的价格波动，",
+        "您的交易将被撤销。"
+      ]
+    },
+    "fee": {
+      "name": "区块链手续费",
+      "text": "最多 {gasFee} TON"
+    },
+    "economy": "您的经济",
+    "distribution": "分配计划"
+  },
+  "dexSuccess": {
+    "status": {
+      "error": "交易错误",
+      "timed_out": "交易超时",
+      "pending": "再等一秒",
+      "success": "兑换成功!"
+    },
+    "btnText": "兑换所有中间代币",
+    "info": [
+      "尝试使用比正常情况下更大的滑点，以",
+      "确保您的交易完成。"
+    ],
+    "cashback": {
+      "name": "现金返还",
+      "text": "成功"
+    }
+  },
+  "dexDistribution": {
+    "plan": "通过 {dexNames} 的分配计划",
+    "caption": [
+      "分配计划",
+      "路径规划"
+    ]
+  },
+  "claimCenter": {
+    "description": "邀請朋友，從他們的交易中賺取一定比例的佣金，並領取您的獎勵！",
+    "titles": [
+      "所有奖励",
+      "现金返还",
+      "推荐奖励",
+      "竞赛"
+    ],
+    "caption": "选择代币",
+    "text": "提现费用取决于所选代币的数量",
+    "empty": "没有代币可提取",
+    "tooltip": "我們從不同的錢包獎勵獎勵，一個代幣可以從多個錢包提取，每筆交易都需要支付費用"
+  },
+  "claimHistory": {
+    "empty": "申请历史目前为空。"
+  },
+  "claimStatus": {
+    "failedText": "尝试使用比正常情况下更大的滑点，以\n确保您的交易完成。",
+    "error": "申索失败",
+    "timed_out": "交易时间已到",
+    "pending": "再多一秒钟",
+    "success": "申领成功"
+  },
+  "referralInfo": {
+    "referrals": "{count} 个推荐人",
+    "heading": "推荐计划",
+    "description": "邀请朋友并赚取他们交易佣金的百分比！当你的朋友使用你的链接时，他会自动成为你的推荐人。",
+    "withdraw": "可提取",
+    "emptyWithdraw": "没有可提取的代币",
+    "blockNames": [
+      "所有时间的收入",
+      "月收入",
+      "所有时间的交易量",
+      "月交易量"
+    ],
+    "statsNames": [
+      "奖励百分比",
+      "推荐系统等级",
+      "推荐人数"
+    ],
+    "tableTitles": [
+      "地址",
+      "交易",
+      "交易量",
+      "我的奖励"
+    ],
+    "levels": [
+      "青铜",
+      "银",
+      "金"
+    ],
+    "empty": [
+      "推荐人列表当前为空。",
+      "与其他用户分享你的推荐链接"
+    ]
+  },
+  "referralHistory": {
+    "tableTitles": [
+      "交易",
+      "时间",
+      "金额"
+    ]
+  },
+  "referralLink": {
+    "caption": "你的推荐链接",
+    "description": "这是你的推荐链接，一旦你的朋友点击链接，他会自动成为你的推荐人。",
+    "copyBtn": "复制链接",
+    "qrBtn": "显示二维码"
+  },
+  "referralNav": {
+    "info": "我的信息",
+    "referrals": "我的推荐人",
+    "history": "申请历史"
+  },
+  "referralFaq": {
+    "questions": [
+      "奖励百分比是如何计算的？",
+      "什么是推荐系统等级？",
+      "谁可以成为我的推荐人？",
+      "如何提高奖励百分比？",
+      "如何获得奖励？"
+    ],
+    "answers": [
+      "奖励百分比取决于你的等级。\nswap.coffee 不会向用户收取额外费用。我们将部分佣金收入与用户分享，确保没有额外费用。",
+      "推荐系统等级表示你从推荐人处获得的收入百分比。等级越高，奖励百分比越高。",
+      "只能邀请新用户作为推荐人。之前使用过 swap.coffee 的用户不能作为推荐人。",
+      "提高等级的工具将稍后添加。影响者有特别条件。详情请联系我的 Telegram。",
+      "在推荐计划页面，你可以查看你所有推荐人的总收入。这包括你所有推荐人的所有 DEX。\n在申请中心，你可以申请从 StonFi 获得的金额。DeDust 的奖励将在稍后分配后可以申请。"
+    ],
+    "levels": "我们有三个佣金等级：\n青铜 - 适用于所有用户\n银 - 适用于 CES 质押者（即将推出）\n金 - 适用于影响者"
+  },
+  "cashback": {
+    "btnText": "更多细节",
+    "menuDetail": "详情",
+    "menuPromo": "促销条款",
+    "terms": [
+      "促销仅适用于新客户。",
+      "折扣适用于当前价格，不能与其他促销活动叠加。不适用于以下品牌、产品和服务：Apple, Beats, Prada, Miu Miu。",
+      "优惠码数量有限。条款可能会被合作伙伴更改，促销活动可能会在所有优惠码使用完毕之前提前结束。"
+    ],
+    "details": [
+      "促销开始日期",
+      "促销结束日期",
+      "奖励基金",
+      "每日现金返还",
+      "总现金返还",
+      "交易金额的百分比"
+    ],
+    "ads": {
+      "btnText": "广告",
+      "title": "空投 10,000,000 $Whale TOKENs \uD83D\uDD25\uD83E\uDD2F",
+      "description": "我们的优先级一直是 Whale 社区：这是你成为首批 $Whale Token 持有者的机会！\uD83D\uDE80",
+      "subtitle": "最佳 DEX 聚合器"
+    }
+  }
+}

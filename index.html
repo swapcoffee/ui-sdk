@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru" class="custom-scroll">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#0A0A0A"/>
+    <meta name="description" content="swap.coffee - Progressive DEX Aggregator in the TON blockchain" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script async src="https://tganalytics.xyz/index.js" type="text/javascript" onload="tgAnalyticsSetup()"></script>
+    <script>
+        function tgAnalyticsSetup() {
+            if (window.Telegram?.WebApp?.initData) {
+                window.telegramAnalytics.init({
+                    token: 'eyJhcHBfbmFtZSI6InN3YXBjb2ZmZWUiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL3N3YXBjb2ZmZWVib3QiLCJhcHBfZG9tYWluIjoiaHR0cHM6Ly9zd2FwLmNvZmZlZSJ9!xOeR/YnP1V66zbUEkLSHNr4dw5fh0sIKpct5L+JO8ms=',
+                    appName: 'swapcoffee',
+                });
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --background-color-light: #f8f8f8;
+            --background-color-dark: #0A0A0A;
+        }
+
+        html {
+            background-color: var(--background-color-light);
+        }
+
+
+        @media (prefers-color-scheme: dark) {
+            html {
+                background-color: var(--background-color-dark);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            html {
+                background-color: var(--background-color-light);
+            }
+        }
+    </style>
+    <title>swap.coffee</title>
+</head>
+<body>
+<script>
+    const setTheme = () => {
+        const settings = JSON.parse(localStorage.getItem('globalSettings')) || {};
+        const theme = settings?.theme || 'dark';
+
+        if (theme === "system") {
+            const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
+            darkThemeMq.addListener((e) => {
+                const darkModeOn = e.matches;
+                document.body.classList.toggle('theme-dark', darkModeOn);
+                document.body.classList.toggle('theme-light', !darkModeOn);
+            });
+            document.body.classList.toggle('theme-dark', darkThemeMq.matches);
+            document.body.classList.toggle('theme-light', !darkThemeMq.matches);
+            return;
+        }
+
+        document.body.classList.add(`theme-${theme}`);
+    };
+
+    setTheme();
+</script>
+<noscript>
+    <strong>We're sorry but this application doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+</noscript>
+<div id="app"></div>
+<!-- built files will be auto injected -->
+</body>
+</html>
+<!-- Yandex.Metrika counter -->
+<script type="text/javascript">
+    (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () {
+            (m[i].a = m[i].a || []).push(arguments)
+        };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+            if (document.scripts[j].src === r) {
+                return;
+            }
+        }
+        k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+    })
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(96930797, "init", {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true
+    });
+</script>
+<script type="module" src="/src/main.ts"></script>
+<noscript>
+    <div><img src="https://mc.yandex.ru/watch/96930797" style="position:absolute; left:-9999px;" alt=""/></div>
+</noscript>
+<!-- /Yandex.Metrika counter -->

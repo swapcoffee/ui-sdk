@@ -1,0 +1,232 @@
+{
+    "dexSettings": {
+        "caption": "Settings",
+        "cashback": {
+            "title": "Cashback",
+            "text": "By activating this feature, you agree that you want to claim your bonus",
+            "colorText": ["$KINGY", "$DFC", "$WEB3", "$DYOR"]
+        },
+        "expert": {
+            "title": "Expert mode",
+            "text": "Use at your own risk."
+        },
+        "slippage": {
+            "title": "Slippage Tolerance",
+            "text": "Your transaction will revert if the price changes unfavorably by more than this percentage."
+        },
+        "priceImpact": {
+            "title": "Price impact",
+            "text": "We will not let you perform a swap if the price impact is more than this percentage."
+        },
+        "intermediate": {
+            "title": "Intermediate Tokens",
+            "text": "You can configure the max number of intermediate tokens, thereby controlling the length of the route. The longer it is, the more gas it will consume and the higher the probability of receiving an intermediate token instead of the desired one if swapping through highly volatile pools or with low slippage."
+        },
+        "volatility": {
+            "title": "Pools Volatility",
+            "text": "You can exclude routes that use highly volatile (and therefore high-risk) pools. Volatility is considered the ratio of the max and min price rates in the pool over the last 15 minutes."
+        },
+        "parallel": {
+            "title": "Parallel transactions",
+            "text": "You can set the maximum number of parallel transactions, which allows for build more profitable routes.",
+            "textW5": "Get the option to choose up to 20 routes with",
+            "colorText": "W5 wallet",
+            "tooltip": "However, this also increases the amount of gas that will be consumed and the probability of receiving an intermediate token instead of the desired one when swapping."
+        }
+    },
+    "dexInterface": {
+        "selectToken": "Select a token",
+        "youSend": "You send",
+        "youReceive": "You receive",
+        "balance": "Balance: {currentBalance}",
+        "max": "Max",
+        "slippage": "{slippageCount}% slippage",
+        "cashback": {
+            "name": "Cashback",
+            "status": "Enabled"
+        }
+    },
+    "dexTokens": {
+        "searchPlaceholder": "Search by name",
+        "emptySearch": ["We didn't find any assets.", "Try to specify the address of the token."],
+        "validAddress": "Please enter a valid token address",
+        "importNotice": "This token isn’t included in the active token list. Make sure you are aware of the risks associated with imported tokens.",
+        "importBtn": "Accept and Import",
+        "titles": ["Your tokens", "Popular tokens", "Search results"],
+        "info": ["Price", "Liquidity", "Holders amount"]
+    },
+    "stakeButton": {
+        "stake": "Stake",
+        "tooltip": [
+            "• You can stake your TON and receive {output_amount} {symbol}",
+            "• Moreover, by staking you are eligible to receive rewards"
+        ]
+    },
+    "unstakeButton": {
+        "unstake": "Unstake in {hours}h",
+        "unstakeNow": "Unstake now",
+        "tooltip_later": [
+            "• You can receive slightly more TON by unstaking {symbol}",
+            "• By unstaking you will receive {output_amount} TON",
+            "• Your unstake request will be processed in {hours} hours",
+            "• However, you can swap your {symbol} for TON right now, but you will receive less"
+        ],
+        "tooltip_now": [
+            "• You can receive slightly more TON by unstaking {symbol}",
+            "• By unstaking you will receive {output_amount} TON"
+        ]
+    },
+    "dexButton": {
+        "poolNotFound": "Liquidity pools not found",
+        "connectWallet": "Connect Wallet",
+        "highPriceImpact": "Price impact too high",
+        "notEnough": "Insufficient balance",
+        "enterAmount": "Enter amount",
+        "selectToken": "Select a Token",
+        "sendTransaction": "Swap",
+        "tooltip": ["• Try to increase Pool Volatility setting.", "• Try to increase Intermediate Tokens setting.", "• Make sure that such a pool exists and notify support."]
+    },
+    "dexSidebar": {
+        "portfolio": "Portfolio",
+        "claim": "Claim Center",
+        "dex": "DEX Aggregator",
+        "benefits": "Benefits",
+        "launchpad": "Launchpad",
+        "soon": "Soon",
+        "settings": "Settings",
+        "documentation": "Documentation",
+        "whitePaper": "White paper"
+    },
+    "dexGlobal": {
+        "caption": "Global settings",
+        "theme": {
+            "name": ["System", "Dark", "Light", "Coffee"],
+            "text": "Theme mode"
+        },
+        "lang": {
+            "name": "Language",
+            "text": "Select preferred language",
+            "caption": "Select a language"
+        }
+    },
+    "dexNavigation": {
+        "swap": "Swap",
+        "limit": "Limit",
+        "referral": "Referral program",
+        "cashback": "Cashback"
+    },
+    "dexInfo": {
+        "highPriceImpact": "High price impact {priceImpact}% drop!",
+        "priceImpact": "Swapping this amount of selected tokens will cause a significant price impact and reduce your outcome.",
+        "reverseSwap": ["ExactOut swap supports less liquidity venues and less routes.", "It might also offer a worse price."]
+    },
+    "dexWallet": {
+        "title": "Account",
+        "balance": "Your balance"
+    },
+    "dexDetails": {
+        "titles": ["Show swap details", "Hide details"],
+        "priceImpact": {
+            "name": "Price impact",
+            "tooltip": ["The difference between the market", "price and estimated price due to trade", "size."]
+        },
+        "minimumReceive": {
+            "name": "Minimum received",
+            "tooltip": ["Your transaction will revert if there is a ", "large, unfavorable price movement ", "before it is confirmed."]
+        },
+        "fee": {
+            "name": "Blockchain fee",
+            "text": "Up to {gasFee} TON"
+        },
+        "economy": "Your Economy",
+        "distribution": "Distribution Plan"
+    },
+    "dexSuccess": {
+        "status": {
+            "error": "Transaction error",
+            "timed_out": "Transaction time is out",
+            "pending": "One more second",
+            "success": "Swap success!"
+        },
+        "btnText": "Swap All Intermediate Tokens",
+        "info": ["Try using higher than normal slippage to", "ensure your transaction is completed."],
+        "cashback": {
+            "name": "Cashback",
+            "text": "Success"
+        }
+    },
+    "dexDistribution": {
+        "plan": "Distribution plan via {dexNames}",
+        "caption": ["Distribution plan", "Routing"]
+    },
+    "claimCenter": {
+        "froge": "Froge is a new meme ecosystem in the TON blockchain that allows you to use all the features of DeFi, as well as participate in launchpads using DAO elements, profiting from ICO.",
+        "titles": ["All rewards", "Cashback", "Referral", "Contests"],
+        "caption": "Select a Tokens",
+        "text": "The cost of withdrawal depends on the number of tokens you have selected",
+        "empty": "There are no tokens available for withdrawal"
+    },
+    "claimHistory": {
+        "empty": "The claim history is currently empty."
+    },
+    "claimStatus": {
+        "failedText": "Try using higher than normal slippage to\nensure your transaction is completed."
+    },
+    "referralInfo": {
+        "referrals": "{count} referrals",
+        "heading": "Referral program",
+        "description": "Invite friends and earn a percentage of the commission from their transactions! When your friend uses your link, they automatically become your referral.",
+        "withdraw": "Available for withdrawal",
+        "blockNames": ["Income for all time", "Monthly income", "Turnover from all time", "Monthly turnover"],
+        "statsNames": ["Reward Percentage", "Referral Level", "Number of referrals"],
+        "tableTitles": ["Address", "Transactions", "Turnover", "My reward"],
+        "levels": ["Bronze", "Silver", "Gold"],
+        "empty": ["The referral list is currently empty.", "Share your referral link with other users"]
+    },
+    "referralLink": {
+        "caption": "Your referral link",
+        "description": "This is your referral link, as soon as your friend clicks on the link, he will automatically become your referral",
+        "copyBtn": "Copy the link",
+        "qrBtn": "Show QR code"
+    },
+    "referralNav": {
+        "info": "My info",
+        "referrals": "My referrals",
+        "history": "Claim history"
+    },
+    "referralFaq": {
+        "questions": ["How is the reward percentage calculated?", "What is the referral system level?", "Who can be my referral?", "How to increase the reward percentage?", "How to Claim Rewards?"],
+        "answers": [
+            "The reward percentage is based on your level.\nswap.coffee does not charge users any additional fees. We share a portion of our commission profits with the user, ensuring there are no extra costs.",
+            "The level of the referral system indicates your percentage of income from referrals. The higher the level, the higher the reward percentage.",
+            "Only new users can be invited as referrals. Users who have previously used swap.coffee cannot be invited as referrals.",
+            "Tools for level upgrades will be added later. Special conditions apply for influencers. For details, please contact our Telegram.",
+            "On the referral program page, you can see the total amount of your earnings. This includes all your referrals from all DEX.\nIn the claim center, you can request the amount earned from StonFi. Rewards from DeDust will be available for claiming later, after their distribution."
+        ],
+        "levels": "We have three commission levels:\nBronze - For all users\nSilver - For CES stakers (Coming soon)\nGold - For influencers"
+    },
+    "cashback": {
+        "btnText": "More Details",
+        "menuDetail": "Detail",
+        "menuPromo": "Terms of the promotion",
+        "terms": [
+            "The promotion is valid only for new customers of the partner.",
+            "The discount is applied to the current price and cannot be combined with other promotions. It does not apply to other partner offers. The promo code is not valid for payment on the following brands, products, and services: Apple, Beats, Prada, Miu Miu.",
+            "The number of promo codes is limited. Conditions may be changed by the partner, and the promotion may be prematurely terminated if all promo codes are used up."
+        ],
+        "details": [
+            "Promo starts",
+            "Promo end",
+            "Reward Pool",
+            "Cashback (daily)",
+            "Cashback (for all time)",
+            "% of the transaction amount"
+        ],
+        "ads": {
+            "btnText": "Ads",
+            "title": "☕ swap.coffee",
+            "description": "Join our Telegram channel to stay updated with the latest news, updates, and exclusive offers. Be the first to hear about our new releases!",
+            "subtitle": "Best DEX Aggregator"
+        }
+    }
+}

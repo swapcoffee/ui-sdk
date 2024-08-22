@@ -1,0 +1,321 @@
+{
+  "dexSettings": {
+    "caption": "Configuraciones",
+    "cashback": {
+      "title": "Reembolso",
+      "text": "Al activar esta función, aceptas recibir tu bono",
+      "colorText": [
+        "$KINGY",
+        "$DFC",
+        "$WEB3",
+        "$DYOR"
+      ]
+    },
+    "expert": {
+      "title": "Modo Experto",
+      "text": "Utilízalo bajo tu propio riesgo."
+    },
+    "slippage": {
+      "title": "Tolerancia al Slippage",
+      "text": "Tu transacción será cancelada si el precio cambia desfavorablemente en más de este porcentaje."
+    },
+    "priceImpact": {
+      "title": "Impacto en el Precio",
+      "text": "No te permitiremos realizar el intercambio si el impacto en el precio supera este porcentaje."
+    },
+    "intermediate": {
+      "title": "Tokens Intermedios",
+      "text": "Puedes configurar el número máximo de tokens intermedios, controlando así la longitud de la ruta. Cuanto más larga sea la ruta, más gas consume y mayor es la probabilidad de recibir un token intermedio en lugar del deseado, especialmente si el intercambio se realiza a través de pools muy volátiles o con bajo slippage."
+    },
+    "volatility": {
+      "title": "Volatilidad de los Pools",
+      "text": "Puedes excluir rutas que utilicen pools muy volátiles (y, por lo tanto, de alto riesgo). La volatilidad se define como la relación entre el precio máximo y el mínimo en el pool durante los últimos 15 minutos."
+    },
+    "parallel": {
+      "title": "Transacciones Paralelas",
+      "text": "Puedes establecer el número máximo de transacciones paralelas, lo que permite crear rutas más eficientes.",
+      "textW5": "Obtén la posibilidad de elegir hasta 20 rutas desde",
+      "colorText": "cartera W5",
+      "tooltip": "Sin embargo, esto también aumenta la cantidad de gas consumido y la probabilidad de recibir un token intermedio en lugar del deseado al intercambiar."
+    }
+  },
+  "dexInterface": {
+    "selectToken": "Seleccionar token",
+    "youSend": "Envías",
+    "youReceive": "Recibes",
+    "balance": "Saldo: {currentBalance}",
+    "max": "Máx",
+    "slippage": "{slippageCount}% slippage",
+    "cashback": {
+      "name": "Reembolso",
+      "status": "Activado"
+    }
+  },
+  "dexTokens": {
+    "searchPlaceholder": "Buscar por nombre",
+    "emptySearch": [
+      "No encontramos ningún activo.",
+      "Intenta ingresar la dirección del token."
+    ],
+    "validAddress": "Por favor, ingresa una dirección de token válida",
+    "importNotice": "Este token no está incluido en la lista activa de tokens. Asegúrate de conocer los riesgos asociados con los tokens importados.",
+    "importBtn": "Aceptar e importar",
+    "titles": [
+      "Tus tokens",
+      "Tokens populares",
+      "Resultados de búsqueda"
+    ],
+    "info": [
+      "Precio",
+      "Liquidez",
+      "Número de propietarios"
+    ]
+  },
+  "stakeButton": {
+    "stake": "Participar",
+    "tooltip": [
+      "• Puedes participar con tu TON y recibir {output_amount} {symbol}",
+      "• Además, al participar, puedes recibir recompensas"
+    ]
+  },
+  "unstakeButton": {
+    "unstake": "Deshacer participación en {hours} horas",
+    "unstakeNow": "Deshacer participación ahora",
+    "tooltip_later": [
+      "• Puedes obtener un poco más de TON al deshacer la participación {symbol}",
+      "• Al deshacer la participación, recibirás {output_amount} TON",
+      "• Tu solicitud de deshacer la participación se procesará en {hours} horas",
+      "• Sin embargo, puedes intercambiar tu {symbol} por TON ahora mismo, pero recibirás menos"
+    ],
+    "tooltip_now": [
+      "• Puedes obtener un poco más de TON al deshacer la participación {symbol}",
+      "• Al deshacer la participación, recibirás {output_amount} TON"
+    ]
+  },
+  "dexButton": {
+    "poolNotFound": "Pools de liquidez no encontrados",
+    "connectWallet": "Conectar cartera",
+    "highPriceImpact": "Impacto en el precio demasiado alto",
+    "notEnough": "Saldo insuficiente",
+    "enterAmount": "Ingresa la cantidad",
+    "selectToken": "Seleccionar token",
+    "sendTransaction": "Intercambiar",
+    "tooltip": [
+      "• Intenta aumentar la configuración de Volatilidad de los pools.",
+      "• Intenta aumentar la configuración de Tokens Intermedios.",
+      "• Asegúrate de que exista tal pool y contacta con el soporte."
+    ]
+  },
+  "dexSidebar": {
+    "portfolio": "Portafolio",
+    "claim": "Centro de recogida",
+    "dex": "Agregador DEX",
+    "benefits": "Beneficios",
+    "launchpad": "Launchpad",
+    "soon": "En breve",
+    "settings": "Configuraciones",
+    "documentation": "Documentación",
+    "whitePaper": "Libro Blanco"
+  },
+  "dexGlobal": {
+    "caption": "Configuraciones Globales",
+    "theme": {
+      "name": [
+        "Sistema",
+        "Oscuro",
+        "Claro",
+        "Café"
+      ],
+      "text": "Modo de Tema"
+    },
+    "lang": {
+      "name": "Idioma",
+      "text": "Selecciona el idioma deseado",
+      "caption": "Elegir idioma"
+    }
+  },
+  "dexNavigation": {
+    "swap": "Intercambiar",
+    "limit": "Límite",
+    "referral": "Mis referidos",
+    "cashback": "Reembolso"
+  },
+  "dexInfo": {
+    "highPriceImpact": "¡Alto impacto en el precio {priceImpact}% de caída!",
+    "priceImpact": "Intercambiar esta cantidad de tokens seleccionados resultará en un impacto significativo en el precio y reducirá tu resultado.",
+    "reverseSwap": [
+      "El intercambio con salida exacta admite lugares menos líquidos y menos rutas.",
+      "Esto también puede ofrecer un peor precio."
+    ]
+  },
+  "dexWallet": {
+    "title": "Cuenta",
+    "balance": "Tu saldo"
+  },
+  "dexDetails": {
+    "titles": [
+      "Mostrar detalles del intercambio",
+      "Ocultar detalles"
+    ],
+    "priceImpact": {
+      "name": "Impacto en el precio",
+      "tooltip": [
+        "La diferencia entre el precio de mercado",
+        "y el precio estimado debido al tamaño de la operación."
+      ]
+    },
+    "minimumReceive": {
+      "name": "Cantidad mínima recibida",
+      "tooltip": [
+        "Tu transacción se revertirá si hay un",
+        "movimiento de precio grande e inadecuado",
+        "antes de que se confirme."
+      ]
+    },
+    "fee": {
+      "name": "Comisión de blockchain",
+      "text": "Hasta {gasFee} TON"
+    },
+    "economy": "Tu economía",
+    "distribution": "Plan de distribución"
+  },
+  "dexSuccess": {
+    "status": {
+      "error": "Error de transacción",
+      "timed_out": "Tiempo de transacción agotado",
+      "pending": "Un momento más",
+      "success": "¡Intercambio exitoso!"
+    },
+    "btnText": "Intercambiar todos los tokens intermedios",
+    "info": [
+      "Intenta usar un deslizamiento mayor que el habitual para",
+      "asegurar que tu transacción se complete."
+    ],
+    "cashback": {
+      "name": "Reembolso",
+      "text": "Exitoso"
+    }
+  },
+  "dexDistribution": {
+    "plan": "Plan de distribución a través de {dexNames}",
+    "caption": [
+      "Plan de distribución",
+      "Enrutamiento"
+    ]
+  },
+  "claimCenter": {
+    "description": "Invita a tus amigos, gana un porcentaje de la comisión de sus transacciones y reclama tus recompensas.",
+    "titles": [
+      "Todas las recompensas",
+      "Reembolso",
+      "Referencias",
+      "Concursos"
+    ],
+    "caption": "Selecciona tokens",
+    "text": "El costo de retiro depende de la cantidad de tokens seleccionados",
+    "empty": "No hay tokens para retirar",
+    "tooltip": "Otorgamos recompensas de diferentes billeteras, un token se puede retirar de varias billeteras, se debe pagar gas por cada transacción"
+  },
+  "claimHistory": {
+    "empty": "El historial de solicitudes está actualmente vacío."
+  },
+  "claimStatus": {
+    "failedText": "Intenta usar un deslizamiento mayor al habitual para\nasegurar que tu transacción se complete.",
+    "error": "Reclamación fallida",
+    "timed_out": "El tiempo de transacción ha expirado",
+    "pending": "Una segunda más",
+    "success": "Reclamo de éxito"
+  },
+  "referralInfo": {
+    "referrals": "{count} referencias",
+    "heading": "Programa de Referencias",
+    "description": "¡Invita a tus amigos y gana un porcentaje de las comisiones de sus transacciones! Cuando tu amigo use tu enlace, automáticamente se convertirá en tu referido.",
+    "withdraw": "Disponible para retiro",
+    "emptyWithdraw": "No hay tokens para retirar",
+    "blockNames": [
+      "Ingresos totales",
+      "Ingresos mensuales",
+      "Volumen total",
+      "Volumen mensual"
+    ],
+    "statsNames": [
+      "Porcentaje de recompensa",
+      "Nivel del sistema de referidos",
+      "Número de referidos"
+    ],
+    "tableTitles": [
+      "Dirección",
+      "Transacciones",
+      "Volumen",
+      "Mi recompensa"
+    ],
+    "levels": [
+      "Bronce",
+      "Plata",
+      "Oro"
+    ],
+    "empty": [
+      "La lista de referidos está actualmente vacía.",
+      "Comparte tu enlace de referido con otros usuarios"
+    ]
+  },
+  "referralHistory": {
+    "tableTitles": [
+      "Transacción",
+      "Hora",
+      "Costo"
+    ]
+  },
+  "referralLink": {
+    "caption": "Tu enlace de referido",
+    "description": "Este es tu enlace de referido, una vez que tu amigo haga clic en el enlace, automáticamente se convertirá en tu referido",
+    "copyBtn": "Copiar enlace",
+    "qrBtn": "Mostrar código QR"
+  },
+  "referralNav": {
+    "info": "Mi información",
+    "referrals": "Mis referidos",
+    "history": "Historial de solicitudes"
+  },
+  "referralFaq": {
+    "questions": [
+      "¿Cómo se calcula el porcentaje de recompensa?",
+      "¿Qué es el nivel del sistema de referidos?",
+      "¿Quién puede ser mi referido?",
+      "¿Cómo aumentar el porcentaje de recompensa?",
+      "¿Cómo obtener recompensas?"
+    ],
+    "answers": [
+      "El porcentaje de recompensa depende de tu nivel.\nswap.coffee no cobra tarifas adicionales a los usuarios. Compartimos una parte de nuestras ganancias de comisiones con el usuario, asegurando que no haya costos adicionales.",
+      "El nivel del sistema de referidos indica tu porcentaje de ingresos de referidos. Cuanto mayor sea el nivel, mayor será el porcentaje de recompensa.",
+      "Solo los nuevos usuarios pueden ser invitados como referidos. Los usuarios que ya han utilizado swap.coffee no pueden ser invitados como referidos.",
+      "Las herramientas para aumentar el nivel se añadirán más adelante. Se aplican condiciones especiales para influencers. Para detalles, por favor, contacta con nuestro Telegram.",
+      "En la página del programa de referidos puedes ver el monto total de tus ingresos. Esto incluye todos tus referidos de todos los DEX.\nEn el centro de solicitudes, puedes solicitar el monto ganado de StonFi. Las recompensas de DeDust estarán disponibles para solicitud más adelante, después de su distribución."
+    ],
+    "levels": "Tenemos tres niveles de comisión:\nBronce - Para todos los usuarios\nPlata - Para los stakers de CES (Próximamente)\nOro - Para influencers"
+  },
+  "cashback": {
+    "btnText": "Más detalles",
+    "menuDetail": "Detalles",
+    "menuPromo": "Términos de la promoción",
+    "terms": [
+      "La promoción es válida solo para nuevos clientes del socio.",
+      "El descuento se aplica al precio actual y no se puede combinar con otras promociones. No se aplica a otras ofertas del socio. El código promocional no es válido para pagos en las siguientes marcas, productos y servicios: Apple, Beats, Prada, Miu Miu.",
+      "La cantidad de códigos promocionales es limitada. Las condiciones pueden ser modificadas por el socio y la promoción puede ser cancelada anticipadamente si se utilizan todos los códigos promocionales."
+    ],
+    "details": [
+      "Inicio de la promoción",
+      "Fin de la promoción",
+      "Fondo de recompensas",
+      "Reembolso (diario)",
+      "Reembolso (total)",
+      "% del monto de la transacción"
+    ],
+    "ads": {
+      "btnText": "Anuncios",
+      "title": "AIRDROPS 10,000,000 $Whale TOKENs \uD83D\uDD25\uD83E\uDD2F",
+      "description": "Nuestra prioridad siempre ha sido la comunidad Whale: ¡aquí está tu oportunidad de ser de los PRIMEROS propietarios de $Whale Token! \uD83D\uDE80",
+      "subtitle": "Mejor Agregador DEX"
+    }
+  }
+}
