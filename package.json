@@ -1,11 +1,19 @@
 {
-  "name": "swap-sdk",
-  "private": true,
-  "version": "0.0.0",
+  "name": "swap-widget-sdk",
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/swap-sdk.esm.js",
+      "require": "./dist/swap-sdk.cjs.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build --config vite.config.js",
     "preview": "vite preview"
   },
   "dependencies": {

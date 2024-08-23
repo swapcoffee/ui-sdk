@@ -3,11 +3,9 @@ import { resolve, dirname } from 'node:path'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite"
-// import NodeGlobalsPolyfillPlugin from "@esbuild-plugins/node-globals-polyfill";
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 
-// https://vitejs.dev/config/
 export default defineConfig({
   optimizeDeps: {
     esbuildOptions: {
@@ -15,18 +13,10 @@ export default defineConfig({
         global: 'globalThis',
         Buffer: 'globalThis.Buffer',
       },
-      // plugins: [
-      //   NodeGlobalsPolyfillPlugin({
-      //     buffer: true,
-      //   })
-      // ]
     }
   },
   plugins: [
     vue(),
-    // NodeGlobalsPolyfillPlugin({
-    //   buffer: true,
-    // }),
     nodePolyfills(),
     VueI18nPlugin({
       include: resolve(
@@ -38,6 +28,21 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  build: {
+    lib: {
+      entry: resolve(__dirname, 'src/index.ts'),
+      name: 'SwapWidgetSDK',
+      fileName: (format) => `swap-sdk.${format}.js`
+    },
+    rollupOptions: {
+      external: ['vue'],
+      output: {
+        globals: {
+          vue: 'Vue'
+        }
+      }
     }
   }
 })
