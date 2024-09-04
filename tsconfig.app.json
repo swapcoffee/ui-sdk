@@ -4,19 +4,24 @@
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.vue",
+    "src/**/*"
   ],
   "exclude": [
     "src/**/__tests__/*",
     "node_modules"
   ],
   "compilerOptions": {
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "outDir": "./dist",
     "composite": true,
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@ton/*": ["node_modules/@ton/*"]
+      "@ton/*": ["node_modules/@ton/*"],
+      "swap-widget-sdk": ["./node_modules/swap-widget-sdk"]
     }
   }
 }

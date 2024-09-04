@@ -1,10 +1,10 @@
 {
   "name": "swap-widget-sdk",
   "private": false,
-  "version": "1.0.0",
+  "version": "1.0.2",
   "type": "module",
-  "main": "dist/index.cjs.js",
-  "module": "dist/index.esm.js",
+  "main": "dist/swap-sdk.cjs.js",
+  "module": "dist/swap-sdk.esm.js",
   "exports": {
     ".": {
       "import": "./dist/swap-sdk.esm.js",

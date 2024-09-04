@@ -34,7 +34,16 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'SwapWidgetSDK',
-      fileName: (format) => `swap-sdk.${format}.js`
+      formats: ['es', 'cjs'],
+      fileName: (format) => {
+        if (format === 'es') {
+          return 'swap-sdk.esm.js';
+        } else if (format === 'cjs') {
+          return 'swap-sdk.cjs.js';
+        } else {
+          return `swap-sdk.${format}.js`;
+        }
+      }
     },
     rollupOptions: {
       external: ['vue'],

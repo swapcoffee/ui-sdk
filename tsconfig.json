@@ -7,15 +7,19 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "declaration": true,
+    "declarationDir": "./dist/types",
+    "outDir": "./dist",
     "skipLibCheck": true,
     "isolatedModules": true,
     "strict": false,
     "paths": {
       "@/*": ["./src/*"],
-      "@ton/*": ["node_modules/@ton/*"]
+      "@ton/*": ["node_modules/@ton/*"],
+      "swap-widget-sdk": ["./node_modules/swap-widget-sdk"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"],
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", "src/**/*"],
   "exclude": ["node_modules"],
   "references": [
     {
