@@ -15,7 +15,7 @@
     "dev": "vite",
     "build": "vite build --config vite.config.js",
     "preview": "vite preview",
-    "save&publish": "npm run build && npm publish"
+    "save&publish": "npm version patch && npm run build && npm publish"
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
