@@ -1,7 +1,7 @@
 {
   "name": "swap-widget-sdk",
   "private": false,
-  "version": "1.0.6",
+  "version": "1.0.8",
   "type": "module",
   "main": "dist/swap-sdk.cjs.js",
   "module": "dist/swap-sdk.esm.js",
@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --config vite.config.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "save&publish": "npm run build && npm publish"
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
