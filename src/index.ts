@@ -1,1 +1,1 @@
-export { createSwapWidget } from './main.ts';
+export { default as App } from "./App.vue"
