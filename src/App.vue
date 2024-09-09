@@ -12,7 +12,7 @@ import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 
 export default {
-  name: "MainWidget",
+  name: "App",
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
   data() {
     return {

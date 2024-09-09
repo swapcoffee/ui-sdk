@@ -1,1 +1,1 @@
-export { default as MainWidget } from "./MainWidget.vue"
+export { default as SwapWidget } from "./ui/SwapWidget.vue"
