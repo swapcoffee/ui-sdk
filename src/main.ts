@@ -3,7 +3,6 @@ import App from './App.vue';
 import i18n from './i18n';
 import { router } from './router';
 import { pinia } from './stores';
-import './style.css';
 
 export function createSwapWidget(selector) {
     const app = createApp(App);
