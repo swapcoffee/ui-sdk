@@ -32,7 +32,7 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/main.ts'),
       name: 'SwapWidgetSDK',
       formats: ['es', 'cjs'],
       fileName: (format) => {
@@ -40,6 +40,8 @@ export default defineConfig({
           return 'swap-sdk.esm.js';
         } else if (format === 'cjs') {
           return 'swap-sdk.cjs.js';
+        } else if (format === 'umd') {
+          return 'swap-sdk.umd.js';
         } else {
           return `swap-sdk.${format}.js`;
         }
