@@ -27,6 +27,7 @@
     "lottie-web": "^5.12.2",
     "pinia": "^2.2.1",
     "ton": "^13.9.0",
+    "vite-plugin-css-injected-by-js": "^3.5.1",
     "vite-plugin-node-polyfills": "^0.22.0",
     "vue": "^3.4.35",
     "vue-i18n": "^9.13.1",

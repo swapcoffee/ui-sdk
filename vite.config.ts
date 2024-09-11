@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite"
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 
 export default defineConfig({
@@ -24,6 +25,7 @@ export default defineConfig({
           "./src/i18n/locales/**"
       )
     }),
+    cssInjectedByJsPlugin(),
   ],
   resolve: {
     alias: {
@@ -47,7 +49,6 @@ export default defineConfig({
         }
       }
     },
-    cssCodeSplit: false,
     rollupOptions: {
       external: ['vue'],
       output: {
