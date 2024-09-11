@@ -150,31 +150,34 @@
         const setTheme = () => {
             const settings = JSON.parse(localStorage.getItem('globalSettings')) || {};
             const theme = settings?.theme || 'dark';
+            const widgetElement = document.getElementById('swap-widget-component');
 
-            document.body.classList.remove('theme-light', 'theme-dark', 'theme-coffee');
+            if (!widgetElement) return;
+
+            widgetElement.classList.remove('theme-light', 'theme-dark', 'theme-coffee');
 
             if (theme === "system") {
                 const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
                 darkThemeMq.addEventListener('change', (e) => {
                     const darkModeOn = e.matches;
-                    document.body.classList.toggle('theme-dark', darkModeOn);
-                    document.body.classList.toggle('theme-light', !darkModeOn);
+                    widgetElement.classList.toggle('theme-dark', darkModeOn);
+                    widgetElement.classList.toggle('theme-light', !darkModeOn);
                 });
-                document.body.classList.toggle('theme-dark', darkThemeMq.matches);
-                document.body.classList.toggle('theme-light', !darkThemeMq.matches);
+                widgetElement.classList.toggle('theme-dark', darkThemeMq.matches);
+                widgetElement.classList.toggle('theme-light', !darkThemeMq.matches);
                 return;
             }
 
-            document.body.classList.add(`theme-${theme}`);
+            widgetElement.classList.add(`theme-${theme}`);
         };
 
         setTheme();
-    })
+    });
 </script>
 <noscript>
     <strong>We're sorry but this application doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
 </noscript>
-<div id="swap"></div>
+<div id="swap-widget-component"></div>
 <!-- built files will be auto injected -->
 </body>
 </html>

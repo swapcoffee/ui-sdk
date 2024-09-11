@@ -5,10 +5,12 @@ import { router } from './router';
 import { pinia } from './stores';
 import './main.css'
 
-export function createSwapWidget(selector) {
+export function createSwapWidget() {
     const app = createApp(App);
     app.use(router);
     app.use(i18n);
     app.use(pinia);
-    app.mount(selector);
+    app.mount('#swap-widget-component');
 }
+
+createSwapWidget()
