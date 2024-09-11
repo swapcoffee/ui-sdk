@@ -1,8 +1,10 @@
 import { THEME, toUserFriendlyAddress } from '@tonconnect/ui';
 import { useDexStore } from '@/stores/dex';
 import { useSettingsStore } from "@/stores/settings";
+import { inject } from 'vue';
 
 export default {
+    inject: ['tonConnectManifest'],
     computed: {
         dexStore() {
             return useDexStore();
@@ -39,7 +41,7 @@ export default {
         },
         tonConnectSettings() {
             return {
-                manifestUrl: 'https://swap.coffee/tonconnect-manifest.json',
+                manifestUrl: this.tonConnectManifest.url,
                 uiPreferences: {
                     theme: THEME.DARK,
                 },

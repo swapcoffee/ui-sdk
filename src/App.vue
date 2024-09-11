@@ -1,5 +1,5 @@
 <template>
-  <router-view :tonConnectUi="tonConnectUi" />
+  <SwapWidget/>
 </template>
 
 <script lang="ts">
@@ -10,9 +10,11 @@ import computedMixins from "@/mixins/computedMixins";
 import methodsMixins from "@/mixins/methodsMixins";
 import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
+import SwapWidget from "@/ui/SwapWidget.vue";
 
 export default {
   name: "App",
+  components: {SwapWidget},
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
   data() {
     return {
@@ -93,24 +95,6 @@ export default {
         console.error(err);
       }
     },
-    async setUserLanguage() {
-      const settings = localStorage.getItem('globalSettings');
-      if (!settings) {
-        try {
-          const userCountryCode = await this.geoApi.getUserCountryCode();
-          if (userCountryCode) {
-            this.$i18n.locale = this.getLocaleForCountry(userCountryCode);
-            const newSettings = {
-              theme: this.GET_THEME || "dark",
-              lang: userCountryCode.toLowerCase(),
-            }
-            localStorage.setItem('globalSettings', JSON.stringify(newSettings))
-          }
-        } catch (err) {
-          console.error(err);
-        }
-      }
-    },
     updateWalletInfo() {
       this.getAccountInfo(this.GET_DEX_WALLET)
     },
@@ -162,45 +146,61 @@ export default {
       }
     },
     checkQueryParams(mergeTokens) {
-      let route = this.$route
-      if (route.query?.ref) {
-        sessionStorage.setItem('referral_name', JSON.stringify(route.query?.ref))
+      const urlParams = new URLSearchParams(window.location.search);
+
+      const ref = urlParams.get('ref');
+      const referral = urlParams.get('referral');
+      const ft = urlParams.get('ft');
+      const st = urlParams.get('st');
+      const fa = urlParams.get('fa');
+      const sa = urlParams.get('sa');
+
+      if (ref) {
+        sessionStorage.setItem('referral_name', JSON.stringify(ref));
       }
-      if (route.query?.referral) {
-        sessionStorage.setItem('user_referral', JSON.stringify(route.query?.referral))
+
+      if (referral) {
+        sessionStorage.setItem('user_referral', JSON.stringify(referral));
       }
-      if (route.query?.ft && route.query?.st) {
-        let first = mergeTokens.find((item) => item.symbol === route.query?.ft)
-        let second = mergeTokens.find((item) => item.symbol === route.query?.st)
+
+      if (ft && st) {
+        let first = mergeTokens.find((item) => item.symbol === ft);
+        let second = mergeTokens.find((item) => item.symbol === st);
+
         if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first)
+          this.dexStore.DEX_SEND_TOKEN(first);
         }
+
         if (second) {
-          this.dexStore.DEX_RECEIVE_TOKEN(second)
+          this.dexStore.DEX_RECEIVE_TOKEN(second);
         }
+
         setTimeout(() => {
-          if (route.query?.fa > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(route.query?.fa))
-          } else if (route.query?.sa > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(route.query?.sa))
+          if (fa > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+          } else if (sa > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
           }
-        }, 10)
-      } else if (route.query?.ft) {
-        let first = mergeTokens.find((item) => item.symbol === route.query?.ft)
+        }, 10);
+      } else if (ft) {
+        let first = mergeTokens.find((item) => item.symbol === ft);
+
         if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first)
+          this.dexStore.DEX_SEND_TOKEN(first);
         }
+
         setTimeout(() => {
-          if (route.query?.fa > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(route.query?.fa))
-          } else if (route.query?.sa > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(route.query?.sa))
+          if (fa > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+          } else if (sa > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
           }
-        }, 10)
-      } else { // Если нет параметров установить TON как SEND token
-        let findToken = mergeTokens.find((item) => item.type === 'native')
+        }, 10);
+      } else {
+        let findToken = mergeTokens.find((item) => item.type === 'native');
+
         if (findToken) {
-          this.dexStore.DEX_SEND_TOKEN(findToken)
+          this.dexStore.DEX_SEND_TOKEN(findToken);
         }
       }
     },
@@ -394,7 +394,6 @@ export default {
     this.subscribeConnect()
     this.restoreUiConnection()
     this.tonproofSetConnect()
-    this.setUserLanguage()
     this.getPinnedTokens()
     let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
     let walletInfoStorage = JSON.parse(localStorage.getItem('ton-connect-ui_wallet-info'))
@@ -442,16 +441,6 @@ export default {
         }
       }
     },
-    GET_THEME: {
-      handler() {
-        this.changeMetaTheme()
-      }
-    },
-    getRouteName: {
-      handler() {
-
-      }
-    }
   }
 }
 </script>

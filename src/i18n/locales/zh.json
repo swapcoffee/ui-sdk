@@ -297,9 +297,7 @@
     "menuDetail": "详情",
     "menuPromo": "促销条款",
     "terms": [
-      "促销仅适用于新客户。",
-      "折扣适用于当前价格，不能与其他促销活动叠加。不适用于以下品牌、产品和服务：Apple, Beats, Prada, Miu Miu。",
-      "优惠码数量有限。条款可能会被合作伙伴更改，促销活动可能会在所有优惠码使用完毕之前提前结束。"
+      "使用 swap.coffee 并在每次交换中获得 {token} 的返现。奖励按交易量的 {percent}% 计入。单日最高奖励为 {dailyLimit} {token}，总计最高奖励为 {totalLimit} {token}。总计将分发 {distributed} {token}。"
     ],
     "details": [
       "促销开始日期",

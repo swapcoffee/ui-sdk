@@ -1,7 +1,6 @@
 import TonApi from '@/api/tonApi';
 import DexApiV2 from "@/api/dexApiV2";
 import TokensApi from "@/api/tokensApi";
-import GeoApi from "@/api/geoApi";
 
 export default {
     computed: {
@@ -10,9 +9,6 @@ export default {
         },
         tonApi() {
             return new TonApi();
-        },
-        geoApi() {
-            return new GeoApi();
         },
         dexApiV2() {
             return new DexApiV2();

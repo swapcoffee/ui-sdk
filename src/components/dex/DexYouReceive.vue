@@ -90,7 +90,8 @@ export default {
       return this.dexStore.GET_SWAP_MODE
     },
     getRouteQuery() {
-      return this.$route.query?.st !== undefined;
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('st') !== null || undefined;
     },
     showTokenSkeleton() {
       return this.getRouteQuery && this.dexStore.GET_RECEIVE_TOKEN === null;

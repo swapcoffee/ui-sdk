@@ -4,7 +4,6 @@ import ru from "./locales/ru.json"
 import ua from "./locales/ua.json"
 import zh from "./locales/zh.json"
 import fa from "./locales/fa.json"
-import fr from "./locales/fr.json"
 import es from "./locales/es.json"
 
 
@@ -18,7 +17,6 @@ export default createI18n({
         ua,
         zh,
         fa,
-        fr,
         es
     }
 })

@@ -299,9 +299,7 @@
     "menuDetail": "Detalles",
     "menuPromo": "Términos de la promoción",
     "terms": [
-      "La promoción es válida solo para nuevos clientes del socio.",
-      "El descuento se aplica al precio actual y no se puede combinar con otras promociones. No se aplica a otras ofertas del socio. El código promocional no es válido para pagos en las siguientes marcas, productos y servicios: Apple, Beats, Prada, Miu Miu.",
-      "La cantidad de códigos promocionales es limitada. Las condiciones pueden ser modificadas por el socio y la promoción puede ser cancelada anticipadamente si se utilizan todos los códigos promocionales."
+      "Usa swap.coffee y recibe cashback en {token} por cada intercambio. La recompensa se acredita a una tasa de {percent}% del volumen de la transacción. La recompensa máxima por 1 día es {dailyLimit} {token}, y para todo el tiempo - {totalLimit} {token}. En total, se distribuirán {distributed} {token}."
     ],
     "details": [
       "Inicio de la promoción",
