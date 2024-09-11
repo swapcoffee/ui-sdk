@@ -1,7 +1,6 @@
 import { THEME, toUserFriendlyAddress } from '@tonconnect/ui';
 import { useDexStore } from '@/stores/dex';
 import { useSettingsStore } from "@/stores/settings";
-import { inject } from 'vue';
 
 export default {
     inject: ['tonConnectManifest'],
@@ -40,6 +39,7 @@ export default {
             return this.settingsStore.GET_THEME;
         },
         tonConnectSettings() {
+            console.log('manifestUrl ', this.tonConnectManifest.url)
             return {
                 manifestUrl: this.tonConnectManifest.url,
                 uiPreferences: {

@@ -20,6 +20,7 @@ export function createSwapWidget(selector, options = {}) {
     app.use(i18n);
 
     app.provide('tonConnectManifest', tonConnectManifest);
+    console.log('tonConnectManifest', tonConnectManifest)
 
     i18n.global.locale.value = locale;
 
@@ -38,3 +39,14 @@ const applyTheme = (selector, theme) => {
     widgetElement.classList.add(`theme-${theme}`);
 }
 
+createSwapWidget('#swap-widget-component',
+    {
+        theme: 'dark',
+        locale: 'es',
+        tonConnectManifest: {
+            "url": "https://swap.coffee",
+            "name": "swap.coffee",
+            "iconUrl": "https://raw.githubusercontent.com/divineempire/swap-pictures/master/manifest-ton/swap-logo.png"
+        }
+    }
+);

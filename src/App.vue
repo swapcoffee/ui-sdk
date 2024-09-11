@@ -1,5 +1,7 @@
 <template>
-  <SwapWidget/>
+  <SwapWidget
+      :tonConnectUi="tonConnectUi"
+  />
 </template>
 
 <script lang="ts">
