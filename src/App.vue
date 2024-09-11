@@ -148,7 +148,6 @@ export default {
 
         this.dexStore.DEX_TON_TOKENS(tokens)
         this.checkQueryParams(tokens)
-        this.checkTwaParams(tokens)
 
         if (this.GET_DEX_WALLET !== null) {
           await this.getAccountInfo(this.dexStore.GET_DEX_WALLET)
@@ -159,35 +158,6 @@ export default {
           setTimeout(() => {
             this.getTonTokens(retryCount + 1);
           }, 5000);
-        }
-      }
-    },
-    checkTwaParams(mergeTokens) {
-      if (window.Telegram.WebApp.platform !== 'unknown') {
-        let startParam = window.Telegram.WebApp?.initDataUnsafe?.start_param
-
-        if (startParam) {
-          // ft_{symbol}_st_{symbol}_fa_{amount}
-          let params = startParam.split('_')
-          if (params.length === 6) {
-            let ft = params[1].toUpperCase()
-            let st = params[3].toUpperCase()
-            let fa = params[5]
-
-            // console.log("params", ft, st, fa)
-
-            let first = mergeTokens.find((item) => item.symbol === ft)
-            let second = mergeTokens.find((item) => item.symbol === st)
-            if (first) {
-              this.dexStore.DEX_SEND_TOKEN(first)
-            }
-            if (second) {
-              this.dexStore.DEX_RECEIVE_TOKEN(second)
-            }
-            if (fa) {
-              this.dexStore.DEX_SEND_AMOUNT(fa)
-            }
-          }
         }
       }
     },
