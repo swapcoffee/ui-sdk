@@ -807,7 +807,7 @@ export default {
 };
 </script>
 
-<style module scoped>
+<style scoped>
 
 /*.cashback-enter-active, .cashback-leave-active {
 	transition: .2s ease-out;
