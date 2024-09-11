@@ -1,13 +1,20 @@
-import { createApp } from 'vue'
+import { defineCustomElement } from './defineCustomElementWithStyles'
 import './style.css'
-import App from './App.vue'
+import App from './App.ce.vue'
 import i18n from "./i18n";
-import { router } from "./router";
 import { pinia } from "./stores";
 
-const app = createApp(App);
+let SwapWidgetSdk = defineCustomElement(App, {
+	plugins: [pinia, i18n],
+})
 
-app.use(router);
-app.use(i18n);
-app.use(pinia);
-app.mount("#app");
+customElements.define(
+	'swap-widget',
+	SwapWidgetSdk
+)
+
+// document.body.appendChild(
+// 	new SwapWidgetSdk({
+//
+// 	})
+// )

@@ -502,7 +502,7 @@ export default {
         }
       }
 
-      this.$router.push({ name: "Dex", query: queryParams });
+      // this.$router.push({ name: "Dex", query: queryParams });
     },
     addedReceiveQuery(value: any) {
       const queryParams: any = {
@@ -522,7 +522,7 @@ export default {
         }
       }
 
-      this.$router.push({ name: "Dex", query: queryParams });
+      // this.$router.push({ name: "Dex", query: queryParams });
     },
     pinToken(item: any) {
       const pinTokens = this.dexStore.GET_PINNED_TOKENS.slice();

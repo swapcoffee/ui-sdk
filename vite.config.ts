@@ -16,7 +16,14 @@ export default defineConfig({
     }
   },
   plugins: [
-    vue(),
+    vue({
+      template: {
+        compilerOptions: {
+          isCustomElement: tag => tag.startsWith('swap-widget')
+        }
+      },
+      customElement: true
+    }),
     nodePolyfills(),
     VueI18nPlugin({
       include: resolve(
@@ -30,11 +37,20 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
+  css: {
+    // Глобальные стили можно вставить в Shadow DOM
+    preprocessorOptions: {
+      css: {
+        additionalData: `@import "./src/styles/widget.css";` // Подключаем глобальные стили
+      }
+    }
+  },
   build: {
+    cssCodeSplit: false,
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'SwapWidgetSDK',
-      formats: ['es', 'cjs'],
+      formats: ['es', 'cjs' , 'umd'],
       fileName: (format) => {
         if (format === 'es') {
           return 'swap-sdk.esm.js';
@@ -45,13 +61,13 @@ export default defineConfig({
         }
       }
     },
-    rollupOptions: {
-      external: ['vue'],
-      output: {
-        globals: {
-          vue: 'Vue'
-        }
-      }
-    }
+    // rollupOptions: {
+    //   external: ['vue'],
+    //   output: {
+    //     globals: {
+    //       vue: 'Vue'
+    //     }
+    //   }
+    // }
   }
 })

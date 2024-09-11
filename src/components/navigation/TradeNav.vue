@@ -29,7 +29,7 @@ export default {
   },
   methods: {
     linkTo(value: string) {
-      this.$router.push({ name: value, query: this.$route.query });
+      // this.$router.push({ name: value, query: this.$route.query });
     }
   }
 }

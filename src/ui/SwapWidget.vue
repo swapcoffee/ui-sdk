@@ -223,13 +223,13 @@ export default {
       );
     },
     firstLoading() {
-      const route = this.$route;
-      if (route.query?.ft && route.query?.st) {
-        return (
-            this.dexStore.GET_DEAL_CONDITIONS === null &&
-            this.dexStore.GET_TON_TOKENS.length === 0
-        );
-      }
+      // const route = this.$route;
+      // if (route.query?.ft && route.query?.st) {
+      //   return (
+      //       this.dexStore.GET_DEAL_CONDITIONS === null &&
+      //       this.dexStore.GET_TON_TOKENS.length === 0
+      //   );
+      // }
     },
     notEnoughConditions() {
       const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
@@ -534,22 +534,22 @@ export default {
         clearInterval(this.interval as number);
         this.refreshDex();
 
-        this.$router.replace({
-          name: "Dex",
-          query: {
-            ft: this.dexStore.GET_SEND_TOKEN?.symbol,
-            st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
-            fa: this.dexStore.GET_SEND_AMOUNT,
-          },
-        });
+        // this.$router.replace({
+        //   name: "Dex",
+        //   query: {
+        //     ft: this.dexStore.GET_SEND_TOKEN?.symbol,
+        //     st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
+        //     fa: this.dexStore.GET_SEND_AMOUNT,
+        //   },
+        // });
       } else if (
           this.dexStore.GET_SEND_TOKEN !== null &&
           this.dexStore.GET_SEND_AMOUNT > 0
       ) {
-        this.$router.replace({
-          name: "Dex",
-          query: { ft: this.dexStore.GET_SEND_TOKEN?.symbol, fa: this.dexStore.GET_SEND_AMOUNT },
-        });
+        // this.$router.replace({
+        //   name: "Dex",
+        //   query: { ft: this.dexStore.GET_SEND_TOKEN?.symbol, fa: this.dexStore.GET_SEND_AMOUNT },
+        // });
       } else {
         if (this.abortController !== null) {
           this.abortController.abort();
@@ -557,12 +557,12 @@ export default {
         if (this.dexStore.GET_SEND_AMOUNT === 0) {
           const updatedQuery = { ...this.$route.query };
           delete updatedQuery.fa;
-          this.$router.replace({ query: updatedQuery });
+          // this.$router.replace({ query: updatedQuery });
         }
         if (this.dexStore.GET_RECEIVE_TOKEN === null) {
           const updatedQuery = { ...this.$route.query };
           delete updatedQuery?.st;
-          this.$router.replace({ query: updatedQuery });
+          // this.$router.replace({ query: updatedQuery });
         }
         clearInterval(this.interval as number);
       }
@@ -576,14 +576,14 @@ export default {
         this.setDebounceForRequest();
         clearInterval(this.interval as number);
         this.refreshDex();
-        this.$router.replace({
-          name: "Dex",
-          query: {
-            ft: this.dexStore.GET_SEND_TOKEN?.symbol,
-            st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
-            sa: this.dexStore.GET_RECEIVE_AMOUNT,
-          },
-        });
+        // this.$router.replace({
+        //   name: "Dex",
+        //   query: {
+        //     ft: this.dexStore.GET_SEND_TOKEN?.symbol,
+        //     st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
+        //     sa: this.dexStore.GET_RECEIVE_AMOUNT,
+        //   },
+        // });
       } else {
         if (this.abortController !== null) {
           this.abortController.abort();
@@ -591,12 +591,12 @@ export default {
         if (this.dexStore.GET_RECEIVE_AMOUNT === 0) {
           const updatedQuery = { ...this.$route.query };
           delete updatedQuery.sa;
-          this.$router.replace({ query: updatedQuery });
+          // this.$router.replace({ query: updatedQuery });
         }
         if (this.dexStore.GET_RECEIVE_TOKEN === null) {
           const updatedQuery = { ...this.$route.query };
           delete updatedQuery?.st;
-          this.$router.replace({ query: updatedQuery });
+          // this.$router.replace({ query: updatedQuery });
         }
         clearInterval(this.interval as number);
       }
@@ -807,7 +807,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style module scoped>
 
 /*.cashback-enter-active, .cashback-leave-active {
 	transition: .2s ease-out;

@@ -1,1 +1,1 @@
-export { default as SwapWidget } from "./App.vue"
+export { default as SwapWidget } from "./App.ce.vue"
