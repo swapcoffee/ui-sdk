@@ -50,7 +50,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'src/index.ts'),
       name: 'SwapWidgetSDK',
-      formats: ['es', 'cjs' , 'umd'],
+      formats: ['es', 'cjs'],
       fileName: (format) => {
         if (format === 'es') {
           return 'swap-sdk.esm.js';
