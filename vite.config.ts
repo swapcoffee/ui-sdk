@@ -47,7 +47,7 @@ export default defineConfig({
         }
       }
     },
-    cssCodeSplit: true,
+    cssCodeSplit: false,
     rollupOptions: {
       external: ['vue'],
       output: {
