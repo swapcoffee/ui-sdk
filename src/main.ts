@@ -11,9 +11,9 @@ let SwapWidget = defineCustomElement(App, {
 const register = () => {
 	if (typeof window === 'undefined') return;
 	if (!window.customElements.get('swap-widget')) {
-		window.customElements.define('swap-widget', SwapWidget)
+		window.customElements.define('swap-widget', SwapWidget);
 	}
-}
+};
 
 export { SwapWidget, register };
 
