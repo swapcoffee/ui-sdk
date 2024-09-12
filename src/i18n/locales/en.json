@@ -48,12 +48,23 @@
     },
     "dexTokens": {
         "searchPlaceholder": "Search by name",
-        "emptySearch": ["We didn't find any assets.", "Try to specify the address of the token."],
+        "emptySearch": [
+            "We didn't find any assets.",
+            "Try to specify the address of the token."
+        ],
         "validAddress": "Please enter a valid token address",
         "importNotice": "This token isn’t included in the active token list. Make sure you are aware of the risks associated with imported tokens.",
         "importBtn": "Accept and Import",
-        "titles": ["Your tokens", "Popular tokens", "Search results"],
-        "info": ["Price", "Liquidity", "Holders amount"]
+        "titles": [
+            "Your tokens",
+            "Popular tokens",
+            "Search results"
+        ],
+        "info": [
+            "Price",
+            "Liquidity",
+            "Holders amount"
+        ]
     },
     "stakeButton": {
         "stake": "Stake",
@@ -84,7 +95,11 @@
         "enterAmount": "Enter amount",
         "selectToken": "Select a Token",
         "sendTransaction": "Swap",
-        "tooltip": ["• Try to increase Pool Volatility setting.", "• Try to increase Intermediate Tokens setting.", "• Make sure that such a pool exists and notify support."]
+        "tooltip": [
+            "• Try to increase Pool Volatility setting.",
+            "• Try to increase Intermediate Tokens setting.",
+            "• Make sure that such a pool exists and notify support."
+        ]
     },
     "dexSidebar": {
         "portfolio": "Portfolio",
@@ -100,7 +115,12 @@
     "dexGlobal": {
         "caption": "Global settings",
         "theme": {
-            "name": ["System", "Dark", "Light", "Coffee"],
+            "name": [
+                "System",
+                "Dark",
+                "Light",
+                "Coffee"
+            ],
             "text": "Theme mode"
         },
         "lang": {
@@ -118,21 +138,35 @@
     "dexInfo": {
         "highPriceImpact": "High price impact {priceImpact}% drop!",
         "priceImpact": "Swapping this amount of selected tokens will cause a significant price impact and reduce your outcome.",
-        "reverseSwap": ["ExactOut swap supports less liquidity venues and less routes.", "It might also offer a worse price."]
+        "reverseSwap": [
+            "ExactOut swap supports less liquidity venues and less routes.",
+            "It might also offer a worse price."
+        ]
     },
     "dexWallet": {
         "title": "Account",
         "balance": "Your balance"
     },
     "dexDetails": {
-        "titles": ["Show swap details", "Hide details"],
+        "titles": [
+            "Show swap details",
+            "Hide details"
+        ],
         "priceImpact": {
             "name": "Price impact",
-            "tooltip": ["The difference between the market", "price and estimated price due to trade", "size."]
+            "tooltip": [
+                "The difference between the market",
+                "price and estimated price due to trade",
+                "size."
+            ]
         },
         "minimumReceive": {
             "name": "Minimum received",
-            "tooltip": ["Your transaction will revert if there is a ", "large, unfavorable price movement ", "before it is confirmed."]
+            "tooltip": [
+                "Your transaction will revert if there is a ",
+                "large, unfavorable price movement ",
+                "before it is confirmed."
+            ]
         },
         "fee": {
             "name": "Blockchain fee",
@@ -149,39 +183,76 @@
             "success": "Swap success!"
         },
         "btnText": "Swap All Intermediate Tokens",
-        "info": ["Try using higher than normal slippage to", "ensure your transaction is completed."],
+        "info": [
+            "Try using higher than normal slippage to",
+            "ensure your transaction is completed."
+        ],
         "cashback": {
             "name": "Cashback",
             "text": "Success"
-        }
+        },
+        "resultText": "🔥 Look how profitably I bought {token} on swap.coffee!\n🤑 Join and exchange profitably with me!"
     },
     "dexDistribution": {
         "plan": "Distribution plan via {dexNames}",
-        "caption": ["Distribution plan", "Routing"]
+        "caption": [
+            "Distribution plan",
+            "Routing"
+        ]
     },
     "claimCenter": {
-        "froge": "Froge is a new meme ecosystem in the TON blockchain that allows you to use all the features of DeFi, as well as participate in launchpads using DAO elements, profiting from ICO.",
+        "description": "Invite friends, earn a percentage of the commission from their transactions, and claim your rewards!",
         "titles": ["All rewards", "Cashback", "Referral", "Contests"],
         "caption": "Select a Tokens",
         "text": "The cost of withdrawal depends on the number of tokens you have selected",
-        "empty": "There are no tokens available for withdrawal"
+        "empty": "There are no tokens available for withdrawal",
+        "tooltip": "We award rewards from different wallets, one token can be withdrawn from several wallets, gas must be paid for each transaction"
     },
     "claimHistory": {
         "empty": "The claim history is currently empty."
     },
     "claimStatus": {
-        "failedText": "Try using higher than normal slippage to\nensure your transaction is completed."
+        "failedText": "Try using higher than normal slippage to\nensure your transaction is completed.",
+        "error": "Claim failed",
+        "timed_out": "Transaction time is out",
+        "pending": "One more second",
+        "success": "Claim success!"
     },
     "referralInfo": {
         "referrals": "{count} referrals",
         "heading": "Referral program",
         "description": "Invite friends and earn a percentage of the commission from their transactions! When your friend uses your link, they automatically become your referral.",
         "withdraw": "Available for withdrawal",
-        "blockNames": ["Income for all time", "Monthly income", "Turnover from all time", "Monthly turnover"],
-        "statsNames": ["Reward Percentage", "Referral Level", "Number of referrals"],
-        "tableTitles": ["Address", "Transactions", "Turnover", "My reward"],
-        "levels": ["Bronze", "Silver", "Gold"],
-        "empty": ["The referral list is currently empty.", "Share your referral link with other users"]
+        "emptyWithdraw": "There are no tokens available for withdrawal",
+        "blockNames": [
+            "Income for all time",
+            "Monthly income",
+            "Turnover from all time",
+            "Monthly turnover"
+        ],
+        "statsNames": [
+            "Reward Percentage",
+            "Referral Level",
+            "Number of referrals"
+        ],
+        "tableTitles": [
+            "Address",
+            "Transactions",
+            "Turnover",
+            "My reward"
+        ],
+        "levels": [
+            "Bronze",
+            "Silver",
+            "Gold"
+        ],
+        "empty": [
+            "The referral list is currently empty.",
+            "Share your referral link with other users"
+        ]
+    },
+    "referralHistory": {
+        "tableTitles": ["Transaction", "Time", "Value"]
     },
     "referralLink": {
         "caption": "Your referral link",
@@ -195,7 +266,13 @@
         "history": "Claim history"
     },
     "referralFaq": {
-        "questions": ["How is the reward percentage calculated?", "What is the referral system level?", "Who can be my referral?", "How to increase the reward percentage?", "How to Claim Rewards?"],
+        "questions": [
+            "How is the reward percentage calculated?",
+            "What is the referral system level?",
+            "Who can be my referral?",
+            "How to increase the reward percentage?",
+            "How to Claim Rewards?"
+        ],
         "answers": [
             "The reward percentage is based on your level.\nswap.coffee does not charge users any additional fees. We share a portion of our commission profits with the user, ensuring there are no extra costs.",
             "The level of the referral system indicates your percentage of income from referrals. The higher the level, the higher the reward percentage.",
@@ -210,9 +287,7 @@
         "menuDetail": "Detail",
         "menuPromo": "Terms of the promotion",
         "terms": [
-            "The promotion is valid only for new customers of the partner.",
-            "The discount is applied to the current price and cannot be combined with other promotions. It does not apply to other partner offers. The promo code is not valid for payment on the following brands, products, and services: Apple, Beats, Prada, Miu Miu.",
-            "The number of promo codes is limited. Conditions may be changed by the partner, and the promotion may be prematurely terminated if all promo codes are used up."
+            "Use swap.coffee and receive cashback in {token} for every exchange. The reward is credited at a rate of {percent}% of the transaction volume. The maximum reward for 1 day is {dailyLimit} {token}, and for all time - {totalLimit} {token}. In total, {distributed} {token} will be distributed."
         ],
         "details": [
             "Promo starts",
@@ -224,8 +299,8 @@
         ],
         "ads": {
             "btnText": "Ads",
-            "title": "☕ swap.coffee",
-            "description": "Join our Telegram channel to stay updated with the latest news, updates, and exclusive offers. Be the first to hear about our new releases!",
+            "title": "AIRDROPS 10,000,000 $Whale TOKENs \uD83D\uDD25\uD83E\uDD2F",
+            "description": "Our priority has always been the Whale community: here's your chance to be THE FIRST $Whale Token owners! \uD83D\uDE80",
             "subtitle": "Best DEX Aggregator"
         }
     }

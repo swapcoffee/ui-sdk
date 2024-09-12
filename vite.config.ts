@@ -4,6 +4,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import VueI18nPlugin from "@intlify/unplugin-vue-i18n/vite"
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 
 
 export default defineConfig({
@@ -30,7 +31,8 @@ export default defineConfig({
           dirname(fileURLToPath(import.meta.url)),
           "./src/i18n/locales/**"
       )
-    })
+    }),
+    cssInjectedByJsPlugin(),
   ],
   resolve: {
     alias: {
@@ -40,7 +42,7 @@ export default defineConfig({
   build: {
     cssCodeSplit: false,
     lib: {
-      entry: resolve(__dirname, 'src/index.ts'),
+      entry: resolve(__dirname, 'src/main.ts'),
       name: 'SwapWidgetSDK',
       formats: ['es', 'cjs'],
       fileName: (format) => {
@@ -48,6 +50,8 @@ export default defineConfig({
           return 'swap-sdk.esm.js';
         } else if (format === 'cjs') {
           return 'swap-sdk.cjs.js';
+        } else if (format === 'umd') {
+          return 'swap-sdk.umd.js';
         } else {
           return `swap-sdk.${format}.js`;
         }

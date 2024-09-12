@@ -485,44 +485,44 @@ export default {
       }
     },
     addedSendQuery(value: any) {
-      const queryParams: any = {
-        ft: value.symbol,
-      };
+      const queryParams = new URLSearchParams(window.location.search);
+      queryParams.set('ft', value.symbol);
 
       if (this.dexStore.GET_RECEIVE_TOKEN !== null) {
-        queryParams.st = this.dexStore.GET_RECEIVE_TOKEN?.symbol;
+        queryParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
       }
+
       if (this.dexStore.GET_SWAP_MODE === "default") {
         if (this.dexStore.GET_SEND_AMOUNT > 0) {
-          queryParams.fa = this.dexStore.GET_SEND_AMOUNT;
+          queryParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
         }
       } else if (this.dexStore.GET_SWAP_MODE === "reverse") {
         if (this.dexStore.GET_RECEIVE_AMOUNT > 0) {
-          queryParams.sa = this.dexStore.GET_RECEIVE_AMOUNT;
+          queryParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
         }
       }
 
-      // this.$router.push({ name: "Dex", query: queryParams });
+      window.history.replaceState(null, '', `?${queryParams.toString()}`);
     },
     addedReceiveQuery(value: any) {
-      const queryParams: any = {
-        ft: this.dexStore.GET_SEND_TOKEN?.symbol,
-      };
+      const queryParams = new URLSearchParams(window.location.search);
+      queryParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
 
       if (value !== null) {
-        queryParams.st = value.symbol;
+        queryParams.set('st', value.symbol);
       }
+
       if (this.dexStore.GET_SWAP_MODE === "default") {
         if (this.dexStore.GET_SEND_AMOUNT > 0) {
-          queryParams.fa = this.dexStore.GET_SEND_AMOUNT;
+          queryParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
         }
       } else if (this.dexStore.GET_SWAP_MODE === "reverse") {
         if (this.dexStore.GET_RECEIVE_AMOUNT > 0) {
-          queryParams.sa = this.dexStore.GET_RECEIVE_AMOUNT;
+          queryParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
         }
       }
 
-      // this.$router.push({ name: "Dex", query: queryParams });
+      window.history.replaceState(null, '', `?${queryParams.toString()}`);
     },
     pinToken(item: any) {
       const pinTokens = this.dexStore.GET_PINNED_TOKENS.slice();

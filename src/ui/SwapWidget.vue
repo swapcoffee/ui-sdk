@@ -89,12 +89,6 @@ export default {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
   props: {
-    tonConnectUi: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
   },
   components: {
     DexUnstakeButton,
@@ -223,13 +217,13 @@ export default {
       );
     },
     firstLoading() {
-      // const route = this.$route;
-      // if (route.query?.ft && route.query?.st) {
-      //   return (
-      //       this.dexStore.GET_DEAL_CONDITIONS === null &&
-      //       this.dexStore.GET_TON_TOKENS.length === 0
-      //   );
-      // }
+      const urlParams = new URLSearchParams(window.location.search);
+      return (
+          urlParams.get('ft') &&
+          urlParams.get('st') &&
+          this.dexStore.GET_DEAL_CONDITIONS === null &&
+          this.dexStore.GET_TON_TOKENS.length === 0
+      );
     },
     notEnoughConditions() {
       const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
@@ -525,78 +519,67 @@ export default {
       }
     },
     sendWatchEvent() {
-      if (
-          this.dexStore.GET_RECEIVE_TOKEN !== null &&
+      const url = new URL(window.location.href);
+      if (this.dexStore.GET_RECEIVE_TOKEN !== null &&
           this.dexStore.GET_SEND_TOKEN !== null &&
-          this.dexStore.GET_SEND_AMOUNT > 0
-      ) {
+          this.dexStore.GET_SEND_AMOUNT > 0) {
         this.setDebounceForRequest();
         clearInterval(this.interval as number);
         this.refreshDex();
 
-        // this.$router.replace({
-        //   name: "Dex",
-        //   query: {
-        //     ft: this.dexStore.GET_SEND_TOKEN?.symbol,
-        //     st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
-        //     fa: this.dexStore.GET_SEND_AMOUNT,
-        //   },
-        // });
-      } else if (
-          this.dexStore.GET_SEND_TOKEN !== null &&
-          this.dexStore.GET_SEND_AMOUNT > 0
-      ) {
-        // this.$router.replace({
-        //   name: "Dex",
-        //   query: { ft: this.dexStore.GET_SEND_TOKEN?.symbol, fa: this.dexStore.GET_SEND_AMOUNT },
-        // });
+        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
+        url.searchParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
+        url.searchParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
+
+        window.history.replaceState(null, '', url.toString());
+      } else if (this.dexStore.GET_SEND_TOKEN !== null &&
+          this.dexStore.GET_SEND_AMOUNT > 0) {
+        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
+        url.searchParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
+
+        window.history.replaceState(null, '', url.toString());
       } else {
         if (this.abortController !== null) {
           this.abortController.abort();
         }
+
         if (this.dexStore.GET_SEND_AMOUNT === 0) {
-          const updatedQuery = { ...this.$route.query };
-          delete updatedQuery.fa;
-          // this.$router.replace({ query: updatedQuery });
+          url.searchParams.delete('fa');
+          window.history.replaceState(null, '', url.toString());
         }
         if (this.dexStore.GET_RECEIVE_TOKEN === null) {
-          const updatedQuery = { ...this.$route.query };
-          delete updatedQuery?.st;
-          // this.$router.replace({ query: updatedQuery });
+          url.searchParams.delete('st');
+          window.history.replaceState(null, '', url.toString());
         }
         clearInterval(this.interval as number);
       }
     },
     receiveWatchEvent() {
-      if (
-          this.dexStore.GET_RECEIVE_TOKEN !== null &&
+      const url = new URL(window.location.href);
+      if (this.dexStore.GET_RECEIVE_TOKEN !== null &&
           this.dexStore.GET_SEND_TOKEN !== null &&
-          this.dexStore.GET_RECEIVE_AMOUNT > 0
-      ) {
+          this.dexStore.GET_RECEIVE_AMOUNT > 0) {
         this.setDebounceForRequest();
         clearInterval(this.interval as number);
         this.refreshDex();
-        // this.$router.replace({
-        //   name: "Dex",
-        //   query: {
-        //     ft: this.dexStore.GET_SEND_TOKEN?.symbol,
-        //     st: this.dexStore.GET_RECEIVE_TOKEN?.symbol,
-        //     sa: this.dexStore.GET_RECEIVE_AMOUNT,
-        //   },
-        // });
+
+        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
+        url.searchParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
+        url.searchParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
+
+        window.history.replaceState(null, '', url.toString());
       } else {
         if (this.abortController !== null) {
           this.abortController.abort();
         }
+
         if (this.dexStore.GET_RECEIVE_AMOUNT === 0) {
-          const updatedQuery = { ...this.$route.query };
-          delete updatedQuery.sa;
-          // this.$router.replace({ query: updatedQuery });
+          url.searchParams.delete('sa');
+          window.history.replaceState(null, '', url.toString());
         }
         if (this.dexStore.GET_RECEIVE_TOKEN === null) {
-          const updatedQuery = { ...this.$route.query };
-          delete updatedQuery?.st;
-          // this.$router.replace({ query: updatedQuery });
+          url.searchParams.delete('st');
+          window.history.replaceState(null, '', url.toString());
         }
         clearInterval(this.interval as number);
       }

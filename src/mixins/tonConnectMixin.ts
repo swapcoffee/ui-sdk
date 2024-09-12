@@ -3,6 +3,7 @@ import { useDexStore } from '@/stores/dex';
 import { useSettingsStore } from "@/stores/settings";
 
 export default {
+    inject: ['tonConnectManifest', 'tonConnectUi'],
     computed: {
         dexStore() {
             return useDexStore();
@@ -38,12 +39,13 @@ export default {
             return this.settingsStore.GET_THEME;
         },
         tonConnectSettings() {
+            console.log('manifestUrl ', this.tonConnectManifest.url)
             return {
-                manifestUrl: 'https://swap.coffee/tonconnect-manifest.json',
+                manifestUrl: this.tonConnectManifest.url,
                 uiPreferences: {
                     theme: THEME.DARK,
                 },
-            };
+            }
         },
     },
     methods: {
