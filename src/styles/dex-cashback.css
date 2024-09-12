@@ -1,0 +1,39 @@
+.cashback {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(85, 255, 133, 0.40);
+    background: rgba(85, 255, 133, 0.10);
+}
+
+.cashback__group {
+    display: flex;
+    align-items: center;
+}
+
+.cashback__image {
+    margin-right: 10px;
+    width: 20px;
+    height: 20px;
+}
+
+.cashback__name {
+    font-size: 14px;
+}
+
+.cashback__status {
+    font-size: 14px;
+    color: var(--main-green);
+}
+
+.theme-light .cashback {
+    border: 1px solid rgba(75, 179, 75, 0.40);
+    background: rgba(75, 179, 75, 0.10);
+}
+
+.theme-light svg path {
+    fill: var(--main-green);
+}

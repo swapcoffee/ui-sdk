@@ -1,0 +1,160 @@
+.settings-background {
+    position: fixed;
+    z-index: 999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(10, 7, 6, 0.8);
+}
+
+.settings {
+    width: 450px;
+    z-index: 999;
+    background: var(--iface-main-bg);
+    border-radius: 20px;
+    padding: 18px;
+}
+
+.settings__title {
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.settings__heading {
+    font-size: 24px;
+    line-height: 28px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+}
+
+.settings__close-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.theme {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 18px;
+    margin-bottom: 18px;
+    border-bottom: 1px solid var(--iface-white6);
+}
+
+.settings__name {
+    margin-bottom: 4px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.settings__description {
+    font-size: 14px;
+    line-height: 18px;
+    opacity: 0.8;
+}
+
+.theme__switch-block {
+    display: flex;
+    align-items: center;
+    gap: 0 4px;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--iface-white10);
+}
+
+.theme__btn {
+    display: flex;
+    padding: 6px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    background: transparent;
+}
+
+.active_theme {
+    background: #fff;
+}
+
+.theme-light svg path {
+    fill: #141414;
+}
+
+.active_theme svg path {
+    fill: #0A84FF
+}
+
+.lang {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.hidden-block {
+    width: 24px;
+    height: 24px;
+}
+
+.language-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px 0;
+}
+
+.language-list__btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 12px;
+    background: var(--iface-white4);
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+}
+
+
+.btn-title {
+    margin-bottom: 4px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.active_lang {
+    background: var(--iface-white10);
+}
+
+@media screen and (max-width: 640px) {
+    .settings {
+        overflow-y: auto;
+        position: fixed;
+        z-index: 999;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        width: 100%;
+        border-radius: 0;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        padding-top: 30px;
+    }
+
+    .settings__title {
+        margin-bottom: 30px;
+    }
+}

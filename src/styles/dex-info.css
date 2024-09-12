@@ -1,0 +1,48 @@
+.dex__info {
+    margin-bottom: 10px;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dex__high-price {
+    margin-bottom: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dex__info-icon {
+    margin-right: 5px;
+    width: 20px;
+    height: 20px;
+}
+
+.theme-light .dex__info-icon path {
+    fill: var(--main-red);
+}
+
+.dex__info-text {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    color: var(--main-red);
+}
+
+.dex__description {
+    font-size: 13px;
+    line-height: 16px;
+    text-align: center;
+    opacity: 0.5;
+    letter-spacing: 0.4px;
+}
+
+@media screen and (max-width: 640px) {
+    .dex__info {
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+}

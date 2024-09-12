@@ -1,0 +1,215 @@
+.dex__you-send {
+    transition: .15s;
+    position: relative;
+    padding: 12px;
+    border-radius: 12px 12px 0 0;
+    background: var(--iface-white8);
+    cursor: pointer;
+    color: var(--main-white);
+}
+
+.dex__you-send:hover {
+    background: var(--iface-white12);
+}
+
+.dex__you-send:active,
+.active {
+    background: var(--iface-white16);
+}
+
+.active:hover {
+    background: var(--iface-white16);
+}
+
+.dex__heading {
+    font-size: 13px;
+    line-height: 15px;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.dex__label {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.dex__input {
+    width: 100%;
+    height: 36px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: 28px;
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+}
+
+.dex__input::placeholder {
+    color: var(--main-text-color);
+}
+
+.dex__btn {
+    transition: .15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 6px 10px 6px 6px;
+    border: 1px solid var(--iface-white20);
+    background: transparent;
+    border-radius: 20px;
+    font-size: 16px;
+}
+
+.theme-light .dex__btn {
+    border: 1px solid var(--iface-white10);
+}
+
+.dex__btn::after {
+    content: '';
+    display: block;
+    width: 16px;
+    height: 16px;
+    background: url("@/assets/dex/arrow-down.svg") no-repeat;
+}
+
+.theme-light .dex__btn::after {
+    mix-blend-mode: difference;
+    filter: invert(.1);
+}
+
+.dex__btn:hover {
+    background: var(--iface-white20);
+    border: 1px solid var(--iface-white24);
+}
+
+.theme-light .dex__btn:hover {
+    background: var(--iface-white10);
+    border: 1px solid var(--iface-white24);
+}
+
+.btn-text {
+    font-family: Roboto, sans-serif;
+    font-weight: 500;
+}
+
+.token-image {
+    border-radius: 100px;
+    width: 24px;
+    height: 24px;
+}
+
+.dex__group {
+    max-height: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.group-margin {
+    margin-bottom: 10px;
+}
+
+.token-price {
+    font-size: 13px;
+    line-height: 15px;
+    opacity: 0.7;
+}
+
+.token-balance {
+    padding: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.balance-text {
+    transition: .2s;
+    font-size: 13px;
+    font-family: Roboto, sans-serif;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.color-text {
+    margin-left: 4px;
+    transition: .2s;
+    font-size: 13px;
+    line-height: 15px;
+    font-weight: 400;
+    letter-spacing: 0.4px;
+    color: var(--iface-accent-color);
+}
+
+.token-name {
+    font-size: 13px;
+    line-height: 15px;
+    opacity: 0.7;
+}
+
+.token-balance:hover .balance-text {
+    opacity: 0.7;
+}
+
+.token-balance:hover .color-text {
+    color: var(--iface-accent-hover);
+}
+
+.token-balance:disabled .balance-text {
+    opacity: 0.7;
+}
+
+.dex__switch-btn {
+    transition: .15s;
+    z-index: 2;
+    position: absolute;
+    bottom: -15px;
+    left: 50%;
+    transform: translate(-50%, 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border: 1px solid transparent;
+    outline: none;
+    border-radius: 100px;
+    background: var(--iface-white12);
+    backdrop-filter: blur(5px);
+    padding: 0;
+}
+
+.dex__switch-btn:hover {
+    transform: translate(-50%, 0) rotate(180deg);
+    background: var(--iface-white10);
+}
+
+.dex__switch-icon {
+    width: 18px;
+    height: 18px;
+}
+
+.theme-light .dex__switch-icon {
+    mix-blend-mode: difference;
+    filter: invert(.8);
+}
+
+.skeleton_row {
+    width: 75px;
+    height: 15px;
+}
+
+.skeleton_balance {
+    width: 150px;
+    height: 32px;
+}
+
+.skeleton_token {
+    min-width: 100px;
+    height: 36px;
+    border-radius: 100px;
+    overflow: hidden;
+}

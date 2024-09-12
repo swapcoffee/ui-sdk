@@ -1,4 +1,5 @@
 import { defineCustomElement } from './defineCustomElementWithStyles'
+import './components/ui/variables.css'
 import './style.css'
 import App from './App.ce.vue'
 import i18n from "./i18n";
@@ -17,4 +18,6 @@ const register = () => {
 
 export { SwapWidget, register };
 
+// register();
 // document.body.appendChild(new SwapWidget({}))
+// document.body.classList.add('theme-dark')

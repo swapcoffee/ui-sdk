@@ -493,6 +493,24 @@ export default {
 <style>
 @import "@/components/ui/variables.css";
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import '@/styles/widget.css';
+@import '@/styles/dex-button.css';
+@import '@/styles/dex-cashback.css';
+@import '@/styles/dex-details.css';
+@import '@/styles/dex-dist-btn.css';
+@import '@/styles/dex-global-settings.css';
+@import '@/styles/dex-info.css';
+@import '@/styles/dex-reverse-info.css';
+@import '@/styles/dex-settings.css';
+@import '@/styles/dex-stake-button.css';
+@import '@/styles/dex-success.css';
+@import '@/styles/dex-title.css';
+@import '@/styles/dex-unstake-button.css';
+@import '@/styles/dex-you-receive.css';
+@import '@/styles/dex-you-send.css';
+@import '@/styles/distribution-popup.css';
+@import '@/styles/token-item.css';
+@import '@/styles/tokens-popup.css';
 
 * {
 	margin: 0;
