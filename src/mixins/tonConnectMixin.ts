@@ -41,11 +41,11 @@ export default {
         tonConnectSettings() {
             console.log('manifestUrl ', this.tonConnectManifest.url)
             return {
-                manifestUrl: this.tonConnectManifest.url,
+                manifestUrl: 'https://swap.coffee/tonconnect-manifest.json',
                 uiPreferences: {
                     theme: THEME.DARK,
                 },
-            };
+            }
         },
     },
     methods: {

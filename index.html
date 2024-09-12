@@ -6,7 +6,17 @@
     <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
     <meta name="theme-color" content="#0A0A0A"/>
     <meta name="description" content="swap.coffee - Progressive DEX Aggregator in the TON blockchain" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <script async src="https://tganalytics.xyz/index.js" type="text/javascript" onload="tgAnalyticsSetup()"></script>
+    <script>
+        function tgAnalyticsSetup() {
+            if (window.Telegram?.WebApp?.initData) {
+                window.telegramAnalytics.init({
+                    token: 'eyJhcHBfbmFtZSI6InN3YXBjb2ZmZWUiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL3N3YXBjb2ZmZWVib3QiLCJhcHBfZG9tYWluIjoiaHR0cHM6Ly9zd2FwLmNvZmZlZSJ9!xOeR/YnP1V66zbUEkLSHNr4dw5fh0sIKpct5L+JO8ms=',
+                    appName: 'swapcoffee',
+                });
+            }
+        }
+    </script>
     <style>
         body {
             --main-btn-disabled: #323232;

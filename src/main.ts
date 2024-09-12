@@ -44,9 +44,7 @@ createSwapWidget('#swap-widget-component',
         theme: 'dark',
         locale: 'es',
         tonConnectManifest: {
-            "url": "https://swap.coffee",
-            "name": "swap.coffee",
-            "iconUrl": "https://raw.githubusercontent.com/divineempire/swap-pictures/master/manifest-ton/swap-logo.png"
+            "url": "https://swap.coffee/tonconnect-manifest.json",
         }
     }
 );
