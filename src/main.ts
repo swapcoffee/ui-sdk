@@ -38,13 +38,3 @@ const applyTheme = (selector, theme) => {
     widgetElement.classList.remove('theme-light', 'theme-dark', 'theme-coffee');
     widgetElement.classList.add(`theme-${theme}`);
 }
-
-createSwapWidget('#swap-widget-component',
-    {
-        theme: 'dark',
-        locale: 'es',
-        tonConnectManifest: {
-            "url": "https://swap.coffee/tonconnect-manifest.json",
-        }
-    }
-);
