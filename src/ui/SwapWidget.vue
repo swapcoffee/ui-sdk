@@ -89,12 +89,6 @@ export default {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
   props: {
-    tonConnectUi: {
-      type: Object,
-      default() {
-        return {};
-      },
-    },
   },
   components: {
     DexUnstakeButton,

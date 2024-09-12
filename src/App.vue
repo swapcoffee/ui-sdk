@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { TonConnectUI, toUserFriendlyAddress } from "@tonconnect/ui";
+import { toUserFriendlyAddress } from "@tonconnect/ui";
 import { useDexStore } from "@/stores/dex";
 import tonConnectMixin from "@/mixins/tonConnectMixin";
 import computedMixins from "@/mixins/computedMixins";
@@ -17,6 +17,7 @@ import SwapWidget from "@/ui/SwapWidget.vue";
 export default {
   name: "App",
   components: {SwapWidget},
+  inject: ['tonConnectUi'],
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
   data() {
     return {
@@ -27,9 +28,9 @@ export default {
     }
   },
   computed: {
-    tonConnectUi() {
-      return new TonConnectUI(this.tonConnectSettings)
-    },
+    // tonConnectUi() {
+    //   return new TonConnectUI(this.tonConnectSettings)
+    // },
     GET_DEX_WALLET() {
       return this.dexStore.GET_DEX_WALLET
     },
