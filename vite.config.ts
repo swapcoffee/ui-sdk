@@ -37,14 +37,6 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   },
-  css: {
-    // Глобальные стили можно вставить в Shadow DOM
-    preprocessorOptions: {
-      css: {
-        additionalData: `@import "./src/styles/widget.css";` // Подключаем глобальные стили
-      }
-    }
-  },
   build: {
     cssCodeSplit: false,
     lib: {

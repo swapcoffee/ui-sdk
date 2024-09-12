@@ -4,17 +4,17 @@ import App from './App.ce.vue'
 import i18n from "./i18n";
 import { pinia } from "./stores";
 
-let SwapWidgetSdk = defineCustomElement(App, {
+let SwapWidget = defineCustomElement(App, {
 	plugins: [pinia, i18n],
 })
 
-customElements.define(
-	'swap-widget',
-	SwapWidgetSdk
-)
+const register = () => {
+	if (typeof window === 'undefined') return;
+	if (!window.customElements.get('swap-widget')) {
+		window.customElements.define('swap-widget', SwapWidgetSdk)
+	}
+}
 
-// document.body.appendChild(
-// 	new SwapWidgetSdk({
-//
-// 	})
-// )
+export { SwapWidget, register };
+
+// document.body.appendChild(new SwapWidget({}))
