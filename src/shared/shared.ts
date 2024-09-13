@@ -1,8 +1,6 @@
 import {THEME, TonConnectUI} from "@tonconnect/ui";
 export const applyTheme = (selector: string, theme: string) => {
 	const widgetElement = document.querySelector(selector);
-	console.log(widgetElement)
-
 	if (!widgetElement) return;
 
 	widgetElement.classList.remove('theme-light', 'theme-dark', 'theme-coffee');

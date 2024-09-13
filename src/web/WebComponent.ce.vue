@@ -404,6 +404,8 @@ export default defineComponent({
 		},
 	},
 	mounted() {
+		let widget = document.querySelector('swap-widget')
+		widget.setAttribute('id', 'swap-widget')
 		applyTheme('#swap-widget', this.theme)
 		this.subscribeConnect()
 		this.restoreUiConnection()

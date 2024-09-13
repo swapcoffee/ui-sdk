@@ -3,13 +3,13 @@ import App from './WebComponent.ce.vue'
 import '../main.css'
 import i18n from "../i18n";
 import { pinia } from "../stores";
-import {applyTheme, tonConnectUiInstance} from "@/shared/shared";
+import {applyTheme, tonConnectUiInstance, getWidgetSettings} from "@/shared/shared";
 import styles from '@/styles/main'
 
 let SwapWidget = null
 let themeWidget = null
-let selectorWidget = null
-const createWebComponent = (selector, options) => {
+let selector = 'swap-widget'
+const createWebComponent = (options) => {
 
 	const {
 		theme = import.meta.env.VITE_DEFAULT_THEME,
@@ -18,7 +18,6 @@ const createWebComponent = (selector, options) => {
 		tonConnectUi,
 	} = options;
 
-	selectorWidget = selector
 	themeWidget = theme
 
 	SwapWidget = defineCustomElement(App, {
@@ -48,18 +47,18 @@ const createWebComponent = (selector, options) => {
 
 export { SwapWidget, createWebComponent };
 
-createWebComponent('swap-widget', {
-	theme: 'dark',
-	locale: 'en',
-	tonConnectManifest: {
-		"url": "https://swap.coffee/tonconnect-manifest.json",
-	},
-	tonConnectUi: tonConnectUiInstance
-});
+// createWebComponent({
+// 	theme: 'dark',
+// 	locale: 'en',
+// 	tonConnectManifest: {
+// 		"url": "https://swap.coffee/tonconnect-manifest.json",
+// 	},
+// 	tonConnectUi: tonConnectUiInstance
+// });
 
 // test
-let widget = new SwapWidget({})
-// widget.setAttribute('id', selectorWidget);
+// let widget = new SwapWidget({})
+// widget.setAttribute('id', selector);
 // document.body.appendChild(widget)
 
 // applyTheme(`#${selectorWidget}`, themeWidget);
