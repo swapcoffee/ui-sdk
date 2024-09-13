@@ -44,28 +44,27 @@ export default defineConfig(({ mode }) => {
     },
     build: {
       cssCodeSplit: false,
+      outDir: isWeb ? 'dist/web' : 'dist/vue', // Разные выходные папки
       lib: {
         entry: resolve(__dirname, isWeb ? 'src/web/main.ts' : 'src/vue/main.ts'),
         name: 'SwapWidgetSDK',
         formats: ['es', 'cjs'],
         fileName: (format) => {
           if (format === 'es') {
-            return isWeb ? `swap-sdk-web.esm.js` : `swap-sdk-vue.esm.js`
+            return `swap-coffee-sdk.esm.js`
           } else if (format === 'cjs') {
-            return isWeb ? `swap-sdk-web.cjs.js` : `swap-sdk-vue.cjs.js`
+            return `swap-coffee-sdk.cjs.js`
           } else if (format === 'umd') {
-            return isWeb ? `swap-sdk-web.umd.js` : `swap-sdk-vue.umd.js`
+            return `swap-coffee-sdk.umd.js`
           } else {
-            isWeb ? `swap-sdk-web.${format}.js` : `swap-sdk-vue.${format}.js`
+            return `swap-coffee-sdk.${format}.js`
           }
         }
       },
       // rollupOptions: {
-      //   external: ['vue'],
+      //   external: isWeb ? [] : ['vue'],
       //   output: {
-      //     globals: {
-      //       vue: 'Vue'
-      //     }
+      //     globals: isWeb ? {} : {vue: 'Vue'}
       //   }
       // }
     }
