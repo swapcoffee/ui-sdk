@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-interface DexState {
+export interface DexState {
 	dealConditions: any | null;
 	pinnedTokens: any[];
 	tonTokens: any[];

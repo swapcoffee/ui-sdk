@@ -46,18 +46,18 @@ const applyTheme = (selector, theme) => {
     widgetElement.classList.add(`theme-${theme}`);
 }
 
-// const tonConnectUiInstance = new TonConnectUI({
-//     manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
-//     uiPreferences: {
-//         theme: THEME.DARK,
-//     },
-// });
-//
-// createSwapWidget('#swap-widget-component', {
-//     theme: 'dark',
-//     locale: 'zh',
-//     tonConnectManifest: {
-//         "url": "https://swap.coffee/tonconnect-manifest.json",
-//     },
-//     tonConnectUi: tonConnectUiInstance
-// });
+const tonConnectUiInstance = new TonConnectUI({
+    manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
+    uiPreferences: {
+        theme: THEME.DARK,
+    },
+});
+
+createSwapWidget('#swap-widget-component', {
+    theme: 'dark',
+    locale: 'zh',
+    tonConnectManifest: {
+        "url": "https://swap.coffee/tonconnect-manifest.json",
+    },
+    tonConnectUi: tonConnectUiInstance
+});
