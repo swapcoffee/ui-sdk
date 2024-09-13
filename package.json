@@ -4,18 +4,18 @@
   "version": "1.0.10",
   "type": "module",
   "main": "dist/vue/swap-coffee-sdk.cjs.js",
-  "module": "dist/vue/swap-coffee-sdk.es.js",
+  "module": "dist/vue/swap-coffee-sdk.esm.js",
   "exports": {
     ".": {
-      "import": "./dist/vue/swap-coffee-sdk.es.js",
+      "import": "./dist/vue/swap-coffee-sdk.esm.js",
       "require": "./dist/vue/swap-coffee-sdk.cjs.js"
     },
     "./web": {
-      "import": "./dist/web/swap-coffee-sdk.es.js",
+      "import": "./dist/web/swap-coffee-sdk.esm.js",
       "require": "./dist/web/swap-coffee-sdk.cjs.js"
     },
     "./vue": {
-      "import": "./dist/vue/swap-coffee-sdk.es.js",
+      "import": "./dist/vue/swap-coffee-sdk.esm.js",
       "require": "./dist/vue/swap-coffee-sdk.cjs.js"
     }
   },
