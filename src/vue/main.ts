@@ -3,7 +3,7 @@ import App from './VueComponent.vue';
 import i18n from '../i18n';
 import { pinia } from '../stores';
 import '../main.css'
-import {applyTheme, tonConnectUiInstance} from "@/shared/shared";
+import {applyTheme} from "@/shared/shared";
 
 export function createSwapWidget(selector, options = {}) {
 	const {
