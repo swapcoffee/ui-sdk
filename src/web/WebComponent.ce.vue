@@ -2,22 +2,32 @@
 	<SwapWidget
 		:tonConnectUi="tonConnectUi"
 	/>
-<!--	<router-view :tonConnectUi="tonConnectUi"/>-->
 </template>
 
 <script lang="ts">
-import {TonConnectUI, toUserFriendlyAddress} from "@tonconnect/ui";
-import {useDexStore} from "@/stores/dex";
-import tonConnectMixin from "@/mixins/tonConnectMixin";
-import computedMixins from "@/mixins/computedMixins";
-import methodsMixins from "@/mixins/methodsMixins";
-import {useSettingsStore} from "@/stores/settings";
-import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
-import SwapWidget from "@/ui/SwapWidget.vue";
+import { toUserFriendlyAddress } from "@tonconnect/ui";
+import { defineComponent } from "vue";
+import { useDexStore } from "../stores/dex";
+import tonConnectMixin from "../mixins/tonConnectMixin";
+import computedMixins from "../mixins/computedMixins";
+import methodsMixins from "../mixins/methodsMixins";
+import {useSettingsStore} from "../stores/settings";
+import {pinnedTokens} from "../helpers/dex/pinnedTokens";
+import SwapWidget from "../ui/SwapWidget.vue";
+import { applyTheme } from "../shared/shared";
 
-export default {
-	name: "App",
-	components: {SwapWidget},
+export default defineComponent({
+	name: "WebComponentApp",
+	components: {
+		SwapWidget
+	},
+	props: {
+		theme: {
+			type: String,
+			require: true,
+		}
+	},
+	inject: ['tonConnectUi'],
 	mixins: [tonConnectMixin, computedMixins, methodsMixins],
 	data() {
 		return {
@@ -28,9 +38,9 @@ export default {
 		}
 	},
 	computed: {
-		tonConnectUi() {
-			return new TonConnectUI(this.tonConnectSettings)
-		},
+		// tonConnectUi() {
+		//   return new TonConnectUI(this.tonConnectSettings)
+		// },
 		GET_DEX_WALLET() {
 			return this.dexStore.GET_DEX_WALLET
 		},
@@ -98,24 +108,6 @@ export default {
 				console.error(err);
 			}
 		},
-		async setUserLanguage() {
-			const settings = localStorage.getItem('globalSettings');
-			if (!settings) {
-				try {
-					const userCountryCode = await this.geoApi.getUserCountryCode();
-					if (userCountryCode) {
-						this.$i18n.locale = this.getLocaleForCountry(userCountryCode);
-						const newSettings = {
-							theme: this.GET_THEME || "dark",
-							lang: userCountryCode.toLowerCase(),
-						}
-						localStorage.setItem('globalSettings', JSON.stringify(newSettings))
-					}
-				} catch (err) {
-					console.error(err);
-				}
-			}
-		},
 		updateWalletInfo() {
 			this.getAccountInfo(this.GET_DEX_WALLET)
 		},
@@ -152,8 +144,7 @@ export default {
 				}
 
 				this.dexStore.DEX_TON_TOKENS(tokens)
-				// this.checkQueryParams(tokens)
-				// this.checkTwaParams(tokens)
+				this.checkQueryParams(tokens)
 
 				if (this.GET_DEX_WALLET !== null) {
 					await this.getAccountInfo(this.dexStore.GET_DEX_WALLET)
@@ -167,78 +158,65 @@ export default {
 				}
 			}
 		},
-		checkTwaParams(mergeTokens) {
-			if (window.Telegram.WebApp.platform !== 'unknown') {
-				let startParam = window.Telegram.WebApp?.initDataUnsafe?.start_param
+		checkQueryParams(mergeTokens) {
+			const urlParams = new URLSearchParams(window.location.search);
 
-				if (startParam) {
-					// ft_{symbol}_st_{symbol}_fa_{amount}
-					let params = startParam.split('_')
-					if (params.length === 6) {
-						let ft = params[1].toUpperCase()
-						let st = params[3].toUpperCase()
-						let fa = params[5]
+			const ref = urlParams.get('ref');
+			const referral = urlParams.get('referral');
+			const ft = urlParams.get('ft');
+			const st = urlParams.get('st');
+			const fa = urlParams.get('fa');
+			const sa = urlParams.get('sa');
 
-						// console.log("params", ft, st, fa)
+			if (ref) {
+				sessionStorage.setItem('referral_name', JSON.stringify(ref));
+			}
 
-						let first = mergeTokens.find((item) => item.symbol === ft)
-						let second = mergeTokens.find((item) => item.symbol === st)
-						if (first) {
-							this.dexStore.DEX_SEND_TOKEN(first)
-						}
-						if (second) {
-							this.dexStore.DEX_RECEIVE_TOKEN(second)
-						}
-						if (fa) {
-							this.dexStore.DEX_SEND_AMOUNT(fa)
-						}
+			if (referral) {
+				sessionStorage.setItem('user_referral', JSON.stringify(referral));
+			}
+
+			if (ft && st) {
+				let first = mergeTokens.find((item) => item.symbol === ft);
+				let second = mergeTokens.find((item) => item.symbol === st);
+
+				if (first) {
+					this.dexStore.DEX_SEND_TOKEN(first);
+				}
+
+				if (second) {
+					this.dexStore.DEX_RECEIVE_TOKEN(second);
+				}
+
+				setTimeout(() => {
+					if (Number(fa) > 0) {
+						this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+					} else if (Number(sa) > 0) {
+						this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
 					}
+				}, 10);
+			} else if (ft) {
+				let first = mergeTokens.find((item) => item.symbol === ft);
+
+				if (first) {
+					this.dexStore.DEX_SEND_TOKEN(first);
+				}
+
+				setTimeout(() => {
+					if (Number(fa) > 0) {
+						this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+					} else if (Number(sa)  > 0) {
+						this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+					}
+				}, 10);
+			} else {
+				let findToken = mergeTokens.find((item) => item.type === 'native');
+
+				if (findToken) {
+					this.dexStore.DEX_SEND_TOKEN(findToken);
 				}
 			}
 		},
-		// checkQueryParams(mergeTokens) {
-		// 	let route = this.$route
-		// 	if (route.query?.ref) {
-		// 		sessionStorage.setItem('referral_name', JSON.stringify(route.query?.ref))
-		// 	}
-		// 	if (route.query?.referral) {
-		// 		sessionStorage.setItem('user_referral', JSON.stringify(route.query?.referral))
-		// 	}
-		// 	if (route.query?.ft && route.query?.st) {
-		// 		let first = mergeTokens.find((item) => item.symbol === route.query?.ft)
-		// 		let second = mergeTokens.find((item) => item.symbol === route.query?.st)
-		// 		if (first) {
-		// 			this.dexStore.DEX_SEND_TOKEN(first)
-		// 		}
-		// 		if (second) {
-		// 			this.dexStore.DEX_RECEIVE_TOKEN(second)
-		// 		}
-		// 		setTimeout(() => {
-		// 			if (route.query?.fa > 0) {
-		// 				this.dexStore.DEX_SEND_AMOUNT(Number(route.query?.fa))
-		// 			} else if (route.query?.sa > 0) {
-		// 				this.dexStore.DEX_RECEIVE_AMOUNT(Number(route.query?.sa))
-		// 			}
-		// 		}, 10)
-		// 	} else if (route.query?.ft) {
-		// 		let first = mergeTokens.find((item) => item.symbol === route.query?.ft)
-		// 		if (first) {
-		// 			this.dexStore.DEX_SEND_TOKEN(first)
-		// 		}
-		// 		setTimeout(() => {
-		// 			if (route.query?.fa > 0) {
-		// 				this.dexStore.DEX_SEND_AMOUNT(Number(route.query?.fa))
-		// 			} else if (route.query?.sa > 0) {
-		// 				this.dexStore.DEX_RECEIVE_AMOUNT(Number(route.query?.sa))
-		// 			}
-		// 		}, 10)
-		// 	} else { // Если нет параметров установить TON как SEND token
-		// 		let findToken = mergeTokens.find((item) => item.type === 'native')
-		// 		if (findToken) {
-		// 			this.dexStore.DEX_SEND_TOKEN(findToken)
-		// 		}
-		// 	}
-		// },
 		async getAccountInfo(wallet) {
 			try {
 				let balance = await this.getBalanceWithRetry(wallet)
@@ -264,7 +242,7 @@ export default {
 		async getBalance(wallet) {
 			try {
 				return await this.dexApiV2.getBalance(wallet.address)
-			} catch (err) {
+			} catch(err) {
 				throw err
 			}
 		},
@@ -371,14 +349,14 @@ export default {
 				return;
 			}
 
-			this.tonConnectUi.setConnectRequestParameters({state: 'loading'});
+			this.tonConnectUi.setConnectRequestParameters({ state: 'loading' });
 
 			this.tokensApi.generateTonProofPayload().then((data) => {
 				const payload = data.data;
 
 				this.tonConnectUi.setConnectRequestParameters({
 					state: 'ready',
-					value: {tonProof: payload},
+					value: { tonProof: payload },
 				});
 			});
 		},
@@ -418,7 +396,7 @@ export default {
 				await this.dexApiV2.writeStorage(
 					this.dexStore.GET_DEX_WALLET?.address,
 					this.GET_PROOF_VERIFICATION,
-					{globalSettings: global, dexSettings: dex}
+					{ globalSettings: global, dexSettings: dex }
 				);
 			} catch (err) {
 				console.error(err);
@@ -426,10 +404,10 @@ export default {
 		},
 	},
 	mounted() {
+		applyTheme('#swap-widget', this.theme)
 		this.subscribeConnect()
 		this.restoreUiConnection()
 		this.tonproofSetConnect()
-		this.setUserLanguage()
 		this.getPinnedTokens()
 		let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
 		let walletInfoStorage = JSON.parse(localStorage.getItem('ton-connect-ui_wallet-info'))
@@ -453,6 +431,7 @@ export default {
 				this.getTonTokens()
 			}
 		}, 1000)
+
 	},
 	unmounted() {
 		if (this.unsubscribeConnect !== null) {
@@ -476,22 +455,12 @@ export default {
 				}
 			}
 		},
-		GET_THEME: {
-			handler() {
-				this.changeMetaTheme()
-			}
-		},
-		getRouteName: {
-			handler() {
-
-			}
-		}
 	}
-}
+})
 </script>
 
 <style>
-@import "@/components/ui/variables.css";
+@import '@/main.css';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import '@/styles/widget.css';
 @import '@/styles/dex-button.css';
@@ -511,6 +480,109 @@ export default {
 @import '@/styles/distribution-popup.css';
 @import '@/styles/token-item.css';
 @import '@/styles/tokens-popup.css';
+
+body {
+	--main-btn-disabled: #323232;
+	--main-blue: #4B76FF;
+	--main-green: #32D74B;
+	--main-red: #FF5449;
+	--main-yellow: #FFCF55;
+	--main-white: #fff;
+	--main-white50: rgba(255, 255, 255, 0.5);
+	--main-text-color: #fff;
+	--iface-blur: 5px;
+	--iface-r14: 14px;
+	--iface-r20: 20px;
+	--iface-r100: 100px;
+	--adv-color: #FF9839;
+
+	--iface-white2: rgba(255, 255, 255, 0.02);
+	--iface-white4: rgba(255, 255, 255, 0.04);
+	--iface-white6: rgba(255, 255, 255, 0.06);
+	--iface-white8: rgba(255, 255, 255, 0.08);
+	--iface-white10: rgba(255, 255, 255, 0.1);
+	--iface-white12: rgba(255, 255, 255, 0.12);
+	--iface-white14: rgba(255, 255, 255, 0.14);
+	--iface-white16: rgba(255, 255, 255, 0.16);
+	--iface-white20: rgba(255, 255, 255, 0.20);
+	--iface-white24: rgba(255, 255, 255, 0.24);
+	--iface-white40: rgba(255, 255, 255, 0.40);
+
+	--iface-warn-text: #FFCF55;
+	--iface-warn-border: 255, 207, 85, 0.40;
+	--iface-warn-bg: 255, 207, 85, 0.06;
+	--iface-error-text: #FF5449;
+	--iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.20);
+}
+
+.theme-coffee {
+	--main-bg-color: #0A0706;
+
+	--iface-bg: #0A0706;
+	--iface-accent-color: #EA7A3B;
+	--iface-accent-hover: #EE9562;
+	--iface-send: rgba(255, 255, 255, 0.06);
+	--iface-main-bg: #181413;
+	--iface-main-border: transparent;
+	--iface-tooltip-bg: #181413;
+	--iface-without-bg: transparent;
+
+	--iface-border-color: rgba(255, 255, 255, 0.1);
+	--iface-border-hover: rgba(255, 255, 255, 0.20);
+	--iface-border-active: rgba(255, 255, 255, 0.24);
+}
+
+.theme-dark {
+	--main-bg-color: #0A0A0A;
+
+	--iface-bg: #0A0A0A;
+	--iface-accent-color: #0A84FF;
+	--iface-accent-hover: #44A6FF;
+	--iface-send: #232324;
+	--iface-main-bg: #19191A;
+	--iface-main-border: rgba(255, 255, 255, 0.1);
+	--iface-tooltip-bg: #0A0A0A;
+	--iface-without-bg: transparent;
+
+	--iface-border-color: rgba(255, 255, 255, 0.06);
+	--iface-border-hover: rgba(255, 255, 255, 0.20);
+	--iface-border-active: rgba(255, 255, 255, 0.24);
+}
+
+.theme-light {
+	--main-btn-disabled: #dfdfdf;
+	--main-bg-color: #f8f8f8;
+	--main-text-color: #141414;
+	--main-green: #28CD41;
+	--main-red: #E64646;
+	--main-yellow: #FFA000;
+	--adv-color: #F07844;
+
+	--iface-bg: #fff;
+	--iface-accent-color: #0A84FF;
+	--iface-accent-hover: #44A6FF;
+	--iface-send: rgba(20, 20, 20, 0.04);
+	--iface-main-bg: #fff;
+	--iface-main-border: rgba(20, 20, 20, 0.08);
+	--iface-tooltip-bg: #0A0A0A;
+	--iface-without-bg: transparent;
+
+	--iface-border-color: rgba(20, 20, 20, 0.08);
+	--iface-border-hover: rgba(20, 20, 20, 0.20);
+	--iface-border-active: rgba(20, 20, 20, 0.24);
+
+	--iface-white2: rgba(20, 20, 20, 0.02);
+	--iface-white4: rgba(20, 20, 20, 0.04);
+	--iface-white6: rgba(20, 20, 20, 0.06);
+	--iface-white8: rgba(20, 20, 20, 0.08);
+	--iface-white10: rgba(20, 20, 20, 0.10);
+	--iface-white12: rgba(20, 20, 20, 0.12);
+	--iface-white14: rgba(20, 20, 20, 0.14);
+	--iface-white16: rgba(20, 20, 20, 0.16);
+	--iface-white20: rgba(20, 20, 20, 0.20);
+	--iface-white24: rgba(20, 20, 20, 0.24);
+	--iface-white40: rgba(20, 20, 20, 0.40);
+}
 
 * {
 	margin: 0;

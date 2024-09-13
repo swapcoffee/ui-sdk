@@ -166,7 +166,7 @@ export default defineComponent({
 	margin: 0 auto;
 	width: 24px;
 	height: 24px;
-	background: url("~@/assets/dex/loader.png") no-repeat;
+	background: url("@/assets/dex/loader.png") no-repeat;
 	background-size: cover;
 	animation: 1s forwards linear infinite Loader;
 }

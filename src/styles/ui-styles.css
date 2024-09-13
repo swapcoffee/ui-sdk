@@ -1,0 +1,94 @@
+.main-color {
+    background: var(--iface-main-bg);
+}
+
+.switch {
+    transition: .15s;
+    min-width: 42px;
+    height: 26px;
+    padding: 2px;
+    border-radius: 100px;
+    background: var(--iface-white10);
+    cursor: pointer;
+}
+
+.switch-toggle {
+    transition: .15s linear;
+    width: 22px;
+    height: 22px;
+    border-radius: 100px;
+    background: #fff;
+}
+
+.active_switch {
+    background: var(--iface-accent-color);
+}
+
+.active_switch .switch-toggle {
+    background: #fff;
+    transform: translateX(16px);
+    border: none;
+}
+
+.switch:not(.active_switch):hover {
+    background: var(--iface-white14);
+}
+
+.active_switch:hover {
+    background: var(--iface-accent-hover);
+}
+
+.tooltip {
+    z-index: 999;
+    position: absolute;
+    min-width: 280px;
+    padding: 10px;
+    border-radius: 10px;
+    background: var(--iface-tooltip-bg);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0px 4px 25px 0px rgba(0, 0, 0, 0.15);
+}
+
+.close-btn {
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 16px;
+    height: 16px;
+    border: none;
+    background: transparent;
+    background: url("@/assets/dex/close-icon.svg") no-repeat;
+}
+
+.tooltip__text {
+    font-size: 13px;
+    line-height: 16px;
+    letter-spacing: 0.4px;
+    color: #fff;
+    font-weight: 400;
+
+}
+
+.tooltip__arrow {
+    position: absolute;
+    width: 10px;
+    height: 6px;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+@media screen and (max-width: 640px) {
+    .tooltip {
+        width: 100%;
+    }
+
+    .close-btn {
+        display: block;
+    }
+
+    .tooltip__arrow {
+        display: none;
+    }
+}

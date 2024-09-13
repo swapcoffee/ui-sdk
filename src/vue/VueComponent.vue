@@ -6,17 +6,20 @@
 
 <script lang="ts">
 import { toUserFriendlyAddress } from "@tonconnect/ui";
-import { useDexStore } from "@/stores/dex";
-import tonConnectMixin from "@/mixins/tonConnectMixin";
-import computedMixins from "@/mixins/computedMixins";
-import methodsMixins from "@/mixins/methodsMixins";
-import {useSettingsStore} from "@/stores/settings";
-import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
-import SwapWidget from "@/ui/SwapWidget.vue";
+import { defineComponent } from "vue";
+import { useDexStore } from "../stores/dex";
+import tonConnectMixin from "../mixins/tonConnectMixin";
+import computedMixins from "../mixins/computedMixins";
+import methodsMixins from "../mixins/methodsMixins";
+import {useSettingsStore} from "../stores/settings";
+import {pinnedTokens} from "../helpers/dex/pinnedTokens";
+import SwapWidget from "../ui/SwapWidget.vue";
 
-export default {
-  name: "App",
-  components: {SwapWidget},
+export default defineComponent({
+  name: "VueComponentApp",
+  components: {
+	  SwapWidget
+  },
   inject: ['tonConnectUi'],
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
   data() {
@@ -179,9 +182,9 @@ export default {
         }
 
         setTimeout(() => {
-          if (fa > 0) {
+          if (Number(fa) > 0) {
             this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          } else if (sa > 0) {
+          } else if (Number(sa) > 0) {
             this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
           }
         }, 10);
@@ -193,9 +196,9 @@ export default {
         }
 
         setTimeout(() => {
-          if (fa > 0) {
+          if (Number(fa) > 0) {
             this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          } else if (sa > 0) {
+          } else if (Number(sa)  > 0) {
             this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
           }
         }, 10);
@@ -445,12 +448,12 @@ export default {
       }
     },
   }
-}
+})
 </script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-@import "./main.css";
+@import "../main.css";
 
 body {
   --main-btn-disabled: #323232;

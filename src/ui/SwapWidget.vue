@@ -78,14 +78,14 @@ import DexYouReceive from "@/components/dex/DexYouReceive.vue";
 import DexCashback from "@/components/dex/DexCashback.vue";
 import computedMixins from "@/mixins/computedMixins";
 import tonConnectMixin from "@/mixins/tonConnectMixin";
-import { defineAsyncComponent } from "vue";
+import {defineAsyncComponent, defineComponent} from "vue";
 import { setTransactionMessage } from "@/helpers/dex/calculate";
 import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import { Address } from "@ton/core";
 import { useDexStore } from "@/stores/dex";
 
-export default {
+export default defineComponent( {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
   props: {
@@ -786,8 +786,8 @@ export default {
         }
       },
     },
-  },
-};
+  }
+})
 </script>
 
 <style scoped>

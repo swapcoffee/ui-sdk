@@ -13,11 +13,11 @@
 }
 
 .dex__you-send:active,
-.active {
+.active_you-send {
     background: var(--iface-white16);
 }
 
-.active:hover {
+.active_you-send:hover {
     background: var(--iface-white16);
 }
 
@@ -119,7 +119,7 @@
     opacity: 0.7;
 }
 
-.token-balance {
+.balance-btn {
     padding: 0;
     border: none;
     outline: none;
@@ -150,15 +150,15 @@
     opacity: 0.7;
 }
 
-.token-balance:hover .balance-text {
+.balance-btn:hover .balance-text {
     opacity: 0.7;
 }
 
-.token-balance:hover .color-text {
+.balance-btn:hover .color-text {
     color: var(--iface-accent-hover);
 }
 
-.token-balance:disabled .balance-text {
+.balance-btn:disabled .balance-text {
     opacity: 0.7;
 }
 

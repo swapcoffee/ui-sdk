@@ -1,4 +1,4 @@
-.distribution {
+.distribution-btn {
     margin-bottom: 6px;
     display: flex;
     align-items: center;
@@ -6,12 +6,12 @@
     cursor: pointer;
 }
 
-.distribution__group {
+.distribution-btn__group {
     display: flex;
     align-items: center;
 }
 
-.distribution__plan {
+.distribution-btn__plan {
     display: flex;
     align-items: center;
     margin-right: 8px;
@@ -21,39 +21,39 @@
     background: rgba(85, 255, 133, 0.04);
 }
 
-.theme-light .distribution__plan {
+.theme-light .distribution-btn__plan {
     border: 1px solid rgba(75, 179, 75, 0.24);
     background: rgba(75, 179, 75, 0.12);
 }
 
-.distribution__icon {
+.distribution-btn__icon {
     width: 14px;
     height: 14px;
     margin-right: 4px;
 }
 
-.distribution__icon path {
+.distribution-btn__icon path {
     fill: var(--main-green);
 }
 
-.distribution__text {
+.distribution-btn__text {
     font-size: 11px;
     color: var(--main-green);
     line-height: 14px;
 }
 
-.distribution__desc {
+.distribution-btn__desc {
     font-size: 11px;
     line-height: 18px;
     opacity: 0.5;
 }
 
-.distribution__arrow-icon path {
+.distribution-btn__arrow-icon path {
     fill: var(--main-text-color);
 }
 
 @media screen and (max-width: 640px) {
-    .distribution {
+    .distribution-btn {
         margin-top: 6px;
         margin-bottom: 0px;
     }

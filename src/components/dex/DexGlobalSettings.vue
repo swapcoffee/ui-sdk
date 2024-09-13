@@ -2,15 +2,15 @@
 	<div class="settings-background"
 		 @click.self="$emit('closeSettings')"
 	>
-		<div class="settings"
+		<div class="global"
 			 v-if="!langMode"
 		>
-			<!--			<div class="settings__content">-->
+			<!--			<div class="global__content">-->
 			<!--				-->
 			<!--			</div>-->
-			<div class="settings__title">
-				<h2 class="settings__heading">{{ $t('dexGlobal.caption') }}</h2>
-				<button class="settings__close-btn"
+			<div class="global__title">
+				<h2 class="global__heading">{{ $t('dexGlobal.caption') }}</h2>
+				<button class="global__close-btn"
 						@click="$emit('closeSettings')"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
@@ -22,8 +22,8 @@
 			</div>
 			<div class="theme">
 				<div class="theme__info">
-					<p class="settings__name">{{ getThemeName }}</p>
-					<p class="settings__description">{{ $t('dexGlobal.theme.text') }}</p>
+					<p class="global__name">{{ getThemeName }}</p>
+					<p class="global__description">{{ $t('dexGlobal.theme.text') }}</p>
 				</div>
 				<div class="theme__switch-block">
 					<button class="theme__btn"
@@ -72,8 +72,8 @@
 				 @click="langMode = true"
 			>
 				<div class="lang__info">
-					<p class="settings__name">{{ $t('dexGlobal.lang.name') }}</p>
-					<p class="settings__description">{{ $t('dexGlobal.lang.text') }}</p>
+					<p class="global__name">{{ $t('dexGlobal.lang.name') }}</p>
+					<p class="global__description">{{ $t('dexGlobal.lang.text') }}</p>
 				</div>
 				<svg class="lang__arrow-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
 					<path d="M12.7729 9.39792L7.14792 15.0229C7.09565 15.0752 7.03361 15.1166 6.96533 15.1449C6.89704 15.1732 6.82386 15.1878 6.74995 15.1878C6.67604 15.1878 6.60285 15.1732 6.53457 15.1449C6.46628 15.1166 6.40424 15.0752 6.35198 15.0229C6.29972 14.9707 6.25826 14.9086 6.22998 14.8403C6.20169 14.772 6.18713 14.6989 6.18713 14.6249C6.18713 14.551 6.20169 14.4779 6.22998 14.4096C6.25826 14.3413 6.29972 14.2792 6.35198 14.227L11.5797 8.99995L6.35198 3.77292C6.24643 3.66737 6.18713 3.52421 6.18713 3.37495C6.18713 3.22568 6.24643 3.08253 6.35198 2.97698C6.45753 2.87143 6.60068 2.81213 6.74995 2.81213C6.89921 2.81213 7.04237 2.87143 7.14792 2.97698L12.7729 8.60198C12.8252 8.65422 12.8667 8.71626 12.895 8.78454C12.9233 8.85283 12.9379 8.92603 12.9379 8.99995C12.9379 9.07387 12.9233 9.14706 12.895 9.21535C12.8667 9.28364 12.8252 9.34567 12.7729 9.39792Z" fill="white"/>
@@ -83,15 +83,15 @@
 		<div class="settings"
 			 v-else
 		>
-			<div class="settings__title">
-				<button class="settings__close-btn"
+			<div class="global__title">
+				<button class="global__close-btn"
 						@click="langMode = false"
 				>
 					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
 						<path d="M6.96933 12.5307L14.4693 20.0307C14.539 20.1004 14.6217 20.1556 14.7128 20.1933C14.8038 20.2311 14.9014 20.2505 14.9999 20.2505C15.0985 20.2505 15.1961 20.2311 15.2871 20.1933C15.3782 20.1556 15.4609 20.1004 15.5306 20.0307C15.6003 19.961 15.6555 19.8783 15.6932 19.7872C15.731 19.6962 15.7504 19.5986 15.7504 19.5001C15.7504 19.4015 15.731 19.3039 15.6932 19.2129C15.6555 19.1218 15.6003 19.0391 15.5306 18.9694L8.56026 12.0001L15.5306 5.03068C15.6713 4.88995 15.7504 4.69907 15.7504 4.50005C15.7504 4.30103 15.6713 4.11016 15.5306 3.96943C15.3898 3.8287 15.199 3.74963 14.9999 3.74963C14.8009 3.74963 14.6101 3.8287 14.4693 3.96943L6.96933 11.4694C6.89959 11.5391 6.84427 11.6218 6.80653 11.7128C6.76879 11.8039 6.74936 11.9015 6.74936 12.0001C6.74936 12.0986 6.76879 12.1962 6.80653 12.2873C6.84427 12.3783 6.89959 12.461 6.96933 12.5307Z" fill="white"/>
 					</svg>
 				</button>
-				<h2 class="settings__heading">{{ $t('dexGlobal.lang.caption') }}</h2>
+				<h2 class="global__heading">{{ $t('dexGlobal.lang.caption') }}</h2>
 				<div class="hidden-block"></div>
 			</div>
 			<div class="language-list">
@@ -262,7 +262,7 @@ export default {
 	background: rgba(10, 7, 6, 0.8);
 }
 
-.settings {
+.global {
 	width: 450px;
 	z-index: 999;
 	background: var(--iface-main-bg);
@@ -270,21 +270,21 @@ export default {
 	padding: 18px;
 }
 
-.settings__title {
+.global__title {
 	margin-bottom: 18px;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 }
 
-.settings__heading {
+.global__heading {
 	font-size: 24px;
 	line-height: 28px;
 	font-family: Roboto, sans-serif;
 	font-weight: 500;
 }
 
-.settings__close-btn {
+.global__close-btn {
 	width: 24px;
 	height: 24px;
 	border: none;
@@ -301,7 +301,7 @@ export default {
 	border-bottom: 1px solid var(--iface-white6);
 }
 
-.settings__name {
+.global__name {
 	margin-bottom: 4px;
 	font-family: Roboto, sans-serif;
 	font-weight: 500;
@@ -309,7 +309,7 @@ export default {
 	line-height: 18px;
 }
 
-.settings__description {
+.global__description {
 	font-size: 14px;
 	line-height: 18px;
 	opacity: 0.8;
@@ -405,7 +405,7 @@ export default {
 		padding-top: 30px;
 	}
 
-	.settings__title {
+	.global__title {
 		margin-bottom: 30px;
 	}
 }

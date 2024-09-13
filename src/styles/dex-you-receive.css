@@ -20,7 +20,7 @@
 }
 
 .dex__content:active,
-.active {
+.active_you-receive {
     background: var(--iface-white16);
 }
 
@@ -189,6 +189,7 @@
     font-size: 13px;
     line-height: 15px;
     opacity: 0.5;
+    color:  var(--main-text-color);
 }
 
 .skeleton_balance {

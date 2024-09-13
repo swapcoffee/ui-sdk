@@ -1,17 +1,4 @@
-.settings-background {
-    position: fixed;
-    z-index: 999;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(10, 7, 6, 0.8);
-}
-
-.settings {
+.global {
     width: 450px;
     z-index: 999;
     background: var(--iface-main-bg);
@@ -19,21 +6,21 @@
     padding: 18px;
 }
 
-.settings__title {
+.global__title {
     margin-bottom: 18px;
     display: flex;
     align-items: center;
     justify-content: space-between;
 }
 
-.settings__heading {
+.global__heading {
     font-size: 24px;
     line-height: 28px;
     font-family: Roboto, sans-serif;
     font-weight: 500;
 }
 
-.settings__close-btn {
+.global__close-btn {
     width: 24px;
     height: 24px;
     border: none;
@@ -50,7 +37,7 @@
     border-bottom: 1px solid var(--iface-white6);
 }
 
-.settings__name {
+.global__name {
     margin-bottom: 4px;
     font-family: Roboto, sans-serif;
     font-weight: 500;
@@ -58,7 +45,7 @@
     line-height: 18px;
 }
 
-.settings__description {
+.global__description {
     font-size: 14px;
     line-height: 18px;
     opacity: 0.8;
@@ -138,7 +125,7 @@
 }
 
 @media screen and (max-width: 640px) {
-    .settings {
+    .global {
         overflow-y: auto;
         position: fixed;
         z-index: 999;
@@ -154,7 +141,7 @@
         padding-top: 30px;
     }
 
-    .settings__title {
+    .global__title {
         margin-bottom: 30px;
     }
 }

@@ -1,11 +1,11 @@
 <template>
 	<div class="dex__you-send"
 		 @click.self="focusInput"
-		 :class="{active: inputFocused}"
+		 :class="{'active_you-send': inputFocused}"
 	>
 		<div class="dex__group group-margin">
 			<h4 class="dex__heading">{{ $t("dexInterface.youSend") }}</h4>
-      <button class="token-balance"
+      <button class="balance-btn"
               v-if="showBalanceCondition"
               @click="maxBalance"
               :disabled="getTokenBalance === 0"
@@ -305,11 +305,11 @@ export default {
 }
 
 .dex__you-send:active,
-.active {
+.active_you-send {
   background: var(--iface-white16);
 }
 
-.active:hover {
+.active_you-send:hover {
   background: var(--iface-white16);
 }
 
@@ -411,7 +411,7 @@ export default {
   opacity: 0.7;
 }
 
-.token-balance {
+.balance-btn {
   padding: 0;
   border: none;
   outline: none;
@@ -442,15 +442,15 @@ export default {
   opacity: 0.7;
 }
 
-.token-balance:hover .balance-text {
+.balance-btn:hover .balance-text {
   opacity: 0.7;
 }
 
-.token-balance:hover .color-text {
+.balance-btn:hover .color-text {
   color: var(--iface-accent-hover);
 }
 
-.token-balance:disabled .balance-text {
+.balance-btn:disabled .balance-text {
   opacity: 0.7;
 }
 

@@ -9,7 +9,7 @@
 		<div class="dex__content"
 			 v-else
 			 @click.self="focusInput"
-			 :class="{active: inputFocused}"
+			 :class="{'active_you-receive': inputFocused}"
 		>
 			<div class="dex__group group-margin">
 				<h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
@@ -220,7 +220,7 @@ export default {
 }
 
 .dex__content:active,
-.active {
+.active_you-receive {
 	background: var(--iface-white16);
 }
 
