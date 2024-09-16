@@ -1,7 +1,7 @@
 {
   "name": "swap-widget-sdk",
   "private": false,
-  "version": "1.0.30",
+  "version": "1.0.31",
   "type": "module",
   "main": "dist/swap-sdk.cjs.js",
   "module": "dist/swap-sdk.esm.js",
