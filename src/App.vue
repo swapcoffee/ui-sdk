@@ -28,9 +28,6 @@ export default {
     }
   },
   computed: {
-    // tonConnectUi() {
-    //   return new TonConnectUI(this.tonConnectSettings)
-    // },
     GET_DEX_WALLET() {
       return this.dexStore.GET_DEX_WALLET
     },
@@ -179,10 +176,12 @@ export default {
         }
 
         setTimeout(() => {
-          if (fa > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          } else if (sa > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+          const faValue = Number(fa);
+          const saValue = Number(sa);
+          if (faValue > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
+          } else if (saValue > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
           }
         }, 10);
       } else if (ft) {
@@ -193,10 +192,12 @@ export default {
         }
 
         setTimeout(() => {
-          if (fa > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          } else if (sa > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+          const faValue = Number(fa);
+          const saValue = Number(sa);
+          if (faValue > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
+          } else if (saValue > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
           }
         }, 10);
       } else {
@@ -407,7 +408,6 @@ export default {
       wallet.imgUrl = walletInfoStorage?.imageUrl
       if (tonConnectStorage) {
         this.DEX_WALLET(wallet)
-        console.log(wallet)
       }
       this.getTonTokens();
     }

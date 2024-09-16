@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ru" class="custom-scroll">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, viewport-fit=cover, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#0A0A0A"/>
+    <meta name="description" content="swap.coffee - Progressive DEX Aggregator in the TON blockchain" />
+    <script async src="https://tganalytics.xyz/index.js" type="text/javascript" onload="tgAnalyticsSetup()"></script>
+    <script>
+        function tgAnalyticsSetup() {
+            if (window.Telegram?.WebApp?.initData) {
+                window.telegramAnalytics.init({
+                    token: 'eyJhcHBfbmFtZSI6InN3YXBjb2ZmZWUiLCJhcHBfdXJsIjoiaHR0cHM6Ly90Lm1lL3N3YXBjb2ZmZWVib3QiLCJhcHBfZG9tYWluIjoiaHR0cHM6Ly9zd2FwLmNvZmZlZSJ9!xOeR/YnP1V66zbUEkLSHNr4dw5fh0sIKpct5L+JO8ms=',
+                    appName: 'swapcoffee',
+                });
+            }
+        }
+    </script>
+    <style>
+        body {
+            --main-btn-disabled: #323232;
+            --main-blue: #4B76FF;
+            --main-green: #32D74B;
+            --main-red: #FF5449;
+            --main-yellow: #FFCF55;
+            --main-white: #fff;
+            --main-white50: rgba(255, 255, 255, 0.5);
+            --main-text-color: #fff;
+            --iface-blur: 5px;
+            --iface-r14: 14px;
+            --iface-r20: 20px;
+            --iface-r100: 100px;
+            --adv-color: #FF9839;
+
+            --iface-white2: rgba(255, 255, 255, 0.02);
+            --iface-white4: rgba(255, 255, 255, 0.04);
+            --iface-white6: rgba(255, 255, 255, 0.06);
+            --iface-white8: rgba(255, 255, 255, 0.08);
+            --iface-white10: rgba(255, 255, 255, 0.1);
+            --iface-white12: rgba(255, 255, 255, 0.12);
+            --iface-white14: rgba(255, 255, 255, 0.14);
+            --iface-white16: rgba(255, 255, 255, 0.16);
+            --iface-white20: rgba(255, 255, 255, 0.20);
+            --iface-white24: rgba(255, 255, 255, 0.24);
+            --iface-white40: rgba(255, 255, 255, 0.40);
+
+            --iface-warn-text: #FFCF55;
+            --iface-warn-border: 255, 207, 85, 0.40;
+            --iface-warn-bg: 255, 207, 85, 0.06;
+            --iface-error-text: #FF5449;
+            --iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.20);
+        }
+
+        .theme-coffee {
+            --main-bg-color: #0A0706;
+
+            --iface-bg: #0A0706;
+            --iface-accent-color: #EA7A3B;
+            --iface-accent-hover: #EE9562;
+            --iface-send: rgba(255, 255, 255, 0.06);
+            --iface-main-bg: #181413;
+            --iface-main-border: transparent;
+            --iface-tooltip-bg: #181413;
+            --iface-without-bg: transparent;
+
+            --iface-border-color: rgba(255, 255, 255, 0.1);
+            --iface-border-hover: rgba(255, 255, 255, 0.20);
+            --iface-border-active: rgba(255, 255, 255, 0.24);
+        }
+
+        .theme-dark {
+            --main-bg-color: #0A0A0A;
+
+            --iface-bg: #0A0A0A;
+            --iface-accent-color: #0A84FF;
+            --iface-accent-hover: #44A6FF;
+            --iface-send: #232324;
+            --iface-main-bg: #19191A;
+            --iface-main-border: rgba(255, 255, 255, 0.1);
+            --iface-tooltip-bg: #0A0A0A;
+            --iface-without-bg: transparent;
+
+            --iface-border-color: rgba(255, 255, 255, 0.06);
+            --iface-border-hover: rgba(255, 255, 255, 0.20);
+            --iface-border-active: rgba(255, 255, 255, 0.24);
+        }
+
+        .theme-light {
+            --main-btn-disabled: #dfdfdf;
+            --main-bg-color: #f8f8f8;
+            --main-text-color: #141414;
+            --main-green: #28CD41;
+            --main-red: #E64646;
+            --main-yellow: #FFA000;
+            --adv-color: #F07844;
+
+            --iface-bg: #fff;
+            --iface-accent-color: #0A84FF;
+            --iface-accent-hover: #44A6FF;
+            --iface-send: rgba(20, 20, 20, 0.04);
+            --iface-main-bg: #fff;
+            --iface-main-border: rgba(20, 20, 20, 0.08);
+            --iface-tooltip-bg: #0A0A0A;
+            --iface-without-bg: transparent;
+
+            --iface-border-color: rgba(20, 20, 20, 0.08);
+            --iface-border-hover: rgba(20, 20, 20, 0.20);
+            --iface-border-active: rgba(20, 20, 20, 0.24);
+
+            --iface-white2: rgba(20, 20, 20, 0.02);
+            --iface-white4: rgba(20, 20, 20, 0.04);
+            --iface-white6: rgba(20, 20, 20, 0.06);
+            --iface-white8: rgba(20, 20, 20, 0.08);
+            --iface-white10: rgba(20, 20, 20, 0.10);
+            --iface-white12: rgba(20, 20, 20, 0.12);
+            --iface-white14: rgba(20, 20, 20, 0.14);
+            --iface-white16: rgba(20, 20, 20, 0.16);
+            --iface-white20: rgba(20, 20, 20, 0.20);
+            --iface-white24: rgba(20, 20, 20, 0.24);
+            --iface-white40: rgba(20, 20, 20, 0.40);
+        }
+        :root {
+            --background-color-light: #f8f8f8;
+            --background-color-dark: #0A0A0A;
+        }
+
+        html {
+            background-color: var(--background-color-light);
+        }
+
+
+        @media (prefers-color-scheme: dark) {
+            html {
+                background-color: var(--background-color-dark);
+            }
+        }
+
+        @media (prefers-color-scheme: light) {
+            html {
+                background-color: var(--background-color-light);
+            }
+        }
+    </style>
+    <title>swap.coffee</title>
+</head>
+<body>
+
+<noscript>
+    <strong>We're sorry but this application doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+</noscript>
+<div id="swap-widget-component"></div>
+<!-- built files will be auto injected -->
+</body>
+</html>
+<script type="module" src="/src/main.ts"></script>

@@ -1,71 +1,74 @@
 <template>
-	<div class="dex__you-receive">
-		<div class="dex__content_empty"
-			 v-if="receiveToken === null && !getRouteQuery"
-			 @click="$emit('chooseReceiveToken')"
-		>
-			<p class="dex__text_empty">{{ $t("dexInterface.selectToken") }}</p>
-		</div>
-		<div class="dex__content"
-			 v-else
-			 @click.self="focusInput"
-			 :class="{active: inputFocused}"
-		>
-			<div class="dex__group group-margin">
-				<h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
-        <p class="token-balance" v-if="receiveToken">
-          {{ $t("dexInterface.balance", {currentBalance: getTokenBalance})}}
-        </p>
+  <div class="dex__you-receive">
+    <div class="dex__content_empty"
+         v-if="receiveToken === null && !getRouteQuery"
+         @click="$emit('chooseReceiveToken')"
+    >
+      <p class="dex__text_empty">{{ $t("dexInterface.selectToken") }}</p>
+    </div>
+    <div class="dex__content"
+         v-else
+         @click.self="focusInput"
+         :class="{active: inputFocused}"
+    >
+      <div class="dex__group group-margin">
+        <h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
+        <p class="token-balance" v-if="receiveToken">{{ $t("dexInterface.balance" , {currentBalance: getTokenBalance}) }}</p>
         <div class="skeleton skeleton_row" v-if="!receiveToken"></div>
-			</div>
-			<div class="dex__flex-block">
-				<!--				<p class="dex__receive-amount" v-if="!showSkeleton">{{ getReceive }}</p>-->
-				<label for="" class="dex__label">
-					<p class="skeleton skeleton_balance" v-if="showSkeleton && swapMode === 'default'"></p>
-					<input type="number" class="dex__input" v-model="youReceive" id="receiveInput" placeholder="0"
-						   inputmode="decimal" autocomplete="off"
-						   v-else
-						   @input="changeInput"
-						   @focus="onFocus"
-						   @blur="onBlur"
-					>
-					<button class="dex__btn"
-							v-if="!showTokenSkeleton"
-							@click="$emit('chooseReceiveToken')"
-					>
-						<img :src="receiveToken?.image" alt="Logo of the selected token for receive" class="token-image">
-						<p class="btn-text">{{ receiveToken?.symbol }}</p>
-						<!--					<div class="skeleton skeleton_round" v-if="showTokenSkeleton"></div>-->
-						<!--					<p class="skeleton skeleton_row" v-if="showTokenSkeleton"></p>-->
-					</button>
-					<div class="skeleton skeleton_token" v-if="showTokenSkeleton"></div>
-				</label>
-			</div>
-			<div class="dex__group">
-				<div class="dex__price-block"
-					 v-if="!showSkeleton"
-				>
-					<p class="token-price">~${{ getTokenPrice }}</p>
-					<p class="token-impact"
-					   v-show="getTokenPrice > 0"
-					   :class="getClassImpact"
-					>
-						({{ getPriceImpactDisplay }}%)
-					</p>
-				</div>
-				<div class="skeleton skeleton_row" v-if="showSkeleton"></div>
-				<p class="token-name" v-if="receiveToken">{{ receiveToken?.name }}</p>
-				<div class="skeleton skeleton_row" v-if="!receiveToken"></div>
-			</div>
-		</div>
-	</div>
+      </div>
+      <div class="dex__flex-block">
+        <label for="" class="dex__label">
+          <p class="skeleton skeleton_balance" v-if="showSkeleton && swapMode === 'default'"></p>
+          <DexInput id="receiveInput" v-else
+                    :model-value="youReceive"
+                    @update:model-value="updateValue"
+          />
+          <!--					<input type="number" class="dex__input" v-model="youReceive" id="receiveInput" placeholder="0"-->
+          <!--						   inputmode="decimal" autocomplete="off"-->
+          <!--						   v-else-->
+          <!--						   @input="changeInput"-->
+          <!--						   @focus="onFocus"-->
+          <!--						   @blur="onBlur"-->
+          <!--					>-->
+          <button class="dex__btn"
+                  v-if="!showTokenSkeleton"
+                  @click="$emit('chooseReceiveToken')"
+          >
+            <img :src="receiveToken?.image" alt="Logo of the selected token for receive" class="token-image">
+            <p class="btn-text">{{ receiveToken?.symbol }}</p>
+            <!--					<div class="skeleton skeleton_round" v-if="showTokenSkeleton"></div>-->
+            <!--					<p class="skeleton skeleton_row" v-if="showTokenSkeleton"></p>-->
+          </button>
+          <div class="skeleton skeleton_token" v-if="showTokenSkeleton"></div>
+        </label>
+      </div>
+      <div class="dex__group">
+        <div class="dex__price-block"
+             v-if="!showSkeleton"
+        >
+          <p class="token-price">~${{ getTokenPrice }}</p>
+          <p class="token-impact"
+             v-show="getTokenPrice > 0"
+             :class="getClassImpact"
+          >
+            ({{ getPriceImpactDisplay }}%)
+          </p>
+        </div>
+        <div class="skeleton skeleton_row" v-if="showSkeleton"></div>
+        <p class="token-name" v-if="receiveToken">{{ receiveToken?.name }}</p>
+        <div class="skeleton skeleton_row" v-if="!receiveToken"></div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { useDexStore } from "@/stores/dex";
+import DexInput from "@/components/dex/DexInput.vue";
 
 export default {
   name: "DexYouReceive",
+  components: {DexInput},
   props: {
     poolNotFound: {
       type: Boolean,
@@ -74,7 +77,7 @@ export default {
   },
   data() {
     return {
-      youReceive: null as number | null,
+      youReceive: '0',
       inputFocused: false,
       pageLoaded: false,
     };
@@ -150,6 +153,10 @@ export default {
     focusInput() {
       const input = document.getElementById("receiveInput") as HTMLInputElement;
       input.focus();
+    },
+    updateValue(value) {
+      this.youReceive = value
+      this.DEX_RECEIVE_AMOUNT(Number(value))
     },
     onFocus() {
       this.inputFocused = true;
