@@ -1,12 +1,12 @@
 <template>
 	<div class="dex__wrapper">
-		<TradeNav class="trade__nav-top"/>
+<!--		<TradeNav class="trade__nav-top"/>-->
 		<div class="dex__title title">
 			<div class="dex__buttons">
 				<button class="title__back-btn">
 					{{ $t('dexSidebar.dex') }}
 				</button>
-				<TradeNav class="trade__nav-bottom"/>
+<!--				<TradeNav class="trade__nav-bottom"/>-->
 			</div>
 			<div class="title__group">
 				<div
