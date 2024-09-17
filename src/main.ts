@@ -3,7 +3,7 @@ import App from './WebComponent.ce.vue'
 import './main.css'
 import i18n from "./i18n";
 import { pinia } from "./stores";
-// import {applyTheme, tonConnectUiInstance} from "@/shared/shared";
+import {applyTheme, tonConnectUiInstance} from "./shared/shared";
 import styles from '@/styles/main'
 
 let SwapWidget = null

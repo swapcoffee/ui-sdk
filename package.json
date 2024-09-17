@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
-    "@intlify/unplugin-vue-i18n": "^5.0.0",
+    "@intlify/unplugin-vue-i18n": "^4.0.0",
     "@ton/core": "^0.56.3",
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.5.1",
