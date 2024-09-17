@@ -7,9 +7,9 @@ export const applyTheme = (selector: string, theme: string) => {
 	widgetElement.classList.add(`theme-${theme}`);
 }
 
-export const tonConnectUiInstance = new TonConnectUI({
-	manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
-	uiPreferences: {
-		theme: THEME.DARK,
-	},
-});
+// export const tonConnectUiInstance = new TonConnectUI({
+// 	manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
+// 	uiPreferences: {
+// 		theme: THEME.DARK,
+// 	},
+// });
