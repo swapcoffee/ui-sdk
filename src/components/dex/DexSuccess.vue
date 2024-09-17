@@ -140,18 +140,18 @@
           <!--					</button>-->
         </div>
       </div>
-<!--      <button class="success__share-btn"-->
-<!--              v-if="getTransactionStatus === 'succeeded'"-->
-<!--              @click="getShareLink"-->
-<!--      >-->
-<!--        <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"-->
-<!--             fill="none">-->
-<!--          <path-->
-<!--              d="M12.1604 4.06107C12.0118 3.91253 11.8225 3.81138 11.6164 3.7704C11.4104 3.72943 11.1968 3.75047 11.0027 3.83086C10.8086 3.91126 10.6426 4.0474 10.5259 4.22207C10.4092 4.39675 10.3468 4.60211 10.3468 4.81221V5.65473H7.78098C6.51342 5.65613 5.29817 6.16029 4.40187 7.05659C3.50557 7.95289 3.00141 9.16814 3 10.4357L3 14.1542C3 14.2951 3.05597 14.4302 3.15559 14.5299C3.25521 14.6295 3.39033 14.6855 3.53122 14.6855C3.67211 14.6855 3.80723 14.6295 3.90685 14.5299C4.00647 14.4302 4.06244 14.2951 4.06244 14.1542C4.06328 13.3092 4.39936 12.4989 4.99692 11.9014C5.59447 11.3038 6.40469 10.9678 7.24976 10.9669H10.3468V11.8094C10.3468 12.0195 10.4092 12.2249 10.5259 12.3996C10.6426 12.5742 10.8086 12.7104 11.0027 12.7908C11.1968 12.8712 11.4104 12.8922 11.6164 12.8512C11.8225 12.8103 12.0118 12.7091 12.1604 12.5606L15.2834 9.43754C15.5822 9.13868 15.75 8.7334 15.75 8.31082C15.75 7.88824 15.5822 7.48296 15.2834 7.1841L12.1604 4.06107Z"-->
-<!--              fill="white"/>-->
-<!--        </svg>-->
-<!--        Share result-->
-<!--      </button>-->
+      <button class="success__share-btn"
+              v-if="getTransactionStatus === 'succeeded'"
+              @click="getShareLink"
+      >
+        <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18"
+             fill="none">
+          <path
+              d="M12.1604 4.06107C12.0118 3.91253 11.8225 3.81138 11.6164 3.7704C11.4104 3.72943 11.1968 3.75047 11.0027 3.83086C10.8086 3.91126 10.6426 4.0474 10.5259 4.22207C10.4092 4.39675 10.3468 4.60211 10.3468 4.81221V5.65473H7.78098C6.51342 5.65613 5.29817 6.16029 4.40187 7.05659C3.50557 7.95289 3.00141 9.16814 3 10.4357L3 14.1542C3 14.2951 3.05597 14.4302 3.15559 14.5299C3.25521 14.6295 3.39033 14.6855 3.53122 14.6855C3.67211 14.6855 3.80723 14.6295 3.90685 14.5299C4.00647 14.4302 4.06244 14.2951 4.06244 14.1542C4.06328 13.3092 4.39936 12.4989 4.99692 11.9014C5.59447 11.3038 6.40469 10.9678 7.24976 10.9669H10.3468V11.8094C10.3468 12.0195 10.4092 12.2249 10.5259 12.3996C10.6426 12.5742 10.8086 12.7104 11.0027 12.7908C11.1968 12.8712 11.4104 12.8922 11.6164 12.8512C11.8225 12.8103 12.0118 12.7091 12.1604 12.5606L15.2834 9.43754C15.5822 9.13868 15.75 8.7334 15.75 8.31082C15.75 7.88824 15.5822 7.48296 15.2834 7.1841L12.1604 4.06107Z"
+              fill="white"/>
+        </svg>
+        Share result
+      </button>
     </div>
     <!--		<app-notification class="error"-->
     <!--			v-show="showError"-->
@@ -159,12 +159,12 @@
     <!--		>-->
     <!--			Your browser or device does not support the share feature.-->
     <!--		</app-notification>-->
-<!--    <app-notification-->
-<!--        v-show="showNotification"-->
-<!--        @closeCopyNotification="closeNotification"-->
-<!--    >-->
-<!--      Copy to clipboard!-->
-<!--    </app-notification>-->
+    <app-notification
+        v-show="showNotification"
+        @closeCopyNotification="closeNotification"
+    >
+      Copy to clipboard!
+    </app-notification>
   </div>
 </template>
 
@@ -178,10 +178,12 @@ import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
 import loading from "@/assets/lottie/loading.json"
 import failed from "@/assets/lottie/failed.json"
 import success from "@/assets/lottie/success.json"
+import AppNotification from "@/components/AppNotification.vue";
+import axios from "axios";
 
 export default {
   name: "DexSuccess",
-  components: { TooltipWrapper },
+  components: {AppNotification, TooltipWrapper },
   mixins: [transactionRoutesMixin, computedMixins],
   props: {
     transaction: {
@@ -201,6 +203,8 @@ export default {
       requestInterval: null as any,
       routeCount: 4,
       tooltipList: [] as string[],
+      showNotification: false,
+      noticeTimeout: null,
     };
   },
   computed: {
@@ -347,10 +351,93 @@ export default {
           })
           .join(", ");
     },
+    getText() {
+      return this.$t("dexSuccess.resultText", {token: this.GET_RECEIVE_TOKEN?.symbol})
+    },
+    getOurPrice() {
+      let regexp = /[^0-9,.]/g
+      let profit = Number(this.getProfitDisplay.replace(regexp, ''))
+      let market = 0
+      if (profit > 0) {
+        market = this.getMarketPrice * (1 - profit / 100)
+      } else {
+        market = this.getMarketPrice
+      }
+      return market.toFixed(4)
+    },
+    getMarketPrice() {
+      let receive = this.GET_RECEIVE_TOKEN?.price_usd
+      return Number(receive.toFixed(4))
+    },
+    isWindows() {
+      return /Windows/i.test(navigator.userAgent);
+    }
   },
   methods: {
     showTooltip(value: string) {
       this.tooltipList.push(value);
+    },
+    async getShareLink() {
+      let newDate = new Date()
+      let params = {
+        in: this.dexStore.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
+        out: this.dexStore.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
+        profit: this.getProfitDisplay,
+        market_price: this.getMarketPrice,
+        our_price: this.getOurPrice,
+        time: Math.floor(newDate / 1000),
+        utc: newDate.getTimezoneOffset() / 60 * -1,
+        ref: this.dexStore.GET_REFERRAL_INFO?.link
+      }
+
+      let url = this.createUrl(params)
+      let blob = await this.getImageAsBlob(url)
+
+      if (this.isWindows) {
+        await this.copyToClipboard(blob)
+      } else {
+        await this.shareResult(blob)
+      }
+    },
+    async copyToClipboard(blob) {
+      try {
+        let item = new ClipboardItem({"image/png": blob.data});
+        await navigator.clipboard.write([item]);
+        this.showShareError()
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async shareResult(blob) {
+      try {
+        let file = new File([blob.data], "result.png", {type: 'image/png'})
+        let data = {
+          // text: this.getText,
+          files: [file],
+        }
+        if (navigator.share && navigator.canShare(data)) {
+          await navigator.share(data)
+        } else {
+          await this.copyToClipboard(blob)
+        }
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    async getImageAsBlob(url) {
+      try {
+        return await axios.get(url, {responseType: "blob"})
+      } catch (err) {
+        console.error(err)
+      }
+    },
+    createUrl(params) {
+      if (params !== null) {
+        let query = `?in_token=${params?.in}&out_token=${params?.out}&profit_percent=${params?.profit}&market_price=${params?.market_price}&our_price=${params?.our_price}&time=${params?.time}&utc_offset=${params?.utc}&ref=${params?.ref}`
+        return 'https://img.swap.coffee/v1/image/profits' + query
+      } else {
+        return ''
+      }
     },
     hideTooltip(value: string) {
       const index = this.tooltipList.indexOf(value);
