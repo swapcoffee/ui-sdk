@@ -7,28 +7,30 @@
 <script lang="ts">
 import { toUserFriendlyAddress } from "@tonconnect/ui";
 import { defineComponent } from "vue";
-import { useDexStore } from "../stores/dex";
-import tonConnectMixin from "../mixins/tonConnectMixin";
-import computedMixins from "../mixins/computedMixins";
-import methodsMixins from "../mixins/methodsMixins";
-import {useSettingsStore} from "../stores/settings";
-import {pinnedTokens} from "../helpers/dex/pinnedTokens";
-import SwapWidget from "../ui/SwapWidget.vue";
-import { applyTheme } from "../shared/shared";
+import { useDexStore } from "./stores/dex";
+import tonConnectMixin from "./mixins/tonConnectMixin";
+import computedMixins from "./mixins/computedMixins";
+import methodsMixins from "./mixins/methodsMixins";
+import {useSettingsStore} from "./stores/settings";
+import {pinnedTokens} from "./helpers/dex/pinnedTokens";
+import SwapWidget from "./ui/SwapWidget.vue";
+import { applyTheme } from "./shared/shared";
 
 export default defineComponent({
 	name: "WebComponentApp",
 	components: {
 		SwapWidget
 	},
+	inject: ['tonConnectUi'],
+	mixins: [tonConnectMixin, computedMixins, methodsMixins],
 	props: {
 		theme: {
 			type: String,
-			require: true,
+			default() {
+				return 'dark'
+			}
 		}
 	},
-	inject: ['tonConnectUi'],
-	mixins: [tonConnectMixin, computedMixins, methodsMixins],
 	data() {
 		return {
 			unsubscribeConnect: null,
@@ -38,9 +40,6 @@ export default defineComponent({
 		}
 	},
 	computed: {
-		// tonConnectUi() {
-		//   return new TonConnectUI(this.tonConnectSettings)
-		// },
 		GET_DEX_WALLET() {
 			return this.dexStore.GET_DEX_WALLET
 		},
@@ -189,10 +188,12 @@ export default defineComponent({
 				}
 
 				setTimeout(() => {
-					if (Number(fa) > 0) {
-						this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-					} else if (Number(sa) > 0) {
-						this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+					const faValue = Number(fa);
+					const saValue = Number(sa);
+					if (faValue > 0) {
+						this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
+					} else if (saValue > 0) {
+						this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
 					}
 				}, 10);
 			} else if (ft) {
@@ -203,10 +204,12 @@ export default defineComponent({
 				}
 
 				setTimeout(() => {
-					if (Number(fa) > 0) {
-						this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-					} else if (Number(sa)  > 0) {
-						this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+					const faValue = Number(fa);
+					const saValue = Number(sa);
+					if (faValue > 0) {
+						this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
+					} else if (saValue > 0) {
+						this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
 					}
 				}, 10);
 			} else {
@@ -242,7 +245,7 @@ export default defineComponent({
 		async getBalance(wallet) {
 			try {
 				return await this.dexApiV2.getBalance(wallet.address)
-			} catch(err) {
+			} catch (err) {
 				throw err
 			}
 		},
@@ -349,14 +352,14 @@ export default defineComponent({
 				return;
 			}
 
-			this.tonConnectUi.setConnectRequestParameters({ state: 'loading' });
+			this.tonConnectUi.setConnectRequestParameters({state: 'loading'});
 
 			this.tokensApi.generateTonProofPayload().then((data) => {
 				const payload = data.data;
 
 				this.tonConnectUi.setConnectRequestParameters({
 					state: 'ready',
-					value: { tonProof: payload },
+					value: {tonProof: payload},
 				});
 			});
 		},
@@ -396,7 +399,7 @@ export default defineComponent({
 				await this.dexApiV2.writeStorage(
 					this.dexStore.GET_DEX_WALLET?.address,
 					this.GET_PROOF_VERIFICATION,
-					{ globalSettings: global, dexSettings: dex }
+					{globalSettings: global, dexSettings: dex}
 				);
 			} catch (err) {
 				console.error(err);
