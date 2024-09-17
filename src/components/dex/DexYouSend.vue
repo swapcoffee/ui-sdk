@@ -13,47 +13,53 @@
         <span class="balance-text">{{ $t("dexInterface.balance", {currentBalance: getTokenBalance}) }}</span>
         <span class="color-text" v-show="getTokenBalance > 0"> {{ $t("dexInterface.max") }}</span>
       </button>
-			<p class="skeleton skeleton_row" v-else></p>
-		</div>
-		<label for="" class="dex__label">
-			<p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && swapMode === 'reverse'"></p>
-			<input type="number" class="dex__input" v-model="youSend" id="sendInput" placeholder="0" inputmode="decimal"
-				   autocomplete="off"
-				   v-else
-				   @input="changeInput"
-				   @focus="onFocus"
-				   @blur="onBlur"
-			>
-			<button class="dex__btn"
-					@click="$emit('chooseSendToken')"
-					v-if="loaded"
-			>
-				<img :src="sendToken?.image" alt="Logo of send selected token for send" class="token-image">
-				<p class="btn-text">{{ sendToken?.symbol }}</p>
-				<!--				<p class="skeleton skeleton_row" v-if="!loaded"></p>-->
-				<!--				<div class="skeleton skeleton_round" v-if="!loaded"></div>-->
-			</button>
-			<div class="skeleton skeleton_token" v-if="!loaded"></div>
-		</label>
-		<div class="dex__group">
-			<p class="token-price" v-if="!showSkeleton && !showBalanceSkeleton">${{ getTokenPrice }}</p>
-			<p class="skeleton skeleton_row" v-else></p>
-			<p class="token-name" v-if="sendToken">{{ sendToken?.name }}</p>
-			<p class="skeleton skeleton_row" v-else></p>
-		</div>
+      <p class="skeleton skeleton_row" v-else></p>
+    </div>
+    <label for="" class="dex__label">
+      <p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && swapMode === 'reverse'"></p>
+      <DexInput id="sendInput" v-else
+                :model-value="String(youSend)"
+                @update:model-value="updateValue" />
+
+      <!--			<input type="number" class="dex__input" v-model="youSend" id="sendInput" placeholder="0" inputmode="decimal"-->
+      <!--				   autocomplete="off"-->
+      <!--				   v-else-->
+      <!--				   @input="changeInput"-->
+      <!--				   @focus="onFocus"-->
+      <!--				   @blur="onBlur"-->
+      <!--			>-->
+      <button class="dex__btn"
+              @click="$emit('chooseSendToken')"
+              v-if="loaded"
+      >
+        <img :src="sendToken?.image" alt="Logo of send selected token for send" class="token-image">
+        <p class="btn-text">{{ sendToken?.symbol }}</p>
+        <!--				<p class="skeleton skeleton_row" v-if="!loaded"></p>-->
+        <!--				<div class="skeleton skeleton_round" v-if="!loaded"></div>-->
+      </button>
+      <div class="skeleton skeleton_token" v-if="!loaded"></div>
+    </label>
+    <div class="dex__group">
+      <p class="token-price" v-if="!showSkeleton && !showBalanceSkeleton">${{ getTokenPrice }}</p>
+      <p class="skeleton skeleton_row" v-else></p>
+      <p class="token-name" v-if="sendToken">{{ sendToken?.name }}</p>
+      <p class="skeleton skeleton_row" v-else></p>
+    </div>
     <button class="dex__switch-btn"
             @click="switchToken"
     >
       <img src="@/assets/dex/switch.svg" alt="switch tokens icon" class="dex__switch-icon">
     </button>
-	</div>
+  </div>
 </template>
 
 <script lang="ts">
 import { useDexStore } from "@/stores/dex";
+import DexInput from "@/components/dex/DexInput.vue";
 
 export default {
   name: "DexYouSend",
+  components: {DexInput},
   props: {
     poolNotFound: {
       type: Boolean,
@@ -66,7 +72,7 @@ export default {
       pageLoaded: false,
       debounce: null as any,
       loaded: false,
-      youSend: null as number | null,
+      youSend: '0',
       currentSend: null as any,
       currentReceive: null as any,
       currentSendAmount: null as number | null,
@@ -154,6 +160,10 @@ export default {
           }
         }, 200);
       }
+    },
+    updateValue(value) {
+      this.youSend = value
+      this.dexStore.DEX_SEND_AMOUNT(Number(value))
     },
     focusInput() {
       const input = document.getElementById("sendInput") as HTMLInputElement;
@@ -249,7 +259,7 @@ export default {
     sendToken: {
       handler() {
         if (this.swapMode === "default" && !this.tokenSwitched) {
-          this.clearAmounts();
+          // this.clearAmounts();
         }
         this.setCurrentSend();
       },
@@ -257,7 +267,7 @@ export default {
     receiveToken: {
       handler() {
         if (this.swapMode === "reverse" && !this.tokenSwitched) {
-          this.clearAmounts();
+          // this.clearAmounts();
         }
         this.setCurrentReceive();
       },

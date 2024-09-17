@@ -22,55 +22,26 @@ export default {
                 return reduce
             }
         },
+        prettyNumber(num, reduceCount) {
+            let numToFixed = 0
+            if (Number.isInteger(num)) {
+                numToFixed = num
+            } else {
+                numToFixed = num.toFixed(reduceCount)
+            }
+
+            let [integerPart, fractionalPart] = String(numToFixed).split(".");
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+            return fractionalPart ? `${integerPart}.${fractionalPart}` : integerPart;
+        },
+        formattedInput(value) {
+            let [integerPart, fractionalPart] = value.split(".");
+            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+            return fractionalPart !== undefined ? `${integerPart}.${fractionalPart}` : integerPart;
+        },
         filterNumber(num) {
             return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ")
         },
-        getLocaleForCountry(countryCode) {
-            const locales = {
-                // Испанский
-                'ES': 'es',
-                'AR': 'es',
-                'BO': 'es',
-                'CL': 'es',
-                'CO': 'es',
-                'CR': 'es',
-                'CU': 'es',
-                'DO': 'es',
-                'EC': 'es',
-                'GT': 'es',
-                'HN': 'es',
-                'MX': 'es',
-                'NI': 'es',
-                'PA': 'es',
-                'PY': 'es',
-                'PE': 'es',
-                'PR': 'es',
-                'SV': 'es',
-                'UY': 'es',
-                'VE': 'es',
-                'GQ': 'es',
-
-                // Китайский
-                'CN': 'zh',
-                'HK': 'en',
-                'TW': 'en',
-
-                // Украинский
-                'UA': 'ua',
-
-                // Русский
-                'BY': 'ru',
-                'RU': 'ru',
-
-                // Иранский
-                'IR': 'fa',
-
-                // Французский
-                'FR': 'fr',
-                'CD': 'fr',
-            };
-
-            return locales[countryCode] || 'en';
-        }
     }
 }

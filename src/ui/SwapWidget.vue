@@ -302,7 +302,6 @@ export default defineComponent( {
     async compareTokens() {
       try {
         const requestData = this.setAsset();
-        console.log("requestData", requestData);
         this.refreshInfo = true;
         this.abortController = new AbortController();
 
@@ -391,7 +390,6 @@ export default defineComponent( {
         max_splits: this.dexStore.GET_MAX_SPLITS,
       };
 
-      console.log(this.dexStore.GET_MAX_SPLITS);
 
       if (this.dexStore.GET_SWAP_MODE === "default") {
         asset.input_amount = Number(this.dexStore.GET_SEND_AMOUNT);
@@ -423,7 +421,6 @@ export default defineComponent( {
     async showTonconnect() {
       try {
         await this.tonConnectUi.openModal();
-        console.log("modal is open");
       } catch (err) {
         console.error(err);
       }

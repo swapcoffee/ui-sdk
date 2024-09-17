@@ -3,29 +3,19 @@
   "private": false,
   "version": "1.0.13",
   "type": "module",
-  "main": "dist/vue/swap-coffee-sdk.cjs.js",
-  "module": "dist/vue/swap-coffee-sdk.esm.js",
+  "main": "dist/swap-sdk.cjs.js",
+  "module": "dist/swap-sdk.esm.js",
   "exports": {
     ".": {
-      "import": "./dist/vue/swap-coffee-sdk.esm.js",
-      "require": "./dist/vue/swap-coffee-sdk.cjs.js"
-    },
-    "./web": {
-      "import": "./dist/web/swap-coffee-sdk.esm.js",
-      "require": "./dist/web/swap-coffee-sdk.cjs.js"
-    },
-    "./vue": {
-      "import": "./dist/vue/swap-coffee-sdk.esm.js",
-      "require": "./dist/vue/swap-coffee-sdk.cjs.js"
+      "import": "./dist/swap-sdk.esm.js",
+      "require": "./dist/swap-sdk.cjs.js"
     }
   },
   "scripts": {
     "dev": "vite",
-    "build:vue": "vite build --config vite.config.js --mode vue",
-    "build:web": "vite build --config vite.config.js --mode web",
-    "build": "npm run build:vue && npm run build:web",
+    "build": "vite build --config vite.config.js",
     "preview": "vite preview",
-    "save-publish": "npm version patch && npm run build && npm publish"
+    "save&publish": "npm version patch && npm run build && npm publish"
   },
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
