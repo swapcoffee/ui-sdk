@@ -1,7 +1,7 @@
 {
   "name": "swap-coffee-vue-sdk",
   "private": false,
-  "version": "1.0.15",
+  "version": "1.0.16",
   "type": "module",
   "main": "dist/swap-sdk.cjs.js",
   "module": "dist/swap-sdk.esm.js",
