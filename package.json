@@ -1,16 +1,35 @@
 {
-  "name": "swap-widget-sdk",
+  "name": "@swap-coffee/ui-sdk",
   "private": false,
-  "version": "1.0.32",
+  "version": "1.0.0",
   "type": "module",
+  "description": "User Interface SDK of swap.coffee DEX aggregator for integration in web applications",
   "main": "dist/swap-sdk.cjs.js",
   "module": "dist/swap-sdk.esm.js",
+  "license": "MIT",
+  "homepage": "https://swap.coffee",
+  "author": {
+    "name": "swap.coffee"
+  },
   "exports": {
     ".": {
       "import": "./dist/swap-sdk.esm.js",
       "require": "./dist/swap-sdk.cjs.js"
     }
   },
+  "repository": {
+    "url": "https://github.com/swapcoffee/ui-sdk"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "swapcoffee",
+    "dedust",
+    "stonfi",
+    "ton",
+    "dex"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build --config vite.config.js",

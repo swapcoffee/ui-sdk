@@ -1,5 +1,27 @@
-# Vue 3 + TypeScript + Vite
+<p align="center">
+  <a href="https://swap.coffee" target="blank"><img src="https://avatars.githubusercontent.com/u/171727895?s=400&u=f6a9b30455abed8c09dc7d4e6108eb21d0715ade&v=4" width="130" alt="swap.coffee logo" /></a>
+</p>
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+<p align="center">User Interface SDK of swap.coffee DEX aggregator for integration in web applications</p>
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
+<p align="center">
+<a href="https://www.npmjs.com/package/@swap-coffee/ui-sdk"><img alt="npm" src="https://img.shields.io/npm/v/%40swap-coffee%2Fsdk?labelColor=%23fffff&color=%233e1c00"></a>
+<a href="https://opensource.org/licenses/mit"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
+<a href="https://docs.swap.coffee"><img alt="documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen"></a>
+</p>
+
+## Installation
+
+```bash
+npm install @swap-coffee/ui-sdk
+```
+
+Documentation can be found [here](https://docs.swap.coffee).
+
+## License
+
+swap.coffee UI SDK is [MIT licensed](LICENSE).
+
+## Copyright
+
+swap.coffee &copy; 2024
