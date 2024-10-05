@@ -17,9 +17,4 @@ export default class TokensApi extends Api {
     getStakingPool(pool_id) {
         return this.request(`/tokens/stacking/pool/${pool_id}`, null, "GET");
     }
-
-    generateTonProofPayload() {
-        const url = `/user/proof/generate`
-        return this.request(url, null, "GET");
-    }
 }

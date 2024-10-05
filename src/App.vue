@@ -340,16 +340,10 @@ export default {
         return;
       }
 
-      this.tonConnectUi.setConnectRequestParameters({ state: 'loading' });
-
-      this.tokensApi.generateTonProofPayload().then((data) => {
-        const payload = data.data;
-
-        this.tonConnectUi.setConnectRequestParameters({
+      this.tonConnectUi.setConnectRequestParameters({
           state: 'ready',
-          value: { tonProof: payload },
+          value: { tonProof: crypto.randomUUID() },
         });
-      });
     },
     async getUserSettings() {
       try {
