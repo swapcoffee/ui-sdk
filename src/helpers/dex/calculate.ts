@@ -34,6 +34,11 @@ export function getDexSourceDataByName(name) {
                 name: "STONfi",
                 imageUrl: "https://static.ston.fi/favicon/favicon.ico",
             }
+        case "stonfi_v2":
+            return {
+                name: "STONfi V2",
+                imageUrl: "https://static.ston.fi/favicon/favicon.ico",
+            }
     }
     throw new Error("Unknown DEX source name")
 }

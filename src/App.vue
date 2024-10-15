@@ -162,49 +162,47 @@ export default {
       if (referral) {
         sessionStorage.setItem('user_referral', JSON.stringify(referral));
       }
-
       if (ft && st) {
-        let first = mergeTokens.find((item) => item.symbol === ft);
-        let second = mergeTokens.find((item) => item.symbol === st);
+        const firstToken = mergeTokens.find((item) => item.symbol === ft);
+        const secondToken = mergeTokens.find((item) => item.symbol === st);
 
-        if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first);
+        if (firstToken) {
+          this.dexStore.DEX_SEND_TOKEN(firstToken);
         }
 
-        if (second) {
-          this.dexStore.DEX_RECEIVE_TOKEN(second);
-        }
-
-        setTimeout(() => {
-          const faValue = Number(fa);
-          const saValue = Number(sa);
-          if (faValue > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
-          } else if (saValue > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
-          }
-        }, 10);
-      } else if (ft) {
-        let first = mergeTokens.find((item) => item.symbol === ft);
-
-        if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first);
+        if (secondToken) {
+          this.dexStore.DEX_RECEIVE_TOKEN(secondToken);
         }
 
         setTimeout(() => {
-          const faValue = Number(fa);
-          const saValue = Number(sa);
-          if (faValue > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(faValue));
-          } else if (saValue > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(saValue));
+          if (Number(fa) > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+          }
+          if (Number(sa) > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
           }
         }, 10);
-      } else {
-        let findToken = mergeTokens.find((item) => item.type === 'native');
+      }
+      else if (ft) {
+        const firstToken = mergeTokens.find((item) => item.symbol === ft);
 
-        if (findToken) {
-          this.dexStore.DEX_SEND_TOKEN(findToken);
+        if (firstToken) {
+          this.dexStore.DEX_SEND_TOKEN(firstToken);
+        }
+
+        setTimeout(() => {
+          if (Number(fa) > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
+          }
+          if (Number(sa) > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+          }
+        }, 10);
+      }
+      else {
+        const defaultToken = mergeTokens.find((item) => item.type === 'native');
+        if (defaultToken) {
+          this.dexStore.DEX_SEND_TOKEN(defaultToken);
         }
       }
     },

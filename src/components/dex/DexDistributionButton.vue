@@ -71,7 +71,7 @@ export default {
           if (!array.includes('DeDust')) {
             array.push('DeDust')
           }
-        } else if (item?.dex === 'stonfi') {
+        } else if (item?.dex === 'stonfi' || item?.dex === 'stonfi_v2') {
           if (!array.includes('STONfi')) {
             array.push('STONfi')
           }

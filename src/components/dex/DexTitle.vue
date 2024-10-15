@@ -3,9 +3,10 @@
 <!--		<TradeNav class="trade__nav-top"/>-->
 		<div class="dex__title title">
 			<div class="dex__buttons">
-				<button class="title__back-btn">
-					{{ $t('dexSidebar.dex') }}
-				</button>
+        <button class="title__back-btn">
+          <span class="powered-text slippage-text">powered</span>
+          <span class="by-text slippage-text">by</span>
+        </button>
 <!--				<TradeNav class="trade__nav-bottom"/>-->
 			</div>
 			<div class="title__group">
@@ -129,11 +130,22 @@ export default {
 }
 
 .title__back-btn {
-	display: block;
-	align-items: center;
-	border: none;
-	background: none;
-	font-size: 18px;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: none;
+  font-weight: 400;
+  font-size: 14px;
+  gap: 1px;
+}
+
+.title__back-btn::after {
+  content: '';
+  width: 80px;
+  height: 20px;
+  background-image: url("@/assets/main/swap-logo.svg");
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 
@@ -263,10 +275,6 @@ export default {
 	.title {
 		margin: 0;
 		padding: 12px 10px 14px 10px;
-	}
-
-	.title__back-btn {
-		display: flex;
 	}
 
 	.trade__nav-bottom {

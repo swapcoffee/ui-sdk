@@ -1,6 +1,7 @@
 import { useDexStore } from "@/stores/dex";
 import dedustIcon from "@/assets/contributors/dedust-icon.png";
 import stonfiIcon from "@/assets/contributors/stonfi-icon.png";
+import stonfiV2Icon from "@/assets/contributors/stonfi-v2-icon.png"
 
 export default {
 	computed: {
@@ -43,14 +44,19 @@ export default {
 					return {
 						name: "DeDust",
 						imageUrl: dedustIcon,
-					};
+					}
 				case "stonfi":
 					return {
 						name: "STONfi",
-						imageUrl: stonfiIcon,
-					};
+						imageUrl: stonfiIcon
+					}
+				case "stonfi_v2":
+					return {
+						name: "STONfi V2",
+						imageUrl: stonfiV2Icon
+					}
 			}
-			throw new Error("Unknown DEX source name");
+			throw new Error("Unknown DEX source name")
 		},
-	},
+	}
 }
