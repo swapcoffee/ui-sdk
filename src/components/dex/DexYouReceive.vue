@@ -1,7 +1,7 @@
 <template>
   <div class="dex__you-receive">
     <div class="dex__content_empty"
-         v-if="receiveToken === null && !getRouteQuery"
+         v-if="dexStore.GET_RECEIVE_TOKEN === null && !getRouteQuery"
          @click="$emit('chooseReceiveToken')"
     >
       <p class="dex__text_empty">{{ $t("dexInterface.selectToken") }}</p>
@@ -11,78 +11,69 @@
          @click.self="focusInput"
          :class="{active: inputFocused}"
     >
-      <div class="dex__group group-margin">
-        <h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
-        <p class="token-balance" v-if="receiveToken">{{ $t("dexInterface.balance" , {currentBalance: getTokenBalance}) }}</p>
-        <div class="skeleton skeleton_row" v-if="!receiveToken"></div>
-      </div>
-      <div class="dex__flex-block">
+      <div class="dex__content-wrapper">
+        <div class="dex__group group-margin">
+          <h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
+          <p class="token-balance" v-if="dexStore.GET_RECEIVE_TOKEN">{{ $t("dexInterface.balance" , {currentBalance: getTokenBalance}) }}</p>
+          <div class="skeleton skeleton_row" v-if="!dexStore.GET_RECEIVE_TOKEN"></div>
+        </div>
         <label for="" class="dex__label">
-          <p class="skeleton skeleton_balance" v-if="showSkeleton && swapMode === 'default'"></p>
+          <p class="skeleton skeleton_balance" v-if="showSkeleton && dexStore.GET_SWAP_MODE === 'default'"></p>
           <DexInput id="receiveInput" v-else
                     :model-value="youReceive"
                     @update:model-value="updateValue"
           />
-          <!--					<input type="number" class="dex__input" v-model="youReceive" id="receiveInput" placeholder="0"-->
-          <!--						   inputmode="decimal" autocomplete="off"-->
-          <!--						   v-else-->
-          <!--						   @input="changeInput"-->
-          <!--						   @focus="onFocus"-->
-          <!--						   @blur="onBlur"-->
-          <!--					>-->
           <button class="dex__btn"
                   v-if="!showTokenSkeleton"
                   @click="$emit('chooseReceiveToken')"
           >
-            <img :src="receiveToken?.image" alt="Logo of the selected token for receive" class="token-image">
-            <p class="btn-text">{{ receiveToken?.symbol }}</p>
-            <!--					<div class="skeleton skeleton_round" v-if="showTokenSkeleton"></div>-->
-            <!--					<p class="skeleton skeleton_row" v-if="showTokenSkeleton"></p>-->
+            <img :src="dexStore.GET_RECEIVE_TOKEN?.image" alt="Logo of the selected token for receive" class="token-image">
+            <p class="btn-text">{{ dexStore.GET_RECEIVE_TOKEN?.symbol }}</p>
           </button>
           <div class="skeleton skeleton_token" v-if="showTokenSkeleton"></div>
         </label>
-      </div>
-      <div class="dex__group">
-        <div class="dex__price-block"
-             v-if="!showSkeleton"
-        >
-          <p class="token-price">~${{ getTokenPrice }}</p>
-          <p class="token-impact"
-             v-show="getTokenPrice > 0"
-             :class="getClassImpact"
+        <div class="dex__group group-padding">
+          <div class="dex__price-block"
+               v-if="!showSkeleton"
           >
-            ({{ getPriceImpactDisplay }}%)
+            <p class="token-price">~${{ getTokenPrice }}</p>
+            <p class="token-impact"
+               v-show="this.GET_DEAL_CONDITIONS?.output_usd > 0"
+               :class="getClassImpact"
+            >
+              ({{ getPriceImpactDisplay }}%)
+            </p>
+          </div>
+          <div class="skeleton skeleton_row" v-if="showSkeleton"></div>
+          <p
+              class="trust-score"
+              v-if="dexStore.GET_RECEIVE_TOKEN"
+              @mouseenter="showTooltip = true"
+              @mouseleave="leaveTrustScore"
+          >
+            <span class="token-name">{{ $t("dexInterface.trustScore") }}:</span> {{ dexStore.GET_RECEIVE_TOKEN?.trust_score || 'No data'}}
           </p>
+          <div class="skeleton skeleton_row" v-if="!dexStore.GET_RECEIVE_TOKEN"></div>
         </div>
-        <div class="skeleton skeleton_row" v-if="showSkeleton"></div>
-        <p
-            class="trust-score"
-            v-if="dexStore.GET_RECEIVE_TOKEN"
-            @mouseenter="showTooltip = true"
-            @mouseleave="leaveTrustScore"
-        >
-          <span class="token-name">{{ $t("dexInterface.trustScore") }}:</span> {{ dexStore.GET_RECEIVE_TOKEN?.trust_score || 'No data'}}
-        </p>
-        <div class="skeleton skeleton_row" v-if="!receiveToken"></div>
+        <transition name="tooltip">
+          <tooltip-wrapper
+              arrowPosition="top"
+              v-show="showTooltip"
+              class="btn-tooltip"
+              @hidden-tooltip="leaveTrustScore"
+              @mouseleave="leaveTrustScore">
+            <DexTrust
+                :trustScore="dexStore.GET_RECEIVE_TOKEN?.trust_score || 0"
+                :symbol="dexStore.GET_RECEIVE_TOKEN?.symbol"
+            >
+            </DexTrust>
+          </tooltip-wrapper>
+        </transition>
       </div>
-      <transition name="tooltip">
-        <tooltip-wrapper
-            arrowPosition="top"
-            v-show="showTooltip"
-            class="btn-tooltip"
-            @hidden-tooltip="leaveTrustScore"
-            @mouseleave="leaveTrustScore">
-          <DexTrust
-              :trustScore="dexStore.GET_RECEIVE_TOKEN?.trust_score || 0"
-              :symbol="dexStore.GET_RECEIVE_TOKEN?.symbol"
-          >
-          </DexTrust>
-        </tooltip-wrapper>
-      </transition>
+      <DexRouteInfo
+          v-if="dexStore.GET_DEAL_CONDITIONS !== null && dexStore.GET_SEND_AMOUNT > 0 && dexStore.GET_SEND_AMOUNT !== ''"
+      />
     </div>
-    <DexRouteInfo
-        v-if="dexStore.GET_DEAL_CONDITIONS !== null && dexStore.GET_SEND_AMOUNT > 0 && dexStore.GET_SEND_AMOUNT !== ''"
-    />
   </div>
 </template>
 
@@ -237,7 +228,8 @@ export default {
 
 <style scoped>
 .dex__you-receive {
-	margin-bottom: 6px;
+  margin-bottom: 6px;
+  position: relative;
 }
 
 .trust-score {
@@ -259,171 +251,168 @@ export default {
 
 .btn-tooltip {
   position: absolute;
-  right: 1%;
+  right: 5px;
 }
 
 .dex__content {
-	transition: .15s;
-	padding: 12px;
-	border-radius: 0 0 12px 12px;
-	cursor: pointer;
-	background: var(--iface-white4);
+  transition: .15s;
+  border-radius: 0 0 12px 12px;
+  background: var(--iface-white2);
 }
 
 .theme-light .dex__content {
-	color: #141414;
+  color: #141414;
 }
 
-.dex__content:hover {
+.dex__content-wrapper {
+  padding-top: 12px;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+}
+
+.dex__content-wrapper:hover {
+  background: var(--iface-white10);
+}
+
+.dex__content-wrapper:active,
+.active .dex__content-wrapper {
+  background: var(--iface-white14);
+}
+
+/*.dex__content:hover {
 	background: var(--iface-white12);
 }
 
 .dex__content:active,
 .active {
 	background: var(--iface-white16);
-}
+}*/
 
 .dex__content_empty {
-	transition: .15s;
-	height: 112px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	padding: 12px;
-	border-radius: 0 0 12px 12px;
-	cursor: pointer;
-	background: var(--iface-white4);
+  transition: .15s;
+  height: 112px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  border-radius: 0 0 12px 12px;
+  cursor: pointer;
+  background: var(--iface-white2);
 }
 
+
 .dex__content_empty:hover {
-	background: var(--iface-white12);
+  background: var(--iface-white12);
 }
 
 .dex__content_empty:active {
-	background: var(--iface-white16);
+  background: var(--iface-white16);
 }
 
 .dex__text_empty {
-	font-size: 16px;
-	font-family: Roboto, sans-serif;
-	font-weight: 500;
-	color: var(--main-text-color);
+  font-size: 16px;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
+  color: var(--main-text-color);
 }
 
 .dex__content_empty:hover .dex__text_empty {
-	color: var(--iface-accent-color);
+  color: var(--iface-accent-color);
 }
 
 .dex__heading {
-	font-size: 13px;
-	font-family: Roboto, sans-serif;
-	font-weight: 400;
-	opacity: 0.5;
-	letter-spacing: 0.4px;
+  font-size: 13px;
+  font-family: Roboto, sans-serif;
+  font-weight: 400;
+  opacity: 0.5;
+  letter-spacing: 0.4px;
 }
 
 .dex__label {
-	margin-bottom: 10px;
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-}
-
-.dex__input {
-	width: 100%;
-	height: 36px;
-	border: none;
-	outline: none;
-	background: transparent;
-	color: var(--main-text-color);
-	font-size: 28px;
-	font-family: Roboto, sans-serif;
-	font-weight: 500;
-}
-
-.dex__input::placeholder {
-	color: var(--main-text-color);
-}
-
-.dex__receive-amount {
-	font-size: 28px;
-	line-height: 34px;
-	font-family: Roboto, sans-serif;
-	font-weight: 500;
+  padding: 0 12px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .dex__btn {
-	transition: .15s;
-	display: flex;
-	align-items: center;
-	gap: 6px;
-	height: 36px;
-	padding: 6px 10px 6px 6px;
-	border: 1px solid var(--iface-white20);
-	border-radius: 20px;
-	background: transparent;
-	font-size: 16px;
+  transition: 0.15s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 6px 10px 6px 6px;
+  border: 1px solid var(--iface-white20);
+  border-radius: 20px;
+  background: transparent;
+  font-size: 16px;
 }
 
 .theme-light .dex__btn {
-	border: 1px solid var(--iface-white10);
+  border: 1px solid var(--iface-white10);
 }
 
 .dex__btn::after {
-	content: '';
-	display: block;
-	width: 16px;
-	height: 16px;
-	background: url("@/assets/dex/arrow-down.svg") no-repeat;
+  content: '';
+  display: block;
+  width: 16px;
+  height: 16px;
+  background: url('@/assets/dex/arrow-down.svg') no-repeat;
 }
 
 .theme-light .dex__btn::after {
-	mix-blend-mode: difference;
-	filter: invert(.1);
+  mix-blend-mode: difference;
+  filter: invert(0.1);
 }
 
 .dex__btn:hover {
-	background: var(--iface-white20);
-	border: 1px solid var(--iface-white24);
+  background: var(--iface-white20);
+  border: 1px solid var(--iface-white24);
 }
 
 .btn-text {
-	font-family: Roboto, sans-serif;
-	font-weight: 500;
+  font-family: Roboto, sans-serif;
+  font-weight: 500;
 }
 
 .token-image {
-	border-radius: 100px;
-	width: 24px;
-	height: 24px;
+  border-radius: 100px;
+  width: 24px;
+  height: 24px;
 }
 
 .dex__group {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
 }
 
 .group-margin {
-	margin-bottom: 10px;
+  margin-bottom: 12px;
+}
+
+.group-padding {
+  padding-bottom: 12px;
 }
 
 .dex__price-block {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .token-price {
-	font-size: 13px;
-	line-height: 15px;
-	opacity: 0.5;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 0.5;
 }
 
 .token-impact {
-	margin-left: 4px;
-	font-size: 13px;
-	line-height: 15px;
-	opacity: 1;
+  margin-left: 4px;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 1;
 }
 
 .token-name {
@@ -434,26 +423,26 @@ export default {
 }
 
 .red-impact {
-	color: var(--main-red);
+  color: var(--main-red);
 }
 
 .yellow-impact {
-	color: var(--main-yellow);
+  color: var(--main-yellow);
 }
 
 .green-impact {
-	color: var(--main-green)
+  color: var(--main-green);
 }
 
 .token-balance {
-	font-size: 13px;
-	line-height: 15px;
-	opacity: 0.5;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 0.5;
 }
 
 .skeleton_balance {
-	width: 150px;
-	height: 32px;
+  width: 150px;
+  height: 32px;
 }
 
 /*.skeleton_row {
@@ -463,15 +452,15 @@ export default {
 }*/
 
 .skeleton_row {
-	width: 75px;
-	height: 15px;
+  width: 75px;
+  height: 15px;
 }
 
 .skeleton_token {
-	min-width: 100px;
-	height: 36px;
-	border-radius: 100px;
-	overflow: hidden;
+  min-width: 100px;
+  height: 36px;
+  border-radius: 100px;
+  overflow: hidden;
 }
 
 /*.dex__text_empty::after {
@@ -490,16 +479,15 @@ export default {
 	filter: none;
 }*/
 
-
 @media screen and (max-width: 640px) {
-	.dex__you-receive {
-		margin-bottom: 0;
-	}
+  .dex__you-receive {
+    margin-bottom: 0;
+  }
 
   .btn-tooltip {
     position: absolute;
-    max-width: 98%;
-    left: auto;
+    right: auto;
   }
+
 }
 </style>

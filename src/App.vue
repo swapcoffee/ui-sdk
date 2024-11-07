@@ -120,7 +120,6 @@ export default {
       }
       try {
         this.tokensRequestInProgress = true;
-        console.log("getTonTokens called", `Count: ${this.tokensRequestCount}`);
         let res = await this.tokensApi.getTokenList()
         let tokens = []
         res.forEach((item) => {
@@ -614,13 +613,7 @@ body {
   box-sizing: border-box;
 }
 
-html {
-  scroll-behavior: smooth;
-  overflow-y: scroll;
-}
-
 body {
-  overflow-x: hidden;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
