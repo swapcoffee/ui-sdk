@@ -28,9 +28,6 @@
 					<DexReverseInfo v-show="GET_SWAP_MODE === 'reverse'"/>
 				</transition>
 				<!-- <transition name="slide-plan"> -->
-				<DexDistributionButton
-					v-if="GET_DEAL_CONDITIONS !== null && GET_SEND_AMOUNT > 0 && GET_SEND_AMOUNT !== ''"
-				/>
 				<!-- </transition> -->
 				<div class="dex__button-wrapper">
 					<DexButton
@@ -515,6 +512,18 @@ export default {
         this.startTransaction = false;
       }
     },
+    toSafeAddress(rawAddress) {
+      try {
+        if (rawAddress === 'native') {
+          return 'TON'
+        }
+        const address = Address.parseRaw(rawAddress);
+        return address.toString({ bounceable: true, urlSafe: true });
+      } catch (error) {
+        console.log(error);
+        return null;
+      }
+    },
     sendWatchEvent() {
       const url = new URL(window.location.href);
       if (this.dexStore.GET_RECEIVE_TOKEN !== null &&
@@ -524,14 +533,14 @@ export default {
         clearInterval(this.interval as number);
         this.refreshDex();
 
-        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
-        url.searchParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
+        url.searchParams.set('ft', this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address));
+        url.searchParams.set('st', this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address));
         url.searchParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
 
         window.history.replaceState(null, '', url.toString());
       } else if (this.dexStore.GET_SEND_TOKEN !== null &&
           this.dexStore.GET_SEND_AMOUNT > 0) {
-        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
+        url.searchParams.set('ft', this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address));
         url.searchParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
 
         window.history.replaceState(null, '', url.toString());
@@ -560,8 +569,8 @@ export default {
         clearInterval(this.interval as number);
         this.refreshDex();
 
-        url.searchParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
-        url.searchParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
+        url.searchParams.set('ft', this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address));
+        url.searchParams.set('st', this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address));
         url.searchParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
 
         window.history.replaceState(null, '', url.toString());

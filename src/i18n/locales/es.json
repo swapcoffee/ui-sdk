@@ -40,6 +40,8 @@
     }
   },
   "dexInterface": {
+    "trustScore": "Puntuación de confianza",
+    "trustDescription": "La puntuación de confianza se calcula en función de parámetros en cadena y fuera de cadena, pero esta evaluación no proporciona garantías de seguridad del 100 %.",
     "selectToken": "Seleccionar token",
     "youSend": "Envías",
     "youReceive": "Recibes",
@@ -51,7 +53,24 @@
       "status": "Activado"
     }
   },
+
+  "dexRouteInfo": {
+    "cashback": "Recibirás un reembolso en efectivo",
+    "plan": "Plan de distribución a través de {dexNames}",
+    "shortPlan": "a través de {dexNames}",
+    "caption": [
+      "Plan de distribución",
+      "Enrutamiento"
+    ]
+  },
   "dexTokens": {
+    "noData": "Datos no encontrados",
+    "filters": [
+      "Todos los activos",
+      "Concurso",
+      "Reembolso",
+      "Nuevos"
+    ],
     "searchPlaceholder": "Buscar por nombre",
     "emptySearch": [
       "No encontramos ningún activo.",
@@ -203,117 +222,10 @@
       "Enrutamiento"
     ]
   },
-  "claimCenter": {
-    "description": "Invita a tus amigos, gana un porcentaje de la comisión de sus transacciones y reclama tus recompensas.",
-    "titles": [
-      "Todas las recompensas",
-      "Reembolso",
-      "Referencias",
-      "Concursos"
-    ],
-    "caption": "Selecciona tokens",
-    "text": "El costo de retiro depende de la cantidad de tokens seleccionados",
-    "empty": "No hay tokens para retirar",
-    "tooltip": "Otorgamos recompensas de diferentes billeteras, un token se puede retirar de varias billeteras, se debe pagar gas por cada transacción"
-  },
-  "claimHistory": {
-    "empty": "El historial de solicitudes está actualmente vacío."
-  },
-  "claimStatus": {
-    "failedText": "Intenta usar un deslizamiento mayor al habitual para\nasegurar que tu transacción se complete.",
-    "error": "Reclamación fallida",
-    "timed_out": "El tiempo de transacción ha expirado",
-    "pending": "Una segunda más",
-    "success": "Reclamo de éxito"
-  },
-  "referralInfo": {
-    "referrals": "{count} referencias",
-    "heading": "Programa de Referencias",
-    "description": "¡Invita a tus amigos y gana un porcentaje de las comisiones de sus transacciones! Cuando tu amigo use tu enlace, automáticamente se convertirá en tu referido.",
-    "withdraw": "Disponible para retiro",
-    "emptyWithdraw": "No hay tokens para retirar",
-    "blockNames": [
-      "Ingresos totales",
-      "Ingresos mensuales",
-      "Volumen total",
-      "Volumen mensual"
-    ],
-    "statsNames": [
-      "Porcentaje de recompensa",
-      "Nivel del sistema de referidos",
-      "Número de referidos"
-    ],
-    "tableTitles": [
-      "Dirección",
-      "Transacciones",
-      "Volumen",
-      "Mi recompensa"
-    ],
-    "levels": [
-      "Bronce",
-      "Plata",
-      "Oro"
-    ],
-    "empty": [
-      "La lista de referidos está actualmente vacía.",
-      "Comparte tu enlace de referido con otros usuarios"
-    ]
-  },
-  "referralHistory": {
-    "tableTitles": [
-      "Transacción",
-      "Hora",
-      "Costo"
-    ]
-  },
-  "referralLink": {
-    "caption": "Tu enlace de referido",
-    "description": "Este es tu enlace de referido, una vez que tu amigo haga clic en el enlace, automáticamente se convertirá en tu referido",
-    "copyBtn": "Copiar enlace",
-    "qrBtn": "Mostrar código QR"
-  },
-  "referralNav": {
-    "info": "Mi información",
-    "referrals": "Mis referidos",
-    "history": "Historial de solicitudes"
-  },
-  "referralFaq": {
-    "questions": [
-      "¿Cómo se calcula el porcentaje de recompensa?",
-      "¿Qué es el nivel del sistema de referidos?",
-      "¿Quién puede ser mi referido?",
-      "¿Cómo aumentar el porcentaje de recompensa?",
-      "¿Cómo obtener recompensas?"
-    ],
-    "answers": [
-      "El porcentaje de recompensa depende de tu nivel.\nswap.coffee no cobra tarifas adicionales a los usuarios. Compartimos una parte de nuestras ganancias de comisiones con el usuario, asegurando que no haya costos adicionales.",
-      "El nivel del sistema de referidos indica tu porcentaje de ingresos de referidos. Cuanto mayor sea el nivel, mayor será el porcentaje de recompensa.",
-      "Solo los nuevos usuarios pueden ser invitados como referidos. Los usuarios que ya han utilizado swap.coffee no pueden ser invitados como referidos.",
-      "Las herramientas para aumentar el nivel se añadirán más adelante. Se aplican condiciones especiales para influencers. Para detalles, por favor, contacta con nuestro Telegram.",
-      "En la página del programa de referidos puedes ver el monto total de tus ingresos. Esto incluye todos tus referidos de todos los DEX.\nEn el centro de solicitudes, puedes solicitar el monto ganado de StonFi. Las recompensas de DeDust estarán disponibles para solicitud más adelante, después de su distribución."
-    ],
-    "levels": "Tenemos tres niveles de comisión:\nBronce - Para todos los usuarios\nPlata - Para los stakers de CES (Próximamente)\nOro - Para influencers"
-  },
-  "cashback": {
-    "btnText": "Más detalles",
-    "menuDetail": "Detalles",
-    "menuPromo": "Términos de la promoción",
-    "terms": [
-      "Usa swap.coffee y recibe cashback en {token} por cada intercambio. La recompensa se acredita a una tasa de {percent}% del volumen de la transacción. La recompensa máxima por 1 día es {dailyLimit} {token}, y para todo el tiempo - {totalLimit} {token}. En total, se distribuirán {distributed} {token}."
-    ],
-    "details": [
-      "Inicio de la promoción",
-      "Fin de la promoción",
-      "Fondo de recompensas",
-      "Reembolso (diario)",
-      "Reembolso (total)",
-      "% del monto de la transacción"
-    ],
-    "ads": {
-      "btnText": "Anuncios",
-      "title": "AIRDROPS 10,000,000 $Whale TOKENs \uD83D\uDD25\uD83E\uDD2F",
-      "description": "Nuestra prioridad siempre ha sido la comunidad Whale: ¡aquí está tu oportunidad de ser de los PRIMEROS propietarios de $Whale Token! \uD83D\uDE80",
-      "subtitle": "Mejor Agregador DEX"
-    }
+  "interfaceTag": {
+    "soon": "En breve",
+    "new": "Nuevo",
+    "cashback": "Reembolso",
+    "contest": "Concurso"
   }
 }

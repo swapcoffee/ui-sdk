@@ -16,6 +16,10 @@ export default class TonApi extends Api {
 		super(ax);
 	}
 
+	getTonTokenPrice(tokenAddress) {
+		return this.request('/rates/' + tokenAddress);
+	}
+
 	getTonWalletInfo(walletAddress) {
 		return this.request('/accounts/' + walletAddress);
 	}

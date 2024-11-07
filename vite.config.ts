@@ -33,6 +33,27 @@ export default defineConfig({
     }
   },
   build: {
+    cssMinify: 'esbuild',
+    target: 'esnext',
+    outDir: 'dist',
+    rollupOptions: {
+      input: 'index.html'
+    },
+    commonjsOptions: { transformMixedEsModules: true },
+    minify: "terser",
+
+    terserOptions: {
+      toplevel: true,
+      compress: {
+        drop_console: true,
+        dead_code: true,
+        passes: 10,
+      },
+      format: {
+        comments: false,
+      },
+      module: true,
+    },
     lib: {
       entry: resolve(__dirname, 'src/main.ts'),
       name: 'SwapWidgetSDK',

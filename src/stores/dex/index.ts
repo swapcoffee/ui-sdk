@@ -22,6 +22,7 @@ export interface DexState {
 	stakingPool: any | null;
 	proofVerification: any | null;
 	payloadId: any | null;
+	tokenLabels: any[],
 }
 
 export const useDexStore = defineStore('dex', {
@@ -46,7 +47,8 @@ export const useDexStore = defineStore('dex', {
 		maxSplitsValue: 4,
 		stakingPool: null,
 		proofVerification: null,
-		payloadId: null
+		payloadId: null,
+		tokenLabels: [],
 	}),
 	actions: {
 		DEX_DEAL_CONDITIONS(item: any) {
@@ -69,6 +71,9 @@ export const useDexStore = defineStore('dex', {
 		},
 		DEX_USER_TOKENS(item: any[]) {
 			this.userTokens = item;
+		},
+		DEX_TOKEN_LABELS(item: any[]) {
+			this.tokenLabels = item;
 		},
 		DEX_WALLET(item: any) {
 			this.dexWallet = item;
@@ -155,6 +160,7 @@ export const useDexStore = defineStore('dex', {
 		GET_CASHBACK: (state) => state.cashback,
 		GET_EXPERT_MODE_VALUE: (state) => state.isExpertMode,
 		GET_DEX_WALLET_VERSION: (state) => state.dexWalletVersion,
-		GET_MAX_SPLITS: (state) => state.maxSplitsValue
+		GET_MAX_SPLITS: (state) => state.maxSplitsValue,
+		GET_TOKEN_LABELS: (state) => state.tokenLabels
 	}
 });

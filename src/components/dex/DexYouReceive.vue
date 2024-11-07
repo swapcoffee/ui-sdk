@@ -55,20 +55,47 @@
           </p>
         </div>
         <div class="skeleton skeleton_row" v-if="showSkeleton"></div>
-        <p class="token-name" v-if="receiveToken">{{ receiveToken?.name }}</p>
+        <p
+            class="trust-score"
+            v-if="dexStore.GET_RECEIVE_TOKEN"
+            @mouseenter="showTooltip = true"
+            @mouseleave="leaveTrustScore"
+        >
+          <span class="token-name">{{ $t("dexInterface.trustScore") }}:</span> {{ dexStore.GET_RECEIVE_TOKEN?.trust_score || 'No data'}}
+        </p>
         <div class="skeleton skeleton_row" v-if="!receiveToken"></div>
       </div>
+      <transition name="tooltip">
+        <tooltip-wrapper
+            arrowPosition="top"
+            v-show="showTooltip"
+            class="btn-tooltip"
+            @hidden-tooltip="leaveTrustScore"
+            @mouseleave="leaveTrustScore">
+          <DexTrust
+              :trustScore="dexStore.GET_RECEIVE_TOKEN?.trust_score || 0"
+              :symbol="dexStore.GET_RECEIVE_TOKEN?.symbol"
+          >
+          </DexTrust>
+        </tooltip-wrapper>
+      </transition>
     </div>
+    <DexRouteInfo
+        v-if="dexStore.GET_DEAL_CONDITIONS !== null && dexStore.GET_SEND_AMOUNT > 0 && dexStore.GET_SEND_AMOUNT !== ''"
+    />
   </div>
 </template>
 
 <script lang="ts">
 import { useDexStore } from "@/stores/dex";
 import DexInput from "@/components/dex/DexInput.vue";
+import DexRouteInfo from "@/components/dex/DexRouteInfo.vue";
+import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
+import DexTrust from "@/components/dex/DexTrust.vue";
 
 export default {
   name: "DexYouReceive",
-  components: {DexInput},
+  components: {DexTrust, TooltipWrapper, DexRouteInfo, DexInput},
   props: {
     poolNotFound: {
       type: Boolean,
@@ -80,6 +107,7 @@ export default {
       youReceive: '0',
       inputFocused: false,
       pageLoaded: false,
+      showTooltip: false,
     };
   },
   computed: {
@@ -150,6 +178,9 @@ export default {
     },
   },
   methods: {
+    leaveTrustScore() {
+      this.showTooltip = false
+    },
     focusInput() {
       const input = document.getElementById("receiveInput") as HTMLInputElement;
       input.focus();
@@ -207,7 +238,28 @@ export default {
 <style scoped>
 .dex__you-receive {
 	margin-bottom: 6px;
-	position: relative;
+}
+
+.trust-score {
+  font-size: 13px;
+  opacity: 1;
+}
+
+.trust-score::after {
+  position: relative;
+  top: 2px;
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin-left: 6px;
+  background: url('@/assets/dex/dyor-shield.svg') no-repeat;
+  background-size: contain;
+}
+
+.btn-tooltip {
+  position: absolute;
+  right: 1%;
 }
 
 .dex__content {
@@ -375,9 +427,10 @@ export default {
 }
 
 .token-name {
-	font-size: 13px;
-	line-height: 15px;
-	opacity: 0.5;
+  font-size: 13px;
+  line-height: 16px;
+  opacity: 0.6;
+  margin-right: 3px;
 }
 
 .red-impact {
@@ -442,5 +495,11 @@ export default {
 	.dex__you-receive {
 		margin-bottom: 0;
 	}
+
+  .btn-tooltip {
+    position: absolute;
+    max-width: 98%;
+    left: auto;
+  }
 }
 </style>

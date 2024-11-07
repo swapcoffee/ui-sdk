@@ -35,6 +35,8 @@
         }
     },
     "dexInterface": {
+        "trustScore": "Trust Score",
+        "trustDescription": "The trust score is calculated based on on-chain and off-chain parameters, but this assessment does not provide 100% security guarantees.",
         "selectToken": "Select a token",
         "youSend": "You send",
         "youReceive": "You receive",
@@ -46,7 +48,23 @@
             "status": "Enabled"
         }
     },
+    "dexRouteInfo": {
+        "cashback": "You will receive a Cashback",
+        "plan": "Distribution plan via {dexNames}",
+        "shortPlan": "via {dexNames}",
+        "caption": [
+            "Distribution plan",
+            "Routing"
+        ]
+    },
     "dexTokens": {
+        "noData": "No data found",
+        "filters": [
+            "All assets",
+            "New",
+            "Cashback",
+            "Contest"
+        ],
         "searchPlaceholder": "Search by name",
         "emptySearch": [
             "We didn't find any assets.",
@@ -200,108 +218,10 @@
             "Routing"
         ]
     },
-    "claimCenter": {
-        "description": "Invite friends, earn a percentage of the commission from their transactions, and claim your rewards!",
-        "titles": ["All rewards", "Cashback", "Referral", "Contests"],
-        "caption": "Select a Tokens",
-        "text": "The cost of withdrawal depends on the number of tokens you have selected",
-        "empty": "There are no tokens available for withdrawal",
-        "tooltip": "We award rewards from different wallets, one token can be withdrawn from several wallets, gas must be paid for each transaction"
-    },
-    "claimHistory": {
-        "empty": "The claim history is currently empty."
-    },
-    "claimStatus": {
-        "failedText": "Try using higher than normal slippage to\nensure your transaction is completed.",
-        "error": "Claim failed",
-        "timed_out": "Transaction time is out",
-        "pending": "One more second",
-        "success": "Claim success!"
-    },
-    "referralInfo": {
-        "referrals": "{count} referrals",
-        "heading": "Referral program",
-        "description": "Invite friends and earn a percentage of the commission from their transactions! When your friend uses your link, they automatically become your referral.",
-        "withdraw": "Available for withdrawal",
-        "emptyWithdraw": "There are no tokens available for withdrawal",
-        "blockNames": [
-            "Income for all time",
-            "Monthly income",
-            "Turnover from all time",
-            "Monthly turnover"
-        ],
-        "statsNames": [
-            "Reward Percentage",
-            "Referral Level",
-            "Number of referrals"
-        ],
-        "tableTitles": [
-            "Address",
-            "Transactions",
-            "Turnover",
-            "My reward"
-        ],
-        "levels": [
-            "Bronze",
-            "Silver",
-            "Gold"
-        ],
-        "empty": [
-            "The referral list is currently empty.",
-            "Share your referral link with other users"
-        ]
-    },
-    "referralHistory": {
-        "tableTitles": ["Transaction", "Time", "Value"]
-    },
-    "referralLink": {
-        "caption": "Your referral link",
-        "description": "This is your referral link, as soon as your friend clicks on the link, he will automatically become your referral",
-        "copyBtn": "Copy the link",
-        "qrBtn": "Show QR code"
-    },
-    "referralNav": {
-        "info": "My info",
-        "referrals": "My referrals",
-        "history": "Claim history"
-    },
-    "referralFaq": {
-        "questions": [
-            "How is the reward percentage calculated?",
-            "What is the referral system level?",
-            "Who can be my referral?",
-            "How to increase the reward percentage?",
-            "How to Claim Rewards?"
-        ],
-        "answers": [
-            "The reward percentage is based on your level.\nswap.coffee does not charge users any additional fees. We share a portion of our commission profits with the user, ensuring there are no extra costs.",
-            "The level of the referral system indicates your percentage of income from referrals. The higher the level, the higher the reward percentage.",
-            "Only new users can be invited as referrals. Users who have previously used swap.coffee cannot be invited as referrals.",
-            "Tools for level upgrades will be added later. Special conditions apply for influencers. For details, please contact our Telegram.",
-            "On the referral program page, you can see the total amount of your earnings. This includes all your referrals from all DEX.\nIn the claim center, you can request the amount earned from StonFi. Rewards from DeDust will be available for claiming later, after their distribution."
-        ],
-        "levels": "We have three commission levels:\nBronze - For all users\nSilver - For CES stakers (Coming soon)\nGold - For influencers"
-    },
-    "cashback": {
-        "btnText": "More Details",
-        "menuDetail": "Detail",
-        "menuPromo": "Terms of the promotion",
-        "terms": [
-            "Use swap.coffee and receive cashback in {token} for every exchange. The reward is credited at a rate of {percent}% of the transaction volume. The maximum reward for 1 day is {dailyLimit} {token}, and for all time - {totalLimit} {token}. In total, {distributed} {token} will be distributed."
-        ],
-        "details": [
-            "Promo starts",
-            "Promo end",
-            "Reward Pool",
-            "Cashback (daily)",
-            "Cashback (for all time)",
-            "% of the transaction amount"
-        ],
-        "ads": {
-            "btnText": "Ads",
-            "title": "AIRDROPS 10,000,000 $Whale TOKENs \uD83D\uDD25\uD83E\uDD2F",
-            "description": "Our priority has always been the Whale community: here's your chance to be THE FIRST $Whale Token owners! \uD83D\uDE80",
-            "subtitle": "Best DEX Aggregator"
-        }
+    "interfaceTag": {
+        "soon": "Soon",
+        "new": "New",
+        "cashback": "Cashback",
+        "contest": "Contest"
     }
 }

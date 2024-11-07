@@ -3,6 +3,7 @@ body {
     --main-blue: #4B76FF;
     --main-green: #32D74B;
     --main-red: #FF5449;
+    --main-purple: #C172FF;
     --main-yellow: #FFCF55;
     --main-white: #fff;
     --main-white50: rgba(255, 255, 255, 0.5);
@@ -30,6 +31,9 @@ body {
     --iface-warn-bg: 255, 207, 85, 0.06;
     --iface-error-text: #FF5449;
     --iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.20);
+
+    --tag-green-bg: rgba(50, 215, 75, 0.10);
+    --tag-purple-bg: rgba(193, 114, 255, 0.10);
 }
 
 .theme-coffee {

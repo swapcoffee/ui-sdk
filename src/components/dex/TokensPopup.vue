@@ -50,22 +50,45 @@
 						<p class="pinned-list__name">{{ item?.symbol }}</p>
 					</li>
 				</ul>
-				<div class="tokens-popup__icon-info">
-					<p class="info-text">$ {{ $t("dexTokens.info[0]") }}</p>
-					<div class="info-dividing"></div>
-					<svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-						<path opacity="0.8" fill-rule="evenodd" clip-rule="evenodd" d="M3.24981 3.61111C3.11222 3.61111 3.02649 3.76615 3.09582 3.8896L6.46518 9.88944V3.61111H3.24981ZM7.53483 3.61111V9.88944L10.9042 3.8896C10.9735 3.76615 10.8878 3.61111 10.7502 3.61111H7.53483ZM2.17188 4.44946C1.68657 3.58528 2.28666 2.5 3.24981 2.5H10.7502C11.7133 2.5 12.3134 3.58528 11.8281 4.44946L7.46197 12.2244C7.36613 12.3951 7.19023 12.5 7 12.5C6.80978 12.5 6.63388 12.3951 6.53803 12.2244L2.17188 4.44946Z" fill="white"/>
-					</svg>
-					<p class="info-text">{{ $t("dexTokens.info[1]") }}</p>
-					<div class="info-dividing"></div>
-					<svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 14 14" fill="none">
-						<g opacity="0.8">
-							<path d="M12.6286 11.5938C11.7957 10.1538 10.5121 9.12134 9.01426 8.63188C9.75518 8.19081 10.3308 7.51871 10.6528 6.7188C10.9748 5.9189 11.0253 5.03541 10.7966 4.20403C10.5678 3.37265 10.0725 2.63933 9.38667 2.1167C8.70083 1.59407 7.86239 1.31102 7.00012 1.31102C6.13784 1.31102 5.29941 1.59407 4.61357 2.1167C3.92773 2.63933 3.43241 3.37265 3.20368 4.20403C2.97495 5.03541 3.02545 5.9189 3.34742 6.7188C3.6694 7.51871 4.24505 8.19081 4.98598 8.63188C3.48809 9.12079 2.20457 10.1533 1.37168 11.5938C1.34114 11.6436 1.32088 11.699 1.3121 11.7567C1.30332 11.8145 1.3062 11.8734 1.32056 11.9301C1.33493 11.9867 1.36049 12.0399 1.39574 12.0865C1.43099 12.133 1.47521 12.1721 1.5258 12.2013C1.57639 12.2305 1.63232 12.2493 1.69029 12.2566C1.74826 12.2639 1.8071 12.2594 1.86333 12.2436C1.91956 12.2277 1.97205 12.2008 2.0177 12.1643C2.06334 12.1278 2.10122 12.0826 2.1291 12.0313C3.15941 10.2506 4.98051 9.18751 7.00012 9.18751C9.01973 9.18751 10.8408 10.2506 11.8711 12.0313C11.899 12.0826 11.9369 12.1278 11.9825 12.1643C12.0282 12.2008 12.0807 12.2277 12.1369 12.2436C12.1931 12.2594 12.252 12.2639 12.3099 12.2566C12.3679 12.2493 12.4238 12.2305 12.4744 12.2013C12.525 12.1721 12.5692 12.133 12.6045 12.0865C12.6397 12.0399 12.6653 11.9867 12.6797 11.9301C12.694 11.8734 12.6969 11.8145 12.6881 11.7567C12.6794 11.699 12.6591 11.6436 12.6286 11.5938ZM3.93762 5.25001C3.93762 4.6443 4.11723 4.0522 4.45374 3.54857C4.79025 3.04495 5.26855 2.65242 5.82815 2.42063C6.38775 2.18883 7.00351 2.12819 7.59758 2.24635C8.19165 2.36452 8.73733 2.65619 9.16563 3.08449C9.59393 3.51279 9.8856 4.05848 10.0038 4.65254C10.1219 5.24661 10.0613 5.86238 9.8295 6.42198C9.5977 6.98158 9.20518 7.45987 8.70155 7.79638C8.19793 8.1329 7.60582 8.31251 7.00012 8.31251C6.18816 8.31164 5.4097 7.98871 4.83556 7.41456C4.26142 6.84042 3.93849 6.06197 3.93762 5.25001Z" fill="white"/>
-						</g>
-					</svg>
-					<p class="info-text">{{ $t("dexTokens.info[2]") }}</p>
-				</div>
-				<div class="dividing-line"></div>
+        <div class="tokens-popup__categories">
+          <div class="tokens-popup__filters">
+            <div class="filter"
+                 :class="{'active_filter': activeFilter.name === 'all'}"
+                 @click="changeFilter({name: 'all'})"
+            >
+              <p class="filter__name">{{ $t('dexTokens.filters[0]') }}</p>
+            </div>
+            <div class="filter"
+                 :class="{'active_filter': activeFilter.name === filter.name}"
+                 v-for="(filter, index) in dexStore.GET_TOKEN_LABELS"
+                 @click="changeFilter(filter)"
+            >
+              <p class="filter__name">{{ $t(`dexTokens.filters.${index + 1}`) }}</p>
+            </div>
+          </div>
+          <div class="dividing-dashed"></div>
+          <div class="tokens-popup__icon-info">
+            <p class="info-text">$ {{ $t("dexTokens.info[0]") }}</p>
+            <div class="info-dividing"></div>
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                 viewBox="0 0 14 14" fill="none">
+              <path opacity="0.8" fill-rule="evenodd" clip-rule="evenodd"
+                    d="M3.24981 3.61111C3.11222 3.61111 3.02649 3.76615 3.09582 3.8896L6.46518 9.88944V3.61111H3.24981ZM7.53483 3.61111V9.88944L10.9042 3.8896C10.9735 3.76615 10.8878 3.61111 10.7502 3.61111H7.53483ZM2.17188 4.44946C1.68657 3.58528 2.28666 2.5 3.24981 2.5H10.7502C11.7133 2.5 12.3134 3.58528 11.8281 4.44946L7.46197 12.2244C7.36613 12.3951 7.19023 12.5 7 12.5C6.80978 12.5 6.63388 12.3951 6.53803 12.2244L2.17188 4.44946Z"
+                    fill="white"/>
+            </svg>
+            <p class="info-text">{{ $t("dexTokens.info[1]") }}</p>
+            <div class="info-dividing"></div>
+            <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                 viewBox="0 0 14 14" fill="none">
+              <g opacity="0.8">
+                <path
+                    d="M12.6286 11.5938C11.7957 10.1538 10.5121 9.12134 9.01426 8.63188C9.75518 8.19081 10.3308 7.51871 10.6528 6.7188C10.9748 5.9189 11.0253 5.03541 10.7966 4.20403C10.5678 3.37265 10.0725 2.63933 9.38667 2.1167C8.70083 1.59407 7.86239 1.31102 7.00012 1.31102C6.13784 1.31102 5.29941 1.59407 4.61357 2.1167C3.92773 2.63933 3.43241 3.37265 3.20368 4.20403C2.97495 5.03541 3.02545 5.9189 3.34742 6.7188C3.6694 7.51871 4.24505 8.19081 4.98598 8.63188C3.48809 9.12079 2.20457 10.1533 1.37168 11.5938C1.34114 11.6436 1.32088 11.699 1.3121 11.7567C1.30332 11.8145 1.3062 11.8734 1.32056 11.9301C1.33493 11.9867 1.36049 12.0399 1.39574 12.0865C1.43099 12.133 1.47521 12.1721 1.5258 12.2013C1.57639 12.2305 1.63232 12.2493 1.69029 12.2566C1.74826 12.2639 1.8071 12.2594 1.86333 12.2436C1.91956 12.2277 1.97205 12.2008 2.0177 12.1643C2.06334 12.1278 2.10122 12.0826 2.1291 12.0313C3.15941 10.2506 4.98051 9.18751 7.00012 9.18751C9.01973 9.18751 10.8408 10.2506 11.8711 12.0313C11.899 12.0826 11.9369 12.1278 11.9825 12.1643C12.0282 12.2008 12.0807 12.2277 12.1369 12.2436C12.1931 12.2594 12.252 12.2639 12.3099 12.2566C12.3679 12.2493 12.4238 12.2305 12.4744 12.2013C12.525 12.1721 12.5692 12.133 12.6045 12.0865C12.6397 12.0399 12.6653 11.9867 12.6797 11.9301C12.694 11.8734 12.6969 11.8145 12.6881 11.7567C12.6794 11.699 12.6591 11.6436 12.6286 11.5938ZM3.93762 5.25001C3.93762 4.6443 4.11723 4.0522 4.45374 3.54857C4.79025 3.04495 5.26855 2.65242 5.82815 2.42063C6.38775 2.18883 7.00351 2.12819 7.59758 2.24635C8.19165 2.36452 8.73733 2.65619 9.16563 3.08449C9.59393 3.51279 9.8856 4.05848 10.0038 4.65254C10.1219 5.24661 10.0613 5.86238 9.8295 6.42198C9.5977 6.98158 9.20518 7.45987 8.70155 7.79638C8.19793 8.1329 7.60582 8.31251 7.00012 8.31251C6.18816 8.31164 5.4097 7.98871 4.83556 7.41456C4.26142 6.84042 3.93849 6.06197 3.93762 5.25001Z"
+                    fill="white"/>
+              </g>
+            </svg>
+            <p class="info-text">{{ $t("dexTokens.info[2]") }}</p>
+          </div>
+        </div>
 			</div>
 
 			<div class="custom-scroll tokens-popup__scroll-block" data-scroll-lock-scrollable>
@@ -138,49 +161,50 @@
 					/>
 				</ul>
 
-				<ul class="tokens-popup__list"
-					v-if="tonTokens.length > 0 && searchValue.length === 0"
-				>
-					<li class="tokens-popup__list-title">{{ $t("dexTokens.titles[0]") }}</li>
-					<TokenItem
-						v-for="(item, index) in getYourTokens"
-						:key="index"
-						:item="item"
-						:userPinnedTokens="userPinnedTokens"
-						:userUnpinnedTokens="userUnpinnedTokens"
-						:tonPrice="getTonPrice"
-						:class="{
-							active_item: mode === 'SEND' && sendToken?.symbol === item.symbol ||
-							mode === 'RECEIVE' && receiveToken?.symbol === item.symbol
+        <ul class="tokens-popup__list"
+            v-if="filteredYourTokens.length > 0 && searchValue.length === 0">
+          <li class="tokens-popup__list-title">{{ $t("dexTokens.titles[0]") }}</li>
+          <TokenItem
+              v-for="(item, index) in filteredYourTokens"
+              :key="item.id"
+              :item="item"
+              :userPinnedTokens="userPinnedTokens"
+              :userUnpinnedTokens="userUnpinnedTokens"
+              :tonPrice="getTonPrice"
+              :activeFilter="activeFilter"
+              :class="{
+							active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
+							mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol
 						}"
-						@click="chooseToken(item)"
-						@pinToken="pinToken"
-						@unpinToken="unpinToken"
-					/>
-				</ul>
-				<ul class="tokens-popup__list"
-					v-if="searchValue.length === 0"
-				>
-					<li class="tokens-popup__list-title">{{ $t("dexTokens.titles[1]") }}</li>
-					<TokenItem
-						v-for="(item, index) in getAllTokens.slice(0, this.tokensCount)"
-						:key="index"
-						:item="item"
-						:userPinnedTokens="userPinnedTokens"
-						:userUnpinnedTokens="userUnpinnedTokens"
-						:tonPrice="getTonPrice"
-						:class="[
+              @click="chooseToken(item)"
+              @pinToken="pinToken"
+              @unpinToken="unpinToken"
+          />
+        </ul>
+        <ul class="tokens-popup__list"
+            v-if="filteredAllTokens.length > 0 && searchValue.length === 0"
+        >
+          <li class="tokens-popup__list-title">{{ $t("dexTokens.titles[1]") }}</li>
+          <TokenItem
+              v-for="(item, index) in filteredAllTokens.slice(0, this.tokensCount)"
+              :key="item.id"
+              :item="item"
+              :userPinnedTokens="userPinnedTokens"
+              :userUnpinnedTokens="userUnpinnedTokens"
+              :tonPrice="getTonPrice"
+              :activeFilter="activeFilter"
+              :class="[
 							'token_' + (index + 1),
 							{
-								active_item: mode === 'SEND' && sendToken?.symbol === item.symbol ||
-								mode === 'RECEIVE' && receiveToken?.symbol === item.symbol
+								active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
+								mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol
 							}
 						]"
-						@click="chooseToken(item)"
-						@pinToken="pinToken"
-						@unpinToken="unpinToken"
-					/>
-				</ul>
+              @click="chooseToken(item)"
+              @pinToken="pinToken"
+              @unpinToken="unpinToken"
+          />
+        </ul>
 			</div>
 		</div>
 	</div>
@@ -213,6 +237,9 @@ export default {
       debounce: null as ReturnType<typeof setTimeout> | null,
       searchValue: "",
       step: 1,
+      activeFilter: {
+        name: 'all'
+      },
     };
   },
   computed: {
@@ -271,10 +298,17 @@ export default {
     titleText(): string {
       return this.$t("dexInterface.selectToken") as string;
     },
-    checkTokenInList(): boolean {
-      return !!this.dexStore.GET_TON_TOKENS.find(
-          (find) => find.symbol === this.unlistedToken?.symbol
-      );
+    checkTokenInList() {
+      const friendlyAddress = this.unlistedToken?.address;
+      const rawAddress = this.toRawAddress(friendlyAddress);
+
+      let find = this.dexStore.GET_TON_TOKENS.find((token) => token.address === rawAddress);
+
+      if (!find) {
+        find = this.dexStore.GET_TON_TOKENS.find((token) => token.address === friendlyAddress);
+      }
+
+      return !!find;
     },
     getYourTokens(): any[] {
       return this.dexStore.GET_USER_TOKENS.filter((item) => item.balance > 0)
@@ -318,40 +352,72 @@ export default {
               self.findIndex((t) => t.address === item.address && t.name === item.name)
       );
     },
-    getSearchTokens(): any[] {
+    filteredYourTokens() {
+      if (this.activeFilter.name === 'all') {
+        return this.getYourTokens
+      } else {
+        return this.getYourTokens.filter((token) =>
+            token.labels?.some((label) => label.label_id === this.activeFilter.id)
+        );
+      }
+    },
+    filteredAllTokens() {
+      if (this.activeFilter.name === 'all') {
+        return this.getAllTokens
+      } else {
+        return this.getAllTokens.filter((token) =>
+            token.labels?.some((label) => label.label_id === this.activeFilter.id)
+        );
+      }
+    },
+    getSearchTokens() {
+      let tokensToSearch = this.dexStore.GET_TON_TOKENS;
+
+      if (this.activeFilter.name !== 'all') {
+        tokensToSearch = tokensToSearch.filter((token) =>
+            token.labels?.some((label) => label.label_id === this.activeFilter.id)
+        );
+      }
+
       if (this.searchValue.length === 0) {
-        return this.dexStore.GET_TON_TOKENS;
+        return tokensToSearch;
       } else if (this.searchValue.length <= 10) {
-        return this.dexStore.GET_TON_TOKENS.filter(
-            (item) =>
-                item.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-                item.symbol.toLowerCase().includes(this.searchValue.toLowerCase())
+        return tokensToSearch.filter((item) =>
+            item.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+            item.symbol.toLowerCase().includes(this.searchValue.toLowerCase())
         )
             .sort((a, b) => a.name.localeCompare(b.name))
             .sort((a, b) => this.checkItemIsPinned(b) - this.checkItemIsPinned(a));
       } else {
         let searchAddress = null;
-        if (
-            this.searchValue.includes(":") &&
-            this.searchValue.length === 66
-        ) {
+        if (this.searchValue.includes(':') && this.searchValue.length === 66) {
           searchAddress = this.searchValue;
-        } else if (
-            this.searchValue.substring(0, 2) === "EQ" ||
-            this.searchValue.substring(0, 2) === "UQ"
-        ) {
+        } else if (this.searchValue.substring(0, 2) === 'EQ' || this.searchValue.substring(0, 2) === 'UQ') {
           searchAddress = Address.parseFriendly(this.searchValue).address.toRawString();
         } else {
           return [];
         }
 
-        return this.dexStore.GET_TON_TOKENS.filter(
-            (item) => item?.address === searchAddress
-        );
+        return tokensToSearch.filter((item) => item?.address === searchAddress);
       }
-    },
+    }
   },
   methods: {
+    filterLabels() {
+      const filteredLabels = this.dexStore.GET_TOKEN_LABELS.filter((label) => {
+        return this.dexStore.GET_TON_TOKENS.some((token) =>
+            token.labels?.some((tokenLabel) => tokenLabel.label_id === label.id)
+        );
+      });
+
+      const sortedLabels = filteredLabels.sort((a, b) => a.id - b.id);
+
+      this.dexStore.DEX_TOKEN_LABELS(sortedLabels);
+    },
+    changeFilter(filter) {
+      this.activeFilter = filter
+      this.searchValue = '';
+    },
     showMoreTokens(entries: IntersectionObserverEntry[]) {
       if (entries[0].isIntersecting) {
         if (this.getAllTokens.length >= this.tokensCount + 50) {
@@ -389,13 +455,50 @@ export default {
       if (this.unlistedToken !== null) {
         this.unlistedToken = null;
       }
+
       if (this.searchValue.length > 10 && this.getSearchTokens.length === 0) {
-        clearTimeout(this.debounce!);
-        this.debounce = setTimeout(() => {
+        if (this.isAddress(this.searchValue)) {
           this.getUnlistedToken();
-        }, 1000);
+        } else {
+          clearTimeout(this.debounce);
+          this.debounce = setTimeout(() => {
+            this.getUnlistedToken();
+          }, 1000);
+        }
       } else {
-        clearTimeout(this.debounce!);
+        clearTimeout(this.debounce);
+      }
+    },
+    isAddress(value) {
+      try {
+        Address.parseFriendly(value);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    toRawAddress(address) {
+      try {
+        if (address === 'native') {
+          return 'TON'
+        }
+
+        const parsedAddress = Address.parseFriendly(address);
+        return parsedAddress.address.toRawString();
+      } catch (error) {
+        return address;
+      }
+    },
+    toSafeAddress(rawAddress) {
+      try {
+        if (rawAddress === 'native') {
+          return 'TON'
+        }
+        const address = Address.parseRaw(rawAddress);
+        return address.toString({ bounceable: true, urlSafe: true });
+      } catch (error) {
+        console.log(error);
+        return null;
       }
     },
     inputFocused() {
@@ -414,31 +517,40 @@ export default {
       }
     },
     importToken() {
-      this.unlistedToken.imported = true;
-      this.unlistedToken.type = "jetton";
-      this.unlistedToken.balance = 0;
+      this.unlistedToken.imported = true
+      let array = []
+      let allTokens = this.dexStore.GET_TON_TOKENS
+      let storage = JSON.parse(localStorage.getItem('importTokens'))
+      // let storage = this.GET_USER_SETTINGS?.importTokens
 
-      const allTokens = this.dexStore.GET_TON_TOKENS.slice();
-      const storage = JSON.parse(localStorage.getItem("importTokens") || "[]");
-
-      const isTokenExist = storage.some(
-          (item: any) =>
+      if (storage) {
+        array = storage;
+      }
+      if (array.length > 0) {
+        array.forEach((item) => {
+          if (
               item?.symbol === this.unlistedToken?.symbol &&
               item?.address === this.unlistedToken?.address
-      );
-
-      if (!isTokenExist) {
-        storage.push(this.unlistedToken);
+          ) {
+            return;
+          }
+          array.push(this.unlistedToken);
+          allTokens.unshift(this.unlistedToken);
+        });
+      } else {
+        array.push(this.unlistedToken);
         allTokens.unshift(this.unlistedToken);
       }
 
-      localStorage.setItem("importTokens", JSON.stringify(storage));
-      this.dexStore.DEX_TON_TOKENS(allTokens);
+      localStorage.removeItem('importTokens')
+      localStorage.setItem('importTokens', JSON.stringify(array))
+
+      this.dexStore.DEX_TON_TOKENS(allTokens)
 
       setTimeout(() => {
-        this.searchValue = "";
-        this.chooseToken(this.unlistedToken);
-      }, 200);
+        this.searchValue = ''
+        this.chooseToken(this.unlistedToken)
+      }, 200)
     },
     chooseToken(item: any) {
       if (this.mode === "SEND") {
@@ -484,39 +596,41 @@ export default {
         }
       }
     },
-    addedSendQuery(value: any) {
+    addedSendQuery(value) {
       const queryParams = new URLSearchParams(window.location.search);
-      queryParams.set('ft', value.symbol);
+
+      queryParams.set('ft', this.toSafeAddress(value.address));
 
       if (this.dexStore.GET_RECEIVE_TOKEN !== null) {
-        queryParams.set('st', this.dexStore.GET_RECEIVE_TOKEN?.symbol);
+        queryParams.set('st', this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address));
       }
 
-      if (this.dexStore.GET_SWAP_MODE === "default") {
+      if (this.dexStore.GET_SWAP_MODE === 'default') {
         if (this.dexStore.GET_SEND_AMOUNT > 0) {
           queryParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
         }
-      } else if (this.dexStore.GET_SWAP_MODE === "reverse") {
+      } else if (this.dexStore.GET_SWAP_MODE === 'reverse') {
         if (this.dexStore.GET_RECEIVE_AMOUNT > 0) {
           queryParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
         }
       }
 
-      window.history.replaceState(null, '', `?${queryParams.toString()}`);
+        window.history.replaceState(null, '', `?${queryParams.toString()}`);
     },
-    addedReceiveQuery(value: any) {
+    addedReceiveQuery(value) {
       const queryParams = new URLSearchParams(window.location.search);
-      queryParams.set('ft', this.dexStore.GET_SEND_TOKEN?.symbol);
+
+      queryParams.set('ft', this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address));
 
       if (value !== null) {
-        queryParams.set('st', value.symbol);
+        queryParams.set('st', this.toSafeAddress(value.address));
       }
 
-      if (this.dexStore.GET_SWAP_MODE === "default") {
+      if (this.dexStore.GET_SWAP_MODE === 'default') {
         if (this.dexStore.GET_SEND_AMOUNT > 0) {
           queryParams.set('fa', this.dexStore.GET_SEND_AMOUNT.toString());
         }
-      } else if (this.dexStore.GET_SWAP_MODE === "reverse") {
+      } else if (this.dexStore.GET_SWAP_MODE === 'reverse') {
         if (this.dexStore.GET_RECEIVE_AMOUNT > 0) {
           queryParams.set('sa', this.dexStore.GET_RECEIVE_AMOUNT.toString());
         }
@@ -637,6 +751,7 @@ export default {
     },
   },
   mounted() {
+    this.filterLabels()
     setTimeout(() => {
       if (this.getTarget) {
         this.observer.observe(this.getTarget);
@@ -731,6 +846,32 @@ export default {
 	margin-right: 15px;
 	width: 20px;
 	height: 20px;
+}
+
+.tokens-popup__filters {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px dashed var(--iface-white10);
+  margin-bottom: 12px;
+  padding: 0 16px;
+}
+
+.filter {
+  padding-bottom: 12px;
+  opacity: 0.4;
+  cursor: pointer;
+  transform: translateY(1px);
+}
+
+.filter__name {
+  font-size: 14px;
+  line-height: 17px;
+}
+
+.active_filter {
+  opacity: 1;
+  border-bottom: 1px solid var(--main-text-color);
 }
 
 .tokens-popup__remove-btn {

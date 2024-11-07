@@ -1,9 +1,11 @@
 import { THEME, toUserFriendlyAddress } from '@tonconnect/ui';
 import { useDexStore } from '@/stores/dex';
 import { useSettingsStore } from "@/stores/settings";
+import computedMixins from "@/mixins/computedMixins";
 
 export default {
     inject: ['tonConnectManifest', 'tonConnectUi'],
+    mixins: [computedMixins],
     computed: {
         dexStore() {
             return useDexStore();
@@ -108,17 +110,20 @@ export default {
 
         async getUserSettings() {
             try {
-                const settings = await this.dexApiV2.readStorage(
+                let settings = await this.dexApiV2.readStorage(
                     this.dexStore.GET_DEX_WALLET?.address,
-                    this.GET_PROOF_VERIFICATION
-                );
+                    this.dexStore.GET_PROOF_VERIFICATION
+                )
                 if (settings.body?.dexSettings && settings.body?.globalSettings) {
-                    this.SAVE_USER_SETTINGS(settings.body);
+                    this.SAVE_USER_SETTINGS(settings.body)
                 } else {
-                    await this.setDefaultSettings();
+                    await this.setDefaultSettings()
                 }
             } catch (err) {
-                console.error(err);
+                if (err?.response?.status === 403) {
+                    await this.disconnectWallet()
+                }
+                console.error(err)
             }
         },
 

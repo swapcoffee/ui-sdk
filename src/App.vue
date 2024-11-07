@@ -13,6 +13,7 @@ import methodsMixins from "@/mixins/methodsMixins";
 import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
+import {Address} from "@ton/core";
 
 export default {
   name: "App",
@@ -25,6 +26,8 @@ export default {
       loadInfoCount: 0,
       tonInfo: null,
       timeout: null,
+      tokensRequestInProgress: false,
+      balanceRequestInProgress: false,
     }
   },
   computed: {
@@ -40,6 +43,9 @@ export default {
   },
   methods: {
     subscribeConnect() {
+      if (this.unsubscribeConnect) {
+        this.unsubscribeConnect();
+      }
       this.unsubscribeConnect = this.tonConnectUi.onStatusChange((wallet) => {
         if (wallet === null) {
           this.dexStore.DEX_WALLET(null);
@@ -96,6 +102,8 @@ export default {
       }
     },
     updateWalletInfo() {
+      this.balanceRequestCount++;
+      console.log("updateWalletInfo called", `Count: ${this.balanceRequestCount}`);
       this.getAccountInfo(this.GET_DEX_WALLET)
     },
     async getPinnedTokens() {
@@ -107,7 +115,12 @@ export default {
       }
     },
     async getTonTokens(retryCount = 0) {
+      if (this.tokensRequestInProgress) {
+        return;
+      }
       try {
+        this.tokensRequestInProgress = true;
+        console.log("getTonTokens called", `Count: ${this.tokensRequestCount}`);
         let res = await this.tokensApi.getTokenList()
         let tokens = []
         res.forEach((item) => {
@@ -143,70 +156,112 @@ export default {
             this.getTonTokens(retryCount + 1);
           }, 5000);
         }
+      } finally {
+        this.tokensRequestInProgress = false;
+      }
+    },
+    isAddress(value) {
+      try {
+        if (value === 'native') {
+          return 'TON'
+        }
+
+        Address.parseFriendly(value);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    toRawAddress(address) {
+      try {
+        if (address === 'native') {
+          return 'TON'
+        }
+
+        const parsedAddress = Address.parseFriendly(address);
+        return parsedAddress.address.toRawString();
+      } catch (error) {
+        return address;
       }
     },
     checkQueryParams(mergeTokens) {
       const urlParams = new URLSearchParams(window.location.search);
 
-      const ref = urlParams.get('ref');
-      const referral = urlParams.get('referral');
-      const ft = urlParams.get('ft');
-      const st = urlParams.get('st');
-      const fa = urlParams.get('fa');
-      const sa = urlParams.get('sa');
-
-      if (ref) {
-        sessionStorage.setItem('referral_name', JSON.stringify(ref));
+      if (urlParams.has('ref')) {
+        sessionStorage.setItem('referral_name', JSON.stringify(urlParams.get('ref')));
+      }
+      if (urlParams.has('referral') || urlParams.has('r')) {
+        sessionStorage.setItem('user_referral', JSON.stringify(urlParams.get('referral') || urlParams.get('r')));
       }
 
-      if (referral) {
-        sessionStorage.setItem('user_referral', JSON.stringify(referral));
-      }
-      if (ft && st) {
-        const firstToken = mergeTokens.find((item) => item.symbol === ft);
-        const secondToken = mergeTokens.find((item) => item.symbol === st);
+      if (urlParams.has('ft') && urlParams.has('st')) {
+        let first, second;
 
-        if (firstToken) {
-          this.dexStore.DEX_SEND_TOKEN(firstToken);
+        const ftRawAddress = this.isAddress(urlParams.get('ft')) ? this.toRawAddress(urlParams.get('ft')) : null;
+        const stRawAddress = this.isAddress(urlParams.get('st')) ? this.toRawAddress(urlParams.get('st')) : null;
+
+        first = mergeTokens.find((item) => item.address === ftRawAddress) ||
+            mergeTokens.find((item) => item.symbol === urlParams.get('ft'));
+
+        second = mergeTokens.find((item) => item.address === stRawAddress) ||
+            mergeTokens.find((item) => item.symbol === urlParams.get('st'));
+
+        if (first) {
+          this.dexStore.DEX_SEND_TOKEN(first);
         }
-
-        if (secondToken) {
-          this.dexStore.DEX_RECEIVE_TOKEN(secondToken);
-        }
-
-        setTimeout(() => {
-          if (Number(fa) > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          }
-          if (Number(sa) > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
-          }
-        }, 10);
-      }
-      else if (ft) {
-        const firstToken = mergeTokens.find((item) => item.symbol === ft);
-
-        if (firstToken) {
-          this.dexStore.DEX_SEND_TOKEN(firstToken);
+        if (second) {
+          this.dexStore.DEX_RECEIVE_TOKEN(second);
         }
 
         setTimeout(() => {
-          if (Number(fa) > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(fa));
-          }
-          if (Number(sa) > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(sa));
+          if (urlParams.has('fa') && Number(urlParams.get('fa')) > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(urlParams.get('fa')));
+          } else if (urlParams.has('sa') && Number(urlParams.get('sa')) > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(urlParams.get('sa')));
           }
         }, 10);
-      }
-      else {
-        const defaultToken = mergeTokens.find((item) => item.type === 'native');
-        if (defaultToken) {
-          this.dexStore.DEX_SEND_TOKEN(defaultToken);
+
+      } else if (urlParams.has('ft')) {
+        let first;
+
+        const ftRawAddress = this.isAddress(urlParams.get('ft')) ? this.toRawAddress(urlParams.get('ft')) : null;
+        first = mergeTokens.find((item) => item.address === ftRawAddress) ||
+            mergeTokens.find((item) => item.symbol === urlParams.get('ft'));
+
+        if (first) {
+          this.dexStore.DEX_SEND_TOKEN(first);
+        }
+
+        setTimeout(() => {
+          if (urlParams.has('fa') && Number(urlParams.get('fa')) > 0) {
+            this.dexStore.DEX_SEND_AMOUNT(Number(urlParams.get('fa')));
+          } else if (urlParams.has('sa') && Number(urlParams.get('sa')) > 0) {
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(urlParams.get('sa')));
+          }
+        }, 10);
+
+      } else {
+        const findToken = mergeTokens.find((item) => item.type === 'native');
+        if (findToken) {
+          this.dexStore.DEX_SEND_TOKEN(findToken);
         }
       }
     },
+    async getTokenLabels() {
+      try {
+        let res = await this.tokensApi.getLabels()
+        this.dexStore.DEX_TOKEN_LABELS(res?.items)
+      } catch(err) {
+        console.error(err)
+      }
+    },
     async getAccountInfo(wallet) {
+      if (this.balanceRequestInProgress) {
+        return;
+      }
+
+      this.balanceRequestInProgress = true;
+
       try {
         let balance = await this.getBalanceWithRetry(wallet)
         let walletInfo = {
@@ -214,31 +269,33 @@ export default {
           balance: Number(balance),
         }
 
-        let mergedTokens = await this.mergeTonTokens(walletInfo)
-        this.dexStore.DEX_USER_TOKENS(mergedTokens)
+        let mergedTokens = await this.mergeTonTokens(walletInfo);
+        this.dexStore.DEX_USER_TOKENS(mergedTokens);
       } catch (err) {
-        console.log(err)
+        console.log(err);
+      } finally {
+        this.balanceRequestInProgress = false;
       }
     },
     async getBalanceWithRetry(wallet) {
       try {
         return await this.getBalance(wallet);
       } catch (err) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, 2000));
         return await this.getBalanceFromTonApi(wallet);
       }
     },
     async getBalance(wallet) {
       try {
-        return await this.dexApiV2.getBalance(wallet.address)
-      } catch(err) {
-        throw err
+        return await this.dexApiV2.getBalance(wallet.address);
+      } catch (err) {
+        throw err;
       }
     },
     async getBalanceFromTonApi(wallet) {
       try {
         let res = await this.tonApi.getTonWalletInfo(wallet.address);
-        return res?.balance
+        return res?.balance;
       } catch (err) {
         throw err;
       }
@@ -343,21 +400,21 @@ export default {
           value: { tonProof: crypto.randomUUID() },
         });
     },
-    async getUserSettings() {
-      try {
-        const settings = await this.dexApiV2.readStorage(
-            this.dexStore.GET_DEX_WALLET?.address,
-            this.GET_PROOF_VERIFICATION
-        );
-        if (settings.body?.dexSettings && settings.body?.globalSettings) {
-          this.SAVE_USER_SETTINGS(settings.body);
-        } else {
-          await this.setDefaultSettings();
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    },
+    // async getUserSettings() {
+    //   try {
+    //     const settings = await this.dexApiV2.readStorage(
+    //         this.dexStore.GET_DEX_WALLET?.address,
+    //         this.dexStore.GET_PROOF_VERIFICATION
+    //     );
+    //     if (settings.body?.dexSettings && settings.body?.globalSettings) {
+    //       this.SAVE_USER_SETTINGS(settings.body);
+    //     } else {
+    //       await this.setDefaultSettings();
+    //     }
+    //   } catch (err) {
+    //     console.error(err);
+    //   }
+    // },
 
     async setDefaultSettings() {
       try {
@@ -378,7 +435,7 @@ export default {
 
         await this.dexApiV2.writeStorage(
             this.dexStore.GET_DEX_WALLET?.address,
-            this.GET_PROOF_VERIFICATION,
+            this.dexStore.GET_PROOF_VERIFICATION,
             { globalSettings: global, dexSettings: dex }
         );
       } catch (err) {
@@ -391,6 +448,7 @@ export default {
     this.restoreUiConnection()
     this.tonproofSetConnect()
     this.getPinnedTokens()
+    this.getTokenLabels()
     let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
     let walletInfoStorage = JSON.parse(localStorage.getItem('ton-connect-ui_wallet-info'))
     let wallet = tonConnectStorage?.connectEvent?.payload?.items[0]
@@ -458,6 +516,9 @@ body {
   --iface-r20: 20px;
   --iface-r100: 100px;
   --adv-color: #FF9839;
+
+  --tag-green-bg: rgba(50, 215, 75, 0.10);
+  --tag-purple-bg: rgba(193, 114, 255, 0.10);
 
   --iface-white2: rgba(255, 255, 255, 0.02);
   --iface-white4: rgba(255, 255, 255, 0.04);
