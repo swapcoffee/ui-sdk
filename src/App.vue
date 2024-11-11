@@ -14,11 +14,12 @@ import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
 import {Address} from "@ton/core";
+import "./main.css";
 
 export default {
   name: "App",
   components: {SwapWidget},
-  inject: ['tonConnectUi'],
+  inject: ['tonConnectUi', "injectionMode", 'payload'],
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
   data() {
     return {
@@ -46,23 +47,93 @@ export default {
       if (this.unsubscribeConnect) {
         this.unsubscribeConnect();
       }
-      this.unsubscribeConnect = this.tonConnectUi.onStatusChange((wallet) => {
-        if (wallet === null) {
+      if (this.injectionMode === 'tonConnect') {
+        this.unsubscribeConnect = this.tonConnectUi.onStatusChange((wallet) => {
+          if (wallet === null) {
+            this.dexStore.DEX_WALLET(null);
+            this.dexStore.DEX_PROOF_VERIFICATION(null);
+            localStorage.removeItem("tonProof_ver");
+            this.tonproofSetConnect();
+            return;
+          }
+          if (wallet && wallet.connectItems?.tonProof && "proof" in wallet.connectItems.tonProof) {
+            wallet.account.userFriendlyAddress = toUserFriendlyAddress(wallet?.account.address);
+            wallet.account.imgUrl = wallet?.imageUrl;
+
+            this.dexStore.DEX_WALLET(wallet.account);
+            this.getContractVersion(wallet.account.userFriendlyAddress);
+            this.checkProof(wallet);
+          }
+        });
+      } else if (this.injectionMode === 'payload' && this.payload) {
+        const walletMeta = this.payload.wallet_meta;
+        const verify = this.payload.verify;
+        if (walletMeta && verify) {
+          const account = {
+            address: walletMeta.address,
+            imgUrl: '',
+            publicKey: verify.public_key,
+          };
+
+          this.dexStore.DEX_WALLET(account);
+          // this.getContractVersion(walletMeta.address);
+          this.DEX_PROOF_VERIFICATION(verify);
+          this.getUserSettings();
+        } else {
           this.dexStore.DEX_WALLET(null);
           this.dexStore.DEX_PROOF_VERIFICATION(null);
-          localStorage.removeItem("tonProof_ver");
-          this.tonproofSetConnect();
-          return;
+          this.disconnectWallet();
         }
-        if (wallet && wallet.connectItems?.tonProof && "proof" in wallet.connectItems.tonProof) {
-          wallet.account.userFriendlyAddress = toUserFriendlyAddress(wallet?.account.address);
-          wallet.account.imgUrl = wallet?.imageUrl;
+      }
+    },
+    restoreUiConnection() {
+      if (this.injectionMode === 'tonConnect') {
+        this.tonConnectUi.connectionRestored.then((restored) => {
+          if (restored) {
+            console.log('connection restored');
+            const account = this.tonConnectUi.account;
+            account.userFriendlyAddress = toUserFriendlyAddress(this.tonConnectUi.account.address);
+            account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
+            const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
+            if (proof) {
+              this.DEX_WALLET(account);
+              this.getContractVersion(account.userFriendlyAddress);
+              this.DEX_PROOF_VERIFICATION(proof);
+              this.getUserSettings();
+            } else {
+              console.log('disconnect');
+              this.disconnectWallet();
+            }
+          } else {
+            console.log('Connection was not restored.');
+          }
+        });
+      } else if (this.injectionMode === 'payload') {
+        const walletMeta = this.payload.wallet_meta;
+        const verify = this.payload.verify;
 
-          this.dexStore.DEX_WALLET(wallet.account);
-          this.getContractVersion(wallet.account.userFriendlyAddress);
-          this.checkProof(wallet);
+        if (walletMeta && verify) {
+          const account = {
+            userFriendlyAddress: toUserFriendlyAddress(walletMeta.address),
+            imgUrl: '',
+            publicKey: verify.public_key,
+            address: walletMeta.address
+          };
+
+          const proof = verify.proof || {};
+          if (proof.timestamp) {
+            this.DEX_WALLET(account);
+            this.getContractVersion(account.userFriendlyAddress);
+            this.DEX_PROOF_VERIFICATION(proof);
+            this.getUserSettings();
+          } else {
+            console.log('disconnect');
+            this.disconnectWallet();
+          }
+        } else {
+          console.log('Invalid payload data.');
         }
-      });
+      }
     },
     checkProof(wallet: any) {
       const tonProof = wallet.connectItems.tonProof.proof;
@@ -358,28 +429,6 @@ export default {
         }
       }
     },
-    restoreUiConnection() {
-      this.tonConnectUi.connectionRestored.then((restored) => {
-        if (restored) {
-          console.log('connection restored');
-          const account = this.tonConnectUi.account;
-          account.userFriendlyAddress = toUserFriendlyAddress(this.tonConnectUi.account.address);
-          account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
-          const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
-          if (proof) {
-            this.DEX_WALLET(account);
-            this.getContractVersion(account.userFriendlyAddress);
-            this.DEX_PROOF_VERIFICATION(proof);
-            this.getUserSettings();
-          } else {
-            console.log('disconnect');
-            this.disconnectWallet();
-          }
-        } else {
-          console.log('Connection was not restored.');
-        }
-      });
-    },
     async disconnectWallet() {
       try {
         await this.tonConnectUi.disconnect();
@@ -389,15 +438,19 @@ export default {
       }
     },
     tonproofSetConnect() {
-      const storedVerification = JSON.parse(localStorage.getItem('tonProof_ver') || null);
-      if (storedVerification) {
-        return;
-      }
+      if (this.injectionMode === 'tonConnect') {
+        const storedVerification = JSON.parse(localStorage.getItem('tonProof_ver') || null);
+        if (storedVerification) {
+          return;
+        }
 
-      this.tonConnectUi.setConnectRequestParameters({
-          state: 'ready',
-          value: { tonProof: crypto.randomUUID() },
-        });
+        if (this.tonConnectUi) {
+          this.tonConnectUi.setConnectRequestParameters({
+            state: 'ready',
+            value: { tonProof: crypto.randomUUID() },
+          });
+        }
+      }
     },
     // async getUserSettings() {
     //   try {

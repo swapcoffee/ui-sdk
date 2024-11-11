@@ -4,7 +4,7 @@ import { useSettingsStore } from "@/stores/settings";
 import computedMixins from "@/mixins/computedMixins";
 
 export default {
-    inject: ['tonConnectManifest', 'tonConnectUi'],
+    inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode'],
     mixins: [computedMixins],
     computed: {
         dexStore() {
@@ -60,27 +60,72 @@ export default {
             this.dexStore.DEX_PROOF_VERIFICATION(proof);
         },
 
-        restoreUiConnection() {
-            this.tonConnectUi.connectionRestored.then((restored) => {
-                if (restored) {
-                    console.log('connection restored');
-                    const account = this.tonConnectUi.account;
-                    account.userFriendlyAddress = toUserFriendlyAddress(this.tonConnectUi.account.address);
-                    account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
-                    const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
-                    if (proof) {
-                        this.DEX_WALLET(account);
-                        this.getContractVersion(account.userFriendlyAddress);
-                        this.DEX_PROOF_VERIFICATION(proof);
-                        this.getUserSettings();
-                    } else {
-                        console.log('disconnect');
-                        this.disconnectWallet();
-                    }
+        async loadSettingsFromPayload(address) {
+            try {
+                let settings = await this.dexApiV2.readStorage(
+                    address,
+                    this.dexStore.GET_PROOF_VERIFICATION
+                );
+                if (settings.body?.dexSettings && settings.body?.globalSettings) {
+                    this.SAVE_USER_SETTINGS(settings.body);
                 } else {
-                    console.log('Connection was not restored.');
+                    await this.setDefaultSettings();
                 }
-            });
+            } catch (err) {
+                console.error(err);
+            }
+        },
+
+        async getSettingsFromTonConnect() {
+            try {
+                const account = this.tonConnectUi.account;
+                const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
+                if (proof) {
+                    this.DEX_WALLET(account);
+                    this.DEX_PROOF_VERIFICATION(proof);
+                    this.getUserSettings();
+                } else {
+                    console.log('disconnect');
+                    this.disconnectWallet();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        },
+
+
+        restoreUiConnection() {
+            if (this.injectionMode === 'payload') {
+                const { wallet_meta, verify } = this.payload;
+                const account = {
+                    address: wallet_meta.address,
+                    userFriendlyAddress: toUserFriendlyAddress(wallet_meta.address),
+                    imgUrl: '',
+                };
+                this.DEX_WALLET(account);
+                this.DEX_PROOF_VERIFICATION(verify);
+                this.getUserSettings();
+            } else {
+                this.tonConnectUi.connectionRestored.then((restored) => {
+                    if (restored) {
+                        console.log('connection restored');
+                        const account = this.tonConnectUi.account;
+                        account.userFriendlyAddress = toUserFriendlyAddress(this.tonConnectUi.account.address);
+                        account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
+                        const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
+                        if (proof) {
+                            this.DEX_WALLET(account);
+                            this.DEX_PROOF_VERIFICATION(proof);
+                            this.getUserSettings();
+                        } else {
+                            console.log('disconnect');
+                            this.disconnectWallet();
+                        }
+                    } else {
+                        console.log('Connection was not restored.');
+                    }
+                });
+            }
         },
 
         async disconnectWallet() {
@@ -110,20 +155,24 @@ export default {
 
         async getUserSettings() {
             try {
-                let settings = await this.dexApiV2.readStorage(
-                    this.dexStore.GET_DEX_WALLET?.address,
-                    this.dexStore.GET_PROOF_VERIFICATION
-                )
-                if (settings.body?.dexSettings && settings.body?.globalSettings) {
-                    this.SAVE_USER_SETTINGS(settings.body)
+                if (this.injectionMode !== 'tonConnect') {
+                    const { wallet_meta, verify } = this.payload;
+
+                    const wallet = {
+                        address: wallet_meta.address,
+                    };
+
+                    if (verify && verify.public_key && verify.wallet_state_init) {
+                        this.DEX_WALLET(wallet);
+                        this.DEX_PROOF_VERIFICATION(verify);
+                    }
+
+                    await this.loadSettingsFromPayload(wallet_meta.address);
                 } else {
-                    await this.setDefaultSettings()
+                    await this.getSettingsFromTonConnect();
                 }
             } catch (err) {
-                if (err?.response?.status === 403) {
-                    await this.disconnectWallet()
-                }
-                console.error(err)
+                console.error(err);
             }
         },
 
