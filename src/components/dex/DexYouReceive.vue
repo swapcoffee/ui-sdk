@@ -20,7 +20,7 @@
         <label for="" class="dex__label">
           <p class="skeleton skeleton_balance" v-if="showSkeleton && dexStore.GET_SWAP_MODE === 'default'"></p>
           <DexInput id="receiveInput" v-else
-                    :model-value="youReceive"
+                    :model-value="String(youReceive)"
                     @update:model-value="updateValue"
           />
           <button class="dex__btn"
@@ -48,7 +48,7 @@
           <p
               class="trust-score"
               v-if="dexStore.GET_RECEIVE_TOKEN"
-              @mouseenter="showTooltip = true"
+              @mouseenter="cancelCloseTooltip"
               @mouseleave="leaveTrustScore"
           >
             <span class="token-name">{{ $t("dexInterface.trustScore") }}:</span> {{ dexStore.GET_RECEIVE_TOKEN?.trust_score || 'No data'}}
@@ -60,6 +60,7 @@
               arrowPosition="top"
               v-show="showTooltip"
               class="btn-tooltip"
+              @mouseenter="cancelCloseTooltip"
               @hidden-tooltip="leaveTrustScore"
               @mouseleave="leaveTrustScore">
             <DexTrust
@@ -99,6 +100,7 @@ export default {
       inputFocused: false,
       pageLoaded: false,
       showTooltip: false,
+      closeTooltipTimeout: null,
     };
   },
   computed: {
@@ -170,7 +172,16 @@ export default {
   },
   methods: {
     leaveTrustScore() {
-      this.showTooltip = false
+      this.closeTooltipTimeout = setTimeout(() => {
+        this.showTooltip = false;
+      }, 200);
+    },
+    cancelCloseTooltip() {
+      if (this.closeTooltipTimeout) {
+        clearTimeout(this.closeTooltipTimeout);
+        this.closeTooltipTimeout = null;
+      }
+      this.showTooltip = true;
     },
     focusInput() {
       const input = document.getElementById("receiveInput") as HTMLInputElement;
