@@ -85,6 +85,7 @@ import { useDexStore } from "@/stores/dex";
 export default {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
+  inject: ["injectionMode"],
   props: {
   },
   components: {
@@ -177,7 +178,7 @@ export default {
     },
     checkDexStatus() {
       let priceImpact = 0;
-      if (this.dexStore.GET_DEAL_CONDITIONS != null) {
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
         const inputUsd = this.dexStore.GET_DEAL_CONDITIONS?.input_usd;
         const outputUsd = this.dexStore.GET_DEAL_CONDITIONS?.output_usd;
         priceImpact = ((outputUsd - inputUsd) / inputUsd) * 100;
@@ -324,6 +325,7 @@ export default {
         } else {
           this.poolNotFound = true;
         }
+
       } catch (err) {
         console.error(err);
       } finally {
@@ -484,14 +486,36 @@ export default {
         this.unstakeProcessing = false;
       }
     },
+    async sendPayloadTransaction(transactionParams) {
+      try {
+        window.dispatchEvent(new CustomEvent('payloadTransaction', {
+          detail: {
+            isTransactionActive: true,
+            transactionData: transactionParams
+          }
+        }));
+
+        console.log('trans data dispatched');
+      } catch (error) {
+        console.error(error);
+      }
+    },
     async dexTransaction() {
       try {
         this.startTransaction = true;
         await this.compareTokens();
+        let sender: string;
 
-        const sender = Address.parseRaw(
-            this.dexStore.GET_DEX_WALLET?.address
-        ).toString();
+        if (this.injectionMode === 'tonConnect') {
+          sender = Address.parseRaw(
+              this.dexStore.GET_DEX_WALLET?.address
+          ).toString();
+        } else if (this.injectionMode === 'payload') {
+          sender = Address.parseRaw(
+              this.dexStore.GET_DEX_WALLET?.address
+          ).toString();
+        }
+
         const referralName = JSON.parse(sessionStorage.getItem("referral_name"));
         this.trInfo = await this.dexApiV2.getRouteTransactions(
             this.dexStore.GET_DEAL_CONDITIONS,
@@ -499,13 +523,25 @@ export default {
             this.dexStore.GET_SLIPPAGE / 100,
             referralName
         );
-        await this.tonConnectUi.sendTransaction(
-            this.getTransactionParams(this.trInfo)
-        );
+
+        if (this.injectionMode === 'tonConnect') {
+          await this.tonConnectUi.sendTransaction(this.getTransactionParams(this.trInfo));
+          this.showSuccess = true;
+        } else if (this.injectionMode === 'payload') {
+          const transactionParams = this.getTransactionParams(this.trInfo);
+          await this.sendPayloadTransaction(transactionParams);
+
+          window.addEventListener('transactionConfirmed', (event: any) => {
+            if (event.detail?.route_id === this.trInfo?.route_id) {
+              this.showSuccess = true;
+              console.log('confirmed, details:', event.detail);
+            }
+          });
+        }
+
         this.transactionStatus = await this.dexApiV2.getTransactions(
             this.trInfo?.route_id
         );
-        this.showSuccess = true;
       } catch (err) {
         console.error(err);
       } finally {

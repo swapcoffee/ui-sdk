@@ -38,7 +38,7 @@
           >
             <p class="token-price">~${{ getTokenPrice }}</p>
             <p class="token-impact"
-               v-show="this.GET_DEAL_CONDITIONS?.output_usd > 0"
+               v-show="dexStore.GET_DEAL_CONDITIONS?.output_usd > 0"
                :class="getClassImpact"
             >
               ({{ getPriceImpactDisplay }}%)

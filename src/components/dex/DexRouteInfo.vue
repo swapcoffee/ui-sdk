@@ -130,7 +130,6 @@ export default {
 			this.showDistribution = true
 		},
 		closeDistribution() {
-			console.log('close')
 			this.showDistribution = false
 		}
 	},

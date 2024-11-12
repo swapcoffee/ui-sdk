@@ -12,7 +12,6 @@ export default {
 			const paths = this.dexStore.GET_DEAL_CONDITIONS?.paths
 			const routes = []
 			const totalInputAmount = paths.reduce((sum, current) => sum + current.swap.input_amount, 0)
-			console.log('totalInput', totalInputAmount)
 			for (const routeStart of paths) {
 				const source = this.getDexSourceDataByName(routeStart.dex)
 				const tokens = []
