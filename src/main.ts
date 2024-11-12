@@ -73,30 +73,30 @@ const applyTheme = (selector, theme) => {
 // });
 //
 
-const payload = {
-    wallet_meta: {
-        address: "0:e82b785a9f11c271ce0418a921aa3fa255a98f6cff88be610b8ce2df66ed3ba6",
-    },
-    verify: {
-        public_key: "a3e1e5811d634985c82132c636fc7fbfef831bbfcf1593dc35f8291fe2c4af2c",
-        wallet_state_init: "te6cckECFgEAAwQAAgE0ARUBFP8A9KQT9LzyyAsCAgEgAxACAUgEBwLm0AHQ0wMhcbCSXwTgItdJwSCSXwTgAtMfIYIQcGx1Z70ighBkc3RyvbCSXwXgA/pAMCD6RAHIygfL/8nQ7UTQgQFA1yH0BDBcgQEI9ApvoTGzkl8H4AXTP8glghBwbHVnupI4MOMNA4IQZHN0crqSXwbjDQUGAHgB+gD0BDD4J28iMFAKoSG+8uBQghBwbHVngx6xcIAYUATLBSbPFlj6Ahn0AMtpF8sfUmDLPyDJgED7AAYAilAEgQEI9Fkw7UTQgQFA1yDIAc8W9ADJ7VQBcrCOI4IQZHN0coMesXCAGFAFywVQA88WI/oCE8tqyx/LP8mAQPsAkl8D4gIBIAgPAgEgCQ4CAVgKCwA9sp37UTQgQFA1yH0BDACyMoHy//J0AGBAQj0Cm+hMYAIBIAwNABmtznaiaEAga5Drhf/AABmvHfaiaEAQa5DrhY/AABG4yX7UTQ1wsfgAWb0kK29qJoQICga5D6AhhHDUCAhHpJN9KZEM5pA+n/mDeBKAG3gQFImHFZ8xhAT48oMI1xgg0x/TH9MfAvgju/Jk7UTQ0x/TH9P/9ATRUUO68qFRUbryogX5AVQQZPkQ8qP4ACSkyMsfUkDLH1Iwy/9SEPQAye1U+A8B0wchwACfbFGTINdKltMH1AL7AOgw4CHAAeMAIcAC4wABwAORMOMNA6TIyx8Syx/L/xESExQAbtIH+gDU1CL5AAXIygcVy//J0Hd0gBjIywXLAiLPFlAF+gIUy2sSzMzJc/sAyEAUgQEI9FHypwIAcIEBCNcY+gDTP8hUIEeBAQj0UfKnghBub3RlcHSAGMjLBcsCUAbPFlAE+gIUy2oSyx/LP8lz+wACAGyBAQjXGPoA0z8wUiSBAQj0WfKnghBkc3RycHSAGMjLBcsCUAXPFlAD+gITy2rLHxLLP8lz+wAACvQAye1UAFEAAAAAKamjF6Ph5YEdY0mFyCEyxjb8f7/vgxu/zxWT3DX4KR/ixK8sQN9iJtU=",
-        proof: {
-            timestamp: 1731021811,
-            domain_len: 11,
-            domain_val: "swap.coffee",
-            payload: "uR2ZE2YmeErIlVNhYItMnaiPfeDqSDCs",
-            signature: "CBnBPcRMRcflfqhNK8FAW7uzcK7MZZGsK3+o+atFXAdQAs3NsGSt/YpeLZoes55bBgzQwk2hraHMOJyfZrDPBg=="
-        }
-    }
-}
-
-
-createSwapWidget('#swap-widget-component', {
-    theme: 'dark',
-    locale: 'en',
-    injectionMode: 'payload',
-    payload
-});
+// const payload = {
+//     wallet_meta: {
+//         address: "0:e82b785a9f11c271ce0418a921aa3fa255a98f6cff88be610b8ce2df66ed3ba6",
+//     },
+//     verify: {
+//         public_key: "a3e1e5811d634985c82132c636fc7fbfef831bbfcf1593dc35f8291fe2c4af2c",
+//         wallet_state_init: "te6cckECFgEAAwQAAgE0ARUBFP8A9KQT9LzyyAsCAgEgAxACAUgEBwLm0AHQ0wMhcbCSXwTgItdJwSCSXwTgAtMfIYIQcGx1Z70ighBkc3RyvbCSXwXgA/pAMCD6RAHIygfL/8nQ7UTQgQFA1yH0BDBcgQEI9ApvoTGzkl8H4AXTP8glghBwbHVnupI4MOMNA4IQZHN0crqSXwbjDQUGAHgB+gD0BDD4J28iMFAKoSG+8uBQghBwbHVngx6xcIAYUATLBSbPFlj6Ahn0AMtpF8sfUmDLPyDJgED7AAYAilAEgQEI9Fkw7UTQgQFA1yDIAc8W9ADJ7VQBcrCOI4IQZHN0coMesXCAGFAFywVQA88WI/oCE8tqyx/LP8mAQPsAkl8D4gIBIAgPAgEgCQ4CAVgKCwA9sp37UTQgQFA1yH0BDACyMoHy//J0AGBAQj0Cm+hMYAIBIAwNABmtznaiaEAga5Drhf/AABmvHfaiaEAQa5DrhY/AABG4yX7UTQ1wsfgAWb0kK29qJoQICga5D6AhhHDUCAhHpJN9KZEM5pA+n/mDeBKAG3gQFImHFZ8xhAT48oMI1xgg0x/TH9MfAvgju/Jk7UTQ0x/TH9P/9ATRUUO68qFRUbryogX5AVQQZPkQ8qP4ACSkyMsfUkDLH1Iwy/9SEPQAye1U+A8B0wchwACfbFGTINdKltMH1AL7AOgw4CHAAeMAIcAC4wABwAORMOMNA6TIyx8Syx/L/xESExQAbtIH+gDU1CL5AAXIygcVy//J0Hd0gBjIywXLAiLPFlAF+gIUy2sSzMzJc/sAyEAUgQEI9FHypwIAcIEBCNcY+gDTP8hUIEeBAQj0UfKnghBub3RlcHSAGMjLBcsCUAbPFlAE+gIUy2oSyx/LP8lz+wACAGyBAQjXGPoA0z8wUiSBAQj0WfKnghBkc3RycHSAGMjLBcsCUAXPFlAD+gITy2rLHxLLP8lz+wAACvQAye1UAFEAAAAAKamjF6Ph5YEdY0mFyCEyxjb8f7/vgxu/zxWT3DX4KR/ixK8sQN9iJtU=",
+//         proof: {
+//             timestamp: 1731021811,
+//             domain_len: 11,
+//             domain_val: "swap.coffee",
+//             payload: "uR2ZE2YmeErIlVNhYItMnaiPfeDqSDCs",
+//             signature: "CBnBPcRMRcflfqhNK8FAW7uzcK7MZZGsK3+o+atFXAdQAs3NsGSt/YpeLZoes55bBgzQwk2hraHMOJyfZrDPBg=="
+//         }
+//     }
+// }
+//
+//
+// createSwapWidget('#swap-widget-component', {
+//     theme: 'dark',
+//     locale: 'en',
+//     injectionMode: 'payload',
+//     payload
+// });
 
 
 // createSwapWidget('#swap-widget-component', {
