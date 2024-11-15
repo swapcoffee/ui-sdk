@@ -486,12 +486,12 @@ export default {
         this.unstakeProcessing = false;
       }
     },
-    async sendPayloadTransaction(transactionParams) {
+    async sendPayloadTransaction(transactionParams, transactionInfo) {
       try {
         window.dispatchEvent(new CustomEvent('payloadTransaction', {
           detail: {
-            isTransactionActive: true,
-            transactionData: transactionParams
+            transactionDetails: transactionInfo,
+            transactionParams: transactionParams
           }
         }));
 
@@ -524,19 +524,22 @@ export default {
             referralName
         );
 
+        const transactionConfirmedListener = (event: any) => {
+          if (event.detail?.route_id === this.trInfo?.route_id) {
+            this.showSuccess = true;
+
+            window.removeEventListener('transactionConfirmed', transactionConfirmedListener);
+          }
+        };
+
+
         if (this.injectionMode === 'tonConnect') {
           await this.tonConnectUi.sendTransaction(this.getTransactionParams(this.trInfo));
           this.showSuccess = true;
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
-          await this.sendPayloadTransaction(transactionParams);
-
-          window.addEventListener('transactionConfirmed', (event: any) => {
-            if (event.detail?.route_id === this.trInfo?.route_id) {
-              this.showSuccess = true;
-              console.log('confirmed, details:', event.detail);
-            }
-          });
+          await this.sendPayloadTransaction(transactionParams, this.trInfo);
+          window.addEventListener('transactionConfirmed', transactionConfirmedListener);
         }
 
         this.transactionStatus = await this.dexApiV2.getTransactions(
