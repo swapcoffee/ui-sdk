@@ -639,7 +639,9 @@ export default {
     observingTabVisibilityChange() {
       this.isVisible = !document.hidden;
       if (this.isVisible) {
-        this.refreshDex();
+        if (this.dexStore.GET_SEND_AMOUNT && this.dexStore.GET_RECEIVE_AMOUNT) {
+          this.refreshDex();
+        }
       } else {
         clearInterval(this.interval as number);
       }
