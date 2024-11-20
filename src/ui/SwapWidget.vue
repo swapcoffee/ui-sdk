@@ -486,12 +486,13 @@ export default {
         this.unstakeProcessing = false;
       }
     },
-    async sendPayloadTransaction(transactionParams, transactionInfo) {
+    async sendPayloadTransaction(transactionParams, transactionInfo, transactionConditions) {
       try {
         window.dispatchEvent(new CustomEvent('payloadTransaction', {
           detail: {
             transactionDetails: transactionInfo,
-            transactionParams: transactionParams
+            transactionParams: transactionParams,
+            transactionConditions: transactionConditions
           }
         }));
 
@@ -538,7 +539,7 @@ export default {
           this.showSuccess = true;
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
-          await this.sendPayloadTransaction(transactionParams, this.trInfo);
+          await this.sendPayloadTransaction(transactionParams, this.trInfo, this.dexStore.GET_DEAL_CONDITIONS);
           window.addEventListener('transactionConfirmed', transactionConfirmedListener);
         }
 
