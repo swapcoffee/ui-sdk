@@ -42,8 +42,8 @@
 						:key="index"
 						@click="chooseToken(item)"
 						:class="{
-							active_pinned: mode === 'SEND' && sendToken?.symbol === item.symbol ||
-							mode === 'RECEIVE' && receiveToken?.symbol === item.symbol
+							active_pinned: mode === 'SEND' && sendToken?.address === item.address ||
+							mode === 'RECEIVE' && receiveToken?.address === item.address
 						}"
 					>
 						<img :src="item?.image" alt="Pinned token logo" class="pinned-list__image">
@@ -152,8 +152,8 @@
 						:userUnpinnedTokens="userUnpinnedTokens"
 						:tonPrice="getTonPrice"
 						:class="{
-							active_item: mode === 'SEND' && sendToken?.symbol === item.symbol ||
-							mode === 'RECEIVE' && receiveToken?.symbol === item.symbol
+							active_item: mode === 'SEND' && sendToken?.address === item.address ||
+							mode === 'RECEIVE' && receiveToken?.address === item.address
 						}"
 						@click="chooseToken(item)"
 						@pinToken="pinToken"
@@ -173,8 +173,8 @@
               :tonPrice="getTonPrice"
               :activeFilter="activeFilter"
               :class="{
-							active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
-							mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol
+							active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.address === item.address ||
+							mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.address === item.address
 						}"
               @click="chooseToken(item)"
               @pinToken="pinToken"
@@ -196,8 +196,8 @@
               :class="[
 							'token_' + (index + 1),
 							{
-								active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
-								mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol
+								active_item: mode === 'SEND' && dexStore.GET_SEND_TOKEN?.address === item.address ||
+								mode === 'RECEIVE' && dexStore.GET_RECEIVE_TOKEN?.address === item.address
 							}
 						]"
               @click="chooseToken(item)"

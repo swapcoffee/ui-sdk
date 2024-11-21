@@ -188,18 +188,21 @@ export default {
       let balance = this.sendToken?.balance;
       let fee = 0.23501;
 
-      if (this.dealConditions !== null) {
-        fee = this.dealConditions.recommended_gas + 0.00001;
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+        fee = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
       }
-      if (this.sendToken?.address === "native") {
-        balance = this.sendToken.balance - fee;
-        if (balance <= 0) {
-          balance = 0;
+
+      if (this.sendToken?.address === 'native') {
+        if (balance >= 1) {
+          balance = this.sendToken?.balance - fee;
+          if (balance <= 0) {
+            balance = 0;
+          }
         }
       }
 
-      this.youSend = balance!.toFixed(4);
-      this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
+      this.youSend = balance.toFixed(4);
+      this.dexStore.DEX_SEND_AMOUNT(balance);
     },
     setCurrentSend() {
       if (this.sendToken !== null) {

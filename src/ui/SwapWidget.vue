@@ -224,9 +224,19 @@ export default {
       );
     },
     notEnoughConditions() {
-      const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
-          (item) => item.symbol === this.dexStore.GET_SEND_TOKEN?.symbol
+      const userTonBalance = this.dexStore.GET_USER_TOKENS.find(
+          (item) => item.address === 'native'
       );
+      const tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001
+
+      const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
+          (item) => item.address === this.dexStore.GET_SEND_TOKEN?.address
+      );
+
+      if (userTonBalance?.balance < tonGas) {
+        return true;
+      }
+
       return !(
           findTokenInUser &&
           findTokenInUser?.balance >=
