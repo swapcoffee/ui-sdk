@@ -425,7 +425,12 @@ export default {
       }
     },
     getProfitDisplay() {
-      let profit = (this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+      const savings = Number(this.dexStore.GET_DEAL_CONDITIONS?.savings);
+      if (isNaN(savings) || savings === undefined || savings === null) {
+        return '0.00';
+      }
+
+      let profit = (savings * 100).toFixed(2);
       return Number(profit) > 100 ? '>100' : profit;
     },
     getPriceImpactDisplay() {

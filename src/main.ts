@@ -3,7 +3,7 @@ import App from './App.vue';
 import i18n from './i18n';
 import { pinia } from './stores';
 import './main.css'
-import {TonConnectUI, THEME} from "@tonconnect/ui";
+// import {TonConnectUI, THEME} from "@tonconnect/ui";
 
 export function createSwapWidget(selector, options = {}) {
     const {
@@ -71,23 +71,13 @@ const applyTheme = (selector, theme) => {
 //         theme: THEME.DARK,
 //     },
 // });
-//
+
 
 // export const payload = {
 //     wallet_meta: {
-//         address: "0:e82b785a9f11c271ce0418a921aa3fa255a98f6cff88be610b8ce2df66ed3ba6",
+//         address: "0:e867df1c40a11d2aa28ee003b6da58cec7518df463f93b72185c8aabbcbe3b1a",
 //     },
-//     verify: {
-//         public_key: "a3e1e5811d634985c82132c636fc7fbfef831bbfcf1593dc35f8291fe2c4af2c",
-//         wallet_state_init: "te6cckECFgEAAwQAAgE0ARUBFP8A9KQT9LzyyAsCAgEgAxACAUgEBwLm0AHQ0wMhcbCSXwTgItdJwSCSXwTgAtMfIYIQcGx1Z70ighBkc3RyvbCSXwXgA/pAMCD6RAHIygfL/8nQ7UTQgQFA1yH0BDBcgQEI9ApvoTGzkl8H4AXTP8glghBwbHVnupI4MOMNA4IQZHN0crqSXwbjDQUGAHgB+gD0BDD4J28iMFAKoSG+8uBQghBwbHVngx6xcIAYUATLBSbPFlj6Ahn0AMtpF8sfUmDLPyDJgED7AAYAilAEgQEI9Fkw7UTQgQFA1yDIAc8W9ADJ7VQBcrCOI4IQZHN0coMesXCAGFAFywVQA88WI/oCE8tqyx/LP8mAQPsAkl8D4gIBIAgPAgEgCQ4CAVgKCwA9sp37UTQgQFA1yH0BDACyMoHy//J0AGBAQj0Cm+hMYAIBIAwNABmtznaiaEAga5Drhf/AABmvHfaiaEAQa5DrhY/AABG4yX7UTQ1wsfgAWb0kK29qJoQICga5D6AhhHDUCAhHpJN9KZEM5pA+n/mDeBKAG3gQFImHFZ8xhAT48oMI1xgg0x/TH9MfAvgju/Jk7UTQ0x/TH9P/9ATRUUO68qFRUbryogX5AVQQZPkQ8qP4ACSkyMsfUkDLH1Iwy/9SEPQAye1U+A8B0wchwACfbFGTINdKltMH1AL7AOgw4CHAAeMAIcAC4wABwAORMOMNA6TIyx8Syx/L/xESExQAbtIH+gDU1CL5AAXIygcVy//J0Hd0gBjIywXLAiLPFlAF+gIUy2sSzMzJc/sAyEAUgQEI9FHypwIAcIEBCNcY+gDTP8hUIEeBAQj0UfKnghBub3RlcHSAGMjLBcsCUAbPFlAE+gIUy2oSyx/LP8lz+wACAGyBAQjXGPoA0z8wUiSBAQj0WfKnghBkc3RycHSAGMjLBcsCUAXPFlAD+gITy2rLHxLLP8lz+wAACvQAye1UAFEAAAAAKamjF6Ph5YEdY0mFyCEyxjb8f7/vgxu/zxWT3DX4KR/ixK8sQN9iJtU=",
-//         proof: {
-//             timestamp: 1731927983,
-//             domain_len: 11,
-//             domain_val: "swap.coffee",
-//             payload: "tbhTOcnrO1NbBCZPsc9g2vge0R149ntX",
-//             signature: "Kbkns5rJg+TapCjBR7pT1vuu6rOsUDY69DuxNQvt3ZTQJY5cfCEV9t0QZvahOalavmB2kQXk6WphuHJkr+/2CA=="
-//         }
-//     }
+//     verify: {"public_key":"1aa6150cea2170a5a850892318425279fcb79db2d1d77130230d8e30c2abbb35","wallet_state_init":"te6cckECFgEAAwQAAgE0ARUBFP8A9KQT9LzyyAsCAgEgAxACAUgEBwLm0AHQ0wMhcbCSXwTgItdJwSCSXwTgAtMfIYIQcGx1Z70ighBkc3RyvbCSXwXgA/pAMCD6RAHIygfL/8nQ7UTQgQFA1yH0BDBcgQEI9ApvoTGzkl8H4AXTP8glghBwbHVnupI4MOMNA4IQZHN0crqSXwbjDQUGAHgB+gD0BDD4J28iMFAKoSG+8uBQghBwbHVngx6xcIAYUATLBSbPFlj6Ahn0AMtpF8sfUmDLPyDJgED7AAYAilAEgQEI9Fkw7UTQgQFA1yDIAc8W9ADJ7VQBcrCOI4IQZHN0coMesXCAGFAFywVQA88WI/oCE8tqyx/LP8mAQPsAkl8D4gIBIAgPAgEgCQ4CAVgKCwA9sp37UTQgQFA1yH0BDACyMoHy//J0AGBAQj0Cm+hMYAIBIAwNABmtznaiaEAga5Drhf/AABmvHfaiaEAQa5DrhY/AABG4yX7UTQ1wsfgAWb0kK29qJoQICga5D6AhhHDUCAhHpJN9KZEM5pA+n/mDeBKAG3gQFImHFZ8xhAT48oMI1xgg0x/TH9MfAvgju/Jk7UTQ0x/TH9P/9ATRUUO68qFRUbryogX5AVQQZPkQ8qP4ACSkyMsfUkDLH1Iwy/9SEPQAye1U+A8B0wchwACfbFGTINdKltMH1AL7AOgw4CHAAeMAIcAC4wABwAORMOMNA6TIyx8Syx/L/xESExQAbtIH+gDU1CL5AAXIygcVy//J0Hd0gBjIywXLAiLPFlAF+gIUy2sSzMzJc/sAyEAUgQEI9FHypwIAcIEBCNcY+gDTP8hUIEeBAQj0UfKnghBub3RlcHSAGMjLBcsCUAbPFlAE+gIUy2oSyx/LP8lz+wACAGyBAQjXGPoA0z8wUiSBAQj0WfKnghBkc3RycHSAGMjLBcsCUAXPFlAD+gITy2rLHxLLP8lz+wAACvQAye1UAFEAAAAAKamjFxqmFQzqIXClqFCJIxhCUnn8t52y0ddxMCMNjjDCq7s1QH69tGQ=","proof":{"timestamp":1732210619,"domain_len":11,"domain_val":"swap.coffee","payload":"wB21V8QoKJOF6v5iCJxi4TPENRjB3uQD","signature":"0Dy+haUYXnvBAlV1tKR+aFJsL2vBN8wpbYnbzGxMrkIVd+p0YJL6mtc24MyUnRIXVUlzOCHwAM/jpC5T6DjKCA=="}}
 // }
 //
 //

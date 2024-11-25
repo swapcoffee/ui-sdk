@@ -229,20 +229,22 @@ export default {
       );
       const tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001
 
-      const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
-          (item) => item.address === this.dexStore.GET_SEND_TOKEN?.address
-      );
+      if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'default') {
+        if (userTonBalance?.balance < tonGas + this.dexStore.GET_SEND_AMOUNT) {
+          return true;
+        }
+      } else if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'reverse') {
+        if (userTonBalance?.balance < tonGas + this.dexStore.GET_RECEIVE_AMOUNT) {
+          return true;
+        }
+      }
 
-      if (userTonBalance?.balance < tonGas) {
+      if (userTonBalance?.balance < tonGas ) {
         return true;
       }
 
-      return !(
-          findTokenInUser &&
-          findTokenInUser?.balance >=
-          this.dexStore.GET_DEAL_CONDITIONS?.input_amount &&
-          this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0
-      );
+      let findTokenInUser = this.dexStore.GET_USER_TOKENS.find((item) => item.address === this.dexStore.GET_SEND_TOKEN?.address);
+      return !(findTokenInUser && findTokenInUser?.balance >= this.dexStore.GET_DEAL_CONDITIONS?.input_amount && this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0);
     },
   },
   methods: {
@@ -437,11 +439,9 @@ export default {
     async stakeAction() {
       try {
         this.stakeProcessing = true;
-        const sender = Address.parseRaw(
-            this.dexStore.GET_DEX_WALLET?.address
-        ).toString();
-        const referralName = JSON.parse(sessionStorage.getItem("referral_name"));
 
+        const sender = Address.parseRaw(this.dexStore.GET_DEX_WALLET?.address).toString();
+        const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
         const transaction = await this.dexApiV2.getStakeTransaction(
             sender,
             this.dexStore.GET_RECEIVE_TOKEN?.address,
@@ -449,7 +449,7 @@ export default {
             referralName
         );
 
-        await this.tonConnectUi.sendTransaction({
+        const transactionParams = {
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
@@ -458,27 +458,39 @@ export default {
               payload: transaction.payload_cell,
             },
           ],
-        });
+        };
+
+        if (this.injectionMode === 'tonConnect') {
+          await this.tonConnectUi.sendTransaction(transactionParams);
+        } else if (this.injectionMode === 'payload') {
+          await this.sendPayloadTransaction(
+              transactionParams,
+              transaction,
+              'stake'
+          );
+
+        }
 
         this.dexStore.DEX_SEND_AMOUNT(0);
+      } catch (err) {
+        console.error(err);
       } finally {
         this.stakeProcessing = false;
       }
     },
+
     async unstakeAction() {
       try {
         this.unstakeProcessing = true;
-        const sender = Address.parseRaw(
-            this.dexStore.GET_DEX_WALLET?.address
-        ).toString();
 
+        const sender = Address.parseRaw(this.dexStore.GET_DEX_WALLET?.address).toString();
         const transaction = await this.dexApiV2.getUnstakeTransaction(
             sender,
             this.dexStore.GET_SEND_TOKEN?.address,
             this.dexStore.GET_SEND_AMOUNT
         );
 
-        await this.tonConnectUi.sendTransaction({
+        const transactionParams = {
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
@@ -487,26 +499,40 @@ export default {
               payload: transaction.payload_cell,
             },
           ],
-        });
+        };
 
-        this.dexStore.DEX_SEND_AMOUNT(0);
+        if (this.injectionMode === 'tonConnect') {
+          await this.tonConnectUi.sendTransaction(transactionParams);
+        } else if (this.injectionMode === 'payload') {
+          await this.sendPayloadTransaction(
+              transactionParams,
+              transaction,
+              'stake'
+          );
+        }
       } catch (err) {
         console.error(err);
       } finally {
         this.unstakeProcessing = false;
       }
     },
-    async sendPayloadTransaction(transactionParams, transactionInfo, transactionConditions) {
+    async sendPayloadTransaction(transactionParams, transactionInfo, type) {
       try {
-        window.dispatchEvent(new CustomEvent('payloadTransaction', {
-          detail: {
-            transactionDetails: transactionInfo,
-            transactionParams: transactionParams,
-            transactionConditions: transactionConditions
-          }
-        }));
-
-        console.log('trans data dispatched');
+        if (type === 'dex') {
+          window.dispatchEvent(new CustomEvent('payloadTransaction', {
+            detail: {
+              transactionDetails: transactionInfo,
+              transactionParams: transactionParams,
+            }
+          }));
+        } else if (type === 'stake') {
+          window.dispatchEvent(new CustomEvent('stakeTransaction', {
+            detail: {
+              transactionDetails: transactionInfo,
+              transactionParams: transactionParams,
+            }
+          }));
+        }
       } catch (error) {
         console.error(error);
       }
@@ -549,7 +575,7 @@ export default {
           this.showSuccess = true;
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
-          await this.sendPayloadTransaction(transactionParams, this.trInfo, this.dexStore.GET_DEAL_CONDITIONS);
+          await this.sendPayloadTransaction(transactionParams, this.trInfo, 'dex');
           window.addEventListener('transactionConfirmed', transactionConfirmedListener);
         }
 

@@ -18,14 +18,14 @@ export default class DexApiV2 extends Api {
         let body = {
             sender_address: senderAddress,
             amount: amount,
-            token_address: tokenAddress
-        }
+            token_address: tokenAddress,
+        };
 
         if (referralName) {
-            body.referral_name = referralName
+            body.referral_name = referralName;
         }
 
-        return this.request(`/v2/stake/ton/transaction`, JSON.stringify(body), "POST");
+        return this.request('/v2/stake/ton/transaction', JSON.stringify(body), 'POST');
     }
 
     getUnstakeTransaction(senderAddress, tokenAddress, amount) {
