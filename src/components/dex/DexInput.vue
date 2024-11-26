@@ -1,34 +1,43 @@
 <template>
-  <input type="text" class="dex__input" placeholder="0" inputmode="decimal"
-         autocomplete="off"
-         :value="formattedValue"
-         @input="changeInput"
-         @focus="onFocus"
-         @blur="onBlur"
-  >
+  <input
+      type="text"
+      class="dex__input"
+      placeholder="0"
+      inputmode="decimal"
+      autocomplete="off"
+      :value="formattedValue"
+      @input="changeInput"
+      @focus="onFocus"
+      @blur="onBlur"
+  />
 </template>
 
-<script lang="ts">
+<script>
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import { useDexStore } from "@/stores/dex";
-import methodsMixins from "@/mixins/methodsMixins";
 
 export default {
   mixins: [methodsMixins],
   name: "DexInput",
   props: {
     modelValue: {
-      type: [String],
+      type: String,
       required: true,
-      defaultValue: ''
     },
   },
+  data() {
+    return {
+      inputFocused: false,
+    }
+  },
   computed: {
-    formattedValue() {
-      const rawValue = this.modelValue ? this.modelValue.replace(/[^0-9.]/g, '') : '';
-      return this.formattedInput(rawValue);
-    },
     dexStore() {
       return useDexStore();
+    },
+    formattedValue() {
+      const value = String(this.modelValue ?? '');
+      const rawValue = value.replace(/[^0-9.]/g, '');
+      return this.formattedInput(rawValue);
     }
   },
   methods: {
@@ -44,17 +53,24 @@ export default {
         this.emitUpdateValue('0');
       }
     },
-      changeInput(event) {
-        let rawValue = event.target.value.replace(",", ".").replace(/[^0-9.]/g, '');
-        this.emitUpdateValue(rawValue);
-        this.dexStore.DEX_SEND_AMOUNT(Number(rawValue));
-        event.target.value = this.formattedValue;
-      },
+    changeInput(event) {
+      let rawValue = event.target.value.replace(",", ".")
+          .replace(/[^0-9.]/g, '')
+      this.emitUpdateValue(rawValue);
+      event.target.value = this.formattedValue;
+    },
     emitUpdateValue(value) {
       this.$emit('update:modelValue', value);
+    },
+  },
+  watch: {
+    inputFocused: {
+      handler() {
+        this.$emit('changeFocus', this.inputFocused)
+      }
     }
   }
-};
+}
 </script>
 
 <style scoped>

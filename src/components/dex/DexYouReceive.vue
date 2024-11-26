@@ -22,6 +22,7 @@
           <DexInput id="receiveInput" v-else
                     :model-value="String(youReceive)"
                     @update:model-value="updateValue"
+                    @changeFocus="changeFocus"
           />
           <button class="dex__btn"
                   v-if="!showTokenSkeleton"
@@ -107,6 +108,12 @@ export default {
     dexStore() {
       return useDexStore();
     },
+    GET_RECEIVE_AMOUNT() {
+      return this.dexStore.GET_RECEIVE_AMOUNT
+    },
+    GET_DEAL_CONDITIONS() {
+      return this.dexStore.GET_DEAL_CONDITIONS
+    },
     receiveToken() {
       return this.dexStore.GET_RECEIVE_TOKEN
     },
@@ -114,8 +121,7 @@ export default {
       return this.dexStore.GET_SWAP_MODE
     },
     getRouteQuery() {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('st') !== null || undefined;
+      return new URLSearchParams(window.location.search).get('st') || undefined;
     },
     showTokenSkeleton() {
       return this.getRouteQuery && this.dexStore.GET_RECEIVE_TOKEN === null;
@@ -171,6 +177,17 @@ export default {
     },
   },
   methods: {
+    changeFocus(value) {
+      this.inputFocused = value
+    },
+    focusInput() {
+      let input = document.getElementById('receiveInput')
+      input.focus()
+    },
+    updateValue(value) {
+      this.youReceive = value;
+      this.dexStore.DEX_RECEIVE_AMOUNT(Number(value));
+    },
     leaveTrustScore() {
       this.closeTooltipTimeout = setTimeout(() => {
         this.showTooltip = false;
@@ -182,57 +199,29 @@ export default {
         this.closeTooltipTimeout = null;
       }
       this.showTooltip = true;
-    },
-    focusInput() {
-      const input = document.getElementById("receiveInput") as HTMLInputElement;
-      input.focus();
-    },
-    updateValue(value) {
-      this.youReceive = value
-      this.DEX_RECEIVE_AMOUNT(Number(value))
-    },
-    onFocus() {
-      this.inputFocused = true;
-    },
-    onBlur() {
-      this.inputFocused = false;
-      if (this.youReceive === 0 || this.youReceive?.toString().length === 0) {
-        this.youReceive = null;
-      }
-    },
-    changeInput() {
-      if (this.youReceive! < 0) {
-        this.youReceive = null;
-      }
-      this.dexStore.DEX_RECEIVE_AMOUNT(Number(this.youReceive));
-    },
+    }
   },
   watch: {
-    "dexStore.GET_RECEIVE_AMOUNT": {
+    GET_RECEIVE_AMOUNT: {
       handler() {
-        if (
-            this.youReceive !== this.dexStore.GET_RECEIVE_AMOUNT &&
-            this.pageLoaded === false
-        ) {
-          this.pageLoaded = true;
-          this.youReceive = this.dexStore.GET_RECEIVE_AMOUNT;
+        if (Number(this.youReceive) !== this.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
+          this.pageLoaded = true
+          this.youReceive = String(this.GET_RECEIVE_AMOUNT)
         }
-      },
+      }
     },
-    "dexStore.GET_DEAL_CONDITIONS": {
+    GET_DEAL_CONDITIONS: {
       handler() {
-        if (this.dexStore.GET_SWAP_MODE !== "reverse") {
-          if (this.dexStore.GET_DEAL_CONDITIONS) {
-            this.dexStore.GET_DEAL_CONDITIONS.output_amount > 0
-                ? (this.youReceive = this.dexStore.GET_DEAL_CONDITIONS.output_amount.toFixed(4))
-                : (this.youReceive = 0);
+        if (this.dexStore.GET_SWAP_MODE !== 'reverse') {
+          if (this.GET_DEAL_CONDITIONS !== null) {
+            this.GET_DEAL_CONDITIONS?.output_amount > 0 ? this.youReceive = this.GET_DEAL_CONDITIONS.output_amount.toFixed(4) : this.youReceive = '0'
           } else {
-            this.youReceive = 0;
+            this.youReceive = '0'
           }
         }
-      },
+      }
     },
-  },
+  }
 };
 </script>
 

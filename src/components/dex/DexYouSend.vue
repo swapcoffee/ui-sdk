@@ -56,10 +56,12 @@
 <script lang="ts">
 import { useDexStore } from "@/stores/dex";
 import DexInput from "@/components/dex/DexInput.vue";
+import methodsMixins from "@/mixins/methodsMixins";
 
 export default {
   name: "DexYouSend",
   components: {DexInput},
+  mixins: [methodsMixins],
   props: {
     poolNotFound: {
       type: Boolean,
@@ -127,10 +129,10 @@ export default {
       );
     },
     getTokenBalance() {
-      if (this.sendToken?.balance) {
-        return this.dexStore.GET_SEND_TOKEN?.balance.toFixed(2)
+      if (this.dexStore.GET_SEND_TOKEN?.balance) {
+        return this.prettyNumber(this.dexStore.GET_SEND_TOKEN?.balance, 2);
       } else {
-        return 0
+        return 0;
       }
     },
     getTokenPrice() {
@@ -185,16 +187,20 @@ export default {
       this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
     },
     maxBalance() {
-      let balance = this.sendToken?.balance;
-      let fee = 0.23501;
+      let balance = this.dexStore.GET_SEND_TOKEN?.balance
+      let fee = 0.23501
+
+      if (this.dexStore.GET_SWAP_MODE === 'reverse') {
+        this.dexStore.CHANGE_SWAP_MODE('default')
+      }
 
       if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
         fee = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
       }
 
-      if (this.sendToken?.address === 'native') {
+      if (this.dexStore.GET_SEND_TOKEN?.address === 'native') {
         if (balance >= 1) {
-          balance = this.sendToken?.balance - fee;
+          balance = this.dexStore.GET_SEND_TOKEN?.balance - fee;
           if (balance <= 0) {
             balance = 0;
           }
