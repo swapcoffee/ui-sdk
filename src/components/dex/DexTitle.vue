@@ -3,9 +3,9 @@
 <!--		<TradeNav class="trade__nav-top"/>-->
 		<div class="dex__title title">
 			<div class="dex__buttons">
-        <button class="title__back-btn">
-          <span class="powered-text slippage-text">powered</span>
-          <span class="by-text slippage-text">by</span>
+        <button class="title__back-btn" @click="redirectToSwapCoffee">
+          <span class="by-text slippage-text">powered by</span>
+          <img src="@/assets/main/swap-logo.svg" alt="swap-logo" class="swap-logo">
         </button>
 <!--				<TradeNav class="trade__nav-bottom"/>-->
 			</div>
@@ -101,6 +101,9 @@ export default {
         this.$emit("refresh", "compareTokens");
       }
     },
+    redirectToSwapCoffee() {
+      window.open("https://swap.coffee/dex", "_blank");
+    },
     closeSettings() {
       this.show = false;
     },
@@ -132,6 +135,7 @@ export default {
 .title__back-btn {
   display: flex;
   align-items: center;
+  flex-direction: row;
   border: none;
   background: none;
   font-weight: 400;
@@ -139,13 +143,9 @@ export default {
   gap: 1px;
 }
 
-.title__back-btn::after {
-  content: '';
-  width: 80px;
+.swap-logo {
   height: 20px;
-  background-image: url("@/assets/main/swap-logo.svg");
-  background-size: contain;
-  background-repeat: no-repeat;
+  width: 80px;
 }
 
 
@@ -284,6 +284,21 @@ export default {
 	.trade__nav-top {
 		display: block;
 	}
+}
+
+@media screen and (max-width: 359px) {
+  .title__back-btn {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2px;
+  }
+
+  .title__back-btn .slippage-text {
+    text-align: left;
+    margin-right: 0;
+  }
+
 }
 
 </style>
