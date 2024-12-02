@@ -116,13 +116,7 @@ export const useDexStore = defineStore('dex', {
 			this.sendAmount = 0;
 			this.receiveAmount = 0;
 			this.swapMode = 'default';
-			this.slippage = 5;
-			this.priceImpact = 10;
-			this.maxPoolVolatility = -1;
-			this.maxIntermediateTokens = 1;
-			this.cashback = true;
 			this.dexWalletVersion = null;
-			this.maxSplitsValue = 4;
 		},
 		CLEAR_DEX_EXPERTS_SETTINGS() {
 			this.priceImpact = 10;

@@ -85,7 +85,7 @@ import { useDexStore } from "@/stores/dex";
 export default {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
-  inject: ["injectionMode"],
+  inject: ["injectionMode", "widgetReferral"],
   props: {
   },
   components: {
@@ -441,7 +441,7 @@ export default {
         this.stakeProcessing = true;
 
         const sender = Address.parseRaw(this.dexStore.GET_DEX_WALLET?.address).toString();
-        const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
+        const referralName = this.widgetReferral || JSON.parse(sessionStorage.getItem('referral_name'));
         const transaction = await this.dexApiV2.getStakeTransaction(
             sender,
             this.dexStore.GET_RECEIVE_TOKEN?.address,
@@ -553,7 +553,7 @@ export default {
           ).toString();
         }
 
-        const referralName = JSON.parse(sessionStorage.getItem("referral_name"));
+        const referralName = this.widgetReferral || JSON.parse(sessionStorage.getItem('referral_name'));
         this.trInfo = await this.dexApiV2.getRouteTransactions(
             this.dexStore.GET_DEAL_CONDITIONS,
             sender,
@@ -700,9 +700,12 @@ export default {
         "visibilitychange",
         this.observingTabVisibilityChange
     );
+
+    this.dexStore.CLEAR_DEX_STORE();
     clearTimeout(this.debounce as number);
     clearInterval(this.interval as number);
     clearInterval(this.requestInterval as number);
+
   },
   watch: {
     showTokens: {
