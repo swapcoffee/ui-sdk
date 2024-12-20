@@ -267,6 +267,7 @@ export default {
 }
 
 .theme-light .arrow-icon {
+  filter: invert(100%);
 	mix-blend-mode: difference;
 }
 

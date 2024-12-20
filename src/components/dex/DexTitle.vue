@@ -220,6 +220,25 @@ export default {
 	animation: 1s forwards ease-out LoaderReverse;
 }
 
+@keyframes Loader {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(-360deg);
+  }
+}
+
+@keyframes LoaderReverse {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+
 .chart__toggle-btn {
 	transition: .15s;
 	margin-right: 6px;

@@ -135,6 +135,24 @@ export default {
   opacity: 0.4;
 }
 
+@keyframes Loader {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(-360deg);
+  }
+}
+
+@keyframes LoaderReverse {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
 .btn-loader {
   margin: 0 auto;
   width: 24px;
