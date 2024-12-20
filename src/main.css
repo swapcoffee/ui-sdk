@@ -1,4 +1,4 @@
-body {
+.swap-coffee__sdk-widget {
     --main-btn-disabled: #323232;
     --main-blue: #4B76FF;
     --main-green: #32D74B;
@@ -36,7 +36,7 @@ body {
     --tag-purple-bg: rgba(193, 114, 255, 0.10);
 }
 
-.theme-coffee {
+.swap-coffee__sdk-widget.theme-coffee {
     --main-bg-color: #0A0706;
 
     --iface-bg: #0A0706;
@@ -53,7 +53,7 @@ body {
     --iface-border-active: rgba(255, 255, 255, 0.24);
 }
 
-.theme-dark {
+.swap-coffee__sdk-widget.theme-dark {
     --main-bg-color: #0A0A0A;
 
     --iface-bg: #0A0A0A;
@@ -70,7 +70,7 @@ body {
     --iface-border-active: rgba(255, 255, 255, 0.24);
 }
 
-.theme-light {
+.swap-coffee__sdk-widget.theme-light {
     --main-btn-disabled: #dfdfdf;
     --main-bg-color: #f8f8f8;
     --main-text-color: #141414;

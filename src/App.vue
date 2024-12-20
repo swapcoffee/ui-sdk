@@ -14,7 +14,6 @@ import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
 import {Address} from "@ton/core";
-import "./main.css";
 
 export default {
   name: "App",
@@ -553,7 +552,6 @@ export default {
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-@import "./main.css";
 
 :deep(body) {
   --main-btn-disabled: #323232;

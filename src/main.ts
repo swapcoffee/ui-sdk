@@ -63,6 +63,8 @@ const applyTheme = (selector, theme) => {
     const widgetElement = document.querySelector(selector);
     if (!widgetElement) return;
 
+    widgetElement.classList.add('swap-coffee__sdk-widget');
+
     widgetElement.classList.remove('theme-light', 'theme-dark', 'theme-coffee');
     widgetElement.classList.add(`theme-${theme}`);
 }
