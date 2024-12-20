@@ -93,7 +93,7 @@ const applyTheme = (selector, theme) => {
 
 
 // createSwapWidget('#swap-widget-component', {
-//     theme: 'dark',
+//     theme: 'light',
 //     locale: 'en',
 //     injectionMode: "tonConnect",
 //     tonConnectManifest: {

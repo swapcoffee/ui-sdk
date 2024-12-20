@@ -53,6 +53,7 @@ export default {
 .trust {
   max-width: 300px;
   padding: 4px;
+  background: var(--main-bg-color);
 }
 
 

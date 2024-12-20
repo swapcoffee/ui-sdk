@@ -21,6 +21,7 @@ export default {
   components: {SwapWidget},
   inject: ['tonConnectUi', "injectionMode", 'payload'],
   mixins: [tonConnectMixin, computedMixins, methodsMixins],
+  shadow: true,
   data() {
     return {
       unsubscribeConnect: null,
@@ -550,11 +551,11 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 @import "./main.css";
 
-body {
+:deep(body) {
   --main-btn-disabled: #323232;
   --main-blue: #4B76FF;
   --main-green: #32D74B;
@@ -591,9 +592,8 @@ body {
   --iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.20);
 }
 
-.theme-coffee {
+:deep(.theme-coffee) {
   --main-bg-color: #0A0706;
-
   --iface-bg: #0A0706;
   --iface-accent-color: #EA7A3B;
   --iface-accent-hover: #EE9562;
@@ -608,9 +608,8 @@ body {
   --iface-border-active: rgba(255, 255, 255, 0.24);
 }
 
-.theme-dark {
+:deep(.theme-dark) {
   --main-bg-color: #0A0A0A;
-
   --iface-bg: #0A0A0A;
   --iface-accent-color: #0A84FF;
   --iface-accent-hover: #44A6FF;
@@ -625,7 +624,7 @@ body {
   --iface-border-active: rgba(255, 255, 255, 0.24);
 }
 
-.theme-light {
+:deep(.theme-light) {
   --main-btn-disabled: #dfdfdf;
   --main-bg-color: #f8f8f8;
   --main-text-color: #141414;
@@ -660,39 +659,39 @@ body {
   --iface-white40: rgba(20, 20, 20, 0.40);
 }
 
-* {
+:deep(*) {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-body {
+:deep(body) {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-ul {
+:deep(ul) {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-a {
+:deep(a) {
   text-decoration: none;
   color: #fff;
   font-family: Roboto, sans-serif;
   font-weight: 500;
 }
 
-h1, h2, h3, h4 {
+:deep(h1, h2, h3, h4) {
   margin: 0;
   font-family: Roboto, sans-serif;
   font-weight: 700;
   color: var(--main-text-color);
 }
 
-p {
+:deep(p) {
   margin: 0;
   font-size: 16px;
   line-height: 19px;
@@ -701,13 +700,13 @@ p {
   color: var(--main-text-color);
 }
 
-li {
+:deep(li) {
   font-family: Roboto, sans-serif;
   font-weight: 400;
   color: var(--main-text-color);
 }
 
-button {
+:deep(button) {
   cursor: pointer;
   font-family: Roboto, sans-serif;
   font-weight: 500;
@@ -717,28 +716,28 @@ button {
   outline: none;
 }
 
-button:focus, button:active {
-	outline: none;
+:deep(button:focus, button:active) {
+  outline: none;
 }
 
-input {
+:deep(input) {
   font-family: Roboto, sans-serif;
   font-weight: 400;
   color: var(--main-text-color);
 }
 
-textarea {
+:deep(textarea) {
   font-family: Roboto, sans-serif;
   font-weight: 400;
 }
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+:deep(input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button) {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.container {
+:deep(.container) {
   position: relative;
   padding: 0 20px;
   max-width: 1280px;
@@ -748,17 +747,17 @@ input[type="number"]::-webkit-inner-spin-button {
 
 /* CUSTOM SCROLLBAR */
 
-.custom-scroll::-webkit-scrollbar {
+:deep(custom-scroll::-webkit-scrollbar) {
   transition: .2s;
   background-color: transparent;
   width: 5px;
 }
 
-.custom-scroll::-webkit-scrollbar-track-piece {
+:deep(.custom-scroll::-webkit-scrollbar-track-piece) {
   width: 6px;
 }
 
-.custom-scroll::-webkit-scrollbar-thumb {
+:deep(.custom-scroll::-webkit-scrollbar-thumb) {
   transition: .2s;
   height: 10%;
   background-color: var(--iface-white20);
@@ -768,23 +767,23 @@ input[type="number"]::-webkit-inner-spin-button {
   max-height: 100px;
 }
 
-.custom-scroll::-webkit-scrollbar-thumb:hover {
+:deep(.custom-scroll::-webkit-scrollbar-thumb:hover) {
   background-color: var(--iface-white24);
 }
 
-.custom-scroll::-webkit-scrollbar-thumb:active {
+:deep(.custom-scroll::-webkit-scrollbar-thumb:active) {
   cursor: grabbing;
 }
 
-.custom-scroll::-webkit-scrollbar-track {
+:deep(.custom-scroll::-webkit-scrollbar-track) {
   margin: 5px 0 5px 0;
 }
 
-.slider .swiper-wrapper {
+:deep(.slider .swiper-wrapper) {
   transition-timing-function: linear;
 }
 
-.skeleton::after {
+:deep(.skeleton::after) {
   content: '';
   display: block;
   width: 100%;
@@ -796,7 +795,7 @@ input[type="number"]::-webkit-inner-spin-button {
   border-radius: 16px;
 }
 
-.skeleton-large::after {
+:deep(.skeleton-large::after) {
   content: '';
   display: block;
   width: 100%;
@@ -823,48 +822,6 @@ input[type="number"]::-webkit-inner-spin-button {
   }
   100% {
     background-position: -150px 0px;
-  }
-}
-
-@keyframes Loader {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(-360deg);
-  }
-}
-
-@keyframes LoaderReverse {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(360deg);
-  }
-}
-
-@media screen and (max-width: 1260px) {
-  .container {
-    padding: 0 60px;
-    max-width: 100%;
-    width: 100%;
-  }
-}
-
-@media screen and (max-width: 1024px) {
-  .container {
-    padding: 0 20px;
-  }
-
-  body {
-    overflow-x: auto;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .container {
-    padding: 0 10px;
   }
 }
 </style>

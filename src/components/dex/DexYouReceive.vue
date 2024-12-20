@@ -252,6 +252,7 @@ export default {
 .btn-tooltip {
   position: absolute;
   right: 5px;
+  background: var(--main-bg-color);
 }
 
 .dex__content {
@@ -363,7 +364,7 @@ export default {
 
 .theme-light .dex__btn::after {
   mix-blend-mode: difference;
-  filter: invert(0.1);
+  filter: invert(100%);
 }
 
 .dex__btn:hover {

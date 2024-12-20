@@ -333,6 +333,7 @@ export default {
 }
 
 .dex__heading {
+  color: var(--main-text-color);
   font-size: 13px;
   line-height: 15px;
   font-family: Roboto, sans-serif;
@@ -389,7 +390,7 @@ export default {
 
 .theme-light .dex__btn::after {
   mix-blend-mode: difference;
-  filter: invert(.1);
+  filter: invert(100%);
 }
 
 .dex__btn:hover {
