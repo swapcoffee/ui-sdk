@@ -44,11 +44,8 @@ export default class DexApiV2 extends Api {
             slippage: slippage,
             paths: route.paths,
         }
-        if (referralName) {
+        if (referralName && feeSettings) {
             body.referral_name = referralName;
-        }
-
-        if (feeSettings) {
             body.custom_fee = feeSettings;
         }
 

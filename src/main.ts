@@ -55,7 +55,10 @@ export function createSwapWidget(selector, options = {}) {
 
     app.provide('injectionMode', injectionMode);
     app.provide('widgetReferral', widgetReferral);
-    app.provide('customFeeSettings', customFeeSettings || null);
+
+    if (customFeeSettings && widgetReferral) {
+        app.provide('customFeeSettings', customFeeSettings || null);
+    }
 
     i18n.global.locale.value = locale;
 
