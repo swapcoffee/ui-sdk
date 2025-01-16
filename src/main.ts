@@ -14,6 +14,12 @@ export function createSwapWidget(selector, options = {}) {
         payload,
         injectionMode = 'tonConnect',
         widgetReferral = null,
+        customFeeSettings = {
+            fixed_fee: null,
+            percentage_fee: null,
+            min_percentage_fee_fixed: null,
+            max_percentage_fee_fixed: null,
+        }
     } = options;
 
     if (injectionMode !== 'tonConnect' && injectionMode !== 'payload') {
@@ -49,6 +55,10 @@ export function createSwapWidget(selector, options = {}) {
 
     app.provide('injectionMode', injectionMode);
     app.provide('widgetReferral', widgetReferral);
+
+    if (customFeeSettings && widgetReferral) {
+        app.provide('customFeeSettings', customFeeSettings || null);
+    }
 
     i18n.global.locale.value = locale;
 

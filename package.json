@@ -1,7 +1,7 @@
 {
   "name": "@swap-coffee/ui-sdk",
   "private": false,
-  "version": "1.1.19",
+  "version": "1.2.0",
   "type": "module",
   "description": "User Interface SDK of swap.coffee DEX aggregator for integration in web applications",
   "main": "dist/swap-sdk.cjs.js",
