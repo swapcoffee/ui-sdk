@@ -85,7 +85,7 @@ import { useDexStore } from "@/stores/dex";
 export default {
   name: "SwapWidget",
   mixins: [computedMixins, tonConnectMixin],
-  inject: ["injectionMode", "widgetReferral"],
+  inject: ["injectionMode", "widgetReferral", "customFeeSettings"],
   props: {
   },
   components: {
@@ -554,11 +554,13 @@ export default {
         }
 
         const referralName = this.widgetReferral || JSON.parse(sessionStorage.getItem('referral_name'));
+        const widgetCustomFeeSettings = this.customFeeSettings;
         this.trInfo = await this.dexApiV2.getRouteTransactions(
             this.dexStore.GET_DEAL_CONDITIONS,
             sender,
             this.dexStore.GET_SLIPPAGE / 100,
-            referralName
+            referralName,
+            widgetCustomFeeSettings
         );
 
         const transactionConfirmedListener = (event: any) => {

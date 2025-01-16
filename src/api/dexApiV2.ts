@@ -38,14 +38,18 @@ export default class DexApiV2 extends Api {
         return this.request(`/v2/unstake/ton/transaction`, JSON.stringify(body), "POST");
     }
 
-    getRouteTransactions(route, senderAddress, slippage, referralName) {
+    getRouteTransactions(route, senderAddress, slippage, referralName, feeSettings) {
         let body = {
             sender_address: senderAddress,
             slippage: slippage,
             paths: route.paths,
         }
         if (referralName) {
-            body.referral_name = referralName
+            body.referral_name = referralName;
+        }
+
+        if (feeSettings) {
+            body.custom_fee = feeSettings;
         }
 
         return this.request(`/v2/route/transactions`, JSON.stringify(body), "POST");
