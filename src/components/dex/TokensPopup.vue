@@ -212,16 +212,15 @@
 
 <script lang="ts">
 import { Address } from "@ton/core";
-import axios from "axios";
 import methodsMixins from "@/mixins/methodsMixins";
-import computedMixins from "@/mixins/computedMixins";
 import TokenItem from "@/components/dex/TokenItem.vue";
 import { useDexStore } from "@/stores/dex";
+import {profileService, tokenService} from "@/api/coffeeApi/services";
 
 export default {
   name: "TokensPopup",
   components: { TokenItem },
-  mixins: [methodsMixins, computedMixins],
+  mixins: [methodsMixins],
   props: {
     mode: {
       type: String,
@@ -510,10 +509,15 @@ export default {
     },
     async getUnlistedToken() {
       try {
-        const res = await axios.get(`https://tonapi.io/v2/jettons/${this.searchValue}`);
-        this.unlistedToken = res?.data.metadata;
+        let res = await tokenService.getSingleToken(this.searchValue);
+        this.unlistedToken = res?.metadata
+        this.unlistedToken.type = 'jetton'
+        this.unlistedToken.balance = 0
+        this.unlistedToken.stacking_pool_id = null
+        this.unlistedToken.labels = []
+
       } catch (err) {
-        console.error(err);
+        console.error(err)
       }
     },
     importToken() {
@@ -739,7 +743,7 @@ export default {
         settings[key] = value;
         localStorage.setItem(key, JSON.stringify(value));
         if (this.dexStore.GET_PROOF_VERIFICATION) {
-          this.dexStore.dexApiV2.writeStorage(
+          await profileService.writeStorage(
               this.dexStore.GET_DEX_WALLET?.address,
               this.dexStore.GET_PROOF_VERIFICATION,
               settings

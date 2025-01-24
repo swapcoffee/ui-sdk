@@ -1,11 +1,10 @@
 import { THEME, toUserFriendlyAddress } from '@tonconnect/ui';
 import { useDexStore } from '@/stores/dex';
 import { useSettingsStore } from "@/stores/settings";
-import computedMixins from "@/mixins/computedMixins";
+import { profileService } from '@/api/coffeeApi/services';
 
 export default {
     inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode'],
-    mixins: [computedMixins],
     computed: {
         dexStore() {
             return useDexStore();
@@ -15,6 +14,9 @@ export default {
         },
         GET_PROOF_VERIFICATION() {
             return this.dexStore.GET_PROOF_VERIFICATION;
+        },
+        GET_DEX_WALLET() {
+            return this.dexStore.GET_DEX_WALLET;
         },
         GET_CASHBACK() {
             return this.dexStore.GET_CASHBACK;
@@ -62,10 +64,12 @@ export default {
 
         async loadSettingsFromPayload(address) {
             try {
-                let settings = await this.dexApiV2.readStorage(
+                let settingsRes = await profileService.readStorage(
                     address,
                     this.dexStore.GET_PROOF_VERIFICATION
                 );
+
+                const settings = settingsRes.data;
                 if (settings.body?.dexSettings && settings.body?.globalSettings) {
                     this.SAVE_USER_SETTINGS(settings.body);
                 } else {
@@ -83,7 +87,6 @@ export default {
                 if (proof) {
                     this.DEX_WALLET(account);
                     this.DEX_PROOF_VERIFICATION(proof);
-                    this.getUserSettings();
                 } else {
                     console.log('disconnect');
                     this.disconnectWallet();
@@ -193,10 +196,13 @@ export default {
                     maxSplits: this.GET_MAX_SPLITS,
                 };
 
-                await this.dexApiV2.writeStorage(
-                    this.dexStore.GET_DEX_WALLET?.address,
+                await profileService.writeStorage(
+                    this.GET_DEX_WALLET?.address,
                     this.GET_PROOF_VERIFICATION,
-                    { globalSettings: global, dexSettings: dex }
+                    {
+                        globalSettings: newSettings,
+                        dexSettings: dex,
+                    },
                 );
             } catch (err) {
                 console.error(err);

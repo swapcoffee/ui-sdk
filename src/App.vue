@@ -8,18 +8,18 @@
 import { toUserFriendlyAddress } from "@tonconnect/ui";
 import { useDexStore } from "@/stores/dex";
 import tonConnectMixin from "@/mixins/tonConnectMixin";
-import computedMixins from "@/mixins/computedMixins";
 import methodsMixins from "@/mixins/methodsMixins";
 import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
 import {Address} from "@ton/core";
+import {tonApiService, profileService, tokenService} from "@/api/coffeeApi/services";
 
 export default {
   name: "App",
   components: {SwapWidget},
   inject: ['tonConnectUi', "injectionMode", 'payload'],
-  mixins: [tonConnectMixin, computedMixins, methodsMixins],
+  mixins: [tonConnectMixin, methodsMixins],
   shadow: true,
   data() {
     return {
@@ -161,7 +161,7 @@ export default {
       try {
         let wallet = this.GET_DEX_WALLET;
         if (!wallet.version) {
-          let res = await this.dexApiV2.getWalletVersion(address);
+          let res = await tonApiService.getWalletVersion(address);
           if (res?.version > 0) {
             wallet.version = res.version;
             this.dexStore.DEX_WALLET(wallet);
@@ -191,7 +191,7 @@ export default {
       }
       try {
         this.tokensRequestInProgress = true;
-        let res = await this.tokensApi.getTokenList()
+        let res = await tokenService.getTokenList()
         let tokens = []
         res.forEach((item) => {
           item.type = item.address === "0:0000000000000000000000000000000000000000000000000000000000000000" ? "native" : "jetton"
@@ -319,7 +319,7 @@ export default {
     },
     async getTokenLabels() {
       try {
-        let res = await this.tokensApi.getLabels()
+        let res = await tokenService.getLabels()
         this.dexStore.DEX_TOKEN_LABELS(res?.items)
       } catch(err) {
         console.error(err)
@@ -357,14 +357,15 @@ export default {
     },
     async getBalance(wallet) {
       try {
-        return await this.dexApiV2.getBalance(wallet.address);
+        const res = await tonApiService.getBalance(wallet.address);
+        return res.data
       } catch (err) {
         throw err;
       }
     },
     async getBalanceFromTonApi(wallet) {
       try {
-        let res = await this.tonApi.getTonWalletInfo(wallet.address);
+        let res = await tonApiService.getTonWalletInfo(wallet.address);
         return res?.balance;
       } catch (err) {
         throw err;
@@ -387,7 +388,7 @@ export default {
       try {
         let array = []
         let tokensWithBalance = this.dexStore.GET_TON_TOKENS
-        let jettons = await this.tonApi.getTonJettons(toUserFriendlyAddress(wallet.address))
+        let jettons = await tonApiService.getTonJettons(toUserFriendlyAddress(wallet.address))
 
         jettons?.balances.forEach((item) => {
           let findItem = this.dexStore.GET_TON_TOKENS.find((find) => item.jetton.address === find.address)
@@ -452,21 +453,6 @@ export default {
         }
       }
     },
-    // async getUserSettings() {
-    //   try {
-    //     const settings = await this.dexApiV2.readStorage(
-    //         this.dexStore.GET_DEX_WALLET?.address,
-    //         this.dexStore.GET_PROOF_VERIFICATION
-    //     );
-    //     if (settings.body?.dexSettings && settings.body?.globalSettings) {
-    //       this.SAVE_USER_SETTINGS(settings.body);
-    //     } else {
-    //       await this.setDefaultSettings();
-    //     }
-    //   } catch (err) {
-    //     console.error(err);
-    //   }
-    // },
 
     async setDefaultSettings() {
       try {
@@ -485,7 +471,7 @@ export default {
           maxSplits: this.GET_MAX_SPLITS,
         };
 
-        await this.dexApiV2.writeStorage(
+        await profileService.writeStorage(
             this.dexStore.GET_DEX_WALLET?.address,
             this.dexStore.GET_PROOF_VERIFICATION,
             { globalSettings: global, dexSettings: dex }

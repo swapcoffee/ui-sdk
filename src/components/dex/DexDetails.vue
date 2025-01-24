@@ -80,31 +80,11 @@
 				<p class="dex__name">{{ $t("dexDetails.economy") }}</p>
 				<p class="dex__value value_green">{{ getProfitDisplay }}%</p>
 			</div>
-			<!-- <div class="dex__row top-align" v-if="GET_DEAL_CONDITIONS?.paths.length > 0">
-				<div class="dex__row">
-					<p class="dex__name">
-						{{ $t("dexDetails.distribution") }}
-					</p>
-					<svg class="dex__arrow_small" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-						<path d="M20.0306 9.53063L12.5306 17.0306C12.461 17.1004 12.3782 17.1557 12.2872 17.1934C12.1961 17.2312 12.0985 17.2506 12 17.2506C11.9014 17.2506 11.8038 17.2312 11.7128 17.1934C11.6217 17.1557 11.539 17.1004 11.4694 17.0306L3.96936 9.53063C3.86435 9.42573 3.79282 9.29204 3.76383 9.14648C3.73485 9.00092 3.7497 8.85002 3.80651 8.71291C3.86333 8.57579 3.95955 8.45861 4.08299 8.37621C4.20644 8.29381 4.35156 8.24988 4.49998 8.25H19.5C19.6484 8.24988 19.7935 8.29381 19.917 8.37621C20.0404 8.45861 20.1366 8.57579 20.1934 8.71291C20.2503 8.85002 20.2651 9.00092 20.2361 9.14648C20.2071 9.29204 20.1356 9.42573 20.0306 9.53063Z" fill="white"/>
-					</svg>
-					<img src="@/assets/dex/filled-arrow.svg" alt="arrow" class="dex__arrow_small">
-				</div>
-				<div class="dex__flex-column">
-					<div class="dex__flex-group"
-						 v-for="(route, index) in getRoutes"
-						 :key="index"
-					>
-						<img :src="route.dex.imageUrl" alt="" class="dex__source-image">
-						<p class="dex__value">{{ route.dex.name }} </p>
-						<img src="@/assets/dex/arrow-right.svg" alt="" class="dex__arrow-icon">
-						<p class="dex__value value_green">{{ route.inputPercentage }}%</p>
-						<p class="dex__value">{{ route.path }}</p>
-					</div>
-				</div>
-			</div> -->
+      <div class="dex__row">
+        <p class="dex__name">Integrator Fee</p>
+        <p class="dex__value">≈ {{ partnerFee }} TON</p>
+      </div>
 		</div>
-		<!--		</transition>-->
 	</div>
 </template>
 
@@ -117,6 +97,7 @@ export default {
   name: "DexDetails",
   mixins: [transactionRoutesMixin],
   components: { TooltipWrapper },
+  inject: ["customFeeSettings"],
   data() {
     return {
       showMore: false,
@@ -162,6 +143,22 @@ export default {
       const profit = parseFloat((this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2));
       return profit > 100 ? ">100" : profit.toString();
     },
+    partnerFee() {
+      const feeSettings = this.customFeeSettings;
+      const transactionAmount = this.GET_DEAL_CONDITIONS?.input_amount
+
+      if (!feeSettings || !transactionAmount) {
+        return 0;
+      }
+
+      const percentageFee = (transactionAmount * feeSettings.percentage_fee) / 1_000_000;
+      const minFee = Number(feeSettings.min_percentage_fee_fixed);
+      const maxFee = Number(feeSettings.max_percentage_fee_fixed);
+
+      const result = Math.min(Math.max(percentageFee, minFee), maxFee)
+
+      return this.formatTon(result);
+    },
     getGasFeeDisplay(): string {
       const gasFee = this.GET_DEAL_CONDITIONS?.recommended_gas ?? 0;
       return gasFee.toFixed(3);
@@ -181,6 +178,11 @@ export default {
   methods: {
     showTooltip(value: number): void {
       this.tooltipList.push(value);
+    },
+    formatTon(nanotons, decimals = 9) {
+      const divisor = Math.pow(10, decimals);
+      const tons = parseFloat(nanotons) / divisor;
+      return tons.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     },
     hideTooltip(value: number): void {
       const index = this.tooltipList.indexOf(value);

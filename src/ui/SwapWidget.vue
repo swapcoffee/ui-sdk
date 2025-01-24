@@ -73,7 +73,6 @@ import DexButton from "@/components/dex/DexButton.vue";
 import DexInfo from "@/components/dex/DexInfo.vue";
 import DexYouReceive from "@/components/dex/DexYouReceive.vue";
 import DexCashback from "@/components/dex/DexCashback.vue";
-import computedMixins from "@/mixins/computedMixins";
 import tonConnectMixin from "@/mixins/tonConnectMixin";
 import { defineAsyncComponent } from "vue";
 import { setTransactionMessage } from "@/helpers/dex/calculate";
@@ -81,10 +80,11 @@ import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import { Address } from "@ton/core";
 import { useDexStore } from "@/stores/dex";
+import { dexService, tokenService } from "@/api/coffeeApi/services";
 
 export default {
   name: "SwapWidget",
-  mixins: [computedMixins, tonConnectMixin],
+  mixins: [tonConnectMixin],
   inject: ["injectionMode", "widgetReferral", "customFeeSettings"],
   props: {
   },
@@ -317,23 +317,23 @@ export default {
 
         if (this.dexStore.GET_SEND_TOKEN?.stacking_pool_id != null) {
           this.dexStore.DEX_STAKING_POOL(
-              await this.tokensApi.getStakingPool(
+              await tokenService.getStakingPool(
                   this.dexStore.GET_SEND_TOKEN?.stacking_pool_id
               )
           );
         }
         if (this.dexStore.GET_RECEIVE_TOKEN?.stacking_pool_id != null) {
           this.dexStore.DEX_STAKING_POOL(
-              await this.tokensApi.getStakingPool(
+              await tokenService.getStakingPool(
                   this.dexStore.GET_RECEIVE_TOKEN?.stacking_pool_id
               )
           );
         }
 
-        this.calculateRequestData = await this.dexApiV2.getRoute(requestData);
+        this.calculateRequestData = await dexService.getRoute(requestData);
 
-        if (this.calculateRequestData.paths.length > 0) {
-          this.dexStore.DEX_DEAL_CONDITIONS(this.calculateRequestData);
+        if (this.calculateRequestData.data.paths.length > 0) {
+          this.dexStore.DEX_DEAL_CONDITIONS(this.calculateRequestData?.data);
         } else {
           this.poolNotFound = true;
         }
@@ -398,7 +398,7 @@ export default {
         },
         max_length: this.dexStore.GET_MAX_INTERMEDIATE_TOKENS + 2,
         pool_selector: this.getPoolSelector(),
-        max_splits: this.dexStore.GET_MAX_SPLITS,
+        max_splits: this.customFeeSettings ? 3 : this.dexStore.GET_MAX_SPLITS,
       };
 
 
@@ -441,8 +441,8 @@ export default {
         this.stakeProcessing = true;
 
         const sender = Address.parseRaw(this.dexStore.GET_DEX_WALLET?.address).toString();
-        const referralName = this.widgetReferral || JSON.parse(sessionStorage.getItem('referral_name'));
-        const transaction = await this.dexApiV2.getStakeTransaction(
+        const referralName = this.widgetReferral;
+        const { data } = await dexService.getStakeTransaction(
             sender,
             this.dexStore.GET_RECEIVE_TOKEN?.address,
             this.dexStore.GET_SEND_AMOUNT,
@@ -453,9 +453,9 @@ export default {
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
-              address: transaction.address,
-              amount: transaction.value,
-              payload: transaction.payload_cell,
+              address: data.address,
+              amount: data.value,
+              payload: data.payload_cell,
             },
           ],
         };
@@ -465,7 +465,7 @@ export default {
         } else if (this.injectionMode === 'payload') {
           await this.sendPayloadTransaction(
               transactionParams,
-              transaction,
+              data,
               'stake'
           );
 
@@ -484,7 +484,7 @@ export default {
         this.unstakeProcessing = true;
 
         const sender = Address.parseRaw(this.dexStore.GET_DEX_WALLET?.address).toString();
-        const transaction = await this.dexApiV2.getUnstakeTransaction(
+        const { data } = await dexService.getUnstakeTransaction(
             sender,
             this.dexStore.GET_SEND_TOKEN?.address,
             this.dexStore.GET_SEND_AMOUNT
@@ -494,9 +494,9 @@ export default {
           validUntil: Math.floor(Date.now() / 1000) + 300,
           messages: [
             {
-              address: transaction.address,
-              amount: transaction.value,
-              payload: transaction.payload_cell,
+              address: data.address,
+              amount: data.value,
+              payload: data.payload_cell,
             },
           ],
         };
@@ -506,7 +506,7 @@ export default {
         } else if (this.injectionMode === 'payload') {
           await this.sendPayloadTransaction(
               transactionParams,
-              transaction,
+              data,
               'stake'
           );
         }
@@ -553,15 +553,17 @@ export default {
           ).toString();
         }
 
-        const referralName = this.widgetReferral || JSON.parse(sessionStorage.getItem('referral_name'));
+        const referralName = this.widgetReferral;
         const widgetCustomFeeSettings = this.customFeeSettings;
-        this.trInfo = await this.dexApiV2.getRouteTransactions(
+        const response = await dexService.getRouteTransactions(
             this.dexStore.GET_DEAL_CONDITIONS,
             sender,
             this.dexStore.GET_SLIPPAGE / 100,
             referralName,
             widgetCustomFeeSettings
         );
+
+        this.trInfo = response?.data;
 
         const transactionConfirmedListener = (event: any) => {
           if (event.detail?.route_id === this.trInfo?.route_id) {
@@ -574,16 +576,20 @@ export default {
 
         if (this.injectionMode === 'tonConnect') {
           await this.tonConnectUi.sendTransaction(this.getTransactionParams(this.trInfo));
-          this.showSuccess = true;
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
           await this.sendPayloadTransaction(transactionParams, this.trInfo, 'dex');
           window.addEventListener('transactionConfirmed', transactionConfirmedListener);
         }
 
-        this.transactionStatus = await this.dexApiV2.getTransactions(
+        const { data } = await dexService.getTransactions(
             this.trInfo?.route_id
         );
+
+        this.transactionStatus = data;
+
+        this.showSuccess = true;
+
       } catch (err) {
         console.error(err);
       } finally {

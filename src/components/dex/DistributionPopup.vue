@@ -43,11 +43,10 @@
 
 <script lang="ts">
 import transactionRoutesMixin from "@/mixins/transactionRoutesMixin";
-import computedMixins from "@/mixins/computedMixins";
 
 export default {
   name: "DistributionPopup",
-  mixins: [transactionRoutesMixin, computedMixins],
+  mixins: [transactionRoutesMixin],
   data() {
     return {
       routeCount: 4,

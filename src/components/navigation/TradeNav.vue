@@ -17,11 +17,9 @@
 </template>
 
 <script lang="ts">
-import computedMixins from "@/mixins/computedMixins";
 
 export default {
   name: "TradeNav",
-  mixins: [computedMixins],
   computed: {
     getRouteName() {
       return this.$route.name;

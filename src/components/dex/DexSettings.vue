@@ -326,11 +326,10 @@ import { useDexStore } from "@/stores/dex";
 import { useSettingsStore } from "@/stores/settings";
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
-import computedMixins from "@/mixins/computedMixins";
+import {profileService} from "@/api/coffeeApi/services";
 
 export default {
   name: "DexSettings",
-  mixins: [computedMixins],
   components: {
     SwitchToggle,
     TooltipWrapper,
@@ -519,7 +518,7 @@ export default {
 
         localStorage.setItem("dexSettings", JSON.stringify(settings));
         if (this.dexStore.GET_PROOF_VERIFICATION && this.dexStore.GET_DEX_WALLET) {
-          await this.dexApiV2.writeStorage(
+          await profileService.writeStorage(
               this.dexStore.GET_DEX_WALLET.address,
               this.dexStore.GET_PROOF_VERIFICATION,
               settings

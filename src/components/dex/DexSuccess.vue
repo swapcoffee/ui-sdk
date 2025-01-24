@@ -198,64 +198,27 @@
               </p>
             </div>
           </div>
-          <!--					<button class="success__btn text_colored"-->
-          <!--							v-if="checkIntermediateTokens.length > 0"-->
-          <!--							@click="swapIntermediateTokens"-->
-          <!--					>-->
-          <!--						{{ $t("dexSuccess.btnText") }}-->
-          <!--					</button>-->
         </div>
       </div>
-<!--      <button-->
-<!--          v-if="getTransactionStatus === 'succeeded'"-->
-<!--          class="success__share-btn"-->
-<!--          @click="getShareLink"-->
-<!--      >-->
-<!--        <svg-->
-<!--            class="share-icon"-->
-<!--            xmlns="http://www.w3.org/2000/svg"-->
-<!--            width="20"-->
-<!--            height="20"-->
-<!--            viewBox="0 0 18 18"-->
-<!--            fill="none"-->
-<!--        >-->
-<!--          <path-->
-<!--              d="M12.1604 4.06107C12.0118 3.91253 11.8225 3.81138 11.6164 3.7704C11.4104 3.72943 11.1968 3.75047 11.0027 3.83086C10.8086 3.91126 10.6426 4.0474 10.5259 4.22207C10.4092 4.39675 10.3468 4.60211 10.3468 4.81221V5.65473H7.78098C6.51342 5.65613 5.29817 6.16029 4.40187 7.05659C3.50557 7.95289 3.00141 9.16814 3 10.4357L3 14.1542C3 14.2951 3.05597 14.4302 3.15559 14.5299C3.25521 14.6295 3.39033 14.6855 3.53122 14.6855C3.67211 14.6855 3.80723 14.6295 3.90685 14.5299C4.00647 14.4302 4.06244 14.2951 4.06244 14.1542C4.06328 13.3092 4.39936 12.4989 4.99692 11.9014C5.59447 11.3038 6.40469 10.9678 7.24976 10.9669H10.3468V11.8094C10.3468 12.0195 10.4092 12.2249 10.5259 12.3996C10.6426 12.5742 10.8086 12.7104 11.0027 12.7908C11.1968 12.8712 11.4104 12.8922 11.6164 12.8512C11.8225 12.8103 12.0118 12.7091 12.1604 12.5606L15.2834 9.43754C15.5822 9.13868 15.75 8.7334 15.75 8.31082C15.75 7.88824 15.5822 7.48296 15.2834 7.1841L12.1604 4.06107Z"-->
-<!--              fill="white"-->
-<!--          />-->
-<!--        </svg>-->
-<!--        Share result-->
-<!--      </button>-->
-    </div>
-    <!--		<app-notification class="error"-->
-    <!--			v-show="showError"-->
-    <!--			@closeCopyNotification="closeNotification"-->
-    <!--		>-->
-    <!--			Your browser or device does not support the share feature.-->
-    <!--		</app-notification>-->
-<!--    <app-notification v-show="showNotification" @close-copy-notification="closeNotification">-->
-<!--      Copy to clipboard!-->
-<!--    </app-notification>-->
+  </div>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import lottie from 'lottie-web';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
-import computedMixins from '@/mixins/computedMixins';
 import { Address } from '@ton/core';
-import { useDexStore } from "@/stores/dex";
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import loadingAnimationData from '@/assets/lottie/loading.json';
 import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
-import axios from "axios";
-import AppNotification from '@/components/AppNotification.vue';
+import { dexService } from '@/api/coffeeApi/services';
+import { useDexStore } from "@/stores/dex/index.ts";
 
 export default {
   name: 'DexSuccess',
-  components: { AppNotification, TooltipWrapper },
-  mixins: [transactionRoutesMixin, computedMixins],
+  components: { TooltipWrapper },
+  mixins: [transactionRoutesMixin],
   props: {
     transaction: {
       type: Object,
@@ -298,20 +261,23 @@ export default {
       if (this.getTransactionStatus === 'succeeded') {
         let inputAmount = 0;
         let address = null;
-        this.getTransactionResult.forEach((item) => {
-          inputAmount += item?.input?.amount;
+
+        const succeededSteps = this.getTransactionResult;
+
+        succeededSteps.forEach((step) => {
           if (address === null) {
-            address = item?.input?.token_address;
+            address = step?.input?.token?.address?.address;
+          }
+
+          if (address === step?.input?.token?.address?.address) {
+            inputAmount += (step?.input?.amount / Math.pow(10, step?.input?.token?.metadata?.decimals));
           }
         });
-        return `${inputAmount.toFixed(2)}` + ' ' + `${this.getTokenByAddress(address)?.symbol}`;
+
+        return `${inputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
         if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-          return (
-              `${this.dexStore.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)}` +
-              ' ' +
-              `${this.dexStore.GET_SEND_TOKEN?.symbol}`
-          );
+          return `${this.dexStore.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)} ${this.dexStore.GET_SEND_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -319,12 +285,9 @@ export default {
     },
     getSendImage() {
       if (this.getTransactionStatus === 'succeeded') {
-        let address = null;
-        this.getTransactionResult.forEach((item) => {
-          if (address === null) {
-            address = item?.input?.token_address;
-          }
-        });
+        const succeededSteps = this.getTransactionResult;
+        let address = succeededSteps[0]?.input?.token?.address?.address;
+
         return this.getTokenByAddress(address)?.image;
       } else {
         return this.dexStore.GET_SEND_TOKEN?.image;
@@ -332,22 +295,21 @@ export default {
     },
     getReceiveTotal() {
       if (this.getTransactionStatus === 'succeeded') {
+        const succeededSteps = this.getTransactionResult;
+
         let outputAmount = 0;
-        let address = null;
-        this.getTransactionResult.forEach((item) => {
-          outputAmount += item?.output?.amount;
-          if (address === null) {
-            address = item?.output?.token_address;
+        let address = succeededSteps[succeededSteps.length - 1]?.output?.token?.address?.address;
+
+        succeededSteps.forEach((step) => {
+          if (address === step?.output?.token?.address?.address) {
+            outputAmount += (step?.output?.amount / Math.pow(10, step?.output?.token?.metadata?.decimals));
           }
         });
-        return `${outputAmount.toFixed(2)}` + ' ' + `${this.getTokenByAddress(address)?.symbol}`;
+
+        return `${outputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
         if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-          return (
-              `${this.dexStore.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)}` +
-              ' ' +
-              `${this.dexStore.GET_RECEIVE_TOKEN?.symbol}`
-          );
+          return `${this.dexStore.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)} ${this.dexStore.GET_RECEIVE_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -355,45 +317,40 @@ export default {
     },
     getReceiveImage() {
       if (this.getTransactionStatus === 'succeeded') {
-        let address = null;
-        this.getTransactionResult.forEach((item) => {
-          if (address === null) {
-            address = item?.output?.token_address;
-          }
-        });
+        const succeededSteps = this.getTransactionResult;
+        let address = succeededSteps[succeededSteps.length - 1]?.output?.token?.address?.address;
+
         return this.getTokenByAddress(address)?.image;
       } else {
         return this.dexStore.GET_RECEIVE_TOKEN?.image;
       }
     },
     getTransactionResult() {
-      if (this.getTransactionStatus === 'succeeded') {
-        let succeededList = [];
+      let succeededList = [];
 
-        this.transactionResult.forEach((item) => {
-          if (item?.status === 'succeeded') {
-            let filteredObject = {
-              status: item.status,
-              input: item.input,
-              output: item.output,
-            };
-            succeededList.push(filteredObject);
-          }
+      this.transactionResult.splits.forEach((item) => {
+        item.steps.forEach((step) => {
+          let filteredObject = {
+            status: step.status,
+            input: step.input,
+            output: step.output,
+          };
+
+          succeededList.push(filteredObject);
         });
+      });
 
-        return succeededList;
-      }
+      return succeededList;
     },
     getTransactionStatus() {
-      // return 'failed'
-      if (this.transactionResult !== null) {
-        let findFailed = this.transactionResult.find((item) => item?.status === 'failed');
-        let findTimedOut = this.transactionResult.find((item) => item?.status === 'timed_out');
-        let findPending = this.transactionResult.find((item) => item?.status === 'pending');
-        let findPartiallyComplete = this.transactionResult.find(
-            (item) => item?.status === 'partially_complete',
+      if (this.transactionResult && Array.isArray(this.transactionResult.splits)) {
+        let findFailed = this.transactionResult.splits.find((item) => item?.status === 'failed');
+        let findTimedOut = this.transactionResult.splits.find((item) => item?.status === 'timed_out');
+        let findPending = this.transactionResult.splits.find((item) => item?.status === 'pending');
+        let findPartiallyComplete = this.transactionResult.splits.find(
+            (item) => item?.status === 'partially_complete'
         );
-        let findSucceeded = this.transactionResult.find((item) => item?.status === 'succeeded');
+        let findSucceeded = this.transactionResult.splits.find((item) => item?.status === 'succeeded');
 
         if (findSucceeded && !findPending && !findPartiallyComplete) {
           return 'succeeded';
@@ -425,13 +382,8 @@ export default {
       }
     },
     getProfitDisplay() {
-      const savings = Number(this.dexStore.GET_DEAL_CONDITIONS?.savings);
-      if (isNaN(savings) || savings === undefined || savings === null) {
-        return '0.00';
-      }
-
-      let profit = (savings * 100).toFixed(2);
-      return Number(profit) > 100 ? '>100' : profit;
+      let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+      return profit > 100 ? '>100' : profit;
     },
     getPriceImpactDisplay() {
       let pi = this.getPriceImpact;
@@ -461,44 +413,26 @@ export default {
     checkIntermediateTokens() {
       let failedArray = [];
 
-      this.transactionResult.forEach((item) => {
-        if (item?.status === 'failed' || item?.status === 'timed_out') {
-          failedArray.push(item);
+      const succeededSteps = this.getTransactionResult;
+
+      succeededSteps.forEach((step) => {
+        if (step?.status === 'failed' || step?.status === 'timed_out') {
+          failedArray.push(step);
         }
       });
 
       return failedArray;
-      // let findFailed = null
-      // let findTimedOut = null
-      // if (this.transactionResult !== null) {
-      // 	findFailed = this.transactionResult.find((item) => item?.status === 'failed')
-      // 	findTimedOut = this.transactionResult.find((item) => item?.status === 'timed_out')
-      // }
-      // let intermediateToken = null
-      //
-      // if (findFailed) {
-      // 	intermediateToken = this.findIntermediate(findFailed)
-      // } else if (findTimedOut) {
-      // 	intermediateToken = this.findIntermediate(findTimedOut)
-      // }
-      // return intermediateToken
     },
     getDisplayIntermediate() {
-      // let intermediateAmount = 0
-      let message = '';
-      if (this.checkIntermediateTokens.length > 0) {
-        this.checkIntermediateTokens.forEach((item, index) => {
-          let findToken = this.findIntermediate(item);
-          let intermediate = this.getTokenByAddress(findToken?.token_address);
+      let tokens = []
 
-          message += findToken?.amount.toFixed(2) + ' ' + intermediate?.symbol;
-          if (index + 1 < this.checkIntermediateTokens.length) {
-            message += ', ';
-          }
-        });
-      }
+      this.checkIntermediateTokens.forEach((item, index) => {
+        let metadata = item?.input.token.metadata;
+        const convertedAmount = item?.input.amount / Math.pow(10, metadata.decimals);
+        tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+      });
 
-      return message;
+      return tokens.join(', ');
     },
     getText() {
       return this.$t('dexSuccess.resultText', { token: this.dexStore.GET_RECEIVE_TOKEN?.symbol });
@@ -520,6 +454,13 @@ export default {
     },
     isWindows() {
       return /Windows/i.test(navigator.userAgent);
+    },
+    getTokenPrice() {
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+        return this.dexStore.GET_DEAL_CONDITIONS?.input_usd;
+      } else {
+        return 0;
+      }
     },
   },
   methods: {
@@ -551,46 +492,6 @@ export default {
     hiddenTooltip() {
       this.tooltipList = [];
     },
-    async copyToClipboard(blob) {
-      try {
-        let item = new ClipboardItem({ 'image/png': blob.data });
-        await navigator.clipboard.write([item]);
-        this.showShareError();
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    async shareResult(blob) {
-      try {
-        let file = new File([blob.data], 'result.png', { type: 'image/png' });
-        let data = {
-          // text: this.getText,
-          files: [file],
-        };
-        if (navigator.share && navigator.canShare(data)) {
-          await navigator.share(data);
-        } else {
-          await this.copyToClipboard(blob);
-        }
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    async getImageAsBlob(url) {
-      try {
-        return await axios.get(url, { responseType: 'blob' });
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    createUrl(params) {
-      if (params !== null) {
-        let query = `?in_token=${params?.in}&out_token=${params?.out}&profit_percent=${params?.profit}&market_price=${params?.market_price}&our_price=${params?.our_price}&time=${params?.time}&utc_offset=${params?.utc}&ref=${params?.ref}`;
-        return 'https://img.swap.coffee/v1/image/profits' + query;
-      } else {
-        return '';
-      }
-    },
     getTokenByAddress(tokenAddress) {
       let searchAddress = '';
 
@@ -602,20 +503,19 @@ export default {
 
       return this.dexStore.GET_TON_TOKENS.find((find) => find.address === searchAddress);
     },
-    findIntermediate(split) {
+    findIntermediate(token) {
       let result = null;
-      let index = 0;
-      split?.steps.forEach((token) => {
-        ++index;
-        if (token.status === 'failed' || token.status === 'timed_out') {
-          result = split.steps[index - 1].output;
-        }
-      });
+
+      if (token.status === 'failed' || token.status === 'timed_out') {
+        result = token.output;
+      }
       return result;
+
     },
     async checkTransactionStatus(trInfo) {
       try {
-        this.transactionResult = await this.dexApiV2.getTransactions(trInfo?.route_id);
+        const res = await dexService.getTransactions(trInfo?.route_id);
+        this.transactionResult = res?.data;
         if (
             this.getTransactionStatus === 'failed' ||
             this.getTransactionStatus === 'timed_out' ||
@@ -633,38 +533,6 @@ export default {
       } else {
         this.routeCount = 4;
       }
-    },
-    swapIntermediateTokens() {
-      let rawIntermediateAddress = '';
-      let findToken = this.findIntermediate(this.checkIntermediateTokens[0]);
-      let intermediate = this.getTokenByAddress(findToken?.token_address);
-      // let intermediate = this.getIntermediateFromTokenList
-      // if (this.checkIntermediateTokens?.token_address !== 'native') {
-      // 	rawIntermediateAddress = Address.parseFriendly(this.checkIntermediateTokens?.token_address).address.toRawString()
-      // } else {
-      // 	rawIntermediateAddress = 'native'
-      // }
-      // let intermediate = this.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
-      let necessaryToken = null;
-
-      if (this.dexStore.GET_SWAP_MODE === 'default') {
-        necessaryToken = this.dexStore.GET_RECEIVE_TOKEN;
-      } else {
-        necessaryToken = this.dexStore.GET_SEND_TOKEN;
-      }
-
-      this.dexStore.DEX_SEND_TOKEN(intermediate);
-      this.dexStore.DEX_RECEIVE_TOKEN(necessaryToken);
-      setTimeout(() => {
-        this.$router.replace({
-          name: 'Dex',
-          query: {
-            ft: intermediate?.symbol,
-            st: necessaryToken?.symbol,
-          },
-        });
-      }, 100);
-      this.$emit('closeSuccess');
     },
   },
   mounted() {
