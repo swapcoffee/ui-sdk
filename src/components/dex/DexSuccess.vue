@@ -214,7 +214,7 @@ import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
 import { dexService } from '@/api/coffeeApi/services';
 import { useDexStore } from "@/stores/dex/index.ts";
-import methodsMixins from "@/mixins/methodsMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import {ReadonlySdkEvent} from "@/utils/consts";
 
 export default {
