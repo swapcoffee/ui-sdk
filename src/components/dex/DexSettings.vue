@@ -327,9 +327,12 @@ import { useSettingsStore } from "@/stores/settings";
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
 import {profileService} from "@/api/coffeeApi/services";
+import {ReadonlySdkEvent} from "@/utils/consts";
+import methodsMixins from "@/mixins/methodsMixins";
 
 export default {
   name: "DexSettings",
+  mixins: [methodsMixins],
   components: {
     SwitchToggle,
     TooltipWrapper,
@@ -517,6 +520,8 @@ export default {
         settings.dexSettings[key] = value;
 
         localStorage.setItem("dexSettings", JSON.stringify(settings));
+
+        this.dispatchSdkEvent(ReadonlySdkEvent.SWAP_SETTINGS_UPDATED, settings)
         if (this.dexStore.GET_PROOF_VERIFICATION && this.dexStore.GET_DEX_WALLET) {
           await profileService.writeStorage(
               this.dexStore.GET_DEX_WALLET.address,

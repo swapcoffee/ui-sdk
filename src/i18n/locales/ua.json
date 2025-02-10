@@ -115,6 +115,7 @@
     "connectWallet": "Підключити гаманець",
     "highPriceImpact": "Занадто великий вплив на ціну",
     "notEnough": "Недостатньо балансу",
+    "notEnoughGas": "Недостатньо TON для газу",
     "enterAmount": "Введіть суму",
     "selectToken": "Вибрати токен",
     "sendTransaction": "Обміняти",

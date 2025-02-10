@@ -78,7 +78,11 @@
         </div>
         <div class="item__holders-count" v-if="!hasData"> {{ $t("dexTokens.noData") }} </div>
         <p class="item__status" v-if="status === 'unlisted'">Not on the list</p>
-        <p class="item__status" v-if="item?.imported === true">Imported</p>
+        <div class="import__info" v-if="item?.imported === true">
+          <p class="item__holders-count">Imported</p>
+          <div class="info-line"></div>
+          <p class="item__status remove__import" @click="removeImportedToken(item, $event)"> Remove </p>
+        </div>
       </div>
     </div>
     <div class="item__group">
@@ -291,6 +295,30 @@ export default {
     },
     unpinToken(item: any): void {
       this.$emit("unpinToken", item);
+    },
+    removeImportedToken(importedToken, event) {
+      event.stopPropagation();
+      event.preventDefault();
+
+      const tokens = JSON.parse(localStorage.getItem('importTokens'))
+          .filter(token => token.address !== importedToken.address);
+      localStorage.setItem('importTokens', JSON.stringify(tokens));
+
+      this.dexStore.DEX_TON_TOKENS(
+          this.dexStore.GET_TON_TOKENS.filter(token => token.address !== importedToken.address)
+      );
+
+      if (this.dexStore.GET_SEND_TOKEN?.address === importedToken?.address) {
+        this.dexStore.DEX_SEND_TOKEN(
+            this.dexStore.GET_TON_TOKENS.find(token => token.address === 'native')
+        );
+
+        const url = new URL(window.location.href);
+        if (url.searchParams.get('ft') !== 'TON') {
+          url.searchParams.set('ft', 'TON');
+          window.history.replaceState({}, '', url);
+        }
+      }
     },
     findLabels() {
       if (this.item.hasOwnProperty("labels")) {
@@ -535,5 +563,29 @@ export default {
 
 .theme-light .down-price path {
   fill: var(--main-red);
+}
+
+.import__info {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: 5px;
+}
+
+.import__info .item__status {
+  margin: 0;
+}
+
+.import__info .info-line {
+  margin: 0;
+}
+
+.remove__import {
+  color: var(--main-red);
+  transition: 0.2s all;
+}
+
+.remove__import:hover {
+  text-decoration: underline;
 }
 </style>

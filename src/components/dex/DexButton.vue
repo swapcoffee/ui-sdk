@@ -51,30 +51,37 @@ export default {
     },
     btnText(): string {
       if (this.checkDexStatus === 'POOL_NOT_FOUND') {
-        return this.$t("dexButton.poolNotFound") as string;
+        return this.$t('dexButton.poolNotFound');
       } else if (this.checkDexStatus === 'NOT_CONNECTED') {
-        return this.$t("dexButton.connectWallet") as string;
+        return this.$t('dexButton.connectWallet');
       } else if (this.checkDexStatus === 'HIGH_PRICE_IMPACT') {
-        return this.$t("dexButton.highPriceImpact") as string;
-      } else if (this.checkDexStatus === 'NOT_ENOUGH' && (this.dexStore.GET_SEND_AMOUNT > 0 || this.dexStore.GET_RECEIVE_AMOUNT > 0)) {
-        return this.$t("dexButton.notEnough") as string;
-      } else if (this.checkDexStatus === 'NOT_ENOUGH' && (this.dexStore.GET_SEND_AMOUNT === 0 || this.dexStore.GET_RECEIVE_AMOUNT === 0)) {
-        return this.$t("dexButton.enterAmount") as string;
+        return this.$t('dexButton.highPriceImpact');
+      } else if (this.checkDexStatus === 'NOT_ENOUGH_GAS') {
+        return this.$t('dexButton.notEnoughGas');
+      } else if (
+          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT > 0) ||
+          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT > 0)
+      ) {
+        return this.$t('dexButton.notEnough');
+      } else if (
+          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT === 0) ||
+          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT === 0)
+      ) {
+        return this.$t('dexButton.enterAmount');
       } else if (this.checkDexStatus === 'NOT_SELECTED') {
-        return this.$t("dexButton.selectToken") as string;
+        return this.$t('dexButton.selectToken');
       } else if (this.checkDexStatus === 'READY_DEX') {
-        return this.$t("dexButton.sendTransaction") as string;
+        return this.$t('dexButton.sendTransaction');
       }
-      return '';
     },
-    isButtonDisabled(): boolean {
-      return this.checkDexStatus === 'NOT_ENOUGH' ||
+    isButtonDisabled() {
+      return (this.checkDexStatus === 'NOT_ENOUGH' ||
           this.checkDexStatus === 'NOT_SELECTED' ||
           this.checkDexStatus === 'POOL_NOT_FOUND' ||
           this.checkDexStatus === 'LOADING' ||
           this.checkDexStatus === 'HIGH_PRICE_IMPACT' ||
-          this.loadingState === true;
-    }
+          this.checkDexStatus === 'NOT_ENOUGH_GAS' || this.loadingState);
+    },
   },
   methods: {
     hiddenTooltip(): void {

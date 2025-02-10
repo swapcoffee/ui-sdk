@@ -96,6 +96,7 @@
         "connectWallet": "Подключить кошелёк",
         "highPriceImpacлt": "Высокое влияние цены",
         "notEnough": "Недостаточный баланс",
+        "notEnoughGas": "Недостаточно TON для газа",
         "enterAmount": "Введите сумму",
         "selectToken": "Выберите токен",
         "sendTransaction": "Обменять",

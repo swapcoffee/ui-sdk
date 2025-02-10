@@ -115,6 +115,7 @@
     "connectWallet": "连接钱包",
     "highPriceImpact": "价格影响过大",
     "notEnough": "余额不足",
+    "notEnoughGas": "没有足够的 TON 支付 gas",
     "enterAmount": "输入金额",
     "selectToken": "选择代币",
     "sendTransaction": "兑换",

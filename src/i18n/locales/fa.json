@@ -115,6 +115,7 @@
     "connectWallet": "اتصال کیف پول",
     "highPriceImpact": "تأثیر بر قیمت خیلی زیاد",
     "notEnough": "موجودی کافی نیست",
+    "notEnoughGas": "TON کافی برای گاز وجود ندارد",
     "enterAmount": "مقدار را وارد کنید",
     "selectToken": "انتخاب توکن",
     "sendTransaction": "معامله",

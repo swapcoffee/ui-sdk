@@ -110,6 +110,7 @@
         "connectWallet": "Connect Wallet",
         "highPriceImpact": "Price impact too high",
         "notEnough": "Insufficient balance",
+        "notEnoughGas": "Not enough TON for gas",
         "enterAmount": "Enter amount",
         "selectToken": "Select a Token",
         "sendTransaction": "Swap",

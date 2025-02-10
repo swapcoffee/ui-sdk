@@ -1,3 +1,5 @@
+import type { EventAction } from "@/utils/consts";
+
 export default {
     methods: {
         reduceNum(num) {
@@ -43,5 +45,9 @@ export default {
         filterNumber(num) {
             return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, " ")
         },
+        dispatchSdkEvent(eventName: EventAction, data: unknown) {
+            const event = new CustomEvent(eventName, { detail: data });
+            window.dispatchEvent(event);
+        }
     }
 }

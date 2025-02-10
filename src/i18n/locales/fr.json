@@ -107,6 +107,7 @@
     "connectWallet": "Connecter le portefeuille",
     "highPriceImpact": "Impact sur le prix trop élevé",
     "notEnough": "Solde insuffisant",
+    "notEnoughGas": "Pas assez de TON pour le gaz",
     "enterAmount": "Entrez le montant",
     "selectToken": "Sélectionner un token",
     "sendTransaction": "Échanger",

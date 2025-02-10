@@ -211,11 +211,12 @@
 </template>
 
 <script lang="ts">
-import { Address } from "@ton/core";
+import {Address} from "@ton/core";
 import methodsMixins from "@/mixins/methodsMixins";
 import TokenItem from "@/components/dex/TokenItem.vue";
-import { useDexStore } from "@/stores/dex";
+import {useDexStore} from "@/stores/dex";
 import {profileService, tokenService} from "@/api/coffeeApi/services";
+import {ReadonlySdkEvent} from "@/utils/consts";
 
 export default {
   name: "TokensPopup",
@@ -525,7 +526,6 @@ export default {
       let array = []
       let allTokens = this.dexStore.GET_TON_TOKENS
       let storage = JSON.parse(localStorage.getItem('importTokens'))
-      // let storage = this.GET_USER_SETTINGS?.importTokens
 
       if (storage) {
         array = storage;
@@ -554,9 +554,15 @@ export default {
       setTimeout(() => {
         this.searchValue = ''
         this.chooseToken(this.unlistedToken)
+
+        this.dispatchSdkEvent(ReadonlySdkEvent.TOKEN_IMPORTED, this.unlistedToken)
       }, 200)
     },
     chooseToken(item: any) {
+      const previousToken = this.mode === "SEND" ? this.dexStore.GET_SEND_TOKEN : this.dexStore.GET_RECEIVE_TOKEN;
+
+      this.dispatchSdkEvent(ReadonlySdkEvent.TOKEN_CHANGED, { prev: previousToken, curr: item });
+
       if (this.mode === "SEND") {
         if (this.dexStore.GET_RECEIVE_TOKEN?.address === item?.address) {
           this.dexStore.DEX_RECEIVE_TOKEN(null);

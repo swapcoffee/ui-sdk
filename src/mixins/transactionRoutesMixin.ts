@@ -2,6 +2,7 @@ import { useDexStore } from "@/stores/dex";
 import dedustIcon from "@/assets/contributors/dedust-icon.png";
 import stonfiIcon from "@/assets/contributors/stonfi-icon.png";
 import stonfiV2Icon from "@/assets/contributors/stonfi-v2-icon.png"
+import toncoIcon from '@/assets/contributors/tonco.png';
 
 export default {
 	computed: {
@@ -54,6 +55,11 @@ export default {
 						name: "STONfi V2",
 						imageUrl: stonfiV2Icon
 					}
+				case 'tonco':
+					return {
+						name: 'TONCO',
+						imageUrl: toncoIcon,
+					};
 			}
 			throw new Error("Unknown DEX source name")
 		},

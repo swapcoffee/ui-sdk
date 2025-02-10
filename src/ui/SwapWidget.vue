@@ -81,10 +81,12 @@ import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import { Address } from "@ton/core";
 import { useDexStore } from "@/stores/dex";
 import { dexService, tokenService } from "@/api/coffeeApi/services";
+import methodsMixins from "@/mixins/methodsMixins";
+import { ReadonlySdkEvent } from "@/utils/consts";
 
 export default {
   name: "SwapWidget",
-  mixins: [tonConnectMixin],
+  mixins: [tonConnectMixin, methodsMixins],
   inject: ["injectionMode", "widgetReferral", "customFeeSettings"],
   props: {
   },
@@ -200,8 +202,10 @@ export default {
         return "NOT_SELECTED";
       } else if (priceImpact < -this.dexStore.GET_PRICE_IMPACT) {
         return "HIGH_PRICE_IMPACT";
-      } else if (this.notEnoughConditions) {
-        return "NOT_ENOUGH";
+      } else if (this.notEnoughConditions.reason === "noBalance") {
+        return 'NOT_ENOUGH'
+      } else if (this.notEnoughConditions.reason === "noGas") {
+        return 'NOT_ENOUGH_GAS'
       } else {
         return "READY_DEX";
       }
@@ -227,24 +231,45 @@ export default {
       const userTonBalance = this.dexStore.GET_USER_TOKENS.find(
           (item) => item.address === 'native'
       );
-      const tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001
+
+      const partnerFee = this.dexStore.GET_DEAL_CONDITIONS?.partner_commission_ton;
+      let tonGas;
+
+      if (partnerFee) {
+        tonGas = (this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas) + partnerFee
+      } else {
+        tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas;
+      }
 
       if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'default') {
         if (userTonBalance?.balance < tonGas + this.dexStore.GET_SEND_AMOUNT) {
-          return true;
+          return { result: true, reason: "noGas" };
         }
-      } else if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'reverse') {
+      }
+      else if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'reverse') {
         if (userTonBalance?.balance < tonGas + this.dexStore.GET_RECEIVE_AMOUNT) {
-          return true;
+          return { result: true, reason: "noGas" };
         }
       }
 
-      if (userTonBalance?.balance < tonGas ) {
-        return true;
+      if (userTonBalance?.balance < tonGas) {
+        return { result: true, reason: "noGas" };
       }
 
-      let findTokenInUser = this.dexStore.GET_USER_TOKENS.find((item) => item.address === this.dexStore.GET_SEND_TOKEN?.address);
-      return !(findTokenInUser && findTokenInUser?.balance >= this.dexStore.GET_DEAL_CONDITIONS?.input_amount && this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0);
+      const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
+          (item) => item.address === this.dexStore.GET_SEND_TOKEN?.address
+      );
+
+      const hasEnoughBalance =
+          findTokenInUser &&
+          findTokenInUser?.balance >= this.dexStore.GET_DEAL_CONDITIONS?.input_amount &&
+          this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0;
+
+      if (!hasEnoughBalance) {
+        return { result: true, reason: "noBalance" };
+      }
+
+      return { result: false, reason: null };
     },
   },
   methods: {
@@ -334,6 +359,7 @@ export default {
 
         if (this.calculateRequestData.data.paths.length > 0) {
           this.dexStore.DEX_DEAL_CONDITIONS(this.calculateRequestData?.data);
+          this.dispatchSdkEvent(ReadonlySdkEvent.ROUTE_BUILT, this.calculateRequestData?.data);
         } else {
           this.poolNotFound = true;
         }
@@ -575,7 +601,11 @@ export default {
 
 
         if (this.injectionMode === 'tonConnect') {
-          await this.tonConnectUi.sendTransaction(this.getTransactionParams(this.trInfo));
+          const params = this.getTransactionParams(this.trInfo);
+
+          await this.tonConnectUi.sendTransaction(params);
+
+          this.dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, params)
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
           await this.sendPayloadTransaction(transactionParams, this.trInfo, 'dex');

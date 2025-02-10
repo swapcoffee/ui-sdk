@@ -214,11 +214,13 @@ import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
 import { dexService } from '@/api/coffeeApi/services';
 import { useDexStore } from "@/stores/dex/index.ts";
+import methodsMixins from "@/mixins/methodsMixins.js";
+import {ReadonlySdkEvent} from "@/utils/consts";
 
 export default {
   name: 'DexSuccess',
   components: { TooltipWrapper },
-  mixins: [transactionRoutesMixin],
+  mixins: [transactionRoutesMixin, methodsMixins],
   props: {
     transaction: {
       type: Object,
@@ -516,15 +518,19 @@ export default {
       try {
         const res = await dexService.getTransactions(trInfo?.route_id);
         this.transactionResult = res?.data;
-        if (
+
+        if (this.getTransactionStatus === 'succeeded') {
+          this.dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, res?.data);
+
+          clearInterval(this.requestInterval);
+        } else if (
             this.getTransactionStatus === 'failed' ||
-            this.getTransactionStatus === 'timed_out' ||
-            this.getTransactionStatus === 'succeeded'
+            this.getTransactionStatus === 'timed_out'
         ) {
           clearInterval(this.requestInterval);
         }
       } catch (err) {
-        throw err;
+        console.error(err);
       }
     },
     showMore() {
