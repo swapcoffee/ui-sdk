@@ -273,20 +273,14 @@ export default {
     },
   },
   methods: {
-    getTransactionParams(trInfo: any) {
-      const cashback =
-          this.dexStore.GET_DEAL_CONDITIONS?.paths.length <= 3
-              ? this.dexStore.GET_CASHBACK
-              : false;
-      const messages = setTransactionMessage(
-          this.calculateRequestData,
-          cashback,
-          trInfo?.transactions
-      );
+    getTransactionParams(trInfo) {
+      let cashback = false
+
+      let messages = setTransactionMessage(this.calculateRequestData.data, cashback, trInfo.transactions)
       return {
         validUntil: Math.floor(Date.now() / 1000) + 300,
         messages: messages,
-      };
+      }
     },
     chooseSendToken() {
       if (this.tokenMode !== "SEND") {
@@ -603,9 +597,10 @@ export default {
         if (this.injectionMode === 'tonConnect') {
           const params = this.getTransactionParams(this.trInfo);
 
+          this.dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, params)
+
           await this.tonConnectUi.sendTransaction(params);
 
-          this.dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, params)
         } else if (this.injectionMode === 'payload') {
           const transactionParams = this.getTransactionParams(this.trInfo);
           await this.sendPayloadTransaction(transactionParams, this.trInfo, 'dex');

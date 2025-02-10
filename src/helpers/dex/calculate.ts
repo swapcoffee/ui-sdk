@@ -1,24 +1,27 @@
+import {Address} from "@ton/core";
+
 export function setTransactionMessage(data, cashback, transactions) {
     if (data.paths.length > 0) {
-
-        let array = []
+        let array = [];
 
         for (let tx of transactions) {
             array.push({
-                address: tx.address,
+                address: Address.parse(tx.address).toString({
+                    bounceable: true,
+                }),
                 amount: tx.value,
-                payload: tx.cell
-            })
+                payload: tx.cell,
+            });
         }
 
         if (cashback === true) {
             let message = {
                 address: 'EQCuEGnEPtnz728HCWb36rM1LLArmxLVAB3-aeojNRDDk7Tw',
-                amount: '125000000'
-            }
-            array.push(message)
+                amount: '125000000',
+            };
+            array.push(message);
         }
-        return array
+        return array;
     }
 }
 
