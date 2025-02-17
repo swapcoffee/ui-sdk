@@ -597,7 +597,7 @@ export default {
         if (this.injectionMode === 'tonConnect') {
           const params = this.getTransactionParams(this.trInfo);
 
-          this.dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, params)
+          this.dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, this.trInfo)
 
           await this.tonConnectUi.sendTransaction(params);
 
