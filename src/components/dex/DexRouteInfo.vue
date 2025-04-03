@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 import {defineAsyncComponent} from "vue";
+import {useDexStore} from "@/stores/dex/index.js";
 
 export default {
 	name: "DexRouteInfo",
@@ -58,11 +58,11 @@ export default {
 		}
 	},
 	computed: {
-		...mapGetters([
-			'GET_DEAL_CONDITIONS',
-		]),
+    dexStore() {
+      return useDexStore()
+    },
 		getEstimatedCashback() {
-			let cashback = this.GET_DEAL_CONDITIONS?.estimated_cashback_usd
+			let cashback = this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd
 			let count = 2
 			if (cashback && cashback > 0) {
 				while (Number(cashback.toFixed(count)) <= 0) {
@@ -77,11 +77,11 @@ export default {
 			return `${this.getSplitCount} Split + ${this.getHopCount} Hop`
 		},
 		getSplitCount() {
-			return this.GET_DEAL_CONDITIONS?.paths.length
+			return this.dexStore.GET_DEAL_CONDITIONS?.paths.length
 		},
 		getHopCount() {
 			let count = 0
-			const paths = this.GET_DEAL_CONDITIONS?.paths
+			const paths = this.dexStore.GET_DEAL_CONDITIONS?.paths
 			for (const routeStart of paths) {
 				function traverse(current) {
 					count++
@@ -104,7 +104,7 @@ export default {
 		},
 		getDexNames() {
 			let array = []
-			this.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
+			this.dexStore.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
 				if (array.includes(item?.dex)) {
 					return
 				}

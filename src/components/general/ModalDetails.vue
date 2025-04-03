@@ -64,6 +64,9 @@ import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import ModalWithdrawMenu from "@/components/general/ModalWithdrawMenu.vue";
 import computedMixins from "@/mixins/computedMixins.js"
 import ModalStatusRouteInfo from "@/components/general/ModalStatusRouteInfo.vue";
+import {useDexStore} from "@/stores/dex/index.js";
+import {useLimitStore} from "@/stores/limit/index.js";
+import {useTransactionStore} from "@/stores/transaction/index.js";
 
 export default {
     name: "ModalDetails",
@@ -117,18 +120,27 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_FIRST_POOL_TOKEN",
-            "GET_SECOND_POOL_TOKEN",
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN",
-            "GET_LIMIT_FIRST_TOKEN",
-            "GET_LIMIT_SECOND_TOKEN",
-            "GET_DEAL_CONDITIONS",
-            "GET_LIMIT_TRANSACTION_INFO"
-        ]),
+        // ...mapGetters([
+        //     "GET_FIRST_POOL_TOKEN",
+        //     "GET_SECOND_POOL_TOKEN",
+        //     "GET_SEND_TOKEN",
+        //     "GET_RECEIVE_TOKEN",
+        //     "GET_LIMIT_FIRST_TOKEN",
+        //     "GET_LIMIT_SECOND_TOKEN",
+        //     "GET_DEAL_CONDITIONS",
+        //     "GET_LIMIT_TRANSACTION_INFO"
+        // ]),
+        dexStore() {
+          return useDexStore()
+        },
+        limitStore() {
+          return useLimitStore()
+        },
+        transactionStore() {
+          return useTransactionStore()
+        },
         limitInfo() {
-            return this.GET_LIMIT_TRANSACTION_INFO
+            return this.transactionStore.GET_LIMIT_TRANSACTION_INFO
         },
         getFirstPosition() {
             if (this.modalState.mode === 'swap' || this.modalState.mode === 'limit' || this.modalState.mode === 'dca') {
@@ -143,45 +155,37 @@ export default {
         getFirstToken() {
             switch (this.modalState.mode) {
                 case "swap":
-                    return this.GET_RECEIVE_TOKEN
+                    return this.dexStore.GET_RECEIVE_TOKEN
                 case "limit":
                 case "dca":
-                    return this.GET_LIMIT_FIRST_TOKEN
-                default:
-                    return this.GET_FIRST_POOL_TOKEN
+                    return this.limitStore.GET_LIMIT_FIRST_TOKEN
             }
         },
         getSecondToken() {
             switch (this.modalState.mode) {
                 case "swap":
-                    return this.GET_SEND_TOKEN
+                    return this.dexStore.GET_SEND_TOKEN
                 case "limit":
                 case "dca":
-                    return this.GET_LIMIT_SECOND_TOKEN
-                default:
-                    return this.GET_SECOND_POOL_TOKEN
+                    return this.limitStore.GET_LIMIT_SECOND_TOKEN
             }
         },
         getFirstAmount() {
             switch (this.modalState.mode) {
                 case "swap":
-                    return this.GET_DEAL_CONDITIONS?.output_amount
+                    return this.dexStore.GET_DEAL_CONDITIONS?.output_amount
                 case "limit":
                 case "dca":
                     return this.limitInfo?.firstAmount || 0
-                default:
-                    return this.GET_FIRST_POOL_TOKEN
             }
         },
         getSecondAmount() {
             switch (this.modalState.mode) {
                 case "swap":
-                    return this.GET_DEAL_CONDITIONS?.input_amount
+                    return this.dexStore.GET_DEAL_CONDITIONS?.input_amount
                 case "limit":
                 case "dca":
                     return this.limitInfo?.secondAmount || 0
-                default:
-                    return this.GET_FIRST_POOL_TOKEN
             }
         },
         getToggleText() {

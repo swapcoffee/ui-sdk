@@ -1,12 +1,12 @@
 <template>
     <div
-        :class="[{small_padding: GET_DCA_ENABLE_RANGE}, position, 'range-field']"
+        :class="[{small_padding: dcaStore.GET_DCA_ENABLE_RANGE}, position, 'range-field']"
     >
         <div class="range-field__preview">
             <p class="range-field__text">{{ $t('dcaSettings.rangeOptional') }}</p>
             <div class="range-field__row">
                 <p class="range-field__extra"
-                    v-if="GET_DCA_ENABLE_RANGE"
+                    v-if="dcaStore.GET_DCA_ENABLE_RANGE"
                 >
                    {{ getCurrentSummary }}
                 </p>
@@ -18,7 +18,7 @@
             </div>
         </div>
         <div class="range-field__group"
-            v-if="GET_DCA_ENABLE_RANGE"
+            v-if="dcaStore.GET_DCA_ENABLE_RANGE"
         >
             <SettingsInput
                 :placeholder="'Min price'"
@@ -46,8 +46,9 @@
 
 <script>
 import SettingsInput from "@/components/general/SettingsInput.vue";
-import {mapActions, mapGetters} from "vuex";
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.js";
+import {useLimitStore} from "@/stores/limit/index.js";
+import {useDcaStore} from "@/stores/dca/index.js";
 
 export default {
     name: "DcaRangeField",
@@ -68,13 +69,14 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_FIRST_TOKEN',
-            'GET_LIMIT_SECOND_TOKEN',
-            'GET_DCA_ENABLE_RANGE'
-        ]),
+        limitStore() {
+          return useLimitStore()
+        },
+        dcaStore() {
+          return useDcaStore()
+        },
         getBtnText() {
-            if (this.GET_DCA_ENABLE_RANGE) {
+            if (this.dcaStore.GET_DCA_ENABLE_RANGE) {
                 return this.$t('dcaSettings.disable')
             } else {
                 return this.$t('dcaSettings.enable')
@@ -82,8 +84,8 @@ export default {
         },
         getTokens() {
             return {
-                first: this.GET_LIMIT_FIRST_TOKEN,
-                second: this.GET_LIMIT_SECOND_TOKEN
+                first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+                second: this.limitStore.GET_LIMIT_SECOND_TOKEN
             }
         },
         isTonToUsdt() {
@@ -122,13 +124,8 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'DCA_MIN_RANGE',
-            'DCA_MAX_RANGE',
-            'DCA_ENABLE_RANGE'
-        ]),
         toggleRange() {
-            this.DCA_ENABLE_RANGE(!this.GET_DCA_ENABLE_RANGE)
+            this.dcaStore.DCA_ENABLE_RANGE(!this.dcaStore.GET_DCA_ENABLE_RANGE)
         },
         updateMinValue(value) {
             this.minValue = value
@@ -151,7 +148,7 @@ export default {
                 reverseValue = 1 / Number(value)
             }
 
-            this.DCA_MIN_RANGE(reverseValue)
+            this.dcaStore.DCA_MIN_RANGE(reverseValue)
         },
         saveMax(value) {
             let reverseValue = Number(value)
@@ -164,7 +161,7 @@ export default {
             // if (this.isTonToUsdt === 'first' || this.isStableRate === 'second') {
             //     reverseValue = this.firstToken.price_usd / this.maxValue
             // }
-            this.DCA_MAX_RANGE(reverseValue)
+            this.dcaStore.DCA_MAX_RANGE(reverseValue)
         }
     },
     watch: {

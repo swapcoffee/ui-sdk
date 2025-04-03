@@ -38,8 +38,11 @@
 <script>
 import SettingsInput from "@/components/general/SettingsInput.vue";
 import DexInput from "@/components/dex/DexInput.vue";
-import {mapActions, mapGetters} from "vuex";
+
 import CustomSelect from "@/components/general/CustomSelect.vue";
+
+import {useLimitSettingsStore} from "@/stores/limit/settings.js";
+import {useDcaStore} from "@/stores/dca/index.js";
 
 export default {
     name: "DcaSettingsField",
@@ -53,10 +56,12 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_SUBORDERS',
-            'GET_DCA_EVERY_TIME'
-        ]),
+        limitSettingStore() {
+          return useLimitSettingsStore();
+        },
+        dcaStore() {
+          return useDcaStore()
+        },
         getTimeUnits() {
             return {
                 minute: 60,
@@ -103,10 +108,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'LIMIT_MAX_SUBORDERS',
-            'DCA_EVERY_TIME'
-        ]),
         closeSelect() {
             this.showSelect = false
         },
@@ -117,11 +118,11 @@ export default {
         },
         updateTime(value) {
             this.timeValue = value
-            this.DCA_EVERY_TIME(Number(value) * this.getTimeUnits[this.timeMode])
+            this.dcaStore.DCA_EVERY_TIME(Number(value) * this.getTimeUnits[this.timeMode])
         },
         updateOrders(value) {
             this.maxSuborders = value
-            this.LIMIT_MAX_SUBORDERS(Number(value))
+            this.limitSettingStore.LIMIT_MAX_SUBORDERS(Number(value))
         },
         updateSelect(value) {
             this.timeMode = value

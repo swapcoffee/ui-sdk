@@ -47,8 +47,6 @@
 import SwapFieldController from "@/components/swap-interface/SwapFieldController.vue";
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
-import PoolInfo from "@/components/earn/pool-page/PoolHeading.vue";
-import DexTitle from "@/components/dex/DexTitle.vue";
 import DexInfo from "@/components/dex/DexInfo.vue";
 import DexReverseInfo from "@/components/dex/DexReverseInfo.vue";
 import DexButton from "@/components/dex/DexButton.vue";
@@ -56,7 +54,6 @@ import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import computedMixins from "@/mixins/computedMixins.js"
-import {mapGetters} from "vuex";
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexButtonWrapper from "@/components/dex/DexButtonWrapper.vue";
 import DexDetails from "@/components/dex/DexDetails.vue";
@@ -64,6 +61,8 @@ import LimitButtonWrapper from "@/components/limit/LimitButtonWrapper.vue";
 import SwapInfo from "@/components/swap-interface/SwapInfo.vue";
 import LimitDetails from "@/components/limit/LimitDetails.vue";
 import DcaDetails from "@/components/dca/DcaDetails.vue";
+import {useDexStore} from "@/stores/dex/index.js";
+import {useLimitStore} from "@/stores/limit/index.js";
 
 export default {
     name: "SwapInterfaceTest",
@@ -81,8 +80,6 @@ export default {
         DexButton,
         DexReverseInfo,
         DexInfo,
-        DexTitle,
-        PoolInfo,
         SwapHeader,
         SwapButton,
         SwapFieldController
@@ -119,29 +116,22 @@ export default {
         return {}
     },
     computed: {
-        ...mapGetters([
-            "GET_DEX_WALLET",
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN",
-            "GET_SEND_AMOUNT",
-            "GET_RECEIVE_AMOUNT",
-            "GET_STAKING_POOL",
-            "GET_LIMIT_FIRST_TOKEN",
-            "GET_LIMIT_SECOND_TOKEN",
-	        "GET_LIMIT_FIRST_AMOUNT",
-	        "GET_LIMIT_SECOND_AMOUNT",
-            "GET_STRATEGIES_ELIGIBLE"
-        ]),
+        dexStore() {
+              return useDexStore();
+        },
+        limitStore() {
+              return useLimitStore();
+        },
         getTokens() {
             if (this.getRouteName === 'Dex') {
                 return {
-                    first: this.GET_SEND_TOKEN,
-                    second: this.GET_RECEIVE_TOKEN
+                    first: this.dexStore.GET_SEND_TOKEN,
+                    second: this.dexStore.GET_RECEIVE_TOKEN
                 }
             } else if (this.getRouteName === 'Limit' || this.getRouteName === 'Dca') {
 				return {
-					first: this.GET_LIMIT_FIRST_TOKEN,
-                    second: this.GET_LIMIT_SECOND_TOKEN
+					first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+                    second: this.limitStore.GET_LIMIT_SECOND_TOKEN
                 }
             }
         },

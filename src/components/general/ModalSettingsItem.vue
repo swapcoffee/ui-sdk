@@ -27,9 +27,10 @@
 
 <script>
 import ModalSettingButton from "@/components/general/ModalSettingsButton.vue";
-import {mapGetters} from "vuex";
+
 import ModalSettingsInput from "@/components/general/ModalSettingsInput.vue";
 import DexInput from "@/components/dex/DexInput.vue";
+import {useLimitSettingsStore} from "@/stores/limit/settings.js";
 
 export default {
     name: "ModalSettingsItem",
@@ -59,10 +60,9 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-           "GET_LIMIT_SUBORDERS",
-           "GET_LIMIT_INVOCATIONS"
-        ]),
+        limitSettingStore() {
+            return useLimitSettingsStore()
+        },
         getModelValue() {
             switch (this.type) {
                 case "orders":
@@ -74,9 +74,9 @@ export default {
         getCurrentValue() {
             switch (this.type) {
                 case "orders":
-                    return this.GET_LIMIT_SUBORDERS
+                    return this.limitSettingStore.GET_LIMIT_SUBORDERS
                 case "invocations":
-                    return this.GET_LIMIT_INVOCATIONS
+                    return this.limitSettingStore.GET_LIMIT_INVOCATIONS
             }
         },
         isInputActive() {

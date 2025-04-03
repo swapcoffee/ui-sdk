@@ -11,9 +11,9 @@
 </template>
 
 <script>
-import {mapGetters} from "vuex";
 import methodsMixins from "@/mixins/methodsMixins.js";
 import RouteRightIcon from "@/assets/general/RouteRightIcon.vue";
+import {useDexStore} from "@/stores/dex/index.js";
 
 export default {
     name: "SwapDealInfo",
@@ -23,28 +23,26 @@ export default {
         return {}
     },
     computed: {
-        ...mapGetters([
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN",
-            "GET_DEAL_CONDITIONS"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
         firstImage() {
-            return this.GET_SEND_TOKEN?.image
+            return this.dexStore.GET_SEND_TOKEN?.image
         },
         firstSymbol() {
-            return this.GET_SEND_TOKEN?.symbol
+            return this.dexStore.GET_SEND_TOKEN?.symbol
         },
         secondImage() {
-            return this.GET_RECEIVE_TOKEN?.image
+            return this.dexStore.GET_RECEIVE_TOKEN?.image
         },
         secondSymbol() {
-            return this.GET_RECEIVE_TOKEN?.symbol
+            return this.dexStore.GET_RECEIVE_TOKEN?.symbol
         },
         firstAmount() {
-            return this.GET_DEAL_CONDITIONS?.input_amount
+            return this.dexStore.GET_DEAL_CONDITIONS?.input_amount
         },
         secondAmount() {
-            return this.GET_DEAL_CONDITIONS?.output_amount
+            return this.dexStore.GET_DEAL_CONDITIONS?.output_amount
         },
         displayFirst() {
             return `${this.prettyNumber(this.firstAmount, 2)} ${this.firstSymbol}`

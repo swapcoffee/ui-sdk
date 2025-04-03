@@ -10,7 +10,6 @@
 
 <script>
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
-import {mapGetters} from "vuex";
 
 export default {
     name: "LimitButtonWrapper",
@@ -30,10 +29,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_FIRST_AMOUNT',
-            'GET_LIMIT_SECOND_AMOUNT'
-        ]),
         loadingCondition() {
             return this.loadingState || this.interfaceStatus === 'LOADING'
         },

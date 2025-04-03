@@ -1,24 +1,8 @@
 <template>
     <div class="dex">
         <h1 class="dex__heading">DEX Aggregator</h1>
-<!--        :class="{ 'dex__group-centered': !showChartOption }"-->
-        <div class="dex__group"
-             :class="{ 'dex__group-centered': !showChartOption }"
-        >
-            <div class="dex__column-flex"
-                :class="{ hidden: !showChartConditions && $route.path !== '/limit' && $route.path !== '/dca' }"
-            >
-                <div class="dex__chart-wrapper"
-                     v-if="showChartConditions"
-                >
-                    <teleport to="#swap_chart" :disabled="screenSize > 576" defer>
-                        <ChartWrapper
-                            class="dex__chart"
-                            v-if="showChartConditions"
-                            :user-returned="chartUpdateInMount"
-                        />
-                    </teleport>
-                </div>
+        <div class="dex__group dex__group-centered">
+            <div class="dex__column-flex">
                 <div id="limit_history" class="dex__history"></div>
             </div>
             <router-view
@@ -27,7 +11,6 @@
                 :screenSize="screenSize"
             >
                 <component :is="Component">
-
                 </component>
             </router-view>
         </div>
@@ -36,18 +19,15 @@
 
 <script>
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
-import {mapGetters} from "vuex";
 import {disablePageScroll, enablePageScroll} from "scroll-lock";
 import computedMixins from "@/mixins/computedMixins.js"
-import ChartWrapper from "@/components/dex/ChartWrapper.vue";
 import {throttle} from "@/helpers/perfomance/perfomance.js";
 import { createTabVisibilityWatcher } from '@/helpers/swap-interface/watchers.js';
 
 export default {
     name: "DexContainer",
     components: {
-        SwapInterface,
-        ChartWrapper
+        SwapInterface
     },
     mixins: [computedMixins],
     props: {
@@ -62,35 +42,11 @@ export default {
         return {
             screenSize: 1920,
             isTabActive: true,
-            chartUpdateInMount: false,
             timeout: null,
             tabVisibilityWatcher: null
         };
     },
     computed: {
-        ...mapGetters([
-            'GET_CHART_VISIBLE',
-            'GET_CHART_VISIBLE_SETTING'
-        ]),
-        showChartConditions() {
-
-            if (!this.showChartOption) {
-                return false;
-            }
-
-            this.screenSize = window.innerWidth;
-            if (!this.isTabActive) {
-                return false;
-            }
-            if (this.screenSize > 1220) {
-                return true;
-            } else {
-                return this.GET_CHART_VISIBLE;
-            }
-        },
-        showChartOption() {
-            return this.GET_CHART_VISIBLE_SETTING;
-        }
     },
     methods: {
         checkWindowSize() {
@@ -106,16 +62,10 @@ export default {
 
         this.tabVisibilityWatcher = createTabVisibilityWatcher((isVisible) => {
             this.isTabActive = isVisible;
-            if (isVisible) {
-                this.chartUpdateInMount = true;
-            }
         }, 120_000);
 
         this.tabVisibilityWatcher.start();
 
-        if (this.screenSize <= 880) {
-            this.chartUpdateInMount = true;
-        }
     },
     unmounted() {
         this.tabVisibilityWatcher.stop();
@@ -161,11 +111,6 @@ export default {
     gap: 14px;
 }
 
-.dex__chart-wrapper {
-    width: 100%;
-    height: 520px;
-}
-
 .dex__heading {
     position: absolute !important;
     height: 1px;
@@ -189,10 +134,6 @@ export default {
 }
 
 @media screen and (max-width: 1410px) {
-    .dex__chart-wrapper {
-        min-width: auto;
-        width: calc(100vw - 730px);
-    }
 
     .dex__history {
         width: calc(100vw - 730px);
@@ -230,11 +171,6 @@ export default {
         gap: 0;
     }
 
-    .dex__chart-wrapper {
-        width: auto;
-        margin-bottom: 24px;
-    }
-
     .dex__chart {
         margin-bottom: 24px;
     }
@@ -246,10 +182,6 @@ export default {
 }
 
 @media screen and (max-width: 880px) {
-    .dex__chart-wrapper {
-        height: 100%;
-    }
-
     .dex__column-flex {
         width: 100%;
     }
@@ -257,16 +189,10 @@ export default {
     .dex__group-centered {
         margin: 0;
     }
-
-    .dex__interface {
-        max-width: 100%;
-    }
 }
 
 @media screen and (max-width: 576px) {
-    .dex__chart-wrapper {
-        min-width: 100%;
-    }
+
 
     .dex__chart {
         margin-top: 8px;

@@ -1,7 +1,7 @@
 <template>
     <div class="dex__you-receive">
         <div class="dex__content_empty"
-             v-if="GET_RECEIVE_TOKEN === null && !getRouteQuery"
+             v-if="dexStore.GET_RECEIVE_TOKEN === null && !getRouteQuery"
              @click="$emit('chooseReceiveToken')"
         >
             <p class="dex__text_empty">{{ $t("dexInterface.selectToken") }}</p>
@@ -14,12 +14,12 @@
             <div class="dex__content-wrapper">
                 <div class="dex__group group-margin">
                     <h4 class="dex__heading">{{ $t("dexInterface.youReceive") }}</h4>
-                    <p class="token-balance" v-if="GET_RECEIVE_TOKEN">
+                    <p class="token-balance" v-if="dexStore.GET_RECEIVE_TOKEN">
                         {{ $t("dexInterface.balance", {currentBalance: getTokenBalance}) }}</p>
-                    <div class="skeleton skeleton_row" v-if="!GET_RECEIVE_TOKEN"></div>
+                    <div class="skeleton skeleton_row" v-if="!dexStore.GET_RECEIVE_TOKEN"></div>
                 </div>
                 <label for="" class="dex__label">
-                    <p class="skeleton skeleton_balance" v-if="showSkeleton && GET_SWAP_MODE === 'default'"></p>
+                    <p class="skeleton skeleton_balance" v-if="showSkeleton && dexStore.GET_SWAP_MODE === 'default'"></p>
                     <DexInput id="receiveInput" v-else
                               :model-value="youReceive"
                               @update:model-value="updateValue"
@@ -29,9 +29,9 @@
                             v-if="!showTokenSkeleton"
                             @click="$emit('chooseReceiveToken')"
                     >
-                        <img :src="GET_RECEIVE_TOKEN?.image" alt="Logo of the selected token for receive"
+                        <img :src="dexStore.GET_RECEIVE_TOKEN?.image" alt="Logo of the selected token for receive"
                              class="token-image">
-                        <p class="btn-text">{{ GET_RECEIVE_TOKEN?.symbol }}</p>
+                        <p class="btn-text">{{ dexStore.GET_RECEIVE_TOKEN?.symbol }}</p>
                     </button>
                     <div class="skeleton skeleton_token" v-if="showTokenSkeleton"></div>
                 </label>
@@ -41,7 +41,7 @@
                     >
                         <p class="token-price">~${{ getTokenPrice }}</p>
                         <p class="token-impact"
-                           v-show="this.GET_DEAL_CONDITIONS?.output_usd > 0"
+                           v-show="this.dexStore.GET_DEAL_CONDITIONS?.output_usd > 0"
                            :class="getClassImpact"
                         >
                             ({{ getPriceImpactDisplay }}%)
@@ -50,14 +50,14 @@
                     <div class="skeleton skeleton_row" v-if="showSkeleton"></div>
                     <p
                         class="trust-score"
-                        v-if="GET_RECEIVE_TOKEN"
+                        v-if="dexStore.GET_RECEIVE_TOKEN"
                         @mouseenter="cancelCloseTooltip"
                         @mouseleave="leaveTrustScore"
                     >
                         <span class="token-name">{{ $t("dexInterface.trustScore") }}:</span>
-                        {{ GET_RECEIVE_TOKEN?.trust_score || 'No data' }}
+                        {{ dexStore.GET_RECEIVE_TOKEN?.trust_score || 'No data' }}
                     </p>
-                    <div class="skeleton skeleton_row" v-if="!GET_RECEIVE_TOKEN"></div>
+                    <div class="skeleton skeleton_row" v-if="!dexStore.GET_RECEIVE_TOKEN"></div>
                 </div>
                 <transition name="tooltip">
                     <tooltip-wrapper
@@ -68,27 +68,27 @@
                         @hidden-tooltip="leaveTrustScore"
                         @mouseleave="leaveTrustScore">
                         <DexTrust
-                            :trustScore="GET_RECEIVE_TOKEN?.trust_score || 0"
-                            :symbol="GET_RECEIVE_TOKEN?.symbol"
+                            :trustScore="dexStore.GET_RECEIVE_TOKEN?.trust_score || 0"
+                            :symbol="dexStore.GET_RECEIVE_TOKEN?.symbol"
                         >
                         </DexTrust>
                     </tooltip-wrapper>
                 </transition>
             </div>
             <DexRouteInfo
-                v-if="GET_DEAL_CONDITIONS !== null && GET_SEND_AMOUNT > 0 && GET_SEND_AMOUNT !== ''"
+                v-if="dexStore.GET_DEAL_CONDITIONS !== null && dexStore.GET_SEND_AMOUNT > 0 && dexStore.GET_SEND_AMOUNT !== ''"
             />
         </div>
     </div>
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
 import DexInput from "@/components/dex/DexInput.vue";
 import methodsMixins from "@/mixins/methodsMixins.js";
 import {defineAsyncComponent} from "vue";
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import DexTrust from '@/components/dex/DexTrust.vue';
+import {useDexStore} from "@/stores/dex/index.js";
 
 
 export default {
@@ -120,25 +120,21 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'GET_RECEIVE_TOKEN',
-            'GET_DEAL_CONDITIONS',
-            'GET_SEND_AMOUNT',
-            'GET_SWAP_MODE',
-            'GET_RECEIVE_AMOUNT'
-        ]),
+      dexStore() {
+          return useDexStore()
+      },
         getRouteQuery() {
             if (this.$route.query?.st) {
                 return true
             }
         },
         showTokenSkeleton() {
-            if (this.getRouteQuery && this.GET_RECEIVE_TOKEN === null) {
+            if (this.getRouteQuery && this.dexStore.GET_RECEIVE_TOKEN === null) {
                 return true
             }
         },
         showSkeleton() {
-            return this.GET_SEND_AMOUNT > 0 && this.GET_SEND_AMOUNT !== '' && this.GET_DEAL_CONDITIONS === null && !this.poolNotFound
+            return this.dexStore.GET_SEND_AMOUNT > 0 && this.dexStore.GET_SEND_AMOUNT !== '' && this.dexStore.GET_DEAL_CONDITIONS === null && !this.poolNotFound
         },
         getClassImpact() {
             if (this.getUsdPriceImpact <= -5) {
@@ -151,14 +147,14 @@ export default {
         },
         getTokenPrice() {
             if (this.GET_DEAL_CONDITIONS !== null) {
-                return this.prettyNumber(this.GET_DEAL_CONDITIONS?.output_usd, 2)
+                return this.prettyNumber(this.dexStore.GET_DEAL_CONDITIONS?.output_usd, 2)
             } else {
                 return 0
             }
         },
         getTokenBalance() {
-            if (this.GET_RECEIVE_TOKEN?.balance) {
-                return this.prettyNumber(this.GET_RECEIVE_TOKEN?.balance, 2)
+            if (this.dexStore.GET_RECEIVE_TOKEN?.balance) {
+                return this.prettyNumber(this.dexStore.GET_RECEIVE_TOKEN?.balance, 2)
             } else {
                 return 0
             }
@@ -172,9 +168,9 @@ export default {
             }
         },
         getUsdPriceImpact() {
-            if (this.GET_DEAL_CONDITIONS !== null) {
-                let inUsd = this.GET_DEAL_CONDITIONS?.input_usd
-                let outUsd = this.GET_DEAL_CONDITIONS?.output_usd
+            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                let inUsd = this.dexStore.GET_DEAL_CONDITIONS?.input_usd
+                let outUsd = this.dexStore.GET_DEAL_CONDITIONS?.output_usd
                 let priceImpact = (outUsd - inUsd) / inUsd * 100
                 return priceImpact.toFixed(2)
             } else {
@@ -183,11 +179,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'DEX_RECEIVE_AMOUNT',
-            'DEX_SEND_AMOUNT',
-            'CHANGE_SWAP_MODE'
-        ]),
         changeFocus(value) {
             this.inputFocused = value
         },
@@ -197,7 +188,7 @@ export default {
         },
         updateValue(value) {
             this.youReceive = value
-            this.DEX_RECEIVE_AMOUNT(Number(value))
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(value))
         },
         leaveTrustScore() {
             this.closeTooltipTimeout = setTimeout(() => {
@@ -213,19 +204,19 @@ export default {
         }
     },
     watch: {
-        GET_RECEIVE_AMOUNT: {
+        'dexStore.GET_RECEIVE_AMOUNT': {
             handler() {
-                if (Number(this.youReceive) !== this.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
+                if (Number(this.youReceive) !== this.dexStore.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
                     this.pageLoaded = true
-                    this.youReceive = String(this.GET_RECEIVE_AMOUNT)
+                    this.youReceive = String(this.dexStore.GET_RECEIVE_AMOUNT)
                 }
             }
         },
-        GET_DEAL_CONDITIONS: {
+        'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
                 if (this.GET_SWAP_MODE !== 'reverse') {
-                    if (this.GET_DEAL_CONDITIONS !== null) {
-                        this.GET_DEAL_CONDITIONS?.output_amount > 0 ? this.youReceive = this.GET_DEAL_CONDITIONS.output_amount.toFixed(4) : this.youReceive = '0'
+                    if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                        this.dexStore.GET_DEAL_CONDITIONS?.output_amount > 0 ? this.youReceive = this.dexStore.GET_DEAL_CONDITIONS.output_amount.toFixed(4) : this.youReceive = '0'
                     } else {
                         this.youReceive = '0'
                     }
