@@ -48,8 +48,6 @@
 import SwapFieldController from "@/components/swap-interface/SwapFieldController.vue";
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
-import PoolInfo from "@/components/earn/pool-page/PoolHeading.vue";
-import DexTitle from "@/components/dex/DexTitle.vue";
 import DexInfo from "@/components/dex/DexInfo.vue";
 import DexReverseInfo from "@/components/dex/DexReverseInfo.vue";
 import {dexService, tokenService} from "@/api/coffeeApi/services/index.js";

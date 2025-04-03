@@ -26,8 +26,6 @@
 </template>
 
 <script>
-import computedMixins from '@/mixins/computedMixins';
-import {mapGetters} from "vuex";
 import NavigationTab from "@/components/general/NavigationTab.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DexNavigationModal from "@/components/modals/DexNavigationModal.vue";
@@ -35,7 +33,6 @@ import DexNavigationModal from "@/components/modals/DexNavigationModal.vue";
 export default {
     name: 'TradeNav',
     components: {DexNavigationModal, ChevronBottom, NavigationTab},
-    mixins: [computedMixins],
     data() {
         return {
             showMore: false,
@@ -78,7 +75,7 @@ export default {
             if (this.showMore) {
                 this.showMore = false
             }
-            this.$router.push({name: value});
+            console.log("LINKED")
         },
     },
     mounted() {

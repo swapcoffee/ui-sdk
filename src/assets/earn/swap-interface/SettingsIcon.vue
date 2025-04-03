@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import IconColorMixin from '@/mixins/IconColorMixin.js';
+import IconColorMixin from '@/mixins/IconColorMixin.ts';
 
 export default {
     name: "SettingsIcon",

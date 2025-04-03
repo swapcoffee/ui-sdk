@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-import IconColorMixin from '@/mixins/IconColorMixin.js';
+import IconColorMixin from '@/mixins/IconColorMixin.ts';
 
 export default {
     name: "RefreshIcon",

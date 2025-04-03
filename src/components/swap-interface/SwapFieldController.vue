@@ -50,7 +50,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SwapField from "@/components/swap-interface/SwapField.vue";
 import SwitchTokenIcon from "@/assets/earn/swap-interface/SwitchTokenIcon.vue";
 import SwapEmpty from "@/components/swap-interface/SwapEmpty.vue";
@@ -58,11 +58,11 @@ import DisabledSwitch from "@/assets/earn/swap-interface/DisabledSwitch.vue";
 import computedMixins from "@/mixins/computedMixins.js"
 import LimitTokenRate from "@/components/limit/LimitTokenRate.vue";
 import SwapCoffeeDarkIcon from "@/assets/limit/SwapCoffeeDarkIcon.vue";
-import {mapGetters} from "vuex";
 import SwapInterfacePlug from "@/components/swap-interface/SwapInterfacePlug.vue";
 import LimitSubordersField from "@/components/limit/LimitSubordersField.vue";
 import DcaSettingsField from "@/components/dca/DcaSettingsField.vue";
 import DcaRangeField from "@/components/dca/DcaRangeField.vue";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "SwapFieldController",
@@ -119,15 +119,15 @@ export default {
         return {}
     },
     computed: {
-        ...mapGetters([
-           "GET_DEX_WALLET"
-        ]),
+      dexStore() {
+        return useDexStore();
+      },
         plugCondition() {
 			return (this.getRouteName === 'Limit' || this.getRouteName === 'Dca')
-				&& (!this.GET_DEX_WALLET || this.interfaceStatus === 'NOT_ELIGIBLE' || this.interfaceStatus === 'NOT_STRATEGIES_WALLET')
+				&& (!this.dexStore.GET_DEX_WALLET || this.interfaceStatus === 'NOT_ELIGIBLE' || this.interfaceStatus === 'NOT_STRATEGIES_WALLET')
         },
         getPlugTitle() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.GET_DEX_WALLET) {
+            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
                 return this.$t('swapPlug.titleClosed')
             } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                 return this.$t('swapPlug.titleReady')
@@ -136,7 +136,7 @@ export default {
             }
         },
         getPlugFirstText() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.GET_DEX_WALLET) {
+            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
                 return this.$t('swapPlug.descriptionTextClosed')
             } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                 return this.$t('swapPlug.descriptionTextReady')
@@ -145,7 +145,7 @@ export default {
             }
         },
         getPlugSecondText() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.GET_DEX_WALLET) {
+            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
                 return this.$t('swapPlug.description2TextClosed')
             } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                 return this.$t(`swapPlug.description2TextReady`)
