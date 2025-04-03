@@ -225,7 +225,7 @@ computed: {
 					'GET_LIMIT_FIRST_TOKEN',
 					'GET_LIMIT_SECOND_TOKEN'
 	]),
-			getTokens() {
+  getTokens() {
 					if (this.isLimitPage) {
 							return {
 									first: this.GET_LIMIT_FIRST_TOKEN,
