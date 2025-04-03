@@ -53,12 +53,10 @@
     </modal-wrapper>
 </template>
 
-<script>
-import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.js';
-import computedMixins from '@/mixins/computedMixins.js';
+<script lang="ts">
+import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
+import computedMixins from '@/mixins/computedMixins.ts';
 import {mapGetters} from 'vuex';
-import {tracking} from '@/tracking/index.js';
-import {Events} from '@/tracking/events.js';
 import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue"
 
 export default {

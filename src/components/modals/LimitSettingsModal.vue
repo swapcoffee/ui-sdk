@@ -40,9 +40,9 @@
 <script>
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
 import {mapActions, mapGetters} from "vuex";
-import {profileService} from "@/api/coffeeApi/services/index.js";
+import {profileService} from "@/api/coffeeApi/services";
 import ModalSettingItem from "@/components/general/ModalSettingsItem.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 
 export default {
     name: "LimitSettingsModal",

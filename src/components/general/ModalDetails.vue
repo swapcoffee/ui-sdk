@@ -55,15 +55,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import BriefTokenInfo from "@/components/general/BriefTokenInfo.vue";
 import ModalWithdrawMenu from "@/components/general/ModalWithdrawMenu.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import ModalStatusRouteInfo from "@/components/general/ModalStatusRouteInfo.vue";
-import {useDexStore} from "@/stores/dex/index.ts";
-import {useLimitStore} from "@/stores/limit/index.ts";
-import {useTransactionStore} from "@/stores/transaction/index.ts";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
+import {useTransactionStore} from "@/stores/transaction";
 
 export default {
     name: "ModalDetails",

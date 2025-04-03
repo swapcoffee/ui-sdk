@@ -53,9 +53,9 @@
     </div>
 </template>
 
-<script>
-import transactionRoutesMixin from "@/mixins/transactionRoutesMixin.js";
-
+<script lang="ts">
+import transactionRoutesMixin from "@/mixins/transactionRoutesMixin.ts";
+import { mapGetters } from 'vuex';
 import FailedRouteIcon from "@/assets/interface/FailedRouteIcon.vue";
 import SuccessRouteIcon from "@/assets/interface/SuccessRouteIcon.vue";
 import PendingRouteIcon from "@/assets/interface/PendingRouteIcon.vue";

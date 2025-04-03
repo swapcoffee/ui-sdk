@@ -82,13 +82,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import DexInput from "@/components/dex/DexInput.vue";
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import {defineAsyncComponent} from "vue";
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import DexTrust from '@/components/dex/DexTrust.vue';
-import {useDexStore} from "@/stores/dex/index.js";
+import { useDexStore } from "@/stores/dex";
 
 
 export default {

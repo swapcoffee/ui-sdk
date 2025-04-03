@@ -12,7 +12,7 @@
     />
 </template>
 
-<script>
+<script lang="ts">
 import methodsMixins from '@/mixins/methodsMixins.ts';
 
 export default {

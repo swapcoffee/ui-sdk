@@ -329,14 +329,12 @@
     </modal-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import {mapActions, mapGetters} from 'vuex';
 import SwitchToggle from '@/components/ui/SwitchToggle.vue';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
-import computedMixins from '@/mixins/computedMixins.js';
-import {tracking} from '@/tracking/index.js';
-import {Events} from '@/tracking/events.js';
-import {profileService} from '@/api/coffeeApi/services/index.js';
+import computedMixins from '@/mixins/computedMixins.ts';
+import {profileService} from '@/api/coffeeApi/services/index.ts';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
 
 export default {
@@ -547,7 +545,7 @@ export default {
             }
         },
         changeLiquiditySources(value, notSave) {
-            this.liquiditySources = this.liquiditySources.map(el => 
+            this.liquiditySources = this.liquiditySources.map(el =>
                 el.name === value ? { ...el, enabled: !el.enabled } : el
             );
 

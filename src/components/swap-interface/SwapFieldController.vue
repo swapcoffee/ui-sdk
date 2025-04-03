@@ -55,7 +55,7 @@ import SwapField from "@/components/swap-interface/SwapField.vue";
 import SwitchTokenIcon from "@/assets/earn/swap-interface/SwitchTokenIcon.vue";
 import SwapEmpty from "@/components/swap-interface/SwapEmpty.vue";
 import DisabledSwitch from "@/assets/earn/swap-interface/DisabledSwitch.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import LimitTokenRate from "@/components/limit/LimitTokenRate.vue";
 import SwapCoffeeDarkIcon from "@/assets/limit/SwapCoffeeDarkIcon.vue";
 import SwapInterfacePlug from "@/components/swap-interface/SwapInterfacePlug.vue";

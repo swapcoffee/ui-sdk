@@ -41,9 +41,9 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import {defineAsyncComponent} from "vue";
-import {useDexStore} from "@/stores/dex/index.js";
+import {useDexStore} from "@/stores/dex";
 
 export default {
 	name: "DexRouteInfo",

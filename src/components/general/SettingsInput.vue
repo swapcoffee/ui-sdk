@@ -30,7 +30,7 @@
     </label>
 </template>
 
-<script>
+<script lang="ts">
 
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
