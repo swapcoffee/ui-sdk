@@ -43,7 +43,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SwapFieldController from "@/components/swap-interface/SwapFieldController.vue";
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
@@ -53,7 +53,7 @@ import DexButton from "@/components/dex/DexButton.vue";
 import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexButtonWrapper from "@/components/dex/DexButtonWrapper.vue";
 import DexDetails from "@/components/dex/DexDetails.vue";
@@ -61,8 +61,8 @@ import LimitButtonWrapper from "@/components/limit/LimitButtonWrapper.vue";
 import SwapInfo from "@/components/swap-interface/SwapInfo.vue";
 import LimitDetails from "@/components/limit/LimitDetails.vue";
 import DcaDetails from "@/components/dca/DcaDetails.vue";
-import {useDexStore} from "@/stores/dex/index.js";
-import {useLimitStore} from "@/stores/limit/index.js";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
 
 export default {
     name: "SwapInterfaceTest",

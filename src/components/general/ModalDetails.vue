@@ -55,18 +55,16 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import BriefTokenInfo from "@/components/general/BriefTokenInfo.vue";
 import {mapGetters} from "vuex";
-import PoolHeading from "@/components/earn/pool-page/PoolHeading.vue";
-import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import ModalWithdrawMenu from "@/components/general/ModalWithdrawMenu.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import ModalStatusRouteInfo from "@/components/general/ModalStatusRouteInfo.vue";
-import {useDexStore} from "@/stores/dex/index.js";
-import {useLimitStore} from "@/stores/limit/index.js";
-import {useTransactionStore} from "@/stores/transaction/index.js";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
+import {useTransactionStore} from "@/stores/transaction";
 
 export default {
     name: "ModalDetails",
@@ -109,8 +107,6 @@ export default {
     components: {
         ModalStatusRouteInfo,
         ModalWithdrawMenu,
-        PoolDetailsItem,
-        PoolHeading,
         BriefTokenInfo,
         ChevronBottom
     },

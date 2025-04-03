@@ -35,14 +35,14 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SettingsInput from "@/components/general/SettingsInput.vue";
 import DexInput from "@/components/dex/DexInput.vue";
 
 import CustomSelect from "@/components/general/CustomSelect.vue";
 
-import {useLimitSettingsStore} from "@/stores/limit/settings.js";
-import {useDcaStore} from "@/stores/dca/index.js";
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useDcaStore} from "@/stores/dca";
 
 export default {
     name: "DcaSettingsField",

@@ -44,11 +44,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SettingsInput from "@/components/general/SettingsInput.vue";
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
-import {useLimitStore} from "@/stores/limit/index.js";
-import {useDcaStore} from "@/stores/dca/index.js";
+import { useLimitStore } from "@/stores/limit";
+import { useDcaStore } from "@/stores/dca";
 
 export default {
     name: "DcaRangeField",

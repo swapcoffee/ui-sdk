@@ -128,3 +128,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+/.idea/.gitignore
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/swap-sdk.iml
+/public/tonconnect-manifest.json
+/.idea/vcs.xml

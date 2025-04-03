@@ -81,8 +81,6 @@ import successAnimationData from '@/assets/lottie/success.json';
 import lottie from "lottie-web";
 import SwapDealInfo from "@/components/general/SwapDealInfo.vue";
 import TransactionShareIcon from "@/assets/general/TransactionShareIcon.vue";
-import {tracking} from "@/tracking/index.js";
-import {Events} from "@/tracking/events.js";
 import {mapGetters} from "vuex";
 import AppNotification from "@/components/AppNotification.vue";
 
