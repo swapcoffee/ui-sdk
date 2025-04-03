@@ -55,11 +55,14 @@
 
 <script>
 import transactionRoutesMixin from "@/mixins/transactionRoutesMixin.js";
-import { mapGetters } from 'vuex';
+
 import FailedRouteIcon from "@/assets/interface/FailedRouteIcon.vue";
 import SuccessRouteIcon from "@/assets/interface/SuccessRouteIcon.vue";
 import PendingRouteIcon from "@/assets/interface/PendingRouteIcon.vue";
 import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue";
+
+import {useTransactionStore} from "@/stores/transaction/index.ts";
+import {useDexStore} from "@/stores/dex/index.ts";
 
 export default {
     name: "ModalStatusRouteInfo",
@@ -71,12 +74,14 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_SWAP_TRANSACTION_STATUS",
-            "GET_DEAL_CONDITIONS"
-        ]),
+        transactionStore() {
+          return useTransactionStore()
+        },
+        dexStore() {
+          return useDexStore()
+        },
         getTransactions() {
-            return this.GET_SWAP_TRANSACTION_STATUS?.splits
+            return this.transactionStore.GET_SWAP_TRANSACTION_STATUS?.splits
         }
     },
     methods: {

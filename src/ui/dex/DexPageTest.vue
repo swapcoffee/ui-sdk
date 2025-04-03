@@ -42,8 +42,6 @@
 </template>
 
 <script lang="ts">
-import {mapActions, mapGetters} from 'vuex';
-import {disablePageScroll, enablePageScroll} from 'scroll-lock';
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import {
@@ -66,8 +64,12 @@ import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import {defineAsyncComponent} from "vue";
 import DexSuccess from "@/components/dex/DexSuccess.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setSwapTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
+
 import swapSettings from "@/mixins/swapSettings.ts";
+
+import {useDexStore} from "@/stores/dex/index.ts";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useTransactionStore} from "@/stores/transaction/index.ts";
 
 export default {
     name: 'DexPageTest',
@@ -150,40 +152,29 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            'GET_TON_TOKENS',
-            'GET_DEAL_CONDITIONS',
-            'GET_USER_TOKENS',
-            'GET_DEX_WALLET',
-            'GET_RECEIVE_TOKEN',
-            'GET_RECEIVE_AMOUNT',
-            'GET_SEND_TOKEN',
-            'GET_SEND_AMOUNT',
-            'GET_SWAP_MODE',
-            'GET_SLIPPAGE',
-            'GET_PRICE_IMPACT',
-            'GET_MAX_POOL_VOLATILITY',
-            'GET_MAX_INTERMEDIATE_TOKENS',
-            'GET_EXPERT_MODE_VALUE',
-            'GET_MAX_SPLITS',
-            'GET_STAKING_POOL',
-            'GET_CALCULATED_PI',
-            'GET_LIQUIDITY_SOURCES'
-        ]),
+        dexStore() {
+            return useDexStore()
+        },
+        dexSettingsStore() {
+            return useDexSettingsStore()
+        },
+        transactionStore() {
+          return useTransactionStore()
+        },
         interfaceStatus() {
             let priceImpact = 0
-            if (this.GET_CALCULATED_PI) {
-                priceImpact = this.GET_CALCULATED_PI
+            if (this.dexStore.GET_CALCULATED_PI) {
+                priceImpact = this.dexStore.GET_CALCULATED_PI
             }
-            if (this.poolNotFound || this.GET_DEAL_CONDITIONS?.output_usd === 0) {
+            if (this.poolNotFound || this.dexStore.GET_DEAL_CONDITIONS?.output_usd === 0) {
                 return 'POOL_NOT_FOUND'
             } else if (this.loadingConditions || this.processing.dex === true || this.firstLoading) {
                 return 'LOADING'
-            } else if (this.GET_DEX_WALLET === null) {
+            } else if (this.dexStore.GET_DEX_WALLET === null) {
                 return 'NOT_CONNECTED'
-            } else if (this.GET_RECEIVE_TOKEN === null) {
+            } else if (this.dexStore.GET_RECEIVE_TOKEN === null) {
                 return 'NOT_SELECTED'
-            } else if (priceImpact < -this.GET_PRICE_IMPACT) {
+            } else if (priceImpact < -this.dexSettingsStore.GET_PRICE_IMPACT) {
                 return 'HIGH_PRICE_IMPACT'
             } else if (this.notEnoughConditions.reason === "noBalance") {
                 return 'NOT_ENOUGH'
@@ -194,27 +185,27 @@ export default {
             }
         },
         loadingConditions() {
-            return this.GET_RECEIVE_TOKEN !== null && this.GET_SEND_TOKEN !== null && this.GET_SEND_AMOUNT > 0 && this.GET_DEAL_CONDITIONS === null;
+            return this.dexStore.GET_RECEIVE_TOKEN !== null && this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_SEND_AMOUNT > 0 && this.dexStore.GET_DEAL_CONDITIONS === null;
         },
         firstLoading() {
             let route = this.$route
             if (route.query?.ft && route.query?.st) {
-                return this.GET_DEAL_CONDITIONS === null && this.GET_TON_TOKENS.length === 0
+                return this.dexStore.GET_DEAL_CONDITIONS === null && this.dexStore.GET_TON_TOKENS.length === 0
             }
         },
         notEnoughConditions() {
-            const userTonBalance = this.GET_USER_TOKENS.find(
+            const userTonBalance = this.dexStore.GET_USER_TOKENS.find(
                 (item) => item.address === 'native'
             );
 
-            const tonGas = this.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
+            const tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
 
-            if (this.GET_SEND_TOKEN?.address === 'native' && this.GET_SWAP_MODE === 'default') {
-                if (userTonBalance?.balance < tonGas + this.GET_SEND_AMOUNT) {
+            if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'default') {
+                if (userTonBalance?.balance < tonGas + this.dexStore.GET_SEND_AMOUNT) {
                     return {result: true, reason: "noGas"};
                 }
-            } else if (this.GET_SEND_TOKEN?.address === 'native' && this.GET_SWAP_MODE === 'reverse') {
-                if (userTonBalance?.balance < tonGas + this.GET_RECEIVE_AMOUNT) {
+            } else if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && this.dexStore.GET_SWAP_MODE === 'reverse') {
+                if (userTonBalance?.balance < tonGas + this.dexStore.GET_RECEIVE_AMOUNT) {
                     return {result: true, reason: "noGas"};
                 }
             }
@@ -223,14 +214,14 @@ export default {
                 return {result: true, reason: "noGas"};
             }
 
-            const findTokenInUser = this.GET_USER_TOKENS.find(
-                (item) => item.address === this.GET_SEND_TOKEN?.address
+            const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
+                (item) => item.address === this.dexStore.GET_SEND_TOKEN?.address
             );
 
             const hasEnoughBalance =
                 findTokenInUser &&
-                findTokenInUser?.balance >= this.GET_DEAL_CONDITIONS?.input_amount &&
-                this.GET_DEAL_CONDITIONS?.input_amount > 0;
+                findTokenInUser?.balance >= this.dexStore.GET_DEAL_CONDITIONS?.input_amount &&
+                this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0;
 
             if (!hasEnoughBalance) {
                 return {result: true, reason: "noBalance"};
@@ -240,31 +231,31 @@ export default {
         },
         assetForCompare() {
             return {
-                wallet: this.GET_DEX_WALLET,
+                wallet: this.dexStore.GET_DEX_WALLET,
                 tokens: this.getTokens,
                 tokenAmounts: this.tokenValues,
-                maxIntermediate: this.GET_MAX_INTERMEDIATE_TOKENS,
-                maxVolatility: this.GET_MAX_POOL_VOLATILITY,
-                maxSplits: this.GET_MAX_SPLITS,
-                swapMode: this.GET_SWAP_MODE,
+                maxIntermediate: this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS,
+                maxVolatility: this.dexSettingsStore.GET_MAX_POOL_VOLATILITY,
+                maxSplits: this.dexSettingsStore.GET_MAX_SPLITS,
+                swapMode: this.dexStore.GET_SWAP_MODE,
                 changePoolNotFound: this.changePoolNotFound,
                 changeRefreshInfo: this.changeRefreshInfo,
                 createAbortController: this.createAbortController,
-                liquiditySources: this.GET_LIQUIDITY_SOURCES
+                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
             }
         },
         getTokens() {
             return {
-                first: this.GET_SEND_TOKEN,
-                second: this.GET_RECEIVE_TOKEN
+                first: this.dexStore.GET_SEND_TOKEN,
+                second: this.dexStore.GET_RECEIVE_TOKEN
             }
         },
         generalData() {
             return {
                 tokens: this.getTokens,
                 amounts: this.tokenValues,
-                dealConditions: this.GET_DEAL_CONDITIONS,
-                liquiditySources: this.GET_LIQUIDITY_SOURCES
+                dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
+                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
             }
         },
         amountWatcherData() {
@@ -280,7 +271,7 @@ export default {
         tokenWatcherData() {
             return {
                 ...this.generalData,
-                stakingPool: this.GET_STAKING_POOL,
+                stakingPool: this.dexStore.GET_STAKING_POOL,
                 refreshData: this.refreshData
             }
         },
@@ -295,7 +286,7 @@ export default {
                 compareAsset: this.assetForCompare,
                 showSuccess: this.successModalState.show,
                 amounts: this.tokenValues,
-                swapMode: this.GET_SWAP_MODE,
+                swapMode: this.dexStore.GET_SWAP_MODE,
                 abortController: this.abortController,
                 tabVisibility: this.isVisible
             }
@@ -303,13 +294,13 @@ export default {
         trackingData() {
             return {
                 ...this.generalData,
-                wallet: this.GET_DEX_WALLET
+                wallet: this.dexStore.GET_DEX_WALLET
             }
         },
         stakeTransactionData() {
             return {
                 updateProcessing: this.updateProcessing,
-                wallet: this.GET_DEX_WALLET,
+                wallet: this.dexStore.GET_DEX_WALLET,
                 tokens: this.getTokens,
                 amounts: this.tokenValues,
                 tonConnectUi: this.tonConnectUi
@@ -319,9 +310,9 @@ export default {
             return {
                 updateProcessing: this.updateProcessing,
                 compareAsset: this.assetForCompare,
-                wallet: this.GET_DEX_WALLET,
-                dealConditions: this.GET_DEAL_CONDITIONS,
-                slippage: this.GET_SLIPPAGE,
+                wallet: this.dexStore.GET_DEX_WALLET,
+                dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
+                slippage: this.dexSettingsStore.GET_SLIPPAGE,
                 tonConnectUi: this.tonConnectUi,
                 trackingData: this.trackingData
             }
@@ -330,19 +321,10 @@ export default {
     methods: {
         stakeTransaction,
         unstakeTransaction,
-        ...mapActions([
-            "DEX_SEND_TOKEN",
-            "DEX_RECEIVE_TOKEN",
-            "DEX_SEND_AMOUNT",
-            "DEX_RECEIVE_AMOUNT",
-            "DEX_DEAL_CONDITIONS",
-            'CHANGE_SWAP_MODE',
-            'SAVE_SWAP_TRANSACTION_STATUS'
-        ]),
 	    closeSuccess() {
 		    this.successModalState.show = false
             clearRequestInterval()
-		    this.SAVE_SWAP_TRANSACTION_STATUS(null)
+		    this.transactionStore.SAVE_SWAP_TRANSACTION_STATUS(null)
 		    this.updateWalletInfo()
 		    this.tokenValues.first = '0'
             this.tokenValues.second = '0'
@@ -356,26 +338,26 @@ export default {
         },
         changeFirstValue(value) {
             this.tokenValues.first = value
-            this.DEX_SEND_AMOUNT(Number(value))
+            this.dexStore.DEX_SEND_AMOUNT(Number(value))
         },
         changeSecondValue(value) {
             this.tokenValues.second = value
-            this.DEX_RECEIVE_AMOUNT(Number(value))
+            this.dexStore.DEX_RECEIVE_AMOUNT(Number(value))
         },
         changeFirstToken(value) {
-            this.DEX_SEND_TOKEN(value)
+            this.dexStore.DEX_SEND_TOKEN(value)
         },
         changeSecondToken(value) {
-            this.DEX_RECEIVE_TOKEN(value)
+            this.dexStore.DEX_RECEIVE_TOKEN(value)
         },
         swapTokenPositions() {
-            if (this.GET_SEND_TOKEN !== null && this.GET_RECEIVE_TOKEN !== null) {
+            if (this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_RECEIVE_TOKEN !== null) {
                 clearTimeout(this.debounce)
                 this.debounce = setTimeout(() => {
-                    let first = this.GET_RECEIVE_TOKEN
-                    let second = this.GET_SEND_TOKEN
-                    this.DEX_SEND_TOKEN(first)
-                    this.DEX_RECEIVE_TOKEN(second)
+                    let first = this.dexStore.GET_RECEIVE_TOKEN
+                    let second = this.dexStore.GET_SEND_TOKEN
+                    this.dexStore.DEX_SEND_TOKEN(first)
+                    this.dexStore.DEX_RECEIVE_TOKEN(second)
 
                     let firstAmount = this.tokenValues.second
                     this.changeFirstValue(firstAmount)
@@ -472,20 +454,20 @@ export default {
         removeInterval()
     },
     watch: {
-        GET_DEAL_CONDITIONS: {
+        'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
-                if (this.GET_SWAP_MODE !== 'default') {
-                    if (this.GET_DEAL_CONDITIONS !== null) {
-                        this.GET_DEAL_CONDITIONS?.input_amount > 0
-                            ? (this.tokenValues.first = this.GET_DEAL_CONDITIONS.input_amount.toFixed(4))
+                if (this.dexStore.GET_SWAP_MODE !== 'default') {
+                    if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                        this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0
+                            ? (this.tokenValues.first = this.dexStore.GET_DEAL_CONDITIONS.input_amount.toFixed(4))
                             : (this.tokenValues.first = '0');
                     } else {
                         this.tokenValues.first = '0';
                     }
                 } else {
-                    if (this.GET_DEAL_CONDITIONS !== null) {
-                        this.GET_DEAL_CONDITIONS?.output_amount > 0
-                            ? this.tokenValues.second = this.GET_DEAL_CONDITIONS.output_amount.toFixed(4)
+                    if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                        this.dexStore.GET_DEAL_CONDITIONS?.output_amount > 0
+                            ? this.tokenValues.second = this.dexStore.GET_DEAL_CONDITIONS.output_amount.toFixed(4)
                             : this.tokenValues.second = '0'
                     } else {
                         this.tokenValues.second = '0'
@@ -493,70 +475,70 @@ export default {
                 }
             }
         },
-        GET_SEND_AMOUNT: {
+        'dexStore.GET_SEND_AMOUNT': {
             handler() {
-                this.CHANGE_SWAP_MODE('default');
-                if (Number(this.tokenValues.first) !== this.GET_SEND_AMOUNT && this.pageLoaded === false) {
-                    this.tokenValues.first = String(this.GET_SEND_AMOUNT)
+                this.dexStore.CHANGE_SWAP_MODE('default');
+                if (Number(this.tokenValues.first) !== this.dexStore.GET_SEND_AMOUNT && this.pageLoaded === false) {
+                    this.tokenValues.first = String(this.dexStore.GET_SEND_AMOUNT)
                 }
 
                 sendAmountWatcher(this.amountWatcherData)
 
                 if (this.GET_DEAL_CONDITIONS !== null) {
-                    this.DEX_DEAL_CONDITIONS(null);
+                    this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },
         },
-        GET_RECEIVE_AMOUNT: {
+        'dexStore.GET_RECEIVE_AMOUNT': {
             handler() {
-                this.CHANGE_SWAP_MODE('reverse');
-                if (Number(this.tokenValues.second) !== this.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
-                    this.tokenValues.second = String(this.GET_RECEIVE_AMOUNT)
+                this.dexStore.CHANGE_SWAP_MODE('reverse');
+                if (Number(this.tokenValues.second) !== this.dexStore.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
+                    this.tokenValues.second = String(this.dexStore.GET_RECEIVE_AMOUNT)
                 }
 
                 receiveAmountWatcher(this.amountWatcherData)
 
                 if (this.GET_DEAL_CONDITIONS !== null) {
-                    this.DEX_DEAL_CONDITIONS(null);
+                    this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },
         },
-        GET_LIQUIDITY_SOURCES: {
+        'dexSettingsStore.GET_LIQUIDITY_SOURCES': {
             handler() {
                 changeSettingsWatcher(this.changeSettingsWatcherData)
             }
         },
-        GET_SEND_TOKEN: {
+        'dexStore.GET_SEND_TOKEN': {
             handler() {
                 sendTokenWatcher(this.tokenWatcherData)
             },
         },
-        GET_MAX_SPLITS: {
+        'dexSettingsStore.GET_MAX_SPLITS': {
             handler() {
                 sendTokenWatcher(this.tokenWatcherData)
             },
         },
-        GET_RECEIVE_TOKEN: {
+        'dexStore.GET_RECEIVE_TOKEN': {
             handler() {
                 receiveTokenWatcher(this.tokenWatcherData)
             },
         },
-        GET_SLIPPAGE: {
+        'dexSettingsStore.GET_SLIPPAGE': {
             handler() {
                 changeSettingsWatcher(this.changeSettingsWatcherData)
             },
         },
-        GET_MAX_POOL_VOLATILITY: {
+        'dexSettingsStore.GET_MAX_POOL_VOLATILITY': {
             handler() {
                 changeSettingsWatcher(this.changeSettingsWatcherData)
             },
         },
-        GET_MAX_INTERMEDIATE_TOKENS: {
+        'dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS': {
             handler() {
                 changeSettingsWatcher(this.changeSettingsWatcherData)
             },
         },
-        GET_EXPERT_MODE_VALUE: {
+        'dexSettingsStore.GET_EXPERT_MODE_VALUE': {
             handler() {
                 expertModeWatcher(this.changeSettingsWatcherData)
             },

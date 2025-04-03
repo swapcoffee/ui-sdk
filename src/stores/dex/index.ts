@@ -111,6 +111,12 @@ export const useDexStore = defineStore('dex', {
 		DEX_CALCULATED_PI(item: any) {
 			this.calculatedPriceImpact = item;
 		},
+		SET_TOKENS_POPUP_STATE(item: any) {
+			this.tokensPopupState = {
+				...item,
+				...this.tokensPopupState,
+			}
+		}
 	},
 
 	getters: {

@@ -136,6 +136,10 @@ import TokenLimitList from "@/components/dex/tokens-popup/TokenLimitList.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 import {writeReceiveQuery, writeSendQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useDexStore} from "@/stores/dex/index.ts";
+import {useLimitStore} from "@/stores/limit/index.ts";
+
 export default {
 name: 'TokensPopup',
 components: {
@@ -204,37 +208,25 @@ data() {
 	}
 },
 computed: {
-	...mapGetters([
-		'GET_USER_TOKENS',
-		'GET_PINNED_TOKENS',
-		'GET_TON_TOKENS',
-		'GET_DEX_WALLET',
-		'GET_RECEIVE_TOKEN',
-		'GET_SEND_TOKEN',
-		'GET_SEND_AMOUNT',
-		'GET_RECEIVE_AMOUNT',
-		'GET_SWAP_MODE',
-		'GET_USER_SETTINGS',
-		'GET_PROOF_VERIFICATION',
-		'GET_TOKEN_LABELS',
-		'GET_STAKE_GLOBAL_INFO',
-		'GET_TOKENS_BY_LABEL',
-		'GET_TOKENS_POPUP_STATE',
-					'GET_LIMIT_SEND_LIST',
-					'GET_LIMIT_RECEIVE_LIST',
-					'GET_LIMIT_FIRST_TOKEN',
-					'GET_LIMIT_SECOND_TOKEN'
-	]),
+  dexStore() {
+    return useDexStore()
+  },
+  dexStoreSettings() {
+    return useDexSettingsStore()
+  },
+  limitStore() {
+    return useLimitStore()
+  },
   getTokens() {
 					if (this.isLimitPage) {
 							return {
-									first: this.GET_LIMIT_FIRST_TOKEN,
-									second: this.GET_LIMIT_SECOND_TOKEN
+									first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+									second: this.limitStore.GET_LIMIT_SECOND_TOKEN
 							}
 					} else {
 							return {
-									first: this.GET_SEND_TOKEN,
-									second: this.GET_RECEIVE_TOKEN
+									first: this.dexStore.GET_SEND_TOKEN,
+									second: this.dexStore.GET_RECEIVE_TOKEN
 							}
 					}
 			},
@@ -242,17 +234,17 @@ computed: {
 					return this.getRouteName === 'Limit' || this.getRouteName === 'Dca'
 			},
 	currentPageByTab() {
-		return this.GET_TOKENS_POPUP_STATE.currentPageByTab;
+		return this.dexStore.GET_TOKENS_POPUP_STATE.currentPageByTab;
 	},
 	hasMoreTokensByTab() {
-		return this.GET_TOKENS_POPUP_STATE.hasMoreTokensByTab;
+		return this.dexStore.GET_TOKENS_POPUP_STATE.hasMoreTokensByTab;
 	},
 	activeTab: {
 		get() {
-			return this.GET_TOKENS_POPUP_STATE.activeTab;
+			return this.dexStore.GET_TOKENS_POPUP_STATE.activeTab;
 		},
 		set(value) {
-			this.SET_TOKENS_POPUP_STATE({
+			this.dexStore.SET_TOKENS_POPUP_STATE({
 				activeTab: value
 			});
 		}
@@ -284,8 +276,8 @@ computed: {
 	getAllTokens() {
 		let array = []
 
-		this.GET_TON_TOKENS.forEach((item) => {
-			let findItem = this.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
+		this.dexStore.GET_TON_TOKENS.forEach((item) => {
+			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
 			if (findItem?.balance > 0) {
 				return;
 			}
@@ -303,7 +295,7 @@ computed: {
 		let pinnedArray = [];
 
 		this.getPinnedList.forEach((item) => {
-			let findItem = this.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
+			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
 			if (findItem?.balance > 0) {
 				return;
 			}
@@ -317,7 +309,7 @@ computed: {
 		)
 	},
 	getYourTokens() {
-		return this.GET_USER_TOKENS
+		return this.dexStore.GET_USER_TOKENS
 			.filter((item) => item.balance > 0 && (item.listed || item.imported))
 			.sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
 			.sort((a, b) => b.imported - a.imported)
@@ -325,9 +317,9 @@ computed: {
 	},
 	getPinnedList() {
 		let array = []
-		this.GET_PINNED_TOKENS.forEach((item) => {
+		this.dexStore.GET_PINNED_TOKENS.forEach((item) => {
 			if (item?.address === 'native') {
-				let findNative = this.GET_TON_TOKENS.find((find) => find.type === 'native');
+				let findNative = this.dexStore.GET_TON_TOKENS.find((find) => find.type === 'native');
 				if (findNative) {
 					array.push(findNative);
 				}
@@ -336,7 +328,7 @@ computed: {
 				if (findInUnpin) {
 					return;
 				}
-				let findToken = this.GET_TON_TOKENS.find((find) => item.address === find.address);
+				let findToken = this.dexStore.dexStore.GET_TON_TOKENS.find((find) => item.address === find.address);
 				if (findToken) {
 					array.push(findToken);
 				}
@@ -348,8 +340,8 @@ computed: {
 		if (this.activeFilter.name === 'all') {
 			return this.getAllTokens.slice(0, this.displayedTokensCount);
 		} else {
-			return this.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
-				return !this.GET_USER_TOKENS.some((f) => el.id === f.id);
+			return this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
+				return !this.dexStore.GET_USER_TOKENS.some((f) => el.id === f.id);
 			});
 		}
 	},
@@ -357,8 +349,8 @@ computed: {
 		if (this.activeFilter.name === 'all') {
 			return this.getYourTokens
 		} else {
-			return this.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
-				return this.GET_USER_TOKENS.some((f) => el.id === f.id);
+			return this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
+				return this.dexStore.GET_USER_TOKENS.some((f) => el.id === f.id);
 			});
 		}
 	},
@@ -376,15 +368,15 @@ computed: {
 		return this.$refs.loadingMoreTokens;
 	},
 	getTonPrice() {
-		return (this.GET_TON_TOKENS.find((item) => item.address === 'native')).price_usd
+		return (this.dexStore.GET_TON_TOKENS.find((item) => item.address === 'native')).price_usd
 	},
 	titleText() {
 		return this.$t("dexInterface.selectToken")
 	},
 			getLimitTokensList() {
 					return this.mode === 'SEND'
-							? this.GET_LIMIT_SEND_LIST
-							: this.GET_LIMIT_RECEIVE_LIST
+							? this.limitStore.GET_LIMIT_SEND_LIST
+							: this.limitStore.GET_LIMIT_RECEIVE_LIST
 			},
 			sortedLimitTokensList() {
 					if (this.activeFilter.name === 'all') {
@@ -399,18 +391,6 @@ computed: {
 			}
 },
 methods: {
-	...mapMutations([
-		'SET_TOKENS_POPUP_STATE',
-	]),
-	...mapActions([
-		'DEX_RECEIVE_TOKEN',
-		'DEX_SEND_TOKEN',
-		'DEX_TON_TOKENS',
-		'DEX_SEND_AMOUNT',
-		'DEX_RECEIVE_AMOUNT',
-		'DEX_TOKEN_LABELS',
-		'DEX_TOKENS_BY_LABEL',
-	]),
 	handleScroll(event) {
 		if (this.activeTab !== 'all' || this.searchValue.length > 0) return;
 
@@ -447,7 +427,7 @@ methods: {
 		try {
 			const nextPage = this.currentPage + 1;
 
-			if (this.GET_TON_TOKENS.length >= nextPage * this.pageSize) {
+			if (this.dexStore.GET_TON_TOKENS.length >= nextPage * this.pageSize) {
 				this.isPreloading = false;
 				return;
 			}
@@ -469,12 +449,12 @@ methods: {
 					type: item.address === "0:0000000000000000000000000000000000000000000000000000000000000000" ? "native" : "jetton",
 					address: item.address === "0:0000000000000000000000000000000000000000000000000000000000000000" ? "native" : item.address,
 					imported: false,
-											listed: true,
+          listed: true,
 					...item
 				}));
 
-				const updatedTokens = [...this.GET_TON_TOKENS, ...newTokens];
-				this.DEX_TON_TOKENS(updatedTokens);
+				const updatedTokens = [...this.dexStore.GET_TON_TOKENS, ...newTokens];
+				this.dexStore.DEX_TON_TOKENS(updatedTokens);
 			}
 		} catch (err) {
 			console.error(err);
@@ -487,14 +467,13 @@ methods: {
 
 		this.isLoadingMore = true;
 		try {
-			if (this.GET_TON_TOKENS.length > this.displayedTokensCount) {
+			if (this.dexStore.GET_TON_TOKENS.length > this.displayedTokensCount) {
 				if (!this.hasMoreTokens) {
-					this.displayedTokensCount = this.GET_TON_TOKENS.length;
+					this.displayedTokensCount = this.dexStore.GET_TON_TOKENS.length;
 				} else {
 					this.displayedTokensCount += this.pageSize;
 					this.currentPage++;
-
-					if (this.GET_TON_TOKENS.length <= this.currentPage * this.pageSize &&
+					if (this.dexStore.GET_TON_TOKENS.length <= this.currentPage * this.pageSize &&
 						this.hasMoreTokens &&
 						!this.isPreloading) {
 						await this.preloadNextPage();
@@ -517,7 +496,7 @@ methods: {
 		this.hasMoreTokens = this.hasMoreTokensByTab[this.activeTab] !== undefined
 			? this.hasMoreTokensByTab[this.activeTab]
 			: true;
-		if (this.GET_TON_TOKENS.length <= this.currentPage * this.pageSize &&
+		if (this.dexStore.GET_TON_TOKENS.length <= this.currentPage * this.pageSize &&
 			this.hasMoreTokens &&
 			!this.isPreloading) {
 			this.$nextTick(() => {
@@ -548,7 +527,7 @@ methods: {
 		} else {
 			this.displayedTokensCount = this.pageSize;
 			this.currentPage = 1;
-			if (this.GET_TON_TOKENS.length <= this.pageSize && this.hasMoreTokens) {
+			if (this.dexStore.GET_TON_TOKENS.length <= this.pageSize && this.hasMoreTokens) {
 				await this.preloadNextPage();
 			}
 		}
@@ -563,35 +542,35 @@ methods: {
 		this.loading = false;
 	},
 	async loadLabelTokens() {
-		let tokens = this.GET_TOKENS_BY_LABEL(this.activeFilter.id) || [];
+		let tokens = this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id) || [];
 		if (tokens.length === 0) {
 			try {
 				const response = await tokenService.getTokensByLabel(this.activeFilter.id);
 				tokens = response.items.map(item => {
-					const found3 = this.GET_USER_TOKENS.find(token => token.id === item.id);
+					const found3 = this.dexStore.GET_USER_TOKENS.find(token => token.id === item.id);
 					return found3
 						? {...found3, labels: item.labels}
 						: item
 				});
-				this.DEX_TOKENS_BY_LABEL({ labelId: this.activeFilter.id, tokens });
+				this.dexStore.DEX_TOKENS_BY_LABEL({ labelId: this.activeFilter.id, tokens });
 			} catch (error) {
 				console.error(error);
 			}
 		}
 	},
 	filterLabels() {
-		const filteredLabels = this.GET_TOKEN_LABELS.filter((label) => {
-			return this.GET_TON_TOKENS.some((token) =>
+		const filteredLabels = this.dexStore.GET_TOKEN_LABELS.filter((label) => {
+			return this.dexStore.GET_TON_TOKENS.some((token) =>
 				token.labels?.some((tokenLabel) => tokenLabel.label_id === label.id)
 			);
 		});
 		const sortedLabels = filteredLabels.sort((a, b) => a.id - b.id);
-		this.DEX_TOKEN_LABELS(sortedLabels);
+		this.dexStore.DEX_TOKEN_LABELS(sortedLabels);
 	},
 	localSearch() {
 		const tokenList = this.activeFilter.name === 'yourTokens'
 			? this.filteredYourTokens
-			: this.GET_TOKENS_BY_LABEL(this.activeFilter.id);
+			: this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id);
 
 		this.searchResults = tokenList.filter(token =>
 			token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
@@ -602,7 +581,6 @@ methods: {
 	},
 	debouncedSearch() {
 		this.loading = true;
-
 		clearTimeout(this.debounceTimeout);
 
 		this.debounceTimeout = setTimeout(() => {
@@ -629,7 +607,7 @@ methods: {
 
 			const uniqueTokensMap = new Map();
 
-			const userTokens = this.GET_USER_TOKENS.filter(token =>
+			const userTokens = this.dexStore.GET_USER_TOKENS.filter(token =>
 				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
 					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
 				token.balance > 0 &&
@@ -640,7 +618,7 @@ methods: {
 				uniqueTokensMap.set(token.address, token);
 			});
 
-			const otherUserTokens = this.GET_USER_TOKENS.filter(token =>
+			const otherUserTokens = this.dexStore.GET_USER_TOKENS.filter(token =>
 				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
 					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
 				(!token.balance || token.balance === 0)
@@ -720,7 +698,7 @@ methods: {
 					}
 
 					if (this.isLpToken(item)) {
-							const walletAddress = this.GET_DEX_WALLET?.address || 'No wallet';
+							const walletAddress = this.dexStore.GET_DEX_WALLET?.address || 'No wallet';
 							tracking.trackEvent(Events.STAKE_TOKEN_TOGGLE, {
 									token: item.symbol,
 									walletAddress,
@@ -730,7 +708,7 @@ methods: {
 	importToken() {
 		this.unlistedToken.imported = true
 					this.unlistedToken.id = null
-		let allTokens = this.GET_TON_TOKENS
+		let allTokens = this.dexStore.GET_TON_TOKENS
 		let storage = JSON.parse(localStorage.getItem('importTokens')) || []
 					let existingToken = allTokens.find(token => token.address === this.unlistedToken.address)
 
@@ -744,8 +722,8 @@ methods: {
 
 		localStorage.setItem('importTokens', JSON.stringify(storage))
 
-		this.DEX_TON_TOKENS(allTokens)
-		const walletAddress = this.GET_DEX_WALLET?.address;
+		this.dexStore.DEX_TON_TOKENS(allTokens)
+		const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
 		tracking.trackEvent(Events.TOKEN_IMPORT, {
 			tokenInfo: this.unlistedToken,
 			walletAddress,
@@ -756,8 +734,8 @@ methods: {
 		}, 200)
 	},
 	pinToken(item) {
-		let pinTokens = this.GET_PINNED_TOKENS.slice()
-		let findNative = this.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native')
+		let pinTokens = this.dexStore.GET_PINNED_TOKENS.slice()
+		let findNative = this.dexStore.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native')
 		pinTokens.splice(findNative, 1)
 
 		let findInStock = pinTokens.findIndex((findToken) => findToken?.address === item?.address);
@@ -818,7 +796,7 @@ methods: {
 	},
 	checkItemIsPinned(item) {
 		let pinTokens = [];
-		this.GET_PINNED_TOKENS.forEach((findItem) => {
+		this.dexStore.GET_PINNED_TOKENS.forEach((findItem) => {
 			let findInUnpin = this.userUnpinnedTokens.find(
 				(find) => find?.address === findItem?.address,
 			);
@@ -828,7 +806,7 @@ methods: {
 			pinTokens.push(findItem);
 		});
 
-		let findNative = this.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native');
+		let findNative = this.dexStore.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native');
 		pinTokens.splice(findNative, 1);
 
 		let findItem = this.userPinnedTokens.find((find) => find?.address === item?.address)
@@ -853,7 +831,7 @@ methods: {
 	// },
 	async saveToStorage(value, key) {
 		try {
-			let settings = this.GET_USER_SETTINGS
+			let settings = this.dexStoreSettings.GET_USER_SETTINGS
 			let local = JSON.parse(localStorage.getItem(key))
 			if (!settings) {
 				if (local) {
@@ -865,8 +843,8 @@ methods: {
 			settings[key] = value
 			localStorage.removeItem(key)
 			localStorage.setItem(key, JSON.stringify(value))
-			if (this.GET_PROOF_VERIFICATION) {
-				await profileService.writeStorage(this.GET_DEX_WALLET?.address, this.GET_PROOF_VERIFICATION, settings)
+			if (this.dexStore.GET_PROOF_VERIFICATION) {
+				await profileService.writeStorage(this.dexStore.GET_DEX_WALLET?.address, this.dexStore.GET_PROOF_VERIFICATION, settings)
 			}
 		} catch (err) {
 			console.error(err)
@@ -928,7 +906,7 @@ methods: {
 				[this.activeTab]: this.hasMoreTokens
 			}
 		};
-		this.SET_TOKENS_POPUP_STATE(state);
+		this.dexStore.SET_TOKENS_POPUP_STATE(state);
 	},
 	closePopup() {
 		this.savePopupState();
@@ -946,11 +924,11 @@ methods: {
 			}, 1000)
 		}
 	},
-	updateTokensList(selectedToken) {
-		this.GET_TON_TOKENS = this.GET_TON_TOKENS.filter(token => token.address !== selectedToken.address);
-		this.GET_TON_TOKENS.unshift(selectedToken);
-		this.DEX_TON_TOKENS(this.GET_TON_TOKENS);
-	},
+	// updateTokensList(selectedToken) {
+	// 	this.GET_TON_TOKENS = this.GET_TON_TOKENS.filter(token => token.address !== selectedToken.address);
+	// 	this.GET_TON_TOKENS.unshift(selectedToken);
+	// 	this.DEX_TON_TOKENS(this.GET_TON_TOKENS);
+	// },
 	// addedSendQuery(value) {
 	// 	let queryParams = {
 	// 		ft: this.toSafeAddress(value.address)
@@ -998,11 +976,11 @@ mounted() {
 		scrollContainer.addEventListener('scroll', this.handleScroll);
 	}
 
-	const { activeTab } = this.GET_TOKENS_POPUP_STATE;
+	const { activeTab } = this.dexStore.GET_TOKENS_POPUP_STATE;
 	this.activeFilter = { name: activeTab };
 
 	if (activeTab !== 'all') {
-		const filter = this.GET_TOKEN_LABELS.find(f => f.name === activeTab);
+		const filter = this.dexStore.GET_TOKEN_LABELS.find(f => f.name === activeTab);
 		if (filter) this.setActiveFilter(filter);
 	}
 
@@ -1036,9 +1014,9 @@ mounted() {
 	let userPinned = [];
 	let userUnpinned = [];
 
-	if (this.GET_USER_SETTINGS !== null) {
-		userPinned = this.GET_USER_SETTINGS?.userPin;
-		userUnpinned = this.GET_USER_SETTINGS?.userUnpin;
+	if (this.dexStoreSettings.GET_USER_SETTINGS !== null) {
+		userPinned = this.dexStoreSettings.GET_USER_SETTINGS?.userPin;
+		userUnpinned = this.dexStoreSettings.GET_USER_SETTINGS?.userUnpin;
 	} else {
 		userPinned = JSON.parse(localStorage.getItem('userPin'));
 		userUnpinned = JSON.parse(localStorage.getItem('userUnpin'));
@@ -1046,7 +1024,7 @@ mounted() {
 
 	if (userPinned) {
 		userPinned.forEach((item) => {
-			let findPinned = this.GET_TON_TOKENS.find((find) => item === find.address);
+			let findPinned = this.dexStore.GET_TON_TOKENS.find((find) => item === find.address);
 			if (findPinned) {
 				this.userPinnedTokens.push(findPinned);
 			}
@@ -1054,7 +1032,7 @@ mounted() {
 	}
 	if (userUnpinned) {
 		userUnpinned.forEach((item) => {
-			let findUnpinned = this.GET_TON_TOKENS.find((find) => item === find.address);
+			let findUnpinned = this.dexStore.GET_TON_TOKENS.find((find) => item === find.address);
 			if (findUnpinned) {
 				this.userUnpinnedTokens.push(findUnpinned);
 			}

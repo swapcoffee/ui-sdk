@@ -14,7 +14,6 @@
 
 <script>
 import methodsMixins from '@/mixins/methodsMixins.ts';
-import {mapActions} from 'vuex';
 
 export default {
     mixins: [methodsMixins],
@@ -38,9 +37,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'DEX_SEND_AMOUNT',
-        ]),
         onFocus() {
             this.inputFocused = true;
             if (this.modelValue === "0") {

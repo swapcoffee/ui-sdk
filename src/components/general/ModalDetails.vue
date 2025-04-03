@@ -1,11 +1,11 @@
 <template>
     <div class="details">
-        <PoolHeading
-            v-if="modalState.mode === 'deposit' && !withoutHeading"
-            class="details__heading"
-            :withoutBg="true"
-            :size="'small'"
-        />
+<!--        <PoolHeading-->
+<!--            v-if="modalState.mode === 'deposit' && !withoutHeading"-->
+<!--            class="details__heading"-->
+<!--            :withoutBg="true"-->
+<!--            :size="'small'"-->
+<!--        />-->
         <ModalWithdrawMenu
             v-if="modalState.mode === 'withdraw' && !withoutHeading"
         />
@@ -43,30 +43,27 @@
                 />
             </div>
         </div>
-        <div class="pool-details"
-            v-if="showMore"
-        >
-            <PoolDetailsItem
-                v-for="(item, index) in poolDetails"
-                :key="index"
-                :item="item"
-            />
-        </div>
+<!--        <div class="pool-details"-->
+<!--            v-if="showMore"-->
+<!--        >-->
+<!--            <PoolDetailsItem-->
+<!--                v-for="(item, index) in poolDetails"-->
+<!--                :key="index"-->
+<!--                :item="item"-->
+<!--            />-->
+<!--        </div>-->
     </div>
 </template>
 
 <script>
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import BriefTokenInfo from "@/components/general/BriefTokenInfo.vue";
-import {mapGetters} from "vuex";
-import PoolHeading from "@/components/earn/pool-page/PoolHeading.vue";
-import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import ModalWithdrawMenu from "@/components/general/ModalWithdrawMenu.vue";
 import computedMixins from "@/mixins/computedMixins.js"
 import ModalStatusRouteInfo from "@/components/general/ModalStatusRouteInfo.vue";
-import {useDexStore} from "@/stores/dex/index.js";
-import {useLimitStore} from "@/stores/limit/index.js";
-import {useTransactionStore} from "@/stores/transaction/index.js";
+import {useDexStore} from "@/stores/dex/index.ts";
+import {useLimitStore} from "@/stores/limit/index.ts";
+import {useTransactionStore} from "@/stores/transaction/index.ts";
 
 export default {
     name: "ModalDetails",
@@ -109,8 +106,6 @@ export default {
     components: {
         ModalStatusRouteInfo,
         ModalWithdrawMenu,
-        PoolDetailsItem,
-        PoolHeading,
         BriefTokenInfo,
         ChevronBottom
     },
@@ -120,16 +115,6 @@ export default {
         }
     },
     computed: {
-        // ...mapGetters([
-        //     "GET_FIRST_POOL_TOKEN",
-        //     "GET_SECOND_POOL_TOKEN",
-        //     "GET_SEND_TOKEN",
-        //     "GET_RECEIVE_TOKEN",
-        //     "GET_LIMIT_FIRST_TOKEN",
-        //     "GET_LIMIT_SECOND_TOKEN",
-        //     "GET_DEAL_CONDITIONS",
-        //     "GET_LIMIT_TRANSACTION_INFO"
-        // ]),
         dexStore() {
           return useDexStore()
         },
