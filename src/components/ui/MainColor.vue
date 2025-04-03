@@ -1,20 +1,20 @@
 <template>
-	<div class="main-color">
-		<slot></slot>
-	</div>
+  <div class="main-color">
+    <slot />
+  </div>
 </template>
 
-<script lang="ts">
+<script>
 export default {
-	name: "main-color",
-	data() {
-		return {}
-	}
-}
+  name: 'MainColor',
+  data() {
+    return {};
+  },
+};
 </script>
 
 <style scoped>
-	.main-color {
-		background: var(--iface-main-bg);
-	}
+.main-color {
+  background: var(--iface-main-bg);
+}
 </style>

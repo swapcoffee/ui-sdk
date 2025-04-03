@@ -1,4 +1,4 @@
-import { CoffeeSdkWrapper } from '@/api/coffeeApi/sdkWrapper.ts';
+import { CoffeeSdkWrapper } from '@/api/coffeeApi/sdkWrapper';
 
 class TonApiService extends CoffeeSdkWrapper{
   constructor() {

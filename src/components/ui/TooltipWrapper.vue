@@ -59,6 +59,10 @@ export default {
   font-weight: 400;
 }
 
+.theme-light .tooltip__text {
+    color: var(--main-text-color);
+}
+
 .tooltip__arrow--bottom {
   position: absolute;
   width: 10px;
@@ -66,6 +70,10 @@ export default {
   bottom: -6px;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.theme-light .tooltip__arrow--bottom {
+  filter: invert(1);
 }
 
 .tooltip__arrow--top {

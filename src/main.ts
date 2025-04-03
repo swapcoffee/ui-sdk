@@ -3,7 +3,7 @@ import App from './App.vue';
 import i18n from './i18n';
 import { pinia } from './stores';
 import './main.css'
-// import {TonConnectUI, THEME} from "@tonconnect/ui";
+import {TonConnectUI, THEME} from "@tonconnect/ui";
 
 export function createSwapWidget(selector, options = {}) {
     const {
@@ -68,6 +68,7 @@ export function createSwapWidget(selector, options = {}) {
     i18n.global.locale.value = locale;
 
     app.use(pinia);
+    app.provide('widgetTheme', theme);
 
     app.mount(selector);
 
@@ -84,12 +85,12 @@ const applyTheme = (selector, theme) => {
     widgetElement.classList.add(`theme-${theme}`);
 }
 
-// const tonConnectUiInstance = new TonConnectUI({
-//     manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
-//     uiPreferences: {
-//         theme: THEME.DARK,
-//     },
-// });
+const tonConnectUiInstance = new TonConnectUI({
+    manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
+    uiPreferences: {
+        theme: THEME.DARK,
+    },
+});
 
 
 // export const payload = {
@@ -109,19 +110,19 @@ const applyTheme = (selector, theme) => {
 // });
 
 
-// createSwapWidget('#swap-widget-component', {
-//     theme: 'light',
-//     locale: 'en',
-//     injectionMode: "tonConnect",
-//     tonConnectManifest: {
-//         "url": "https://swap.coffee/tonconnect-manifest.json",
-//     },
-//     tonConnectUi: tonConnectUiInstance,
-//     widgetReferral: "TEST_WIDGET_REFERRAL",
-//     customFeeSettings: {
-//         percentage_fee: 3000,
-//         min_percentage_fee_fixed: '50000000',
-//         max_percentage_fee_fixed: '4000000000',
-//     },
-// });
+createSwapWidget('#swap-widget-component', {
+    theme: 'light',
+    locale: 'en',
+    injectionMode: "tonConnect",
+    tonConnectManifest: {
+        "url": "https://swap.coffee/tonconnect-manifest.json",
+    },
+    tonConnectUi: tonConnectUiInstance,
+    widgetReferral: "TEST_WIDGET_REFERRAL",
+    customFeeSettings: {
+        percentage_fee: 3000,
+        min_percentage_fee_fixed: '50000000',
+        max_percentage_fee_fixed: '4000000000',
+    },
+});
 

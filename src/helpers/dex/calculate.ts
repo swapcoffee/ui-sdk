@@ -1,4 +1,4 @@
-import {Address} from "@ton/core";
+import { Address } from '@ton/core';
 
 export function setTransactionMessage(data, cashback, transactions) {
     if (data.paths.length > 0) {
@@ -27,39 +27,51 @@ export function setTransactionMessage(data, cashback, transactions) {
 
 export function getDexSourceDataByName(name) {
     switch (name) {
-        case "dedust":
+        case 'dedust':
             return {
-                name: "DeDust",
-                imageUrl: "https://dedust.io/favicon-32x32.png",
-            }
-        case "stonfi":
+                name: 'DeDust',
+                imageUrl: 'https://dedust.io/favicon-32x32.png',
+            };
+        case 'stonfi':
             return {
-                name: "STONfi",
-                imageUrl: "https://static.ston.fi/favicon/favicon.ico",
-            }
-        case "stonfi_v2":
+                name: 'STONfi',
+                imageUrl: 'https://static.ston.fi/favicon/favicon.ico',
+            };
+        case 'stonfi_v2':
             return {
-                name: "STONfi V2",
-                imageUrl: "https://static.ston.fi/favicon/favicon.ico",
-            }
+                name: 'STONfi V2',
+                imageUrl: 'https://static.ston.fi/favicon/favicon.ico',
+            };
+        case 'coffee':
+            return {
+                name: 'Coffee',
+                imageUrl: 'https://swap.coffee/favicon.ico',
+            };
+        case 'tonco':
+            return {
+                name: 'TONCO',
+                imageUrl: 'https://app.tonco.io/favicon.ico',
+            };
     }
-    throw new Error("Unknown DEX source name")
+    throw new Error('Unknown DEX source name');
 }
 
 export async function waitForOutboundTx(userWallet) {
-    let eventSource = new EventSource(`https://tonapi.io/v2/sse/accounts/transactions?accounts=${userWallet}`);
+    let eventSource = new EventSource(
+        `https://tonapi.io/v2/sse/accounts/transactions?accounts=${userWallet}`,
+    );
 
     return new Promise((resolve, reject) => {
         eventSource.onmessage = async function (event) {
-            let data = JSON.parse(event.data)
-            eventSource.close()
+            let data = JSON.parse(event.data);
+            eventSource.close();
 
-            resolve(data.tx_hash)
+            resolve(data.tx_hash);
         };
 
         eventSource.onerror = function (event) {
             reject(event);
             eventSource.close();
-        }
+        };
     });
 }

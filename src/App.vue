@@ -415,21 +415,6 @@ export default {
         return await this.getTonJettons(wallet)
       }
     },
-    changeMetaTheme() {
-      let meta = document.querySelector('meta[name="theme-color"]')
-      if (meta) {
-        if (this.GET_THEME === 'coffee') {
-          meta.setAttribute('content', '#0A0706')
-          return
-        }
-        if (this.GET_THEME === 'light') {
-          meta.setAttribute('content', '#f8f8f8')
-        }
-        if (this.GET_THEME === 'dark') {
-          meta.setAttribute('content', '#0A0A0A')
-        }
-      }
-    },
     async disconnectWallet() {
       try {
         await this.tonConnectUi.disconnect();
@@ -451,33 +436,6 @@ export default {
             value: { tonProof: crypto.randomUUID() },
           });
         }
-      }
-    },
-
-    async setDefaultSettings() {
-      try {
-        console.log('set default settings');
-        const global = {
-          lang: 'en',
-          theme: this.GET_THEME,
-        };
-        const dex = {
-          cashback: this.GET_CASHBACK,
-          slippage: this.GET_SLIPPAGE,
-          expertMode: this.GET_EXPERT_MODE_VALUE,
-          priceImpact: this.GET_PRICE_IMPACT,
-          maxPoolVolatility: this.GET_MAX_POOL_VOLATILITY,
-          maxIntermediateTokens: this.GET_MAX_INTERMEDIATE_TOKENS,
-          maxSplits: this.GET_MAX_SPLITS,
-        };
-
-        await profileService.writeStorage(
-            this.dexStore.GET_DEX_WALLET?.address,
-            this.dexStore.GET_PROOF_VERIFICATION,
-            { globalSettings: global, dexSettings: dex }
-        );
-      } catch (err) {
-        console.error(err);
       }
     },
   },

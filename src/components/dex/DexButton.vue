@@ -1,55 +1,54 @@
 <template>
-  <button class="dex__button desktop-btn"
-          @click="$emit('dexAction')"
-          :disabled="isButtonDisabled"
-  >
-    <div class="wallet-icon" v-if="!isButtonDisabled"></div>
-    <p class="btn-loader" v-if="checkDexStatus === 'LOADING' || loadingState"></p>
-    <p class="btn-text" v-else>{{ btnText }}</p>
-    <div class="info-wrapper"
-         @mouseenter="showTooltip = true"
-         @mouseleave="showTooltip = false"
-    >
+  <button class="dex__button desktop-btn" :disabled="isButtonDisabled" @click="$emit('dexAction')">
+    <div v-if="!isButtonDisabled" class="wallet-icon" />
+    <p v-if="checkDexStatus === 'LOADING' || loadingState" class="btn-loader" />
+    <p v-else class="btn-text">
+      {{ btnText }}
+    </p>
+    <div class="info-wrapper" @mouseenter="showTooltip = true" @mouseleave="showTooltip = false">
       <transition name="tooltip">
-        <tooltip-wrapper class="btn-tooltip"
-                         v-show="showTooltip"
-                         @hiddenTooltip="hiddenTooltip"
-        >
-          {{ $t("dexButton.tooltip[0]") }}<br>
-          {{ $t("dexButton.tooltip[1]") }}<br>
-          {{ $t("dexButton.tooltip[2]") }}
+        <tooltip-wrapper v-show="showTooltip" class="btn-tooltip" @hidden-tooltip="hiddenTooltip">
+          {{ $t('dexButton.tooltip[0]') }}<br />
+          {{ $t('dexButton.tooltip[1]') }}<br />
+          {{ $t('dexButton.tooltip[2]') }}
         </tooltip-wrapper>
       </transition>
-      <img src="@/assets/dex/details-info.svg" alt="info icon" class="btn-icon"
-           v-if="checkDexStatus === 'POOL_NOT_FOUND'">
+      <img
+        v-if="checkDexStatus === 'POOL_NOT_FOUND'"
+        src="@/assets/dex/details-info.svg"
+        alt="info icon"
+        class="btn-icon"
+      />
     </div>
   </button>
 </template>
 
 <script lang="ts">
-import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
-import { useDexStore } from '@/stores/dex';
+import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
+import { useDexStore } from "@/stores/dex";
 
 export default {
-  name: "DexButton",
+  name: 'DexButton',
   components: { TooltipWrapper },
   props: {
     checkDexStatus: {
       type: String,
-      default: ''
+      default() {
+        return '';
+      },
     },
   },
   data() {
     return {
       showTooltip: false,
-      loadingState: true
+      loadingState: true,
     };
   },
   computed: {
     dexStore() {
       return useDexStore();
     },
-    btnText(): string {
+    btnText() {
       if (this.checkDexStatus === 'POOL_NOT_FOUND') {
         return this.$t('dexButton.poolNotFound');
       } else if (this.checkDexStatus === 'NOT_CONNECTED') {
@@ -59,13 +58,13 @@ export default {
       } else if (this.checkDexStatus === 'NOT_ENOUGH_GAS') {
         return this.$t('dexButton.notEnoughGas');
       } else if (
-          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT > 0) ||
-          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT > 0)
+        (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT > 0) ||
+        (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT > 0)
       ) {
         return this.$t('dexButton.notEnough');
       } else if (
-          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT === 0) ||
-          (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT === 0)
+        (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT === 0) ||
+        (this.checkDexStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT === 0)
       ) {
         return this.$t('dexButton.enterAmount');
       } else if (this.checkDexStatus === 'NOT_SELECTED') {
@@ -83,30 +82,32 @@ export default {
           this.checkDexStatus === 'NOT_ENOUGH_GAS' || this.loadingState);
     },
   },
-  methods: {
-    hiddenTooltip(): void {
-      this.showTooltip = false;
-    }
-  },
   mounted() {
     setTimeout(() => {
       this.loadingState = false;
     }, 1000);
   },
+  methods: {
+    hiddenTooltip() {
+      this.showTooltip = false;
+    },
+  },
 };
 </script>
 
 <style scoped>
-.tooltip-enter-active, .tooltip-leave-active {
-  transition: .1s ease-out;
+.tooltip-enter-active,
+.tooltip-leave-active {
+  transition: 0.1s ease-out;
 }
 
-.tooltip-enter-from, .tooltip-leave-to {
+.tooltip-enter-from,
+.tooltip-leave-to {
   opacity: 0;
 }
 
 .dex__button {
-  transition: .2s;
+  transition: 0.2s;
   width: 100%;
   border: none;
   outline: none;
@@ -129,8 +130,7 @@ export default {
 .btn-text {
   font-size: 16px;
   line-height: 24px;
-  font-family: Roboto, sans-serif;
-  font-weight: 500;
+  font-family: Harmony-Medium, sans-serif;
   color: #fff;
 }
 
@@ -142,29 +142,11 @@ export default {
   opacity: 0.4;
 }
 
-@keyframes Loader {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(-360deg);
-  }
-}
-
-@keyframes LoaderReverse {
-  0% {
-    transform: rotateZ(0deg);
-  }
-  100% {
-    transform: rotateZ(360deg);
-  }
-}
-
 .btn-loader {
   margin: 0 auto;
   width: 24px;
   height: 24px;
-  background: url("@/assets/dex/loader.png") no-repeat;
+  background: url('@/assets/dex/loader.png') no-repeat;
   background-size: cover;
   animation: 1s forwards linear infinite Loader;
 }
@@ -181,12 +163,12 @@ export default {
   margin-right: 5px;
   width: 20px;
   height: 20px;
-  background: url("@/assets/dex/wallet-icon.svg") no-repeat;
+  background: url('@/assets/dex/wallet-icon.svg') no-repeat;
   transition: background 0.2s ease;
 }
 
 .dex__button:hover .wallet-icon {
-  background: url("@/assets/dex/wallet-filled.svg") no-repeat;
+  background: url('@/assets/dex/wallet-filled.svg') no-repeat;
 }
 
 .info-wrapper {

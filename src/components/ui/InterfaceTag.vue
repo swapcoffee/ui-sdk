@@ -1,10 +1,10 @@
 <template>
 	<div class="tag" :style="{backgroundColor: getBackgroundColor}" :class="color.length === 0 ? getClass : ''">
-		<p class="tag__name" :style="{color: color}"> {{ getStatus }} </p>
+		<p class="tag__name" :style="{color: color}">{{ getLabelName }}</p>
 	</div>
 </template>
 
-<script lang="ts">
+<script>
 export default {
 	name: "InterfaceTag",
 	props: {
@@ -40,7 +40,7 @@ export default {
 				return 'gray_color'
 			}
 		},
-		getStatus() {
+		getLabelName() {
 			if (this.tag === 'new') {
 				return this.$t('interfaceTag.new')
 			} else if (this.tag === 'cashback') {

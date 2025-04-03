@@ -1,0 +1,36 @@
+<template>
+  <svg :class="combinedClasses" xmlns="http://www.w3.org/2000/svg" width="21" height="22" viewBox="0 0 21 22" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.62169 17.2724C7.37383 17.0246 7.37383 16.6227 7.62169 16.3748L13.0967 10.8998L7.62169 5.42472C7.37383 5.17685 7.37383 4.77504 7.62169 4.52717C7.86955 4.2793 8.27142 4.2793 8.51928 4.52717L14.4431 10.451C14.5622 10.57 14.629 10.7315 14.629 10.8998C14.629 11.0681 14.5622 11.2296 14.4431 11.3486L8.51928 17.2724C8.27142 17.5203 7.86955 17.5203 7.62169 17.2724Z" :fill="computedFillColor"/>
+</svg>
+</template>
+
+<script>
+import IconColorMixin from '@/mixins/IconColorMixin.js';
+
+export default {
+  name: 'RightArrowIcon',
+  mixins: [IconColorMixin],
+  props: {
+    customClass: {
+      type: String,
+      default: ''
+    },
+      isWhite: {
+          type: Boolean,
+          default: false
+      }
+  },
+  computed: {
+    combinedClasses() {
+      return `icon ${this.customClass}`.trim();
+    },
+      computedFillColor() {
+          return this.isWhite ? 'white' : this.fillColorForTheme;
+      }
+  }
+};
+</script>
+
+<style scoped>
+
+</style>

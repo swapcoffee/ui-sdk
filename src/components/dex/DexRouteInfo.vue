@@ -41,15 +41,15 @@
 	</div>
 </template>
 
-<script lang="ts">
+<script>
+import {mapGetters} from "vuex";
 import {defineAsyncComponent} from "vue";
-import { useDexStore } from "@/stores/dex/index.js";
 
 export default {
 	name: "DexRouteInfo",
 	components: {
 		DistributionPopup: defineAsyncComponent(() => {
-			return import("@/components/dex/DistributionPopup.vue")
+			return import("@/components/modals/DistributionModal.vue")
 		})
 	},
 	data() {
@@ -58,11 +58,11 @@ export default {
 		}
 	},
 	computed: {
-    dexStore() {
-      return useDexStore();
-    },
+		...mapGetters([
+			'GET_DEAL_CONDITIONS',
+		]),
 		getEstimatedCashback() {
-			let cashback = this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd
+			let cashback = this.GET_DEAL_CONDITIONS?.estimated_cashback_usd
 			let count = 2
 			if (cashback && cashback > 0) {
 				while (Number(cashback.toFixed(count)) <= 0) {
@@ -77,11 +77,11 @@ export default {
 			return `${this.getSplitCount} Split + ${this.getHopCount} Hop`
 		},
 		getSplitCount() {
-			return this.dexStore.GET_DEAL_CONDITIONS?.paths.length
+			return this.GET_DEAL_CONDITIONS?.paths.length
 		},
 		getHopCount() {
 			let count = 0
-			const paths = this.dexStore.GET_DEAL_CONDITIONS?.paths
+			const paths = this.GET_DEAL_CONDITIONS?.paths
 			for (const routeStart of paths) {
 				function traverse(current) {
 					count++
@@ -104,7 +104,7 @@ export default {
 		},
 		getDexNames() {
 			let array = []
-			this.dexStore.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
+			this.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
 				if (array.includes(item?.dex)) {
 					return
 				}
@@ -116,7 +116,15 @@ export default {
 					if (!array.includes('STONfi')) {
 						array.push('STONfi')
 					}
-				}
+				} else if (item?.dex === 'tonco') {
+          if (!array.includes('Tonco')) {
+            array.push('Tonco')
+          }
+        } else if (item?.dex === 'coffee') {
+          if (!array.includes('Coffee')) {
+            array.push('Coffee')
+          }
+        }
 			})
 			if (array.length === 2) {
 				return `${array[0]}, ${array[1]}`
@@ -165,7 +173,7 @@ export default {
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
-		padding: 8px 8px;
+		padding: 8px 12px;
 		background: rgba(193, 114, 255, 0.10);
 	}
 
@@ -200,7 +208,7 @@ export default {
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
-		padding: 8px 8px;
+		padding: 8px 12px;
 		background: rgba(50, 215, 75, 0.10);
 	}
 

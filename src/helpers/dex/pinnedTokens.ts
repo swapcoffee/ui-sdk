@@ -1,13 +1,13 @@
 export function pinnedTokens() {
     return [
         {
-            "address": "native"
+            address: 'native',
         },
         {
-            "address": "0:a5d12e31be87867851a28d3ce271203c8fa1a28ae826256e73c506d94d49edad"
+            address: '0:a5d12e31be87867851a28d3ce271203c8fa1a28ae826256e73c506d94d49edad',
         },
         {
-            "address": "0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe"
+            address: '0:b113a994b5024a16719f69139328eb759596c38a25f59028b146fecdc3621dfe',
         },
         // {
         //     "address": "0:f6eb371de82aa9cfb5b22ca547f31fdc0fa0fbb41ae89ba84a73272ff0bf2157"
@@ -27,5 +27,5 @@ export function pinnedTokens() {
         // {
         //     "address": "0:2f807ae445b1ba09fc90366a25d1cf0ccf67634f05c3a00bc9d6ae31164b37f4"
         // },
-    ]
+    ];
 }

@@ -5,7 +5,8 @@ export const useSettingsStore = defineStore('settings', {
 	state: (): SettingsState => ({
 		theme: 'dark',
 		availableThemes: ['system', 'dark', 'light', 'coffee'],
-		settings: null
+		settings: null,
+		lastWalletConnectionTime: null,
 	}),
 	actions: {
 		SET_THEME(value: string) {
@@ -17,10 +18,14 @@ export const useSettingsStore = defineStore('settings', {
 		TOGGLE_THEME() {
 			const currentIndex = this.availableThemes.indexOf(this.theme);
 			this.theme = this.availableThemes[(currentIndex + 1) % this.availableThemes.length];
-		}
+		},
+		SAVE_LAST_WALLET_CONNECTION_TIME(item) {
+			this.lastWalletConnectionTime = item;
+		},
 	},
 	getters: {
 		GET_THEME: (state) => state.theme,
-		GET_USER_SETTINGS: (state) => state.settings
+		GET_USER_SETTINGS: (state) => state.settings,
+		GET_LAST_WALLET_CONNECTION_TIME: (state) => state.lastWalletConnectionTime
 	}
 });

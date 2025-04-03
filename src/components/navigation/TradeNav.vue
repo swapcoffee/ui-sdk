@@ -1,108 +1,126 @@
 <template>
-  <div class="title__button-block">
-    <button class="title__choose-btn"
-            :class="{ active: getRouteName === 'Dex' }"
-            @click="linkTo('Dex')"
-    >
-      {{ $t("dexNavigation.swap") }}
-    </button>
-    <button class="title__choose-btn disabled"
-            :class="{ active: getRouteName === 'Limit' }"
-            @click="linkTo('Limit')"
-    >
-      {{ $t("dexNavigation.limit") }}
-      <img src="@/assets/main/coming-soon.svg" alt="soon" class="coming-soon">
-    </button>
-  </div>
+    <div class="navigation">
+        <div class="navigation__group">
+            <NavigationTab
+                v-for="(item, index) in filteredNavActions"
+                :key="index"
+                :text="item.text"
+                :class="{active: item.isActive}"
+                @click="item.action"
+            />
+            <button class="navigation__select-btn"
+                    v-if="navActions.length > filteredNavActions.length"
+                    @click="showMore = !showMore"
+            >
+                <ChevronBottom
+                    :class="[{rotate: showMore}, 'chevron-icon']"
+                />
+            </button>
+        </div>
+        <DexNavigationModal
+            :navActions="navActions"
+            v-if="showMore"
+            @closeNavigation="showMore = false"
+        />
+    </div>
 </template>
 
-<script lang="ts">
+<script>
+import computedMixins from '@/mixins/computedMixins';
+import {mapGetters} from "vuex";
+import NavigationTab from "@/components/general/NavigationTab.vue";
+import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
+import DexNavigationModal from "@/components/modals/DexNavigationModal.vue";
 
 export default {
-  name: "TradeNav",
-  computed: {
-    getRouteName() {
-      return this.$route.name;
+    name: 'TradeNav',
+    components: {DexNavigationModal, ChevronBottom, NavigationTab},
+    mixins: [computedMixins],
+    data() {
+        return {
+            showMore: false,
+            screenSize: 1920
+        }
+    },
+    computed: {
+        navActions() {
+           return [
+                {
+                    text: this.$t('dexNavigation.swap'),
+                    desc: this.$t('tradeMode.descriptions[0]'),
+                    action: () => this.linkTo('Dex'),
+                    isActive: this.getRouteName === 'Dex'
+                },
+                {
+                    text: this.$t('dexNavigation.limit'),
+                    desc: this.$t('tradeMode.descriptions[1]'),
+                    action: () => this.linkTo('Limit'),
+                    isActive: this.getRouteName === 'Limit'
+                },
+                {
+                    text: "DCA",
+                    desc: this.$t('tradeMode.descriptions[2]'),
+                    action: () => this.linkTo('Dca'),
+                    isActive: this.getRouteName === 'Dca'
+                },
+            ]
+        },
+        filteredNavActions() {
+            if (this.screenSize > 576) {
+                return this.navActions.slice(0, 3)
+            } else {
+                return this.navActions.filter((item) => item.isActive)
+            }
+        }
+    },
+    methods: {
+        linkTo(value) {
+            if (this.showMore) {
+                this.showMore = false
+            }
+            this.$router.push({name: value});
+        },
+    },
+    mounted() {
+        this.screenSize = window.innerWidth
     }
-  },
-  methods: {
-    linkTo(value: string) {
-      this.$router.push({ name: value, query: this.$route.query });
-    }
-  }
-}
+};
 </script>
 
 <style scoped>
-.title__button-block {
-  display: flex;
-  align-items: center;
-  gap: 0 6px;
-}
-
-.title__choose-btn {
-  position: relative;
-  transition: .2s;
-  height: 36px;
-  padding: 0 20px;
-  border-radius: 14px;
-  border: 1px solid transparent;
-  letter-spacing: 0.1px;
-  font-weight: 500;
-  outline: none;
-  background: var(--iface-white4);
-  font-size: 14px;
-  line-height: 16px;
-}
-
-.title__choose-btn::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  bottom: 0;
-  transform: translateX(-50%);
-  width: 45%;
-  height: 3px;
-  background-color: transparent;
-  border-radius: 2px 2px 0 0;
-  transition: .2s;
-}
-
-.title__choose-btn.active::after {
-  background-color: var(--iface-accent-color);
-}
-
-.active {
-  background: var(--iface-white6);
-  opacity: 1;
-}
-
-.disabled {
-  pointer-events: none;
-  cursor: not-allowed;
-}
-
-.coming-soon {
-  position: absolute;
-  top: -5px;
-  right: -10px;
-  width: 30px;
-  height: 30px;
+.navigation__group {
+    display: flex;
+    align-items: center;
+    gap: 0 6px;
 }
 
 .theme-light .coming-soon {
-  mix-blend-mode: difference;
-  filter: invert(.7);
+    mix-blend-mode: difference;
+    filter: invert(0.7);
 }
 
-@media screen and (max-width: 860px) {
-  .title__button-block {
-    padding: 12px 10px;
-    border-bottom: 1px solid var(--iface-white6);
-  }
-
-  .title__choose-btn {
-    margin-right: 6px;
-  }
+.navigation__select-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    border: 1px solid var(--iface-white8);
+    outline: none;
+    background: transparent;
+    backdrop-filter: blur(50px);
 }
+
+.chevron-icon {
+    width: 20px;
+    height: 20px;
+    opacity: 0.6;
+    transition: .2s;
+}
+
+.rotate {
+    transform: rotateX(180deg);
+}
+
 </style>

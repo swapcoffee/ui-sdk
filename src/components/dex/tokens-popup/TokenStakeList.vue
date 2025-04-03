@@ -1,0 +1,65 @@
+<template>
+  <ul class="tokens-popup__list" v-if="stakeItems.length > 0">
+    <li class="tokens-popup__list-title">
+      {{ title }}
+    </li>
+    <TokenItem
+      v-for="(item, index) in stakeItems"
+      :key="index"
+      :item="item"
+      :isStakingPage="isStakingPage"
+      :userPinnedTokens="userPinnedTokens"
+      :userUnpinnedTokens="userUnpinnedTokens"
+      :tonPrice="tonPrice"
+      :class="{ active_item: isActiveItem(item) }"
+      @click="$emit('chooseToken', item)"
+    />
+  </ul>
+</template>
+
+<script>
+import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
+
+export default {
+  name: 'StakeTokenList',
+  components: {
+    TokenItem,
+  },
+  props: {
+    stakeItems: {
+      type: Array,
+      required: true,
+    },
+    isStakingPage: {
+      type: Boolean,
+      default: false,
+    },
+    userPinnedTokens: Array,
+    userUnpinnedTokens: Array,
+    tonPrice: Number,
+    title: String,
+    mode: String
+  },
+  computed: {
+  },
+  methods: {
+    isActiveItem(item) {
+      return this.mode === 'SEND' && this.GET_SEND_TOKEN?.symbol === item.symbol ||
+        this.mode === 'RECEIVE' && this.GET_RECEIVE_TOKEN?.symbol === item.symbol;
+    }
+  }
+};
+</script>
+
+<style scoped>
+.tokens-popup__list {
+  margin-top: 20px;
+}
+
+.tokens-popup__list-title {
+  margin-bottom: 10px;
+  padding: 0 20px;
+  font-size: 14px;
+  opacity: 0.8;
+}
+</style>

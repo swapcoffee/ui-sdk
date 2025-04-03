@@ -11,6 +11,7 @@
     "declarationDir": "./dist/types",
     "outDir": "./dist",
     "skipLibCheck": true,
+    "allowImportingTsExtensions": true,
     "isolatedModules": true,
     "strict": false,
     "paths": {

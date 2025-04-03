@@ -1,259 +1,253 @@
 <template>
-  <div class="dex__you-send"
-       @click.self="focusInput"
-       :class="{active: inputFocused}"
-  >
-    <div class="dex__group group-margin">
-      <h4 class="dex__heading">{{ $t("dexInterface.youSend") }}</h4>
-      <button class="token-balance"
-              v-if="showBalanceCondition"
-              @click="maxBalance"
-              :disabled="getTokenBalance === 0"
-      >
-        <span class="balance-text">{{ $t("dexInterface.balance", {currentBalance: getTokenBalance}) }}</span>
-        <span class="color-text" v-show="getTokenBalance > 0"> {{ $t("dexInterface.max") }}</span>
-      </button>
-      <p class="skeleton skeleton_row" v-else></p>
-    </div>
-    <label for="" class="dex__label">
-      <p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && swapMode === 'reverse'"></p>
-      <DexInput id="sendInput" v-else
-                :model-value="String(youSend)"
-                @update:model-value="updateValue" />
-
-      <!--			<input type="number" class="dex__input" v-model="youSend" id="sendInput" placeholder="0" inputmode="decimal"-->
-      <!--				   autocomplete="off"-->
-      <!--				   v-else-->
-      <!--				   @input="changeInput"-->
-      <!--				   @focus="onFocus"-->
-      <!--				   @blur="onBlur"-->
-      <!--			>-->
-      <button class="dex__btn"
-              @click="$emit('chooseSendToken')"
-              v-if="loaded"
-      >
-        <img :src="sendToken?.image" alt="Logo of send selected token for send" class="token-image">
-        <p class="btn-text">{{ sendToken?.symbol }}</p>
-        <!--				<p class="skeleton skeleton_row" v-if="!loaded"></p>-->
-        <!--				<div class="skeleton skeleton_round" v-if="!loaded"></div>-->
-      </button>
-      <div class="skeleton skeleton_token" v-if="!loaded"></div>
-    </label>
-    <div class="dex__group">
-      <p class="token-price" v-if="!showSkeleton && !showBalanceSkeleton">${{ getTokenPrice }}</p>
-      <p class="skeleton skeleton_row" v-else></p>
-      <p class="token-name" v-if="sendToken">{{ sendToken?.name }}</p>
-      <p class="skeleton skeleton_row" v-else></p>
-    </div>
-    <button class="dex__switch-btn"
-            @click="switchToken"
-    >
-      <img src="@/assets/dex/switch.svg" alt="switch tokens icon" class="dex__switch-icon">
-    </button>
-  </div>
+	<div class="dex__you-send"
+		 @click.self="focusInput"
+		 :class="{active: inputFocused}"
+	>
+		<div class="dex__group group-margin">
+			<h4 class="dex__heading">{{ $t("dexInterface.youSend") }}</h4>
+			<button class="token-balance"
+					v-if="showBalanceCondition"
+					@click="maxBalance"
+					:disabled="getTokenBalance === 0"
+			>
+				<span class="balance-text">{{ $t("dexInterface.balance", {currentBalance: getTokenBalance}) }}</span>
+				<span class="color-text" v-show="isBalanceAvailable"> {{ $t("dexInterface.max") }}</span>
+			</button>
+			<p class="skeleton skeleton_row" v-else></p>
+		</div>
+		<label for="" class="dex__label">
+			<p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && GET_SWAP_MODE === 'reverse'"></p>
+			<DexInput id="sendInput" v-else
+					  :model-value="youSend"
+					  @update:model-value="updateValue"
+					  @changeFocus="changeFocus"
+			/>
+			<button class="dex__btn"
+					@click="$emit('chooseSendToken')"
+					v-if="loaded"
+			>
+				<img :src="GET_SEND_TOKEN?.image" alt="Logo of send selected token for send" class="token-image">
+				<p class="btn-text">{{ GET_SEND_TOKEN?.symbol }}</p>
+				<!--				<p class="skeleton skeleton_row" v-if="!loaded"></p>-->
+				<!--				<div class="skeleton skeleton_round" v-if="!loaded"></div>-->
+			</button>
+			<div class="skeleton skeleton_token" v-if="!loaded"></div>
+		</label>
+		<div class="dex__group">
+			<p class="token-price" v-if="!showSkeleton && !showBalanceSkeleton">${{ getTokenPrice }}</p>
+			<p class="skeleton skeleton_row" v-else></p>
+			<p class="token-name" v-if="GET_SEND_TOKEN">{{ GET_SEND_TOKEN?.name }}</p>
+			<p class="skeleton skeleton_row" v-else></p>
+		</div>
+		<button class="dex__switch-btn"
+				@click="switchToken"
+        :disabled="refreshInfo"
+		>
+			<img src="@/assets/dex/switch.svg" alt="switch tokens icon" class="dex__switch-icon">
+		</button>
+	</div>
 </template>
 
-<script lang="ts">
-import { useDexStore } from "@/stores/dex";
-import DexInput from "@/components/dex/DexInput.vue";
-import methodsMixins from "@/mixins/methodsMixins";
+<script>
+import { mapActions, mapGetters } from 'vuex';
+import DexInput from '@/components/dex/DexInput.vue';
+import methodsMixins from '@/mixins/methodsMixins.js';
 
 export default {
-  name: "DexYouSend",
-  components: {DexInput},
+  name: 'DexYouSend',
+  components: {
+    DexInput,
+  },
   mixins: [methodsMixins],
   props: {
     poolNotFound: {
       type: Boolean,
-      default: false,
+      default() {
+        return false;
+      },
+    },
+    refreshInfo: {
+      type: Boolean,
+      default() {
+        return false;
+      },
     },
   },
   data() {
     return {
       inputFocused: false,
       pageLoaded: false,
-      debounce: null as any,
+      debounce: null,
       loaded: false,
       youSend: '0',
-      currentSend: null as any,
-      currentReceive: null as any,
-      currentSendAmount: null as number | null,
-      currentReceiveAmount: null as number | null,
+      currentSend: null,
+      currentReceive: null,
+      currentSendAmount: null,
+      currentReceiveAmount: null,
       tokenSwitched: false,
     };
   },
   computed: {
-    dexStore() {
-      return useDexStore();
-    },
-    sendToken() {
-      return this.dexStore.GET_SEND_TOKEN;
-    },
-    receiveToken() {
-      return this.dexStore.GET_RECEIVE_TOKEN;
-    },
-    dealConditions() {
-      return this.dexStore.GET_DEAL_CONDITIONS;
-    },
-    sendAmount() {
-      return this.dexStore.GET_SEND_AMOUNT;
-    },
-    receiveAmount() {
-      return this.dexStore.GET_RECEIVE_AMOUNT;
-    },
-    swapMode() {
-      return this.dexStore.GET_SWAP_MODE;
-    },
+    ...mapGetters([
+      'GET_DEX_WALLET',
+      'GET_SEND_TOKEN',
+      'GET_RECEIVE_TOKEN',
+      'GET_DEAL_CONDITIONS',
+      'GET_SEND_AMOUNT',
+      'GET_RECEIVE_AMOUNT',
+      'GET_SWAP_MODE',
+    ]),
     showBalanceCondition() {
-      if (this.dexStore.GET_DEX_WALLET !== null) {
-        return this.sendToken !== null && this.sendToken.hasOwnProperty('balance')
+      if (this.GET_DEX_WALLET !== null) {
+        return this.GET_SEND_TOKEN !== null && this.GET_SEND_TOKEN.hasOwnProperty('balance');
       } else {
-        return this.sendToken !== null
+        return this.GET_SEND_TOKEN !== null;
       }
     },
     showSkeleton() {
       return (
-          this.sendAmount > 0 &&
-          this.sendAmount !== "" &&
-          this.receiveToken !== null &&
-          this.dealConditions === null &&
-          !this.poolNotFound
+        this.GET_SEND_AMOUNT > 0 &&
+        this.GET_SEND_AMOUNT !== '' &&
+        this.GET_RECEIVE_TOKEN !== null &&
+        this.GET_DEAL_CONDITIONS === null &&
+        !this.poolNotFound
       );
     },
     showBalanceSkeleton() {
       return (
-          this.receiveAmount > 0 &&
-          this.receiveAmount !== "" &&
-          this.dealConditions === null &&
-          !this.poolNotFound
+        this.GET_RECEIVE_AMOUNT > 0 &&
+        this.GET_RECEIVE_AMOUNT !== '' &&
+        this.GET_DEAL_CONDITIONS === null &&
+        !this.poolNotFound
       );
     },
+    isBalanceAvailable() {
+      const balance = this.GET_SEND_TOKEN?.balance;
+
+      if (balance === null || balance === undefined) {
+        return false;
+      }
+
+      const numericBalance = parseFloat(balance);
+
+      return !isNaN(numericBalance) && numericBalance > 0;
+    },
     getTokenBalance() {
-      if (this.dexStore.GET_SEND_TOKEN?.balance) {
-        return this.prettyNumber(this.dexStore.GET_SEND_TOKEN?.balance, 2);
+      if (this.GET_SEND_TOKEN?.balance) {
+        return this.prettyNumber(this.GET_SEND_TOKEN?.balance, 2);
       } else {
         return 0;
       }
     },
-    getTokenPrice() {
-      return this.dealConditions !== null
-          ? this.dealConditions.input_usd.toFixed(2)
-          : 0;
-    },
-  },
-  methods: {
-    switchToken() {
-      if (this.sendToken !== null && this.receiveToken !== null) {
-        clearTimeout(this.debounce);
+		getTokenPrice() {
+			if (this.GET_DEAL_CONDITIONS !== null) {
+				return this.prettyNumber(this.GET_DEAL_CONDITIONS?.input_usd, 2)
+			} else {
+				return 0
+			}
+		}
+	},
+	methods: {
+		...mapActions([
+			'DEX_SEND_TOKEN',
+			'DEX_RECEIVE_TOKEN',
+			'DEX_SEND_AMOUNT',
+			'CHANGE_SWAP_MODE',
+			'DEX_RECEIVE_AMOUNT'
+		]),
+		changeFocus(value) {
+			this.inputFocused = value
+		},
+		switchToken() {
+			if (this.GET_SEND_TOKEN !== null && this.GET_RECEIVE_TOKEN !== null) {
+				clearTimeout(this.debounce)
         this.debounce = setTimeout(() => {
           this.tokenSwitched = true;
-          this.dexStore.DEX_SEND_TOKEN(this.currentReceive);
-          this.dexStore.DEX_RECEIVE_TOKEN(this.currentSend);
-          if (
-              this.currentSendAmount !== null &&
-              this.currentReceiveAmount !== null
-          ) {
+          this.DEX_SEND_TOKEN(this.currentReceive);
+          this.DEX_RECEIVE_TOKEN(this.currentSend);
+
+          if (this.currentSendAmount !== null && this.currentReceiveAmount !== null) {
             if (this.currentReceiveAmount === 0) {
-              this.youSend = 0;
-            } else {
+              this.youSend = '0';
+            } else if (typeof this.currentReceiveAmount === 'number' && !isNaN(this.currentReceiveAmount)) {
               this.youSend = this.currentReceiveAmount.toFixed(4);
+            } else {
+              this.youSend = '0';
             }
-            this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
+            this.DEX_SEND_AMOUNT(Number(this.youSend));
           }
         }, 200);
       }
-    },
-    updateValue(value) {
-      this.youSend = value
-      this.dexStore.DEX_SEND_AMOUNT(Number(value))
-    },
-    focusInput() {
-      const input = document.getElementById("sendInput") as HTMLInputElement;
-      input.focus();
-    },
-    onFocus() {
-      this.inputFocused = true;
-    },
-    onBlur() {
-      this.inputFocused = false;
-      if (this.youSend === 0 || this.youSend?.toString().length === 0) {
-        this.youSend = null;
-      }
-    },
-    changeInput() {
-      if (this.youSend! < 0) {
-        this.youSend = null;
-      }
-      this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
-    },
+		},
+		updateValue(value) {
+			this.youSend = value
+			this.DEX_SEND_AMOUNT(Number(value))
+		},
+		focusInput() {
+			let input = document.getElementById('sendInput')
+			input.focus()
+		},
     maxBalance() {
-      let balance = this.dexStore.GET_SEND_TOKEN?.balance
-      let fee = 0.23501
+      let balance = this.GET_SEND_TOKEN?.balance;
 
-      if (this.dexStore.GET_SWAP_MODE === 'reverse') {
-        this.dexStore.CHANGE_SWAP_MODE('default')
+      const currentDeal = this.GET_DEAL_CONDITIONS
+        ? JSON.parse(JSON.stringify(this.GET_DEAL_CONDITIONS))
+        : null;
+
+      const partnerFee = currentDeal?.partner_commission_ton || 0;
+      const recommendedGas = currentDeal?.recommended_gas || 0;
+
+      if (this.GET_SWAP_MODE === 'reverse') {
+        this.CHANGE_SWAP_MODE('default');
       }
 
-      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-        fee = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
-      }
+      const fee = currentDeal ? parseFloat((recommendedGas + 0.00001).toFixed(8)) : 0;
+      const totalFee = parseFloat((fee + partnerFee).toFixed(8));
 
-      if (this.dexStore.GET_SEND_TOKEN?.address === 'native') {
-        if (balance >= 1) {
-          balance = this.dexStore.GET_SEND_TOKEN?.balance - fee;
-          if (balance <= 0) {
-            balance = 0;
-          }
-        }
+      if (this.GET_SEND_TOKEN?.address === 'native' && balance > 0) {
+        balance = parseFloat((balance - totalFee).toFixed(8));
+        if (balance < 0) balance = 0;
       }
 
       this.youSend = balance.toFixed(4);
-      this.dexStore.DEX_SEND_AMOUNT(balance);
+      this.DEX_SEND_AMOUNT(balance);
     },
     setCurrentSend() {
-      if (this.sendToken !== null) {
+      if (this.GET_SEND_TOKEN !== null) {
         setTimeout(() => {
-          this.currentSend = this.sendToken;
+          this.currentSend = this.GET_SEND_TOKEN;
           this.loaded = true;
         }, 100);
       }
     },
     setCurrentReceive() {
-      if (this.receiveToken !== null) {
+      if (this.GET_RECEIVE_TOKEN !== null) {
         setTimeout(() => {
-          this.currentReceive = this.receiveToken;
+          this.currentReceive = this.GET_RECEIVE_TOKEN;
         }, 100);
       }
     },
     setCurrentSendAmount() {
-      if (this.sendAmount > 0) {
+      if (this.GET_SEND_AMOUNT > 0) {
         setTimeout(() => {
-          this.currentSendAmount = this.sendAmount;
+          this.currentSendAmount = this.GET_SEND_AMOUNT;
         }, 100);
       }
     },
     setCurrentReceiveAmount() {
-      if (this.dealConditions !== null) {
+      if (this.GET_DEAL_CONDITIONS !== null) {
         setTimeout(() => {
-          this.currentReceiveAmount = this.dealConditions.output_amount;
+          this.currentReceiveAmount = this.GET_DEAL_CONDITIONS?.output_amount;
         }, 100);
       }
     },
     clearAmounts() {
-      this.youSend = 0;
+      this.youSend = '0';
       this.currentSendAmount = 0;
       this.currentReceiveAmount = 0;
-      this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
-      this.dexStore.DEX_RECEIVE_AMOUNT(Number(this.youSend));
+      this.DEX_SEND_AMOUNT(Number(this.youSend));
+      this.DEX_RECEIVE_AMOUNT(Number(this.youSend));
     },
-  },
-  mounted() {
-    if (this.sendToken !== null) {
-      this.loaded = true;
-    }
-  },
-  unmounted() {
-    clearTimeout(this.debounce);
   },
   watch: {
     tokenSwitched: {
@@ -265,52 +259,62 @@ export default {
         }
       },
     },
-    sendToken: {
+    GET_SEND_TOKEN: {
       handler() {
-        if (this.swapMode === "default" && !this.tokenSwitched) {
-          // this.clearAmounts();
+        if (this.GET_SWAP_MODE === 'default' && !this.tokenSwitched) {
+          this.clearAmounts();
         }
         this.setCurrentSend();
       },
     },
-    receiveToken: {
+    GET_RECEIVE_TOKEN: {
       handler() {
-        if (this.swapMode === "reverse" && !this.tokenSwitched) {
-          // this.clearAmounts();
+        if (this.GET_SWAP_MODE === 'reverse' && !this.tokenSwitched) {
+          this.clearAmounts();
         }
         this.setCurrentReceive();
       },
     },
-    sendAmount: {
+    GET_SEND_AMOUNT: {
       handler() {
         this.setCurrentSendAmount();
-        if (this.youSend !== this.sendAmount && this.pageLoaded === false) {
+        if (Number(this.youSend) !== this.GET_SEND_AMOUNT && this.pageLoaded === false) {
           this.pageLoaded = true;
-          this.youSend = this.sendAmount;
+          this.youSend = String(this.GET_SEND_AMOUNT);
         }
       },
     },
-    dealConditions: {
+    GET_DEAL_CONDITIONS: {
       handler() {
         this.setCurrentReceiveAmount();
-        if (this.swapMode !== "default") {
-          if (this.dealConditions !== null) {
-            this.youSend = this.dealConditions.input_amount > 0
-                ? this.dealConditions.input_amount.toFixed(4)
-                : 0;
+        if (this.GET_SWAP_MODE !== 'default') {
+          if (this.GET_DEAL_CONDITIONS !== null) {
+            this.GET_DEAL_CONDITIONS?.input_amount > 0
+              ? (this.youSend = this.GET_DEAL_CONDITIONS.input_amount.toFixed(4))
+              : (this.youSend = '0');
           } else {
-            this.youSend = 0;
+            this.youSend = '0';
           }
         }
       },
     },
+  },
+  mounted() {
+    if (this.GET_SEND_TOKEN !== null) {
+      this.loaded = true;
+    }
+    // this.setCurrentSend()
+    // this.setCurrentReceive()
+  },
+  unmounted() {
+    clearTimeout(this.debounce);
   },
 };
 </script>
 
 <style scoped>
 .dex__you-send {
-  transition: .15s;
+  transition: 0.15s;
   position: relative;
   padding: 12px;
   border-radius: 12px 12px 0 0;
@@ -333,38 +337,21 @@ export default {
 }
 
 .dex__heading {
-  color: var(--main-text-color);
-  font-size: 13px;
-  line-height: 15px;
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
-  opacity: 0.7;
+	font-size: 13px;
+	line-height: 16px;
+	font-family: Harmony-Regular, sans-serif;
+	opacity: 0.7;
 }
 
 .dex__label {
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.dex__input {
-  width: 100%;
-  height: 36px;
-  border: none;
-  outline: none;
-  background: transparent;
-  font-size: 28px;
-  font-family: Roboto, sans-serif;
-  font-weight: 500;
-}
-
-.dex__input::placeholder {
-  color: var(--main-text-color);
+	margin-bottom: 12px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .dex__btn {
-  transition: .15s;
+  transition: 0.15s;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -385,12 +372,12 @@ export default {
   display: block;
   width: 16px;
   height: 16px;
-  background: url("@/assets/dex/arrow-down.svg") no-repeat;
+  background: url('@/assets/dex/arrow-down.svg') no-repeat;
 }
 
 .theme-light .dex__btn::after {
   mix-blend-mode: difference;
-  filter: invert(100%);
+  filter: invert(0.1);
 }
 
 .dex__btn:hover {
@@ -404,8 +391,7 @@ export default {
 }
 
 .btn-text {
-  font-family: Roboto, sans-serif;
-  font-weight: 500;
+  font-family: Harmony-Medium, sans-serif;
 }
 
 .token-image {
@@ -415,51 +401,47 @@ export default {
 }
 
 .dex__group {
-  max-height: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+	max-height: 16px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .group-margin {
-  margin-bottom: 10px;
+	margin-bottom: 12px;
 }
 
 .token-price {
-  font-size: 13px;
-  line-height: 15px;
-  opacity: 0.7;
+	font-size: 13px;
+	line-height: 16px;
+	opacity: 0.7;
 }
 
 .token-balance {
-  padding: 0;
   border: none;
   outline: none;
   background: transparent;
 }
 
 .balance-text {
-  transition: .2s;
+  transition: 0.2s;
   font-size: 13px;
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
+  font-family: Harmony-Regular, sans-serif;
   opacity: 0.7;
 }
 
 .color-text {
-  margin-left: 4px;
-  transition: .2s;
-  font-size: 13px;
-  line-height: 15px;
-  font-weight: 400;
-  letter-spacing: 0.4px;
-  color: var(--iface-accent-color);
+	margin-left: 4px;
+	transition: .2s;
+	font-size: 13px;
+	letter-spacing: 0.4px;
+	color: var(--iface-accent-color);
 }
 
 .token-name {
-  font-size: 13px;
-  line-height: 15px;
-  opacity: 0.7;
+	font-size: 13px;
+	line-height: 16px;
+	opacity: 0.7;
 }
 
 .token-balance:hover .balance-text {
@@ -475,7 +457,7 @@ export default {
 }
 
 .dex__switch-btn {
-  transition: .15s;
+  transition: 0.15s;
   z-index: 2;
   position: absolute;
   bottom: -15px;
@@ -491,7 +473,6 @@ export default {
   border-radius: 100px;
   background: var(--iface-white12);
   backdrop-filter: blur(5px);
-  padding: 0;
 }
 
 .dex__switch-btn:hover {
@@ -506,7 +487,7 @@ export default {
 
 .theme-light .dex__switch-icon {
   mix-blend-mode: difference;
-  filter: invert(.8);
+  filter: invert(0.8);
 }
 
 .skeleton_row {

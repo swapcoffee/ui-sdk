@@ -1,37 +1,42 @@
 <template>
-  <div class="popup-background" @click.self="$emit('closeSuccess')">
+  <div class="popup-background" @click.self="handleOutsideClick">
     <div class="success">
       <div class="success__menu">
-        <button class="success__close-btn" @click="$emit('closeSuccess')">
+        <button class="success__close-btn" @click="$emit('closeSuccess')" :disabled="isSnowfallActive">
           <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
           >
             <g opacity="0.8">
               <path
-                  d="M19.2806 18.2194C19.3502 18.2891 19.4055 18.3718 19.4432 18.4628C19.4809 18.5539 19.5003 18.6515 19.5003 18.75C19.5003 18.8485 19.4809 18.9461 19.4432 19.0372C19.4055 19.1282 19.3502 19.2109 19.2806 19.2806C19.2109 19.3503 19.1281 19.4056 19.0371 19.4433C18.9461 19.481 18.8485 19.5004 18.7499 19.5004C18.6514 19.5004 18.5538 19.481 18.4628 19.4433C18.3717 19.4056 18.289 19.3503 18.2193 19.2806L11.9999 13.0603L5.78055 19.2806C5.63982 19.4214 5.44895 19.5004 5.24993 19.5004C5.05091 19.5004 4.86003 19.4214 4.7193 19.2806C4.57857 19.1399 4.49951 18.949 4.49951 18.75C4.49951 18.551 4.57857 18.3601 4.7193 18.2194L10.9396 12L4.7193 5.78062C4.57857 5.63989 4.49951 5.44902 4.49951 5.25C4.49951 5.05097 4.57857 4.8601 4.7193 4.71937C4.86003 4.57864 5.05091 4.49958 5.24993 4.49958C5.44895 4.49958 5.63982 4.57864 5.78055 4.71937L11.9999 10.9397L18.2193 4.71937C18.36 4.57864 18.5509 4.49958 18.7499 4.49958C18.949 4.49958 19.1398 4.57864 19.2806 4.71937C19.4213 4.8601 19.5003 5.05097 19.5003 5.25C19.5003 5.44902 19.4213 5.63989 19.2806 5.78062L13.0602 12L19.2806 18.2194Z"
-                  fill="white"
+                d="M19.2806 18.2194C19.3502 18.2891 19.4055 18.3718 19.4432 18.4628C19.4809 18.5539 19.5003 18.6515 19.5003 18.75C19.5003 18.8485 19.4809 18.9461 19.4432 19.0372C19.4055 19.1282 19.3502 19.2109 19.2806 19.2806C19.2109 19.3503 19.1281 19.4056 19.0371 19.4433C18.9461 19.481 18.8485 19.5004 18.7499 19.5004C18.6514 19.5004 18.5538 19.481 18.4628 19.4433C18.3717 19.4056 18.289 19.3503 18.2193 19.2806L11.9999 13.0603L5.78055 19.2806C5.63982 19.4214 5.44895 19.5004 5.24993 19.5004C5.05091 19.5004 4.86003 19.4214 4.7193 19.2806C4.57857 19.1399 4.49951 18.949 4.49951 18.75C4.49951 18.551 4.57857 18.3601 4.7193 18.2194L10.9396 12L4.7193 5.78062C4.57857 5.63989 4.49951 5.44902 4.49951 5.25C4.49951 5.05097 4.57857 4.8601 4.7193 4.71937C4.86003 4.57864 5.05091 4.49958 5.24993 4.49958C5.44895 4.49958 5.63982 4.57864 5.78055 4.71937L11.9999 10.9397L18.2193 4.71937C18.36 4.57864 18.5509 4.49958 18.7499 4.49958C18.949 4.49958 19.1398 4.57864 19.2806 4.71937C19.4213 4.8601 19.5003 5.05097 19.5003 5.25C19.5003 5.44902 19.4213 5.63989 19.2806 5.78062L13.0602 12L19.2806 18.2194Z"
+                fill="white"
               />
             </g>
           </svg>
         </button>
       </div>
       <div class="success__wrapper">
+<!--        <DexSnowflake-->
+<!--          v-if="isSnowfallActive"-->
+<!--          :snowflakeCount="snowflakeCount"-->`
+<!--          @closeSnowfall="handleSnowfallComplete"-->
+<!--        />-->
         <div
-            v-show="
+          v-show="
             getTransactionStatus === 'pending' || getTransactionStatus === 'partially_complete'
           "
-            id="loading"
-            class="success__lottie"
+          id="loading"
+          class="success__lottie"
         />
         <div v-show="getTransactionStatus === 'succeeded'" id="success" class="success__lottie" />
         <div
-            v-show="getTransactionStatus === 'failed' || getTransactionStatus === 'timed_out'"
-            id="failed"
-            class="success__lottie"
+          v-show="getTransactionStatus === 'failed' || getTransactionStatus === 'timed_out'"
+          id="failed"
+          class="success__lottie"
         />
       </div>
       <h2 class="success__title">
@@ -43,24 +48,24 @@
           {{ getSendTotal }}
         </p>
         <svg
-            class="success__arrow-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="17"
-            height="16"
-            viewBox="0 0 17 16"
-            fill="none"
+          class="success__arrow-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="17"
+          height="16"
+          viewBox="0 0 17 16"
+          fill="none"
         >
           <g opacity="0.8">
             <path
-                d="M14.3538 8.35378L9.85375 12.8538C9.75993 12.9476 9.63268 13.0003 9.5 13.0003C9.36732 13.0003 9.24007 12.9476 9.14625 12.8538C9.05243 12.76 8.99972 12.6327 8.99972 12.5C8.99972 12.3674 9.05243 12.2401 9.14625 12.1463L12.7931 8.50003H3C2.86739 8.50003 2.74021 8.44736 2.64645 8.35359C2.55268 8.25982 2.5 8.13264 2.5 8.00003C2.5 7.86743 2.55268 7.74025 2.64645 7.64648C2.74021 7.55271 2.86739 7.50003 3 7.50003H12.7931L9.14625 3.85378C9.05243 3.75996 8.99972 3.63272 8.99972 3.50003C8.99972 3.36735 9.05243 3.2401 9.14625 3.14628C9.24007 3.05246 9.36732 2.99976 9.5 2.99976C9.63268 2.99976 9.75993 3.05246 9.85375 3.14628L14.3538 7.64628C14.4002 7.69272 14.4371 7.74786 14.4623 7.80856C14.4874 7.86926 14.5004 7.93433 14.5004 8.00003C14.5004 8.06574 14.4874 8.13081 14.4623 8.1915C14.4371 8.2522 14.4002 8.30735 14.3538 8.35378Z"
-                fill="#FFFFFF"
+              d="M14.3538 8.35378L9.85375 12.8538C9.75993 12.9476 9.63268 13.0003 9.5 13.0003C9.36732 13.0003 9.24007 12.9476 9.14625 12.8538C9.05243 12.76 8.99972 12.6327 8.99972 12.5C8.99972 12.3674 9.05243 12.2401 9.14625 12.1463L12.7931 8.50003H3C2.86739 8.50003 2.74021 8.44736 2.64645 8.35359C2.55268 8.25982 2.5 8.13264 2.5 8.00003C2.5 7.86743 2.55268 7.74025 2.64645 7.64648C2.74021 7.55271 2.86739 7.50003 3 7.50003H12.7931L9.14625 3.85378C9.05243 3.75996 8.99972 3.63272 8.99972 3.50003C8.99972 3.36735 9.05243 3.2401 9.14625 3.14628C9.24007 3.05246 9.36732 2.99976 9.5 2.99976C9.63268 2.99976 9.75993 3.05246 9.85375 3.14628L14.3538 7.64628C14.4002 7.69272 14.4371 7.74786 14.4623 7.80856C14.4874 7.86926 14.5004 7.93433 14.5004 8.00003C14.5004 8.06574 14.4874 8.13081 14.4623 8.1915C14.4371 8.2522 14.4002 8.30735 14.3538 8.35378Z"
+              fill="#FFFFFF"
             />
           </g>
         </svg>
         <img
-            :src="getReceiveImage"
-            alt="Token logo in TON blockchain"
-            class="success__token-image"
+          :src="getReceiveImage"
+          alt="Token logo in TON blockchain"
+          class="success__token-image"
         />
         <p class="success__token-name">
           {{ getReceiveTotal }}
@@ -68,69 +73,94 @@
       </div>
       <div class="success__scroll-block custom-scroll">
         <div
-            v-if="getTransactionStatus === 'pending' || getTransactionStatus === 'partially_complete'"
-            class="success__tokens-list"
+          v-if="getTransactionStatus === 'pending' || getTransactionStatus === 'partially_complete'"
+          class="success__tokens-list"
         >
           <div
-              v-for="(route, index) in getRoutes.slice(0, routeCount)"
-              :key="index"
-              class="success__flex"
+            v-for="(route, index) in getRoutes.slice(0, routeCount)"
+            :key="index"
+            class="success__flex"
           >
             <div class="success__group">
               <div class="success__distribution">
-                <img :src="route.dex.imageUrl" alt="DEX logo" class="success__route-image" />
+
+                <div v-if="route.dex.length > 1" class="success__route-images">
+                  <img
+                    v-for="(dex, dexIndex) in route.dex"
+                    :key="dex.name"
+                    :src="dex.imageUrl"
+                    :alt="dex.name"
+                    class="success__route-image stacked"
+                    :style="{ marginLeft: dexIndex === 0 ? '0px' : '-14px' }"
+                  />
+                </div>
+
+                <img
+                  v-else
+                  :src="route.dex[0].imageUrl"
+                  :alt="route.dex[0].name"
+                  class="success__route-image"
+                />
                 <p class="success__percentage">{{ route.inputPercentage }}%</p>
               </div>
-              <p class="success__route-path">
-                {{ route.path }}
-              </p>
             </div>
+
+            <p class="success__route-path">
+                <span v-for="(token, tokenIndex) in route.path.split(' > ')" :key="tokenIndex">
+                  {{ token }}
+                  <span
+                    v-if="isCrossDex(route) && tokenIndex < route.path.split(' > ').length - 1 && isSameToken(route.path.split(' > ')[tokenIndex], route.path.split(' > ')[tokenIndex + 1])">
+                    <img src="@/assets/dex/cross.svg" class="custom-arrow" />
+                </span>
+                  <span v-else-if="tokenIndex < route.path.split(' > ').length - 1"> &gt; </span>
+                </span>
+            </p>
             <svg
-                v-if="transaction[index]?.status === 'succeeded'"
-                class="success__status-icon succeeded"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
+              v-if="transaction[index]?.status === 'succeeded'"
+              class="success__status-icon succeeded"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
             >
               <path
-                  d="M8.58075 12.1463L6.25775 9.823C6.11925 9.68467 5.94517 9.61383 5.7355 9.6105C5.526 9.60733 5.34875 9.67817 5.20375 9.823C5.05892 9.968 4.9865 10.1437 4.9865 10.35C4.9865 10.5563 5.05892 10.732 5.20375 10.877L7.948 13.6212C8.12883 13.8019 8.33975 13.8923 8.58075 13.8923C8.82175 13.8923 9.03267 13.8019 9.2135 13.6212L14.777 8.05775C14.9153 7.91925 14.9862 7.74517 14.9895 7.5355C14.9927 7.326 14.9218 7.14875 14.777 7.00375C14.632 6.85892 14.4563 6.7865 14.25 6.7865C14.0437 6.7865 13.868 6.85892 13.723 7.00375L8.58075 12.1463ZM10.0017 19.5C8.68775 19.5 7.45267 19.2507 6.2965 18.752C5.14033 18.2533 4.13467 17.5766 3.2795 16.7218C2.42433 15.8669 1.74725 14.8617 1.24825 13.706C0.749417 12.5503 0.5 11.3156 0.5 10.0017C0.5 8.68775 0.749333 7.45267 1.248 6.2965C1.74667 5.14033 2.42342 4.13467 3.27825 3.2795C4.13308 2.42433 5.13833 1.74725 6.294 1.24825C7.44967 0.749417 8.68442 0.5 9.99825 0.5C11.3123 0.5 12.5473 0.749333 13.7035 1.248C14.8597 1.74667 15.8653 2.42342 16.7205 3.27825C17.5757 4.13308 18.2528 5.13833 18.7518 6.294C19.2506 7.44967 19.5 8.68442 19.5 9.99825C19.5 11.3123 19.2507 12.5473 18.752 13.7035C18.2533 14.8597 17.5766 15.8653 16.7218 16.7205C15.8669 17.5757 14.8617 18.2528 13.706 18.7518C12.5503 19.2506 11.3156 19.5 10.0017 19.5Z"
-                  fill="#55FF85"
+                d="M8.58075 12.1463L6.25775 9.823C6.11925 9.68467 5.94517 9.61383 5.7355 9.6105C5.526 9.60733 5.34875 9.67817 5.20375 9.823C5.05892 9.968 4.9865 10.1437 4.9865 10.35C4.9865 10.5563 5.05892 10.732 5.20375 10.877L7.948 13.6212C8.12883 13.8019 8.33975 13.8923 8.58075 13.8923C8.82175 13.8923 9.03267 13.8019 9.2135 13.6212L14.777 8.05775C14.9153 7.91925 14.9862 7.74517 14.9895 7.5355C14.9927 7.326 14.9218 7.14875 14.777 7.00375C14.632 6.85892 14.4563 6.7865 14.25 6.7865C14.0437 6.7865 13.868 6.85892 13.723 7.00375L8.58075 12.1463ZM10.0017 19.5C8.68775 19.5 7.45267 19.2507 6.2965 18.752C5.14033 18.2533 4.13467 17.5766 3.2795 16.7218C2.42433 15.8669 1.74725 14.8617 1.24825 13.706C0.749417 12.5503 0.5 11.3156 0.5 10.0017C0.5 8.68775 0.749333 7.45267 1.248 6.2965C1.74667 5.14033 2.42342 4.13467 3.27825 3.2795C4.13308 2.42433 5.13833 1.74725 6.294 1.24825C7.44967 0.749417 8.68442 0.5 9.99825 0.5C11.3123 0.5 12.5473 0.749333 13.7035 1.248C14.8597 1.74667 15.8653 2.42342 16.7205 3.27825C17.5757 4.13308 18.2528 5.13833 18.7518 6.294C19.2506 7.44967 19.5 8.68442 19.5 9.99825C19.5 11.3123 19.2507 12.5473 18.752 13.7035C18.2533 14.8597 17.5766 15.8653 16.7218 16.7205C15.8669 17.5757 14.8617 18.2528 13.706 18.7518C12.5503 19.2506 11.3156 19.5 10.0017 19.5Z"
+                fill="#55FF85"
               />
             </svg>
             <svg
-                v-if="
+              v-if="
                 transaction[index]?.status === 'pending' ||
                 transaction[index]?.status === 'partially_complete'
               "
-                class="success__status-icon pending"
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 20 20"
-                fill="none"
+              class="success__status-icon pending"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              fill="none"
             >
               <path
-                  d="M10 18C9.44772 18 9 17.5523 9 17C9 16.4477 9.44772 16 10 16C13.3137 16 16 13.3137 16 10C16 6.68629 13.3137 4 10 4C6.68629 4 4 6.68629 4 10C4 10.6472 4.10214 11.2793 4.3002 11.8802C4.4731 12.4047 4.18807 12.9701 3.66355 13.143C3.13902 13.3159 2.57365 13.0308 2.40074 12.5063C2.13628 11.7041 2 10.8606 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10C18 14.4183 14.4183 18 10 18Z"
-                  fill="white"
+                d="M10 18C9.44772 18 9 17.5523 9 17C9 16.4477 9.44772 16 10 16C13.3137 16 16 13.3137 16 10C16 6.68629 13.3137 4 10 4C6.68629 4 4 6.68629 4 10C4 10.6472 4.10214 11.2793 4.3002 11.8802C4.4731 12.4047 4.18807 12.9701 3.66355 13.143C3.13902 13.3159 2.57365 13.0308 2.40074 12.5063C2.13628 11.7041 2 10.8606 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10C18 14.4183 14.4183 18 10 18Z"
+                fill="white"
               />
             </svg>
             <svg
-                v-if="
+              v-if="
                 transaction[index]?.status === 'failed' ||
                 transaction[index]?.status === 'timed_out'
               "
-                class="success__status-icon failed"
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
+              class="success__status-icon failed"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
             >
               <path
-                  d="M12 16.7308C12.2288 16.7308 12.4207 16.6533 12.5755 16.4985C12.7303 16.3437 12.8077 16.1518 12.8077 15.923C12.8077 15.6942 12.7303 15.5023 12.5755 15.3475C12.4207 15.1928 12.2288 15.1155 12 15.1155C11.7712 15.1155 11.5793 15.1928 11.4245 15.3475C11.2697 15.5023 11.1923 15.6942 11.1923 15.923C11.1923 16.1518 11.2697 16.3437 11.4245 16.4985C11.5793 16.6533 11.7712 16.7308 12 16.7308ZM12.0003 13.077C12.2129 13.077 12.391 13.0051 12.5345 12.8613C12.6782 12.7176 12.75 12.5395 12.75 12.327V7.827C12.75 7.6145 12.6781 7.43633 12.5343 7.2925C12.3904 7.14883 12.2122 7.077 11.9998 7.077C11.7871 7.077 11.609 7.14883 11.4655 7.2925C11.3218 7.43633 11.25 7.6145 11.25 7.827V12.327C11.25 12.5395 11.3219 12.7176 11.4658 12.8613C11.6096 13.0051 11.7878 13.077 12.0003 13.077ZM12.0017 21.5C10.6877 21.5 9.45267 21.2507 8.2965 20.752C7.14033 20.2533 6.13467 19.5766 5.2795 18.7218C4.42433 17.8669 3.74725 16.8617 3.24825 15.706C2.74942 14.5503 2.5 13.3156 2.5 12.0017C2.5 10.6877 2.74933 9.45267 3.248 8.2965C3.74667 7.14033 4.42342 6.13467 5.27825 5.2795C6.13308 4.42433 7.13833 3.74725 8.294 3.24825C9.44967 2.74942 10.6844 2.5 11.9983 2.5C13.3123 2.5 14.5473 2.74933 15.7035 3.248C16.8597 3.74667 17.8653 4.42342 18.7205 5.27825C19.5757 6.13308 20.2528 7.13833 20.7518 8.294C21.2506 9.44967 21.5 10.6844 21.5 11.9983C21.5 13.3123 21.2507 14.5473 20.752 15.7035C20.2533 16.8597 19.5766 17.8653 18.7218 18.7205C17.8669 19.5757 16.8617 20.2528 15.706 20.7518C14.5503 21.2506 13.3156 21.5 12.0017 21.5Z"
-                  fill="#FF5449"
+                d="M12 16.7308C12.2288 16.7308 12.4207 16.6533 12.5755 16.4985C12.7303 16.3437 12.8077 16.1518 12.8077 15.923C12.8077 15.6942 12.7303 15.5023 12.5755 15.3475C12.4207 15.1928 12.2288 15.1155 12 15.1155C11.7712 15.1155 11.5793 15.1928 11.4245 15.3475C11.2697 15.5023 11.1923 15.6942 11.1923 15.923C11.1923 16.1518 11.2697 16.3437 11.4245 16.4985C11.5793 16.6533 11.7712 16.7308 12 16.7308ZM12.0003 13.077C12.2129 13.077 12.391 13.0051 12.5345 12.8613C12.6782 12.7176 12.75 12.5395 12.75 12.327V7.827C12.75 7.6145 12.6781 7.43633 12.5343 7.2925C12.3904 7.14883 12.2122 7.077 11.9998 7.077C11.7871 7.077 11.609 7.14883 11.4655 7.2925C11.3218 7.43633 11.25 7.6145 11.25 7.827V12.327C11.25 12.5395 11.3219 12.7176 11.4658 12.8613C11.6096 13.0051 11.7878 13.077 12.0003 13.077ZM12.0017 21.5C10.6877 21.5 9.45267 21.2507 8.2965 20.752C7.14033 20.2533 6.13467 19.5766 5.2795 18.7218C4.42433 17.8669 3.74725 16.8617 3.24825 15.706C2.74942 14.5503 2.5 13.3156 2.5 12.0017C2.5 10.6877 2.74933 9.45267 3.248 8.2965C3.74667 7.14033 4.42342 6.13467 5.27825 5.2795C6.13308 4.42433 7.13833 3.74725 8.294 3.24825C9.44967 2.74942 10.6844 2.5 11.9983 2.5C13.3123 2.5 14.5473 2.74933 15.7035 3.248C16.8597 3.74667 17.8653 4.42342 18.7205 5.27825C19.5757 6.13308 20.2528 7.13833 20.7518 8.294C21.2506 9.44967 21.5 10.6844 21.5 11.9983C21.5 13.3123 21.2507 14.5473 20.752 15.7035C20.2533 16.8597 19.5766 17.8653 18.7218 18.7205C17.8669 19.5757 16.8617 20.2528 15.706 20.7518C14.5503 21.2506 13.3156 21.5 12.0017 21.5Z"
+                fill="#FF5449"
               />
             </svg>
           </div>
@@ -179,8 +209,8 @@
           <!--					</button>-->
         </div>
         <div
-            v-if="getTransactionStatus === 'failed' || getTransactionStatus === 'timed_out'"
-            class="success__info"
+          v-if="getTransactionStatus === 'failed' || getTransactionStatus === 'timed_out'"
+          class="success__info"
         >
           <p class="success__info-text">
             {{ $t('dexSuccess.info[0]') }} <br />
@@ -198,29 +228,71 @@
               </p>
             </div>
           </div>
+          <!--					<button class="success__btn text_colored"-->
+          <!--							v-if="checkIntermediateTokens.length > 0"-->
+          <!--							@click="swapIntermediateTokens"-->
+          <!--					>-->
+          <!--						{{ $t("dexSuccess.btnText") }}-->
+          <!--					</button>-->
         </div>
       </div>
-  </div>
+      <button
+        v-if="getTransactionStatus === 'succeeded'"
+        class="success__share-btn"
+        @click="getShareLink"
+      >
+        <svg
+          class="share-icon"
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 18 18"
+          fill="none"
+        >
+          <path
+            d="M12.1604 4.06107C12.0118 3.91253 11.8225 3.81138 11.6164 3.7704C11.4104 3.72943 11.1968 3.75047 11.0027 3.83086C10.8086 3.91126 10.6426 4.0474 10.5259 4.22207C10.4092 4.39675 10.3468 4.60211 10.3468 4.81221V5.65473H7.78098C6.51342 5.65613 5.29817 6.16029 4.40187 7.05659C3.50557 7.95289 3.00141 9.16814 3 10.4357L3 14.1542C3 14.2951 3.05597 14.4302 3.15559 14.5299C3.25521 14.6295 3.39033 14.6855 3.53122 14.6855C3.67211 14.6855 3.80723 14.6295 3.90685 14.5299C4.00647 14.4302 4.06244 14.2951 4.06244 14.1542C4.06328 13.3092 4.39936 12.4989 4.99692 11.9014C5.59447 11.3038 6.40469 10.9678 7.24976 10.9669H10.3468V11.8094C10.3468 12.0195 10.4092 12.2249 10.5259 12.3996C10.6426 12.5742 10.8086 12.7104 11.0027 12.7908C11.1968 12.8712 11.4104 12.8922 11.6164 12.8512C11.8225 12.8103 12.0118 12.7091 12.1604 12.5606L15.2834 9.43754C15.5822 9.13868 15.75 8.7334 15.75 8.31082C15.75 7.88824 15.5822 7.48296 15.2834 7.1841L12.1604 4.06107Z"
+            fill="white"
+          />
+        </svg>
+        Share result
+      </button>
+    </div>
+    <!--		<app-notification class="error"-->
+    <!--			v-show="showError"-->
+    <!--			@closeCopyNotification="closeNotification"-->
+    <!--		>-->
+    <!--			Your browser or device does not support the share feature.-->
+    <!--		</app-notification>-->
+    <app-notification v-show="showNotification" @close-copy-notification="closeNotification">
+      Copy to clipboard!
+    </app-notification>
   </div>
 </template>
 
 <script>
 import lottie from 'lottie-web';
+import { mapActions, mapGetters } from 'vuex';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
 import { Address } from '@ton/core';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import loadingAnimationData from '@/assets/lottie/loading.json';
 import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
+import AppNotification from '@/components/AppNotification.vue';
+import { tracking } from '@/tracking';
+import { Events } from '@/tracking/events.js';
 import { dexService } from '@/api/coffeeApi/services';
-import { useDexStore } from "@/stores/dex/index.ts";
-import methodsMixins from "@/mixins/methodsMixins.ts";
-import {ReadonlySdkEvent} from "@/utils/consts";
+// import DexSnowflake from '@/components/dex/DexSnowflake.vue';
+import computedMixins from '@/mixins/computedMixins.js';
 
 export default {
   name: 'DexSuccess',
-  components: { TooltipWrapper },
-  mixins: [transactionRoutesMixin, methodsMixins],
+  components: {
+      // DexSnowflake,
+      AppNotification,
+      TooltipWrapper
+  },
+  mixins: [transactionRoutesMixin, computedMixins],
   props: {
     transaction: {
       type: Object,
@@ -246,12 +318,22 @@ export default {
       showNotification: false,
       noticeTimeout: null,
       // load: true,
+      // isSnowfallActive: false,
+      // snowflakeStep: 100,
     };
   },
   computed: {
-    dexStore() {
-      return useDexStore();
-    },
+    ...mapGetters([
+      'GET_TON_TOKENS',
+      'GET_SEND_TOKEN',
+      'GET_RECEIVE_TOKEN',
+      'GET_SEND_AMOUNT',
+      'GET_DEAL_CONDITIONS',
+      // 'GET_CASHBACK',
+      'GET_SWAP_MODE',
+      'GET_REFERRAL_INFO',
+      'GET_DEX_WALLET',
+    ]),
     getBtnText() {
       if (this.routeCount === 4) {
         return 'Show all';
@@ -278,8 +360,8 @@ export default {
 
         return `${inputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
-        if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-          return `${this.dexStore.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)} ${this.dexStore.GET_SEND_TOKEN?.symbol}`;
+        if (this.GET_DEAL_CONDITIONS !== null) {
+          return `${this.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)} ${this.GET_SEND_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -292,7 +374,7 @@ export default {
 
         return this.getTokenByAddress(address)?.image;
       } else {
-        return this.dexStore.GET_SEND_TOKEN?.image;
+        return this.GET_SEND_TOKEN?.image;
       }
     },
     getReceiveTotal() {
@@ -310,8 +392,8 @@ export default {
 
         return `${outputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
-        if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-          return `${this.dexStore.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)} ${this.dexStore.GET_RECEIVE_TOKEN?.symbol}`;
+        if (this.GET_DEAL_CONDITIONS !== null) {
+          return `${this.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)} ${this.GET_RECEIVE_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -324,7 +406,7 @@ export default {
 
         return this.getTokenByAddress(address)?.image;
       } else {
-        return this.dexStore.GET_RECEIVE_TOKEN?.image;
+        return this.GET_RECEIVE_TOKEN?.image;
       }
     },
     getTransactionResult() {
@@ -332,13 +414,13 @@ export default {
 
       this.transactionResult.splits.forEach((item) => {
         item.steps.forEach((step) => {
-          let filteredObject = {
-            status: step.status,
-            input: step.input,
-            output: step.output,
-          };
+            let filteredObject = {
+              status: step.status,
+              input: step.input,
+              output: step.output,
+            };
 
-          succeededList.push(filteredObject);
+            succeededList.push(filteredObject);
         });
       });
 
@@ -350,7 +432,7 @@ export default {
         let findTimedOut = this.transactionResult.splits.find((item) => item?.status === 'timed_out');
         let findPending = this.transactionResult.splits.find((item) => item?.status === 'pending');
         let findPartiallyComplete = this.transactionResult.splits.find(
-            (item) => item?.status === 'partially_complete'
+          (item) => item?.status === 'partially_complete'
         );
         let findSucceeded = this.transactionResult.splits.find((item) => item?.status === 'succeeded');
 
@@ -375,8 +457,8 @@ export default {
       } else if (this.getTransactionStatus === 'timed_out') {
         return this.$t('dexSuccess.status.timed_out');
       } else if (
-          this.getTransactionStatus === 'pending' ||
-          this.getTransactionStatus === 'partially_complete'
+        this.getTransactionStatus === 'pending' ||
+        this.getTransactionStatus === 'partially_complete'
       ) {
         return this.$t('dexSuccess.status.pending');
       } else {
@@ -384,7 +466,7 @@ export default {
       }
     },
     getProfitDisplay() {
-      let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+      let profit = (this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
       return profit > 100 ? '>100' : profit;
     },
     getPriceImpactDisplay() {
@@ -405,8 +487,8 @@ export default {
       }
     },
     getPriceImpact() {
-      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-        let priceImpact = this.dexStore.GET_DEAL_CONDITIONS?.price_impact * 100;
+      if (this.GET_DEAL_CONDITIONS !== null) {
+        let priceImpact = this.GET_DEAL_CONDITIONS?.price_impact * 100;
         return priceImpact.toFixed(2);
       } else {
         return 0;
@@ -435,9 +517,36 @@ export default {
       });
 
       return tokens.join(', ');
+    // if (this.checkIntermediateTokens) {
+      // 	intermediateAmount = this.checkIntermediateTokens?.amount.toFixed(2)
+      // 	// let rawIntermediateAddress = ''
+      // 	// if (this.checkIntermediateTokens?.token_address !== 'native') {
+      // 	// 	rawIntermediateAddress = Address.parseFriendly(this.checkIntermediateTokens?.token_address).address.toRawString()
+      // 	// } else {
+      // 	// 	rawIntermediateAddress = 'native'
+      // 	// }
+      // 	let intermediate = this.getIntermediateFromTokenList
+      //
+      // 	if (intermediate) {
+      // 		return intermediateAmount + ' ' + intermediate?.symbol
+      // 	} else {
+      // 		return intermediateAmount + '  token'
+      // 	}
+      // } else {
+      // 	return null
+      // }
     },
+    // getIntermediateFromTokenList() {
+    // 	let rawIntermediateAddress = ''
+    // 	if (this.checkIntermediateTokens?.token_address !== 'native') {
+    // 		rawIntermediateAddress = Address.parseFriendly(this.checkIntermediateTokens?.token_address).address.toRawString()
+    // 	} else {
+    // 		rawIntermediateAddress = 'native'
+    // 	}
+    // 	return this.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
+    // },
     getText() {
-      return this.$t('dexSuccess.resultText', { token: this.dexStore.GET_RECEIVE_TOKEN?.symbol });
+      return this.$t('dexSuccess.resultText', { token: this.GET_RECEIVE_TOKEN?.symbol });
     },
     getOurPrice() {
       let regexp = /[^0-9,.]/g;
@@ -451,21 +560,45 @@ export default {
       return market.toFixed(4);
     },
     getMarketPrice() {
-      let receive = this.dexStore.GET_RECEIVE_TOKEN?.price_usd;
+      let receive = this.GET_RECEIVE_TOKEN?.price_usd;
       return Number(receive.toFixed(4));
     },
     isWindows() {
       return /Windows/i.test(navigator.userAgent);
     },
     getTokenPrice() {
-      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-        return this.dexStore.GET_DEAL_CONDITIONS?.input_usd;
+      if (this.GET_DEAL_CONDITIONS !== null) {
+        return this.GET_DEAL_CONDITIONS?.input_usd;
       } else {
         return 0;
       }
     },
+    // snowflakeCount() {
+    //   const volumeUsd = this.getTokenPrice;
+    //   return Math.floor(volumeUsd / this.snowflakeStep);
+    // },
   },
   methods: {
+    ...mapActions(['DEX_SEND_TOKEN', 'DEX_RECEIVE_TOKEN', 'DEX_PROFIT_IMAGE']),
+    handleOutsideClick() {
+      // if (!this.isSnowfallActive) {
+        this.$emit('closeSuccess');
+      // }
+    },
+    isSameToken(currentToken, nextToken) {
+      return currentToken === nextToken;
+    },
+    isCrossDex(route) {
+      return route.dex.length > 1;
+    },
+    // handleSnowfallComplete() {
+    //   this.isSnowfallActive = false;
+    // },
+    // checkSnowflake() {
+    //   if (this.snowflakeCount >= 1) {
+    //     this.isSnowfallActive = true;
+    //   }
+    // },
     showShareError() {
       this.showNotification = true;
       if (this.noticeTimeout) {
@@ -494,6 +627,74 @@ export default {
     hiddenTooltip() {
       this.tooltipList = [];
     },
+    async getShareLink() {
+      let newDate = new Date();
+      let params = {
+        in: this.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
+        out: this.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
+        profit: this.getProfitDisplay,
+        market_price: this.getMarketPrice,
+        our_price: this.getOurPrice,
+        time: Math.floor(newDate / 1000),
+        utc: (newDate.getTimezoneOffset() / 60) * -1,
+        ref: this.GET_REFERRAL_INFO?.link,
+      };
+
+      tracking.trackEvent(Events.SHARE_BUTTON_CLICK, {
+        params: params,
+        walletAddress: this.GET_DEX_WALLET?.address,
+      });
+
+      let url = this.createUrl(params);
+      let blob = await this.getImageAsBlob(url);
+
+      if (this.isWindows) {
+        await this.copyToClipboard(blob);
+      } else {
+        await this.shareResult(blob);
+      }
+    },
+    async copyToClipboard(blob) {
+      try {
+        let item = new ClipboardItem({ 'image/png': blob.data });
+        await navigator.clipboard.write([item]);
+        this.showShareError();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async shareResult(blob) {
+      try {
+        let file = new File([blob.data], 'result.png', { type: 'image/png' });
+        let data = {
+          // text: this.getText,
+          files: [file],
+        };
+        if (navigator.share && navigator.canShare(data)) {
+          await navigator.share(data);
+        } else {
+          await this.copyToClipboard(blob);
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    async getImageAsBlob(url) {
+      try {
+        const response = await fetch(url);
+        return await response.blob();
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    createUrl(params) {
+      if (params !== null) {
+        let query = `?in_token=${params?.in}&out_token=${params?.out}&profit_percent=${params?.profit}&market_price=${params?.market_price}&our_price=${params?.our_price}&time=${params?.time}&utc_offset=${params?.utc}&ref=${params?.ref}`;
+        return 'https://img.swap.coffee/v1/image/profits' + query;
+      } else {
+        return '';
+      }
+    },
     getTokenByAddress(tokenAddress) {
       let searchAddress = '';
 
@@ -503,7 +704,7 @@ export default {
         searchAddress = 'native';
       }
 
-      return this.dexStore.GET_TON_TOKENS.find((find) => find.address === searchAddress);
+      return this.GET_TON_TOKENS.find((find) => find.address === searchAddress);
     },
     findIntermediate(token) {
       let result = null;
@@ -518,19 +719,15 @@ export default {
       try {
         const res = await dexService.getTransactions(trInfo?.route_id);
         this.transactionResult = res?.data;
-
-        if (this.getTransactionStatus === 'succeeded') {
-          this.dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, res?.data);
-
-          clearInterval(this.requestInterval);
-        } else if (
-            this.getTransactionStatus === 'failed' ||
-            this.getTransactionStatus === 'timed_out'
+        if (
+          this.getTransactionStatus === 'failed' ||
+          this.getTransactionStatus === 'timed_out' ||
+          this.getTransactionStatus === 'succeeded'
         ) {
           clearInterval(this.requestInterval);
         }
       } catch (err) {
-        console.error(err);
+        throw err;
       }
     },
     showMore() {
@@ -540,12 +737,46 @@ export default {
         this.routeCount = 4;
       }
     },
+    swapIntermediateTokens() {
+      let rawIntermediateAddress = '';
+      let findToken = this.findIntermediate(this.checkIntermediateTokens[0]);
+      let intermediate = this.getTokenByAddress(findToken?.token_address);
+      // let intermediate = this.getIntermediateFromTokenList
+      // if (this.checkIntermediateTokens?.token_address !== 'native') {
+      // 	rawIntermediateAddress = Address.parseFriendly(this.checkIntermediateTokens?.token_address).address.toRawString()
+      // } else {
+      // 	rawIntermediateAddress = 'native'
+      // }
+      // let intermediate = this.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
+      let necessaryToken = null;
+
+      if (this.GET_SWAP_MODE === 'default') {
+        necessaryToken = this.GET_RECEIVE_TOKEN;
+      } else {
+        necessaryToken = this.GET_SEND_TOKEN;
+      }
+
+      this.DEX_SEND_TOKEN(intermediate);
+      this.DEX_RECEIVE_TOKEN(necessaryToken);
+      setTimeout(() => {
+        this.$router.replace({
+          name: 'Dex',
+          query: {
+            ft: intermediate?.symbol,
+            st: necessaryToken?.symbol,
+          },
+        });
+      }, 100);
+      this.$emit('closeSuccess');
+    },
   },
   mounted() {
     this.transactionResult = this.transaction;
     this.requestInterval = setInterval(() => {
       this.checkTransactionStatus(this.trInfo);
     }, 5000);
+
+    // this.checkSnowflake();
 
     lottie.loadAnimation({
       container: document.getElementById('loading'), // the dom element that will contain the animation
@@ -609,6 +840,15 @@ export default {
   margin-bottom: 30px;
 }
 
+.custom-arrow {
+  height: 14px;
+  width: 14px;
+  position: relative;
+  top: 3px;
+  margin-left: 4px;
+  margin-right: 6px;
+}
+
 .success__close-btn {
   width: 24px;
   height: 24px;
@@ -627,8 +867,7 @@ export default {
 .success__symbol {
   color: #ffffff;
   font-size: 24px;
-  font-family: Roboto, sans-serif;
-  font-weight: 500;
+  font-family: Harmony-Medium, sans-serif;
 }
 
 .success__lottie {
@@ -652,8 +891,7 @@ export default {
 .success__title {
   margin-bottom: 10px;
   font-size: 24px;
-  font-family: Roboto, sans-serif;
-  font-weight: 500;
+  font-family: Harmony-Medium, sans-serif;
   text-align: center;
 }
 
@@ -779,8 +1017,7 @@ export default {
   padding: 10px 12px;
   border: none;
   background: var(--iface-white4);
-  font-family: Roboto, sans-serif;
-  font-weight: 400;
+  font-family: Harmony-Regular, sans-serif;
   font-size: 13px;
   color: var(--main-text-color);
 }
