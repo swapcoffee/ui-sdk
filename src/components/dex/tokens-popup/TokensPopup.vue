@@ -120,7 +120,7 @@
 import {Address} from '@ton/core';
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
-import {profileService, tokenService} from '@/api/coffeeApi/services/index.js';
+import {profileService, tokenService} from '@/api/coffeeApi/services';
 import CloseIcon from '@/assets/dex/icons/CloseIcon.vue';
 import SearchIcon from '@/assets/dex/icons/SearchIcon.vue';
 import LiquidityIcon from '@/assets/dex/icons/LiquidityIcon.vue';
@@ -134,7 +134,7 @@ import TokenUnlisted from '@/components/dex/tokens-popup/TokenUnlisted.vue';
 import TokenStakeList from '@/components/dex/tokens-popup/TokenStakeList.vue';
 import TokenLimitList from "@/components/dex/tokens-popup/TokenLimitList.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
-import {writeReceiveQuery, writeSendQuery} from "@/helpers/swap-interface/swap-query-params.js";
+import {writeReceiveQuery, writeSendQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 
 export default {
 name: 'TokensPopup',

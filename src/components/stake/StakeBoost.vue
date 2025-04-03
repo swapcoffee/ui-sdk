@@ -57,9 +57,9 @@
     </template>
 </template>
 
-<script>
+<script lang="ts">
 import { mapGetters } from 'vuex';
-import { tokenService } from "@/api/coffeeApi/services/index.js";
+import { tokenService } from "@/api/coffeeApi/services";
 
 export default {
     name: "StakeBoost",

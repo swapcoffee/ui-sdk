@@ -68,14 +68,13 @@
     </div>
 </template>
 
-<script>
-
+<script lang="ts">
 import RefreshIcon from "@/assets/earn/swap-interface/RefreshIcon.vue";
 import CancelIcon from "@/assets/limit/CancelIcon.vue";
 import {mapActions, mapGetters} from "vuex";
-import {strategiesService} from "@/api/coffeeApi/services/index.js";
+import {strategiesService} from "@/api/coffeeApi/services";
 import LimitHistoryItem from "@/components/limit/LimitHistoryItem.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 

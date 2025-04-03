@@ -10,12 +10,9 @@
     </div>
 </template>
 
-<script>
-
+<script lang="ts">
 import {mapActions, mapGetters} from "vuex";
-import computedMixins from "@/mixins/computedMixins.js";
-import { Events } from '@/tracking/events.js';
-import { tracking } from '@/tracking';
+import computedMixins from "@/mixins/computedMixins.ts";
 import { Address } from '@ton/core';
 import { stakingService } from '@/api/coffeeApi/services';
 
