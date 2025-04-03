@@ -35,24 +35,24 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import DexSuccess from "@/components/dex/DexSuccess.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import LimitOrdersHistory from "@/components/limit/LimitOrdersHistory.vue";
-import {strategiesService, tokenService} from "@/api/coffeeApi/services/index.js";
+import {strategiesService, tokenService} from "@/api/coffeeApi/services";
 import {
     cancelOrder,
     checkStrategiesWallet,
     createOrder,
     createStrategiesWallet,
     removeLimitCheckerInterval
-} from "@/helpers/strategies/strategies.js";
+} from "@/helpers/strategies/strategies.ts";
 import {Address} from "@ton/core";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.js";
+import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 import resetLimitTokens from "@/mixins/resetLimitTokens";
 import { amountLimitWatcher } from "@/helpers/swap-interface/watchers";
 

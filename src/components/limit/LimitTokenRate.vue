@@ -61,9 +61,8 @@
 import ChevronRightIcon from "@/assets/earn/pool-page/ChevronRightIcon.vue";
 import DexInput from "@/components/dex/DexInput.vue";
 import SwitchHorizontalIcon from "@/assets/earn/swap-interface/SwitchHorizontalIcon.vue";
-import methodsMixins from "@/mixins/methodsMixins.js";
-import {mapGetters} from "vuex";
-import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
+import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
 
 export default {
     name: "LimitTokenRate",

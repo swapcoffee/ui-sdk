@@ -6,8 +6,8 @@
     </svg>
 </template>
 
-<script>
-import iconColorMixin from "@/mixins/IconColorMixin.js";
+<script lang="ts">
+import iconColorMixin from "@/mixins/IconColorMixin.ts";
 
 export default {
     name: "HistoryArrowIcon",

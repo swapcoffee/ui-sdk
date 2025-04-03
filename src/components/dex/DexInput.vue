@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import methodsMixins from '@/mixins/methodsMixins.js';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import {mapActions} from 'vuex';
 
 export default {

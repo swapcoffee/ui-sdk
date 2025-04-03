@@ -10,8 +10,8 @@
     </div>
 </template>
 
-<script>
-import methodsMixins from "@/mixins/methodsMixins.js";
+<script lang="ts">
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import RouteRightIcon from "@/assets/general/RouteRightIcon.vue";
 import {useDexStore} from "@/stores/dex/index.js";
 

@@ -16,7 +16,7 @@
 <script lang="ts">
 import SearchIcon from '@/assets/dex/icons/SearchIcon.vue';
 import { Address } from '@ton/core';
-import { tokenService } from '@/api/coffeeApi/services/index.js';
+import { tokenService } from '@/api/coffeeApi/services';
 
 export default {
 	components: {

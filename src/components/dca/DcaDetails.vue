@@ -21,13 +21,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import {mapGetters} from 'vuex';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
-import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.js';
-import methodsMixins from '@/mixins/methodsMixins.js';
-import {tracking} from '@/tracking/index.js';
-import {Events} from '@/tracking/events.js';
+import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import DetailsIcon from "@/assets/earn/swap-interface/DetailsIcon.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DetailsItem from "@/components/general/DetailsItem.vue";
