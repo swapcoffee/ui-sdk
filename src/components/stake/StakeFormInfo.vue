@@ -31,7 +31,7 @@
 
 <script>
 import {mapGetters} from "vuex";
-import methodsMixins from '@/mixins/methodsMixins.js';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 
 export default {
   name: "StakeFormInfo",

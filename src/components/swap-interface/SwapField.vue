@@ -138,9 +138,9 @@ v<template>
     </div>
 </template>
 
-<script>
-import methodsMixins from "@/mixins/methodsMixins.js";
-import computedMixins from "@/mixins/computedMixins.js";
+<script lang="ts">
+import methodsMixins from "@/mixins/methodsMixins.ts";
+import computedMixins from "@/mixins/computedMixins.ts";
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexInput from "@/components/dex/DexInput.vue";
 import DexTrust from "@/components/dex/DexTrust.vue";

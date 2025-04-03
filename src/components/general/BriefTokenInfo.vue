@@ -20,8 +20,8 @@
     </div>
 </template>
 
-<script>
-import methodsMixins from "@/mixins/methodsMixins.js";
+<script lang="ts">
+import methodsMixins from "@/mixins/methodsMixins.ts";
 
 export default {
     name: "BriefTokenInfo",

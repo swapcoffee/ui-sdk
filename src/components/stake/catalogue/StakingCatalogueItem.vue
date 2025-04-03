@@ -99,15 +99,15 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import socialIcon from '@/assets/cashback/social.svg';
 import telegramIcon from '@/assets/cashback/Telegram.svg';
 import twitterIcon from '@/assets/cashback/x.svg';
 import dfcIcon from '@/assets/stake/dfc.png'
 import discordIcon from '@/assets/cashback/Discord.svg';
 import {mapActions, mapGetters} from 'vuex';
-import computedMixins from '@/mixins/computedMixins.js';
-import methodsMixins from '@/mixins/methodsMixins.js';
+import computedMixins from '@/mixins/computedMixins.ts';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import GreenStarsIcon from "@/assets/stake/icons/GreenStarsIcon.vue";
 import RightArrowIcon from "@/assets/earn/transfer-liquidity/RightArrowIcon.vue";
 import RightChevronIcon from "@/assets/stake/icons/RightChevronIcon.vue";

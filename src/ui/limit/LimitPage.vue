@@ -35,14 +35,14 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import DexTitle from "@/components/dex/DexTitle.vue";
 import {defineAsyncComponent} from "vue";
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import {mapActions, mapGetters} from "vuex";
-import {strategiesService, tokenService} from "@/api/coffeeApi/services/index.js";
+import {strategiesService, tokenService} from "@/api/coffeeApi/services";
 import {Address} from "@ton/core";
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import {
@@ -51,10 +51,10 @@ import {
     createOrder,
     createStrategiesWallet,
     removeLimitCheckerInterval
-} from "@/helpers/strategies/strategies.js";
-import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.js";
+} from "@/helpers/strategies/strategies.ts";
+import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.js";
+import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 import resetLimitTokens from "@/mixins/resetLimitTokens";
 import { amountLimitWatcher } from "@/helpers/swap-interface/watchers";
 

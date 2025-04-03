@@ -85,19 +85,19 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import socialIcon from '@/assets/cashback/social.svg';
 import telegramIcon from '@/assets/cashback/Telegram.svg';
 import twitterIcon from '@/assets/cashback/x.svg';
 import discordIcon from '@/assets/cashback/Discord.svg';
 import {mapActions, mapGetters} from 'vuex';
-import methodsMixins from '@/mixins/methodsMixins.js';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import dfcIcon from '@/assets/stake/dfc.png';
 import GreenStarsIcon from "@/assets/stake/icons/GreenStarsIcon.vue";
 import RightChevronIcon from "@/assets/stake/icons/RightChevronIcon.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import StakeItem from "@/components/stake/StakeItem.vue";
-import {stakingService} from "@/api/coffeeApi/services/index.js";
+import { stakingService } from "@/api/coffeeApi/services";
 
 export default {
     name: 'StakingCatalogueUserItem',

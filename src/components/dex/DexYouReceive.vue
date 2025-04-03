@@ -85,7 +85,7 @@
 <script>
 import {mapActions, mapGetters} from "vuex";
 import DexInput from "@/components/dex/DexInput.vue";
-import methodsMixins from "@/mixins/methodsMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import {defineAsyncComponent} from "vue";
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import DexTrust from '@/components/dex/DexTrust.vue';

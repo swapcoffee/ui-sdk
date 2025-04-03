@@ -18,8 +18,8 @@
 
 <script>
 import LimitDetailsItem from "@/components/limit/LimitDetailsItem.vue";
-import methodsMixins from "@/mixins/methodsMixins.js";
-import computedMixins from "@/mixins/computedMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
+import computedMixins from "@/mixins/computedMixins.ts";
 
 export default {
     name: "LimitHistoryDetails",

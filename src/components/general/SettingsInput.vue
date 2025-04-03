@@ -32,7 +32,7 @@
 
 <script>
 
-import methodsMixins from "@/mixins/methodsMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 
 export default {

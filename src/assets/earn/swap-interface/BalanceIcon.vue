@@ -7,8 +7,8 @@
     </svg>
 </template>
 
-<script>
-import IconColorMixin from '@/mixins/IconColorMixin.js';
+<script lang="ts">
+import IconColorMixin from '@/mixins/IconColorMixin.ts';
 
 export default {
     name: "BalanceIcon",

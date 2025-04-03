@@ -11,11 +11,11 @@
     </modal-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import ModalStatusStep from "@/components/general/ModalStatusSteps.vue";
 import {mapGetters} from "vuex";
-import {clearRequestInterval} from "@/helpers/swap-interface/send-transaction.js";
-import methodsMixins from "@/mixins/methodsMixins.js";
+import {clearRequestInterval} from "@/helpers/swap-interface/send-transaction.ts";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 
 export default {
     name: "TransactionStatusModal",

@@ -80,8 +80,6 @@ import {setTransactionMessage} from '@/helpers/dex/calculate';
 import {Address} from '@ton/core';
 import DexUnstakeButton from '@/components/dex/DexUnstakeButton.vue';
 import DexStakeButton from '@/components/dex/DexStakeButton.vue';
-import {tracking} from '@/tracking';
-import {Events} from '@/tracking/events.js';
 import {dexService, tokenService} from '@/api/coffeeApi/services';
 import SwapFieldController from "@/components/swap-interface/SwapFieldController.vue";
 
@@ -397,7 +395,7 @@ export default {
             if (Number(maxVolatility) !== -1) {
                 result.max_volatility = maxVolatility / 100;
             }
-                
+
             return result;
         },
         setAsset() {

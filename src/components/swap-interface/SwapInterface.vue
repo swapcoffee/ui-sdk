@@ -50,13 +50,13 @@ import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import DexInfo from "@/components/dex/DexInfo.vue";
 import DexReverseInfo from "@/components/dex/DexReverseInfo.vue";
-import {dexService, tokenService} from "@/api/coffeeApi/services/index.js";
+import {dexService, tokenService} from "@/api/coffeeApi/services";
 import DexButton from "@/components/dex/DexButton.vue";
 import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import {Address} from "@ton/core";
-import {setTransactionMessage} from "@/helpers/dex/calculate.js";
+import {setTransactionMessage} from "@/helpers/dex/calculate.ts";
 
 export default {
     name: "SwapInterface",

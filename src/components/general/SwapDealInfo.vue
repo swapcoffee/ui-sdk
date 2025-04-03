@@ -10,9 +10,9 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import {mapGetters} from "vuex";
-import methodsMixins from "@/mixins/methodsMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import RouteRightIcon from "@/assets/general/RouteRightIcon.vue";
 
 export default {

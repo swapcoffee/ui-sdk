@@ -149,7 +149,7 @@
 </template>
 
 <script lang="ts">
-import methodsMixins from "@/mixins/methodsMixins.js";
+import methodsMixins from "@/mixins/methodsMixins.ts";
 import InterfaceTag from "@/components/ui/InterfaceTag.vue";
 import TonviewerLinkIcon from '@/assets/dex/icons/TonviewerLinkIcon.vue';
 import UpPriceArrowIcon from '@/assets/dex/icons/UpPriceArrowIcon.vue';

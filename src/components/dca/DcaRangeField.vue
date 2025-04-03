@@ -47,7 +47,7 @@
 <script>
 import SettingsInput from "@/components/general/SettingsInput.vue";
 import {mapActions, mapGetters} from "vuex";
-import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.js";
+import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
 
 export default {
     name: "DcaRangeField",

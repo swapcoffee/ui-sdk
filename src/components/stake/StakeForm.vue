@@ -56,7 +56,7 @@
     />
 </template>
 
-<script>
+<script lang="ts">
 import StakeButton from "@/components/stake/StakeButton.vue";
 import StakeRange from "@/components/stake/StakeRange.vue";
 import UserStakes from "@/components/stake/UserStakes.vue";
@@ -64,9 +64,7 @@ import {mapActions, mapGetters} from "vuex";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import {disablePageScroll, enablePageScroll} from "scroll-lock";
 import {Address} from "@ton/core";
-import methodsMixins from '@/mixins/methodsMixins.js';
-import { Events } from '@/tracking/events.js';
-import { tracking } from '@/tracking';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import SwapField from "@/components/swap-interface/SwapField.vue";
 import StakeFormInfo from "@/components/stake/StakeFormInfo.vue";
 import StakeFormTabs from "@/components/stake/StakeFormTabs.vue";

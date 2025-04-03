@@ -18,12 +18,12 @@
     </modal-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import SourceItem from "@/components/earn/all-pools/SourceItem.vue";
 import PoolHeading from "@/components/earn/pool-page/PoolHeading.vue";
 import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import EarnModalAddLiquidity from "@/components/general/EarnModalAddLiquidity.vue";
-import computedMixins from "@/mixins/computedMixins.js"
+import computedMixins from "@/mixins/computedMixins.ts"
 import ModalStatusStep from "@/components/general/ModalStatusSteps.vue";
 
 export default {

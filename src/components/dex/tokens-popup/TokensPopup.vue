@@ -118,7 +118,7 @@
 
 <script lang="ts">
 import {Address} from '@ton/core';
-import methodsMixins from '@/mixins/methodsMixins.js';
+import methodsMixins from '@/mixins/methodsMixins.ts';
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
 import {profileService, tokenService} from '@/api/coffeeApi/services/index.js';
 import CloseIcon from '@/assets/dex/icons/CloseIcon.vue';

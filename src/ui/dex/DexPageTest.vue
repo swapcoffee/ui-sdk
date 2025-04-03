@@ -41,7 +41,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import {mapActions, mapGetters} from 'vuex';
 import {disablePageScroll, enablePageScroll} from 'scroll-lock';
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
@@ -51,7 +51,7 @@ import {
     dexTransaction,
     stakeTransaction,
     unstakeTransaction
-} from "@/helpers/swap-interface/send-transaction.js";
+} from "@/helpers/swap-interface/send-transaction.ts";
 import {
     changeSettingsWatcher, expertModeWatcher,
     receiveAmountWatcher, receiveTokenWatcher,
@@ -60,14 +60,14 @@ import {
     removeInterval,
     removeTimeout,
     sendAmountWatcher, sendTokenWatcher
-} from "@/helpers/swap-interface/watchers.js";
+} from "@/helpers/swap-interface/watchers.ts";
 import DexTitle from "@/components/dex/DexTitle.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import {defineAsyncComponent} from "vue";
 import DexSuccess from "@/components/dex/DexSuccess.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setSwapTokensByQuery} from "@/helpers/swap-interface/swap-query-params.js";
-import swapSettings from "@/mixins/swapSettings.js";
+import {setSwapTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
+import swapSettings from "@/mixins/swapSettings.ts";
 
 export default {
     name: 'DexPageTest',
