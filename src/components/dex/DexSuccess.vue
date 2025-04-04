@@ -619,7 +619,7 @@ export default {
       let newDate = new Date();
       let params = {
         in: this.dexStore.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
-        out: this.dexStore.?.symbol.replace('₮', 'T'),
+        out: this.dexStore.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
         profit: this.getProfitDisplay,
         market_price: this.getMarketPrice,
         our_price: this.getOurPrice,

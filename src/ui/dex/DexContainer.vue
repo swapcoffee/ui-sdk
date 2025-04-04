@@ -1,6 +1,5 @@
 <template>
     <div class="dex">
-        <h1 class="dex__heading">DEX Aggregator</h1>
         <div class="dex__group dex__group-centered">
             <div class="dex__column-flex">
                 <div id="limit_history" class="dex__history"></div>

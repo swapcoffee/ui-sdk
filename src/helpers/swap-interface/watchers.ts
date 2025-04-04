@@ -1,11 +1,22 @@
 import { compareTokens } from "@/helpers/swap-interface/compare";
 import { readyCompareCondition, toSafeAddress } from '@/helpers/swap-interface/swap';
 import { useDexStore } from "@/stores/dex";
+import {getActivePinia} from "pinia";
 
 let interval = null;
 let debounce = null;
 
-const dexStore = useDexStore();
+function getStore(storeHook) {
+  const pinia = getActivePinia();
+  console.log('pinia', pinia);
+  if (!pinia) {
+    console.error('Pinia is not initialized.');
+    return null;
+  }
+  return storeHook();
+}
+
+const dexStore = getStore(useDexStore)
 
 function abortRequest(controller) {
   if (controller !== null) {

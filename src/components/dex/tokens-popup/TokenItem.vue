@@ -158,6 +158,7 @@ import LiquidityIcon from '@/assets/dex/icons/LiquidityIcon.vue';
 import HoldersIcon from '@/assets/dex/icons/HoldersIcon.vue';
 import NotActivePinIcon from '@/assets/dex/icons/NotActivePinIcon.vue';
 import ActivePinIcon from '@/assets/dex/icons/ActivePinIcon.vue';
+import {useDexStore} from "@/stores/dex";
 
 export default {
 	name: "TokenItem",
@@ -230,7 +231,7 @@ export default {
 	},
 	computed: {
     dexStore() {
-      return dexStore()
+      return useDexStore()
     },
     hasData() {
       if (this.status !== 'unlisted' && this.item?.imported !== true) {

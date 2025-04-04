@@ -25,10 +25,11 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import NavigationTab from "@/components/general/NavigationTab.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DexNavigationModal from "@/components/modals/DexNavigationModal.vue";
+import computedMixins from "@/mixins/computedMixins";
 
 export default {
     name: 'TradeNav',
@@ -39,6 +40,7 @@ export default {
             screenSize: 1920
         }
     },
+  mixins: [computedMixins],
     computed: {
         navActions() {
            return [

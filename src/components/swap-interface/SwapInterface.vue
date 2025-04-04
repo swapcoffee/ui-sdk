@@ -499,19 +499,19 @@ export default {
                 clearInterval(this.interval)
                 this.refreshDex()
 
-                this.$router.replace({
-                    name: 'Dex',
-                    query: {
-                        ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address),
-                        st: this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address),
-                        fa: this.dexStore.GET_SEND_AMOUNT
-                    }
-                })
+                // this.$router.replace({
+                //     name: 'Dex',
+                //     query: {
+                //         ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address),
+                //         st: this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address),
+                //         fa: this.dexStore.GET_SEND_AMOUNT
+                //     }
+                // })
             } else if (this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_SEND_AMOUNT > 0) {
-                this.$router.replace({
-                    name: 'Dex',
-                    query: {ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address), fa: this.dexStore.GET_SEND_AMOUNT}
-                })
+                // this.$router.replace({
+                //     name: 'Dex',
+                //     query: {ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address), fa: this.dexStore.GET_SEND_AMOUNT}
+                // })
             } else {
 
                 if (this.abortController !== null) {
@@ -527,13 +527,13 @@ export default {
                         updatedQuery.ft = this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address);
                     }
 
-                    this.$router.replace({query: updatedQuery});
+                    // this.$router.replace({query: updatedQuery});
                 }
 
                 if (this.dexStore.GET_RECEIVE_TOKEN === null) {
                     const updatedQuery = {...this.$route.query};
                     delete updatedQuery?.st;
-                    this.$router.replace({query: updatedQuery});
+                    // this.$router.replace({query: updatedQuery});
                 }
 
                 clearInterval(this.interval);
@@ -544,14 +544,14 @@ export default {
                 this.setDebounceForRequest()
                 clearInterval(this.interval)
                 this.refreshDex()
-                this.$router.replace({
-                    name: 'Dex',
-                    query: {
-                        ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address),
-                        st: this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address),
-                        sa: this.dexStore.GET_RECEIVE_AMOUNT
-                    }
-                })
+                // this.$router.replace({
+                //     name: 'Dex',
+                //     query: {
+                //         ft: this.toSafeAddress(this.dexStore.GET_SEND_TOKEN?.address),
+                //         st: this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address),
+                //         sa: this.dexStore.GET_RECEIVE_AMOUNT
+                //     }
+                // })
 
             } else {
                 if (this.abortController !== null) {
@@ -566,12 +566,12 @@ export default {
                         updatedQuery.sa = this.toSafeAddress(this.dexStore.GET_RECEIVE_TOKEN?.address);
                     }
 
-                    this.$router.replace({query: updatedQuery});
+                    // this.$router.replace({query: updatedQuery});
                 }
                 if (this.dexStore.GET_RECEIVE_TOKEN === null) {
                     const updatedQuery = {...this.$route.query};
                     delete updatedQuery?.st;
-                    this.$router.replace({query: updatedQuery});
+                    // this.$router.replace({query: updatedQuery});
                 }
                 clearInterval(this.interval)
             }

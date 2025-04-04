@@ -37,10 +37,12 @@ import TradeNav from "@/components/navigation/TradeNav.vue";
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import computedMixins from "@/mixins/computedMixins.ts";
 
 export default {
     name: "SwapHeader",
     inject: ["updateSettingsModalVisible", "tokenValues", "processing"],
+    mixins: [computedMixins],
     props: {
         title: {
             type: String,

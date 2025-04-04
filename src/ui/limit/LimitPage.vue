@@ -38,7 +38,6 @@
 <script lang="ts">
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
-import DexTitle from "@/components/dex/DexTitle.vue";
 import {defineAsyncComponent} from "vue";
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import {strategiesService, tokenService} from "@/api/coffeeApi/services";
@@ -80,7 +79,6 @@ export default {
         TransactionStatusModal,
         LimitSettingsModal,
         SwapHeader,
-        DexTitle,
         SwapInterfaceTest,
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")

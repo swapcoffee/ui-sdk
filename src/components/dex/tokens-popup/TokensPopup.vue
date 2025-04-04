@@ -33,7 +33,7 @@
 													@filter-selected="setActiveFilter"
 									/>
 									<TokenFilterItem
-													v-for="(filter, index) in GET_TOKEN_LABELS"
+													v-for="(filter, index) in dexStore.GET_TOKEN_LABELS"
 													:key="index"
 													:name="getLabelName(filter)"
 													:value="filter.name"
@@ -140,6 +140,7 @@ import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useLimitStore} from "@/stores/limit/index.ts";
 import {useSettingsStore} from "@/stores/settings";
+import computedMixins from "@/mixins/computedMixins.ts";
 
 export default {
 name: 'TokensPopup',
@@ -159,7 +160,7 @@ components: {
 	CloseIcon,
 	TokenItem
 },
-mixins: [methodsMixins],
+mixins: [methodsMixins, computedMixins],
 	inject: ['updateFirstToken', 'updateSecondToken', 'updateTokenPositions'],
 	props: {
 	mode: {
@@ -332,7 +333,7 @@ computed: {
 				if (findInUnpin) {
 					return;
 				}
-				let findToken = this.dexStore.dexStore.GET_TON_TOKENS.find((find) => item.address === find.address);
+				let findToken = this.dexStore.GET_TON_TOKENS.find((find) => item.address === find.address);
 				if (findToken) {
 					array.push(findToken);
 				}

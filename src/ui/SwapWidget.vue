@@ -1,12 +1,11 @@
 <template>
   <div class="dex">
-    <h1 class="dex__heading">DEX Aggregator</h1>
     <div class="dex__group dex__group-centered">
       <div class="dex__column-flex hidden">
         <div id="limit_history" class="dex__history"></div>
       </div>
       <div class="dex__content">
-        <DexPage/>
+        <DexPageTest :screen-size=600 />
       </div>
     </div>
   </div>
@@ -14,11 +13,11 @@
 
 <script lang="ts">
 import { throttle } from "@/helpers/perfomance/perfomance";
-import DexPage from "@/ui/dex/DexPage.vue";
+import DexPageTest from "@/ui/dex/DexPageTest.vue";
 
 export default {
   name: "DexContainer",
-  components: { DexPage },
+  components: {DexPageTest },
   data() {
     return {
       screenSize: window.innerWidth,

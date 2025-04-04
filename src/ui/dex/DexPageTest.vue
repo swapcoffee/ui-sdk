@@ -11,9 +11,9 @@
         <SwapInterfaceTest
             class="dex-page__interface"
             :ton-connect-ui="tonConnectUi"
-            :routeInfo="GET_DEAL_CONDITIONS"
+            :routeInfo="dexStore.GET_DEAL_CONDITIONS"
             :interfaceStatus="interfaceStatus"
-            :swapMode="GET_SWAP_MODE"
+            :swapMode="dexStore.GET_SWAP_MODE"
         />
         <TokensPopup
             v-if="modals.token === true"
@@ -58,7 +58,6 @@ import {
     removeTimeout,
     sendAmountWatcher, sendTokenWatcher
 } from "@/helpers/swap-interface/watchers.ts";
-import DexTitle from "@/components/dex/DexTitle.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import {defineAsyncComponent} from "vue";
 import DexSuccess from "@/components/dex/DexSuccess.vue";
@@ -76,7 +75,6 @@ export default {
         TransactionStatusModal,
 	    DexSuccess,
 	    SwapHeader,
-        DexTitle,
         SwapInterfaceTest,
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")
@@ -187,10 +185,11 @@ export default {
             return this.dexStore.GET_RECEIVE_TOKEN !== null && this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_SEND_AMOUNT > 0 && this.dexStore.GET_DEAL_CONDITIONS === null;
         },
         firstLoading() {
-            let route = this.$route
-            if (route.query?.ft && route.query?.st) {
-                return this.dexStore.GET_DEAL_CONDITIONS === null && this.dexStore.GET_TON_TOKENS.length === 0
-            }
+            // let route = this.$route
+            // if (route.query?.ft && route.query?.st) {
+            //     return this.dexStore.GET_DEAL_CONDITIONS === null && this.dexStore.GET_TON_TOKENS.length === 0
+            // }
+          return false
         },
         notEnoughConditions() {
             const userTonBalance = this.dexStore.GET_USER_TOKENS.find(

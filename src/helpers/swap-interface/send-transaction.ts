@@ -4,11 +4,22 @@ import { compareTokens } from "@/helpers/swap-interface/compare";
 import { setTransactionMessage } from "@/helpers/dex/calculate";
 import { useDexStore } from "@/stores/dex";
 import { useTransactionStore } from "@/stores/transaction";
+import {getActivePinia} from "pinia";
 
 let requestInterval = null
 
-const dexStore = useDexStore();
-const transactionStore = useTransactionStore();
+function getStore(storeHook) {
+	const pinia = getActivePinia();
+	if (!pinia) {
+		console.error('Pinia is not initialized.');
+		return null;
+	}
+	return storeHook();
+}
+
+
+const dexStore = getStore(useDexStore);
+const transactionStore = getStore(useTransactionStore);
 
 
 export function clearRequestInterval() {

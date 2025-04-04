@@ -118,7 +118,6 @@ export const useDexStore = defineStore('dex', {
 			}
 		}
 	},
-
 	getters: {
 		GET_TOKENS_POPUP_STATE: (state) => state.tokensPopupState,
 		GET_TOKENS_BY_LABEL: (state) => (labelId: string) => state.tokensByLabel[labelId] || [],
