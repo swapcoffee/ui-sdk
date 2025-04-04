@@ -81,8 +81,10 @@ import successAnimationData from '@/assets/lottie/success.json';
 import lottie from "lottie-web";
 import SwapDealInfo from "@/components/general/SwapDealInfo.vue";
 import TransactionShareIcon from "@/assets/general/TransactionShareIcon.vue";
-import {mapGetters} from "vuex";
 import AppNotification from "@/components/AppNotification.vue";
+
+import {useTransactionStore} from "@/stores/transaction";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "ModalStatusStep",
@@ -116,14 +118,12 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_REFERRAL_INFO",
-            "GET_DEX_WALLET",
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN",
-            "GET_DEAL_CONDITIONS",
-            "GET_SWAP_TRANSACTION_STATUS"
-        ]),
+        transactionStore() {
+          return useTransactionStore()
+        },
+        dexStore() {
+          return useDexStore()
+        },
         getDetailsTitle() {
             switch (this.modalState.mode) {
                 case "deposit":
@@ -210,11 +210,11 @@ export default {
             }
         },
         getProfitDisplay() {
-            let profit = (this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+            let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
             return profit > 100 ? '>100' : profit;
         },
         getMarketPrice() {
-            let receive = this.GET_RECEIVE_TOKEN?.price_usd;
+            let receive = this.dexStore.GET_RECEIVE_TOKEN?.price_usd;
             return Number(receive.toFixed(4));
         },
         getOurPrice() {
@@ -231,7 +231,7 @@ export default {
         checkIntermediateTokens() {
             let failedArray = [];
 
-            const succeededSteps = this.GET_SWAP_TRANSACTION_STATUS;
+            const succeededSteps = this.transactionStore.GET_SWAP_TRANSACTION_STATUS;
 
             succeededSteps.splits.forEach((split) => {
                 split.steps.forEach((step) => {
@@ -272,19 +272,19 @@ export default {
         async getShareLink() {
             let newDate = new Date();
             let params = {
-                in: this.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
-                out: this.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
+                in: this.dexStore.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
+                out: this.dexStore.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
                 profit: this.getProfitDisplay,
                 market_price: this.getMarketPrice,
                 our_price: this.getOurPrice,
                 time: Math.floor(newDate / 1000),
                 utc: (newDate.getTimezoneOffset() / 60) * -1,
-                ref: this.GET_REFERRAL_INFO?.link,
+                // ref: this.GET_REFERRAL_INFO?.link,
             };
 
             tracking.trackEvent(Events.SHARE_BUTTON_CLICK, {
                 params: params,
-                walletAddress: this.GET_DEX_WALLET?.address,
+                walletAddress: this.dexStore.GET_DEX_WALLET?.address,
             });
 
             let url = this.createUrl(params);

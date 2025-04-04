@@ -71,12 +71,13 @@
 <script lang="ts">
 import RefreshIcon from "@/assets/earn/swap-interface/RefreshIcon.vue";
 import CancelIcon from "@/assets/limit/CancelIcon.vue";
-import {mapActions, mapGetters} from "vuex";
 import {strategiesService} from "@/api/coffeeApi/services";
 import LimitHistoryItem from "@/components/limit/LimitHistoryItem.vue";
 import computedMixins from "@/mixins/computedMixins.ts"
 import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
 
 export default {
     name: "LimitOrdersHistory",
@@ -117,38 +118,35 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_DEX_WALLET",
-            "GET_PROOF_VERIFICATION",
-            "GET_LIMIT_HISTORY",
-            "GET_STRATEGIES_WALLET"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
+         limitStore() {
+          return useLimitStore()
+         },
         tabsIsDisable() {
-            return !this.GET_DEX_WALLET
+            return !this.dexStore.GET_DEX_WALLET
         },
         actionsIsDisable() {
-            return !this.GET_DEX_WALLET || this.refreshInfo
+            return !this.dexStore.GET_DEX_WALLET || this.refreshInfo
         },
         getEmptyText() {
-            if (this.GET_DEX_WALLET) {
+            if (this.dexStore.GET_DEX_WALLET) {
                 return this.$t('limitOrdersHistory.emptyList')
             } else {
                 return this.$t('limitOrdersHistory.connectWallet')
             }
         },
         getOpenOrdersList() {
-            return this.GET_LIMIT_HISTORY
+            return this.limitStore.GET_LIMIT_HISTORY
                 .filter((item) => item?.status === 'active')
         },
         getHistoryOrdersList() {
-            return this.GET_LIMIT_HISTORY
+            return this.limitStore.GET_LIMIT_HISTORY
                 .filter((item) => item?.status !== 'active')
         }
     },
     methods: {
-        ...mapActions([
-            "LIMIT_HISTORY"
-        ]),
         updateCurrentTab(value) {
             this.currentTab = value
         },
@@ -157,13 +155,13 @@ export default {
                 this.firstLoading = true
                 this.refreshInfo = true
                 let res = await strategiesService.getOrders(
-                    this.GET_DEX_WALLET?.address,
-                    this.GET_PROOF_VERIFICATION,
+                    this.dexStore.GET_DEX_WALLET?.address,
+                    this.dexStore.GET_PROOF_VERIFICATION,
                     this.getRouteName.toLowerCase(),
                     true
                 )
 
-                await this.LIMIT_HISTORY(res?.data)
+                this.limitStore.LIMIT_HISTORY(res?.data)
                 this.historyLoaded = true
             } catch(err) {
                 console.error(err)
@@ -179,7 +177,7 @@ export default {
         },
         // async cancelOrder(id) {
         //     try {
-        //         let res = await strategiesService.cancelOrderById(this.GET_DEX_WALLET?.address, this.GET_PROOF_VERIFICATION, id)
+        //         let res = await strategiesService.cancelOrderById(this.dexStore.GET_DEX_WALLET?.address, this.dexStore.GET_PROOF_VERIFICATION, id)
         //         await this.tonConnectUi.sendTransaction({
         //             validUntil: Math.floor(Date.now() / 1000) + 300,
         //             messages: [
@@ -199,21 +197,21 @@ export default {
         // },
     },
     mounted() {
-        if (this.GET_DEX_WALLET && this.GET_STRATEGIES_WALLET && this.GET_LIMIT_HISTORY.length === 0 && !this.firstLoading) {
+        if (this.dexStore.GET_DEX_WALLET && this.limitStore.GET_STRATEGIES_WALLET && this.limitStore.GET_LIMIT_HISTORY.length === 0 && !this.firstLoading) {
             this.checkOrderHistory()
         } else {
             this.historyLoaded = true
         }
     },
     unmounted() {
-        this.LIMIT_HISTORY([])
+        this.limitStore.LIMIT_HISTORY([])
     },
     watch: {
-        GET_DEX_WALLET: {
+        'dexStore.GET_DEX_WALLET': {
             handler() {
-                if (this.GET_DEX_WALLET && this.GET_STRATEGIES_WALLET) {
+                if (this.dexStore.GET_DEX_WALLET && this.limitStore.GET_STRATEGIES_WALLET) {
                     this.historyLoaded = false
-                    if (this.GET_LIMIT_HISTORY.length === 0) {
+                    if (this.limitStore.GET_LIMIT_HISTORY.length === 0) {
                         console.log('checkOrderHistory')
                         this.checkOrderHistory()
                     }

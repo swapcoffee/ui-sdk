@@ -39,10 +39,12 @@
 
 <script>
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
-import {mapActions, mapGetters} from "vuex";
 import {profileService} from "@/api/coffeeApi/services";
 import ModalSettingItem from "@/components/general/ModalSettingsItem.vue";
 import computedMixins from "@/mixins/computedMixins.ts"
+
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useSettingsStore} from "@/stores/settings";
 
 export default {
     name: "LimitSettingsModal",
@@ -74,48 +76,43 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_LIMIT_EXPERT_MODE",
-            "GET_LIMIT_SUBORDERS",
-            "GET_LIMIT_INVOCATIONS"
-        ]),
+        limitSettingsStore() {
+          return useLimitSettingsStore()
+        },
+        settingsStore() {
+          return useSettingsStore()
+        },
         getTitle() {
             return `${this.getRouteName} ${this.$t('dexSettings.caption').toLowerCase()}`
         },
         getExpertMode() {
-            return this.GET_LIMIT_EXPERT_MODE
+            return this.limitSettingsStore.GET_LIMIT_EXPERT_MODE
         },
     },
     methods: {
-        ...mapActions([
-            "LIMIT_EXPERT_MODE",
-            "LIMIT_MAX_SUBORDERS",
-            "LIMIT_MAX_INVOCATIONS",
-            "CLEAR_LIMIT_EXPERT_SETTINGS"
-        ]),
         switchExpertMode() {
             const updatedExpertMode = !this.getExpertMode;
-            this.LIMIT_EXPERT_MODE(updatedExpertMode);
+            this.limitSettingsStore.LIMIT_EXPERT_MODE(updatedExpertMode);
             this.saveToStorage('limitExpertMode', updatedExpertMode);
             this.toggleExpertsSettingsValues(updatedExpertMode);
         },
         changeMaxSuborders(value, withoutSave = false) {
             this.settingsValue.maxSuborders = value
-            this.LIMIT_MAX_SUBORDERS(Number(value));
+            this.limitSettingsStore.LIMIT_MAX_SUBORDERS(Number(value));
             if (!withoutSave) {
                 this.saveToStorage('maxSuborders', this.settingsValue.maxSuborders)
             }
         },
         changeMaxInvocations(value, withoutSave = false) {
             this.settingsValue.maxInvocations = value
-            this.LIMIT_MAX_INVOCATIONS(Number(value));
+            this.limitSettingsStore.LIMIT_MAX_INVOCATIONS(Number(value));
             if (!withoutSave) {
                 this.saveToStorage('maxInvocations', this.settingsValue.maxInvocations)
             }
         },
         async saveToStorage(key, value) {
             try {
-                let settings = this.GET_USER_SETTINGS;
+                let settings = this.settingsStore.GET_USER_SETTINGS;
                 if (!settings) {
                     let storage = JSON.parse(localStorage.getItem('limitSettings'));
                     if (storage) {
@@ -145,7 +142,7 @@ export default {
         },
         async checkStorageSettings() {
             try {
-                let settings = this.GET_USER_SETTINGS?.limitSettings;
+                let settings = this.settingsStore.GET_USER_SETTINGS?.limitSettings;
                 if (!settings) {
                     let storage = JSON.parse(localStorage.getItem('limitSettings'))?.limitSettings;
                     if (storage) {
@@ -156,23 +153,23 @@ export default {
                 }
 
                 if (settings.hasOwnProperty('limitExpertMode')) {
-                    this.LIMIT_EXPERT_MODE(settings.limitExpertMode);
+                    this.limitSettingsStore.LIMIT_EXPERT_MODE(settings.limitExpertMode);
                 }
                 settings.hasOwnProperty('maxSuborders')
                     ? this.changeMaxSuborders(settings.maxSuborders.toString(), true)
-                    : (this.settingsValue.maxSuborders = this.GET_LIMIT_SUBORDERS.toString());
+                    : (this.settingsValue.maxSuborders = this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString());
 
                 if (this.getExpertMode) {
                     settings.hasOwnProperty('maxInvocations')
                         ? this.changeMaxInvocations(settings.maxInvocations.toString(), true)
-                        : (this.settingsValue.maxInvocations = this.GET_LIMIT_INVOCATIONS.toString());
+                        : (this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString());
                 }
             } catch (err) {
                 console.error(err);
             }
         },
         toggleExpertsSettingsValues(expertModeValue) {
-            let settings = this.GET_USER_SETTINGS?.limitSettings;
+            let settings = this.settingsStore.GET_USER_SETTINGS?.limitSettings;
             if (!settings) {
                 let storage = JSON.parse(localStorage.getItem('limitSettings'))?.limitSettings;
                 if (storage) {
@@ -185,10 +182,10 @@ export default {
             if (expertModeValue) {
                 settings.hasOwnProperty('maxInvocations')
                     ? this.changeMaxInvocations(settings.maxInvocations.toString(), true)
-                    : this.changeMaxInvocations(this.GET_LIMIT_INVOCATIONS.toString());
+                    : this.changeMaxInvocations(this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString());
             } else {
-                this.CLEAR_LIMIT_EXPERT_SETTINGS();
-                this.settingsValue.maxInvocations = this.GET_LIMIT_INVOCATIONS.toString();
+                this.limitSettingsStore.CLEAR_LIMIT_EXPERT_SETTINGS();
+                this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString();
             }
         },
     },
@@ -196,7 +193,7 @@ export default {
         this.checkStorageSettings();
     },
     watch: {
-        GET_USER_SETTINGS: {
+        'settingsStore.GET_USER_SETTINGS': {
             handler() {
                 this.checkStorageSettings();
             },

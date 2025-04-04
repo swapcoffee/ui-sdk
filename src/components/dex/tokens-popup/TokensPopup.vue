@@ -139,6 +139,7 @@ import {writeReceiveQuery, writeSendQuery} from "@/helpers/swap-interface/swap-q
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useLimitStore} from "@/stores/limit/index.ts";
+import {useSettingsStore} from "@/stores/settings";
 
 export default {
 name: 'TokensPopup',
@@ -216,6 +217,9 @@ computed: {
   },
   limitStore() {
     return useLimitStore()
+  },
+  settingsStore() {
+    return useSettingsStore()
   },
   getTokens() {
 					if (this.isLimitPage) {
@@ -831,7 +835,7 @@ methods: {
 	// },
 	async saveToStorage(value, key) {
 		try {
-			let settings = this.dexStoreSettings.GET_USER_SETTINGS
+			let settings = this.settingsStore.GET_USER_SETTINGS
 			let local = JSON.parse(localStorage.getItem(key))
 			if (!settings) {
 				if (local) {
@@ -1014,9 +1018,9 @@ mounted() {
 	let userPinned = [];
 	let userUnpinned = [];
 
-	if (this.dexStoreSettings.GET_USER_SETTINGS !== null) {
-		userPinned = this.dexStoreSettings.GET_USER_SETTINGS?.userPin;
-		userUnpinned = this.dexStoreSettings.GET_USER_SETTINGS?.userUnpin;
+	if (this.settingsStore.GET_USER_SETTINGS !== null) {
+		userPinned = this.settingsStore.GET_USER_SETTINGS?.userPin;
+		userUnpinned = this.settingsStore.GET_USER_SETTINGS?.userUnpin;
 	} else {
 		userPinned = JSON.parse(localStorage.getItem('userPin'));
 		userUnpinned = JSON.parse(localStorage.getItem('userUnpin'));

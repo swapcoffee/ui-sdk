@@ -49,15 +49,14 @@
                 </button>
             </div>
         </div>
-
     </modal-wrapper>
 </template>
 
 <script lang="ts">
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import computedMixins from '@/mixins/computedMixins.ts';
-import {mapGetters} from 'vuex';
 import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue"
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: 'DistributionModal',
@@ -69,7 +68,9 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(['GET_DEAL_CONDITIONS', 'GET_DEX_WALLET']),
+        dexStore() {
+          return useDexStore()
+        },
         getCaption() {
             if (window.innerWidth > 640) {
                 return this.$t('dexRouteInfo.caption[0]');
@@ -104,10 +105,10 @@ export default {
             return route.dex.length > 1;
         },
         trackRouteDetails() {
-            if (this.GET_DEAL_CONDITIONS) {
+            if (this.dexStore.GET_DEAL_CONDITIONS) {
                 tracking.trackEvent(Events.ROUTE_DETAILS_OPEN, {
-                    dealConditions: this.GET_DEAL_CONDITIONS,
-                    walletAddress: this.GET_DEX_WALLET?.address || 'No wallet',
+                    dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
+                    walletAddress: this.dexStore.GET_DEX_WALLET?.address || 'No wallet',
                 });
             }
         },

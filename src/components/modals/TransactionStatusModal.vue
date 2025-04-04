@@ -13,9 +13,12 @@
 
 <script lang="ts">
 import ModalStatusStep from "@/components/general/ModalStatusSteps.vue";
-import {mapGetters} from "vuex";
 import {clearRequestInterval} from "@/helpers/swap-interface/send-transaction.ts";
 import methodsMixins from "@/mixins/methodsMixins.ts";
+
+import {useDexStore} from "@/stores/dex";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useTransactionStore} from "@/stores/transaction";
 
 export default {
     name: "TransactionStatusModal",
@@ -36,14 +39,17 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_DEAL_CONDITIONS",
-            "GET_SLIPPAGE",
-            "GET_SWAP_TRANSACTION_STATUS",
-            "GET_LIMIT_TRANSACTION_INFO"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
+        dexSettingsStore() {
+          return useDexSettingsStore()
+        },
+        transactionStore() {
+          return useTransactionStore()
+        },
         limitInfo() {
-            return this.GET_LIMIT_TRANSACTION_INFO
+            return this.transactionStore.GET_LIMIT_TRANSACTION_INFO
         },
         getStatus() {
             if (this.modalState.mode === 'swap') {
@@ -53,7 +59,7 @@ export default {
             }
         },
         getSwapStatus() {
-            const trResult = this.GET_SWAP_TRANSACTION_STATUS
+            const trResult = this.transactionStore.GET_SWAP_TRANSACTION_STATUS
 
             if (trResult && Array.isArray(trResult.splits)) {
                 let findFailed = trResult.splits.find((item) => item?.status === 'failed');
@@ -77,7 +83,7 @@ export default {
             return [
                 {
                     name: this.$t('transactionStatusModal.swapStatus.swapPendingBlockchain'),
-                    value: this.GET_DEAL_CONDITIONS?.recommended_gas,
+                    value: this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas,
                     symbol: ' TON'
                 }
             ]
@@ -98,7 +104,7 @@ export default {
                 },
                 {
                     name: this.$t('transactionStatusModal.swapStatus.swapSuccessCashback'),
-                    value: this.GET_DEAL_CONDITIONS?.estimated_cashback_usd,
+                    value: this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd,
                     symbol: '~ $'
                 },
             ]
@@ -188,7 +194,7 @@ export default {
         checkIntermediateTokens() {
             let failedArray = [];
 
-            const steps = this.GET_SWAP_TRANSACTION_STATUS;
+            const steps = this.transactionStore.GET_SWAP_TRANSACTION_STATUS;
 
             if (steps && steps.length > 0) {
                 steps.forEach((step) => {
@@ -212,7 +218,7 @@ export default {
             return tokens.join(', ');
         },
         getProfitDisplay() {
-            let profit = (this.GET_DEAL_CONDITIONS?.savings * 100)
+            let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100)
             return profit > 100 ? '>100' : profit;
         },
         getPriceImpactDisplay() {
@@ -233,8 +239,8 @@ export default {
             }
         },
         getPriceImpact() {
-            if (this.GET_DEAL_CONDITIONS !== null) {
-                return this.GET_DEAL_CONDITIONS?.price_impact * 100;
+            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                return this.dexStore.GET_DEAL_CONDITIONS?.price_impact * 100;
             } else {
                 return 0;
             }

@@ -127,11 +127,13 @@
 </template>
 
 <script>
-import {mapGetters} from 'vuex';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import DetailsIcon from "@/assets/earn/swap-interface/DetailsIcon.vue";
+
+import {useDexStore} from "@/stores/dex";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 
 export default {
     name: 'DexDetails',
@@ -145,17 +147,15 @@ export default {
         };
     },
     computed: {
-        ...mapGetters([
-            'GET_DEAL_CONDITIONS',
-            'GET_RECEIVE_TOKEN',
-            'GET_SEND_TOKEN',
-            'GET_SLIPPAGE',
-            'GET_DEX_WALLET',
-            'GET_CALCULATED_PI'
-        ]),
+        dexStore() {
+            return useDexStore()
+        },
+        dexSettingsStore() {
+            return useDexSettingsStore()
+        },
         getTitleText() {
-            let first = this.GET_SEND_TOKEN
-            let second = this.GET_RECEIVE_TOKEN
+            let first = this.dexStore.GET_SEND_TOKEN
+            let second = this.dexStore.GET_RECEIVE_TOKEN
             let calc = second.price_usd / first.price_usd
             let reverseCalc = first.price_usd / second.price_usd
 
@@ -166,9 +166,9 @@ export default {
         },
         getOutputUsd() {
             if (this.isReverse) {
-                return '$' + this.prettyNumber(this.GET_DEAL_CONDITIONS?.input_usd / this.GET_DEAL_CONDITIONS?.input_amount, 2)
+                return '$' + this.prettyNumber(this.dexStore.GET_DEAL_CONDITIONS?.input_usd / this.dexStore.GET_DEAL_CONDITIONS?.input_amount, 2)
             }
-            return '$' + this.prettyNumber(this.GET_DEAL_CONDITIONS?.output_usd / this.GET_DEAL_CONDITIONS?.output_amount, 2)
+            return '$' + this.prettyNumber(this.dexStore.GET_DEAL_CONDITIONS?.output_usd / this.dexStore.GET_DEAL_CONDITIONS?.output_amount, 2)
         },
         // getTitleText() {
         //     return this.showMore === false
@@ -176,8 +176,8 @@ export default {
         //         : this.$t('dexDetails.titles[1]');
         // },
         getEstimatedCashbackAndFee() {
-            const cashback = this.GET_DEAL_CONDITIONS?.estimated_cashback_usd;
-            const partnerFee = this.GET_DEAL_CONDITIONS?.partner_commission_ton;
+            const cashback = this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd;
+            const partnerFee = this.dexStore.GET_DEAL_CONDITIONS?.partner_commission_ton;
 
             const formatAmount = (value, prefix = '') => {
                 if (value > 0) {
@@ -205,18 +205,18 @@ export default {
             }
         },
         getMinimumReceive() {
-            let slippagePercentage = this.GET_SLIPPAGE;
-            let receiveAmount = this.GET_DEAL_CONDITIONS?.output_amount;
+            let slippagePercentage = this.dexSettingsStore.GET_SLIPPAGE;
+            let receiveAmount = this.dexStore.GET_DEAL_CONDITIONS?.output_amount;
             let minimumReceive = receiveAmount - (receiveAmount * slippagePercentage) / 100;
 
             return this.prettyNumber(minimumReceive, 2);
         },
         getProfitDisplay() {
-            let profit = (this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+            let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
             return profit > 100 ? '>100' : profit;
         },
         getGasFeeDisplay() {
-            let gasFee = this.GET_DEAL_CONDITIONS?.recommended_gas * 1.0;
+            let gasFee = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas * 1.0;
             return gasFee.toFixed(3);
         },
         getPriceImpactDisplay() {
@@ -224,8 +224,8 @@ export default {
             return pi > 0 ? `+${pi}` : pi;
         },
         getPriceImpact() {
-           if (this.GET_CALCULATED_PI) {
-               return this.GET_CALCULATED_PI;
+           if (this.dexStore.GET_CALCULATED_PI) {
+               return this.dexStore.GET_CALCULATED_PI;
            }
         },
     },
@@ -248,13 +248,13 @@ export default {
         },
         toggleDetails() {
             this.showMore = !this.showMore;
-            const walletAddress = this.GET_DEX_WALLET?.address;
+            const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
             tracking.trackEvent(Events.EXCHANGE_DETAILS_OPEN, {
-                details: this.GET_DEAL_CONDITIONS,
+                details: this.dexStore.GET_DEAL_CONDITIONS,
                 walletAddress,
-                sendToken: this.GET_SEND_TOKEN,
-                receiveToken: this.GET_RECEIVE_TOKEN,
-                slippage: this.GET_SLIPPAGE,
+                sendToken: this.dexStore.GET_SEND_TOKEN,
+                receiveToken: this.dexStore.GET_RECEIVE_TOKEN,
+                slippage: this.dexSettingsStore.GET_SLIPPAGE,
             });
         },
         hideTooltip(value) {

@@ -16,7 +16,7 @@
 			<p class="skeleton skeleton_row" v-else></p>
 		</div>
 		<label for="" class="dex__label">
-			<p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && GET_SWAP_MODE === 'reverse'"></p>
+			<p class="skeleton skeleton_balance" v-if="showBalanceSkeleton && dexStore.GET_SWAP_MODE === 'reverse'"></p>
 			<DexInput id="sendInput" v-else
 					  :model-value="youSend"
 					  @update:model-value="updateValue"
@@ -26,8 +26,8 @@
 					@click="$emit('chooseSendToken')"
 					v-if="loaded"
 			>
-				<img :src="GET_SEND_TOKEN?.image" alt="Logo of send selected token for send" class="token-image">
-				<p class="btn-text">{{ GET_SEND_TOKEN?.symbol }}</p>
+				<img :src="dexStore.GET_SEND_TOKEN?.image" alt="Logo of send selected token for send" class="token-image">
+				<p class="btn-text">{{ dexStore.GET_SEND_TOKEN?.symbol }}</p>
 				<!--				<p class="skeleton skeleton_row" v-if="!loaded"></p>-->
 				<!--				<div class="skeleton skeleton_round" v-if="!loaded"></div>-->
 			</button>
@@ -36,7 +36,7 @@
 		<div class="dex__group">
 			<p class="token-price" v-if="!showSkeleton && !showBalanceSkeleton">${{ getTokenPrice }}</p>
 			<p class="skeleton skeleton_row" v-else></p>
-			<p class="token-name" v-if="GET_SEND_TOKEN">{{ GET_SEND_TOKEN?.name }}</p>
+			<p class="token-name" v-if="dexStore.GET_SEND_TOKEN">{{ dexStore.GET_SEND_TOKEN?.name }}</p>
 			<p class="skeleton skeleton_row" v-else></p>
 		</div>
 		<button class="dex__switch-btn"
@@ -49,9 +49,10 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
 import DexInput from '@/components/dex/DexInput.vue';
 import methodsMixins from '@/mixins/methodsMixins.ts';
+import {useDexStore} from "@/stores/dex";
+
 
 export default {
   name: 'DexYouSend',
@@ -88,41 +89,35 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'GET_DEX_WALLET',
-      'GET_SEND_TOKEN',
-      'GET_RECEIVE_TOKEN',
-      'GET_DEAL_CONDITIONS',
-      'GET_SEND_AMOUNT',
-      'GET_RECEIVE_AMOUNT',
-      'GET_SWAP_MODE',
-    ]),
+    dexStore() {
+      return useDexStore();
+    },
     showBalanceCondition() {
-      if (this.GET_DEX_WALLET !== null) {
-        return this.GET_SEND_TOKEN !== null && this.GET_SEND_TOKEN.hasOwnProperty('balance');
+      if (this.dexStore.GET_DEX_WALLET !== null) {
+        return this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_SEND_TOKEN.hasOwnProperty('balance');
       } else {
-        return this.GET_SEND_TOKEN !== null;
+        return this.dexStore.GET_SEND_TOKEN !== null;
       }
     },
     showSkeleton() {
       return (
-        this.GET_SEND_AMOUNT > 0 &&
-        this.GET_SEND_AMOUNT !== '' &&
-        this.GET_RECEIVE_TOKEN !== null &&
-        this.GET_DEAL_CONDITIONS === null &&
+        this.dexStore.GET_SEND_AMOUNT > 0 &&
+        this.dexStore.GET_SEND_AMOUNT !== '' &&
+        this.dexStore.GET_RECEIVE_TOKEN !== null &&
+        this.dexStore.GET_DEAL_CONDITIONS === null &&
         !this.poolNotFound
       );
     },
     showBalanceSkeleton() {
       return (
-        this.GET_RECEIVE_AMOUNT > 0 &&
-        this.GET_RECEIVE_AMOUNT !== '' &&
-        this.GET_DEAL_CONDITIONS === null &&
+        this.dexStore.GET_RECEIVE_AMOUNT > 0 &&
+        this.dexStore.GET_RECEIVE_AMOUNT !== '' &&
+        this.dexStore.GET_DEAL_CONDITIONS === null &&
         !this.poolNotFound
       );
     },
     isBalanceAvailable() {
-      const balance = this.GET_SEND_TOKEN?.balance;
+      const balance = this.dexStore.GET_SEND_TOKEN?.balance;
 
       if (balance === null || balance === undefined) {
         return false;
@@ -133,38 +128,31 @@ export default {
       return !isNaN(numericBalance) && numericBalance > 0;
     },
     getTokenBalance() {
-      if (this.GET_SEND_TOKEN?.balance) {
-        return this.prettyNumber(this.GET_SEND_TOKEN?.balance, 2);
+      if (this.dexStore.GET_SEND_TOKEN?.balance) {
+        return this.prettyNumber(this.dexStore.GET_SEND_TOKEN?.balance, 2);
       } else {
         return 0;
       }
     },
 		getTokenPrice() {
-			if (this.GET_DEAL_CONDITIONS !== null) {
-				return this.prettyNumber(this.GET_DEAL_CONDITIONS?.input_usd, 2)
+			if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+				return this.prettyNumber(this.dexStore.GET_DEAL_CONDITIONS?.input_usd, 2)
 			} else {
 				return 0
 			}
 		}
 	},
 	methods: {
-		...mapActions([
-			'DEX_SEND_TOKEN',
-			'DEX_RECEIVE_TOKEN',
-			'DEX_SEND_AMOUNT',
-			'CHANGE_SWAP_MODE',
-			'DEX_RECEIVE_AMOUNT'
-		]),
 		changeFocus(value) {
 			this.inputFocused = value
 		},
 		switchToken() {
-			if (this.GET_SEND_TOKEN !== null && this.GET_RECEIVE_TOKEN !== null) {
+			if (this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_RECEIVE_TOKEN !== null) {
 				clearTimeout(this.debounce)
         this.debounce = setTimeout(() => {
           this.tokenSwitched = true;
-          this.DEX_SEND_TOKEN(this.currentReceive);
-          this.DEX_RECEIVE_TOKEN(this.currentSend);
+          this.dexStore.DEX_SEND_TOKEN(this.currentReceive);
+          this.dexStore.DEX_RECEIVE_TOKEN(this.currentSend);
 
           if (this.currentSendAmount !== null && this.currentReceiveAmount !== null) {
             if (this.currentReceiveAmount === 0) {
@@ -174,70 +162,70 @@ export default {
             } else {
               this.youSend = '0';
             }
-            this.DEX_SEND_AMOUNT(Number(this.youSend));
+            this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
           }
         }, 200);
       }
 		},
 		updateValue(value) {
 			this.youSend = value
-			this.DEX_SEND_AMOUNT(Number(value))
+			this.dexStore.DEX_SEND_AMOUNT(Number(value))
 		},
 		focusInput() {
 			let input = document.getElementById('sendInput')
 			input.focus()
 		},
     maxBalance() {
-      let balance = this.GET_SEND_TOKEN?.balance;
+      let balance = this.dexStore.GET_SEND_TOKEN?.balance;
 
-      const currentDeal = this.GET_DEAL_CONDITIONS
-        ? JSON.parse(JSON.stringify(this.GET_DEAL_CONDITIONS))
+      const currentDeal = this.dexStore.GET_DEAL_CONDITIONS
+        ? JSON.parse(JSON.stringify(this.dexStore.GET_DEAL_CONDITIONS))
         : null;
 
       const partnerFee = currentDeal?.partner_commission_ton || 0;
       const recommendedGas = currentDeal?.recommended_gas || 0;
 
-      if (this.GET_SWAP_MODE === 'reverse') {
-        this.CHANGE_SWAP_MODE('default');
+      if (this.dexStore.GET_SWAP_MODE === 'reverse') {
+        this.dexStore.CHANGE_SWAP_MODE('default');
       }
 
       const fee = currentDeal ? parseFloat((recommendedGas + 0.00001).toFixed(8)) : 0;
       const totalFee = parseFloat((fee + partnerFee).toFixed(8));
 
-      if (this.GET_SEND_TOKEN?.address === 'native' && balance > 0) {
+      if (this.dexStore.GET_SEND_TOKEN?.address === 'native' && balance > 0) {
         balance = parseFloat((balance - totalFee).toFixed(8));
         if (balance < 0) balance = 0;
       }
 
       this.youSend = balance.toFixed(4);
-      this.DEX_SEND_AMOUNT(balance);
+      this.dexStore.DEX_SEND_AMOUNT(balance);
     },
     setCurrentSend() {
-      if (this.GET_SEND_TOKEN !== null) {
+      if (this.dexStore.GET_SEND_TOKEN !== null) {
         setTimeout(() => {
-          this.currentSend = this.GET_SEND_TOKEN;
+          this.currentSend = this.dexStore.GET_SEND_TOKEN;
           this.loaded = true;
         }, 100);
       }
     },
     setCurrentReceive() {
-      if (this.GET_RECEIVE_TOKEN !== null) {
+      if (this.dexStore.GET_RECEIVE_TOKEN !== null) {
         setTimeout(() => {
-          this.currentReceive = this.GET_RECEIVE_TOKEN;
+          this.currentReceive = this.dexStore.GET_RECEIVE_TOKEN;
         }, 100);
       }
     },
     setCurrentSendAmount() {
-      if (this.GET_SEND_AMOUNT > 0) {
+      if (this.dexStore.GET_SEND_AMOUNT > 0) {
         setTimeout(() => {
-          this.currentSendAmount = this.GET_SEND_AMOUNT;
+          this.currentSendAmount = this.dexStore.GET_SEND_AMOUNT;
         }, 100);
       }
     },
     setCurrentReceiveAmount() {
-      if (this.GET_DEAL_CONDITIONS !== null) {
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
         setTimeout(() => {
-          this.currentReceiveAmount = this.GET_DEAL_CONDITIONS?.output_amount;
+          this.currentReceiveAmount = this.dexStore.GET_DEAL_CONDITIONS?.output_amount;
         }, 100);
       }
     },
@@ -245,8 +233,8 @@ export default {
       this.youSend = '0';
       this.currentSendAmount = 0;
       this.currentReceiveAmount = 0;
-      this.DEX_SEND_AMOUNT(Number(this.youSend));
-      this.DEX_RECEIVE_AMOUNT(Number(this.youSend));
+      this.dexStore.DEX_SEND_AMOUNT(Number(this.youSend));
+      this.dexStore.DEX_RECEIVE_AMOUNT(Number(this.youSend));
     },
   },
   watch: {
@@ -259,38 +247,38 @@ export default {
         }
       },
     },
-    GET_SEND_TOKEN: {
+    'dexStore.GET_SEND_TOKEN': {
       handler() {
-        if (this.GET_SWAP_MODE === 'default' && !this.tokenSwitched) {
+        if (this.dexStore.GET_SWAP_MODE === 'default' && !this.tokenSwitched) {
           this.clearAmounts();
         }
         this.setCurrentSend();
       },
     },
-    GET_RECEIVE_TOKEN: {
+    'dexStore.GET_RECEIVE_TOKEN': {
       handler() {
-        if (this.GET_SWAP_MODE === 'reverse' && !this.tokenSwitched) {
+        if (this.dexStore.GET_SWAP_MODE === 'reverse' && !this.tokenSwitched) {
           this.clearAmounts();
         }
         this.setCurrentReceive();
       },
     },
-    GET_SEND_AMOUNT: {
+    'dexStore.GET_SEND_AMOUNT': {
       handler() {
         this.setCurrentSendAmount();
-        if (Number(this.youSend) !== this.GET_SEND_AMOUNT && this.pageLoaded === false) {
+        if (Number(this.youSend) !== this.dexStore.GET_SEND_AMOUNT && this.pageLoaded === false) {
           this.pageLoaded = true;
-          this.youSend = String(this.GET_SEND_AMOUNT);
+          this.youSend = String(this.dexStore.GET_SEND_AMOUNT);
         }
       },
     },
-    GET_DEAL_CONDITIONS: {
+    'dexStore.GET_DEAL_CONDITIONS': {
       handler() {
         this.setCurrentReceiveAmount();
-        if (this.GET_SWAP_MODE !== 'default') {
-          if (this.GET_DEAL_CONDITIONS !== null) {
-            this.GET_DEAL_CONDITIONS?.input_amount > 0
-              ? (this.youSend = this.GET_DEAL_CONDITIONS.input_amount.toFixed(4))
+        if (this.dexStore.GET_SWAP_MODE !== 'default') {
+          if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+            this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0
+              ? (this.youSend = this.dexStore.GET_DEAL_CONDITIONS.input_amount.toFixed(4))
               : (this.youSend = '0');
           } else {
             this.youSend = '0';
@@ -300,7 +288,7 @@ export default {
     },
   },
   mounted() {
-    if (this.GET_SEND_TOKEN !== null) {
+    if (this.dexStore.GET_SEND_TOKEN !== null) {
       this.loaded = true;
     }
     // this.setCurrentSend()

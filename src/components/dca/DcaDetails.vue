@@ -22,13 +22,17 @@
 </template>
 
 <script lang="ts">
-import {mapGetters} from 'vuex';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import DetailsIcon from "@/assets/earn/swap-interface/DetailsIcon.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DetailsItem from "@/components/general/DetailsItem.vue";
+
+import {useLimitStore} from "@/stores/limit";
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useDexStore} from "@/stores/dex";
+import {useDcaStore} from "@/stores/dca";
 
 export default {
     name: 'DcaDetails',
@@ -42,13 +46,18 @@ export default {
     },
     inject: ['tokenValues'],
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_SECOND_TOKEN',
-            'GET_LIMIT_FIRST_TOKEN',
-            'GET_DEX_WALLET',
-            'GET_LIMIT_SUBORDERS',
-            'GET_DCA_EVERY_TIME'
-        ]),
+        limitStore() {
+          return useLimitStore()
+        },
+        limitSettingsStore() {
+          return useLimitSettingsStore()
+        },
+        dexStore() {
+          return useDexStore()
+        },
+        dcaStore() {
+          return useDcaStore()
+        },
         getDetails() {
             return [
                 {
@@ -80,8 +89,8 @@ export default {
         },
         getTokens() {
             return {
-                first: this.GET_LIMIT_FIRST_TOKEN,
-                second: this.GET_LIMIT_SECOND_TOKEN
+                first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+                second: this.limitStore.GET_LIMIT_SECOND_TOKEN
             }
         },
         displayDcaDeal() {
@@ -90,7 +99,7 @@ export default {
                     toBuy: this.displayToBuy,
                     orderInterval: this.displayOrderInterval,
                     sellTotal: this.displaySellTotal,
-                    orders: this.GET_LIMIT_SUBORDERS,
+                    orders: this.limitSettingsStore.GET_LIMIT_SUBORDERS,
                     totalInterval: this.displayTotalInterval
                 })
         },
@@ -98,7 +107,7 @@ export default {
 		    return `${this.prettyNumber(Number(this.tokenValues.first), 2)} ${this.getTokens.first?.symbol}`
 	    },
 	    displaySellPerOrder() {
-		    let calc = Number(this.tokenValues.first) / this.GET_LIMIT_SUBORDERS
+		    let calc = Number(this.tokenValues.first) / this.limitSettingsStore.GET_LIMIT_SUBORDERS
 		    return `${this.prettyNumber(calc,2)} ${this.getTokens.first?.symbol}`
 	    },
 	    displayToBuy() {
@@ -113,7 +122,7 @@ export default {
 		    }
 	    },
 	    displayOrderInterval() {
-			let interval = this.GET_DCA_EVERY_TIME
+			let interval = this.dcaStore.GET_DCA_EVERY_TIME
                 if (interval <= this.getTimeUnits.hour) {
 	                let minutes = interval / 60
 	                return `${minutes} ${this.$t('timeZone.minutes')}`
@@ -134,9 +143,9 @@ export default {
 	    },
 	    displayTotalInterval() {
 		    let interval =
-			    this.GET_LIMIT_SUBORDERS > 1
-				    ? this.GET_DCA_EVERY_TIME * (this.GET_LIMIT_SUBORDERS - 1)
-				    : this.GET_DCA_EVERY_TIME
+			    this.limitSettingsStore.GET_LIMIT_SUBORDERS > 1
+				    ? this.dcaStore.GET_DCA_EVERY_TIME * (this.limitSettingsStore.GET_LIMIT_SUBORDERS - 1)
+				    : this.dcaStore.GET_DCA_EVERY_TIME
 		    if (interval <= this.getTimeUnits.hour) {
 			    let minutes = interval / 60
 			    return `${minutes} ${this.$t('timeZone.minutes')}`
@@ -157,8 +166,8 @@ export default {
 	    },
 	    displayEndDate() {
 			let delay =
-                this.GET_LIMIT_SUBORDERS > 1
-                    ? this.GET_DCA_EVERY_TIME * (this.GET_LIMIT_SUBORDERS - 1)
+                this.limitSettingsStore.GET_LIMIT_SUBORDERS > 1
+                    ? this.dcaStore.GET_DCA_EVERY_TIME * (this.limitSettingsStore.GET_LIMIT_SUBORDERS - 1)
                     : 0
 		    let calcTimestamp = Date.now() + delay * 1000
 		    let date = new Date(calcTimestamp);
