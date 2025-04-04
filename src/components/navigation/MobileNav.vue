@@ -1,6 +1,6 @@
 <template>
   <div class="header__mobile-menu" :class="{ padding_small: getRouteName !== 'Main' }">
-    <nav class="nav" :class="{ disabled: getStatus }">
+    <nav class="nav" >
       <EarnSidebar />
     </nav>
   </div>
@@ -8,7 +8,6 @@
 
 <script>
 import computedMixins from '@/mixins/computedMixins';
-import { mapGetters } from 'vuex';
 import { defineAsyncComponent } from 'vue';
 import EarnSidebar from "@/components/earn/EarnSidebar.vue";
 
@@ -26,13 +25,7 @@ export default {
       showAdditionalMenu: false,
     };
   },
-  computed: {
-    ...mapGetters(['GET_TECHNICAL_WORKS_STATUS']),
-
-    getStatus() {
-      return this.GET_TECHNICAL_WORKS_STATUS;
-    },
-  },
+  computed: {},
   methods: {
     linkTo(value) {
       if (this.showMenu === true) {

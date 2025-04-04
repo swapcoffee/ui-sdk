@@ -15,7 +15,6 @@ interface FeeSettings {
   max_percentage_fee_fixed?: string;
 }
 
-
 class DexService extends CoffeeSdkWrapper {
   constructor() {
     super();

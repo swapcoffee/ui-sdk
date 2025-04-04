@@ -25,13 +25,16 @@
 </template>
 
 <script lang="ts">
-import {mapGetters} from 'vuex';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import DetailsIcon from "@/assets/earn/swap-interface/DetailsIcon.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DetailsItem from "@/components/general/DetailsItem.vue";
+
+import {useLimitStore} from "@/stores/limit";
+import {useDexStore} from "@/stores/dex";
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 
 export default {
     name: 'LimitDetails',
@@ -46,12 +49,15 @@ export default {
     },
     inject: ['tokenValues'],
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_SECOND_TOKEN',
-            'GET_LIMIT_FIRST_TOKEN',
-            'GET_DEX_WALLET',
-            'GET_LIMIT_SUBORDERS'
-        ]),
+        limitStore() {
+          return useLimitStore()
+        },
+        dexStore() {
+          return useDexStore()
+        },
+         limitSettingsStore() {
+           return useLimitSettingsStore()
+         },
         getDetails() {
 		    return [
 			    {
@@ -71,15 +77,15 @@ export default {
 			    },
 			    {
 				    title: this.$t('limitDetails.titleSuborders'),
-				    text: this.GET_LIMIT_SUBORDERS.toString(),
+				    text: this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString(),
 				    textColor: '#fff'
 			    }
             ]
         },
         getTokens() {
             return {
-                first: this.GET_LIMIT_FIRST_TOKEN,
-                second: this.GET_LIMIT_SECOND_TOKEN
+                first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+                second: this.limitStore.GET_LIMIT_SECOND_TOKEN
             }
         },
         getTitleText() {
@@ -125,7 +131,7 @@ export default {
     methods: {
         toggleDetails() {
             this.showMore = !this.showMore;
-            const walletAddress = this.GET_DEX_WALLET?.address;
+            const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
         },
     },
 };

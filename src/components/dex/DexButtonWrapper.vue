@@ -14,7 +14,8 @@
 
 <script>
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
-import {mapGetters} from "vuex";
+
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "DexButtonWrapper",
@@ -39,15 +40,9 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN",
-            "GET_SEND_AMOUNT",
-            "GET_RECEIVE_AMOUNT",
-            "GET_STAKING_POOL",
-            "GET_DEAL_CONDITIONS",
-            "GET_USER_TOKENS"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
         getButtons() {
             return [
                 {
@@ -55,8 +50,8 @@ export default {
                     text: this.$t('stakeButton.stake'),
                     action: this.stakeTransaction,
                     visible: this.canStake,
-                    disabled: this.processing.stake || !this.GET_DEAL_CONDITIONS,
-                    loading: this.processing.stake || !this.GET_DEAL_CONDITIONS,
+                    disabled: this.processing.stake || !this.dexStore.GET_DEAL_CONDITIONS,
+                    loading: this.processing.stake || !this.dexStore.GET_DEAL_CONDITIONS,
                     colorScheme: 'light'
 
                 },
@@ -65,8 +60,8 @@ export default {
                     text: this.unstakeButtonText,
                     action: this.unstakeTransaction,
                     visible: this.canUnstake,
-                    disabled: this.processing.unstake || !this.GET_DEAL_CONDITIONS,
-                    loading: this.processing.unstake || !this.GET_DEAL_CONDITIONS,
+                    disabled: this.processing.unstake || !this.dexStore.GET_DEAL_CONDITIONS,
+                    loading: this.processing.unstake || !this.dexStore.GET_DEAL_CONDITIONS,
                     colorScheme: 'light'
 
                 },
@@ -82,27 +77,27 @@ export default {
             ]
         },
         canStake() {
-            let findTokenInUser = this.GET_USER_TOKENS.find((item) => item.symbol === "TON")
-            let enoughBalance = findTokenInUser && findTokenInUser?.balance >= this.GET_SEND_AMOUNT
-            let validAmount = this.GET_SEND_AMOUNT > 0 && enoughBalance
+            let findTokenInUser = this.dexStore.GET_USER_TOKENS.find((item) => item.symbol === "TON")
+            let enoughBalance = findTokenInUser && findTokenInUser?.balance >= this.dexStore.GET_SEND_AMOUNT
+            let validAmount = this.dexStore.GET_SEND_AMOUNT > 0 && enoughBalance
 
             return (
-                this.GET_STAKING_POOL !== null &&
-                this.GET_SEND_TOKEN?.address === 'native' &&
-                this.GET_RECEIVE_TOKEN?.stacking_pool_id !== null &&
-                this.GET_RECEIVE_TOKEN.hasOwnProperty('stacking_pool_id') &&
+                this.dexStore.GET_STAKING_POOL !== null &&
+                this.dexStore.GET_SEND_TOKEN?.address === 'native' &&
+                this.dexStore.GET_RECEIVE_TOKEN?.stacking_pool_id !== null &&
+                this.dexStore.GET_RECEIVE_TOKEN.hasOwnProperty('stacking_pool_id') &&
                 validAmount
             );
         },
         canUnstake() {
-            let findTokenInUser = this.GET_USER_TOKENS.find(
-                (item) => item.symbol === this.GET_SEND_TOKEN?.symbol,
+            let findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
+                (item) => item.symbol === this.dexStore.GET_SEND_TOKEN?.symbol,
             );
-            let enoughBalance = findTokenInUser && findTokenInUser?.balance >= this.GET_SEND_AMOUNT;
-            let validAmount = this.GET_SEND_AMOUNT > 0 && enoughBalance;
+            let enoughBalance = findTokenInUser && findTokenInUser?.balance >= this.dexStore.GET_SEND_AMOUNT;
+            let validAmount = this.dexStore.GET_SEND_AMOUNT > 0 && enoughBalance;
 
-            return this.GET_STAKING_POOL !== null && this.GET_RECEIVE_TOKEN?.address === 'native' &&
-                this.GET_SEND_TOKEN?.stacking_pool_id !== null && this.GET_SEND_TOKEN.hasOwnProperty("stacking_pool_id") && validAmount
+            return this.dexStore.GET_STAKING_POOL !== null && this.dexStore.GET_RECEIVE_TOKEN?.address === 'native' &&
+                this.dexStore.GET_SEND_TOKEN?.stacking_pool_id !== null && this.dexStore.GET_SEND_TOKEN.hasOwnProperty("stacking_pool_id") && validAmount
         },
         dexDisabled() {
             return (
@@ -125,13 +120,13 @@ export default {
             } else if (this.interfaceStatus === 'NOT_ENOUGH_GAS') {
                 return this.$t('dexButton.notEnoughGas');
             } else if (
-                (this.interfaceStatus === 'NOT_ENOUGH' && this.GET_SEND_AMOUNT > 0) ||
-                (this.interfaceStatus === 'NOT_ENOUGH' && this.GET_RECEIVE_AMOUNT > 0)
+                (this.interfaceStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT > 0) ||
+                (this.interfaceStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT > 0)
             ) {
                 return this.$t('dexButton.notEnough');
             } else if (
-                (this.interfaceStatus === 'NOT_ENOUGH' && this.GET_SEND_AMOUNT === 0) ||
-                (this.interfaceStatus === 'NOT_ENOUGH' && this.GET_RECEIVE_AMOUNT === 0)
+                (this.interfaceStatus === 'NOT_ENOUGH' && this.dexStore.GET_SEND_AMOUNT === 0) ||
+                (this.interfaceStatus === 'NOT_ENOUGH' && this.dexStore.GET_RECEIVE_AMOUNT === 0)
             ) {
                 return this.$t('dexButton.enterAmount');
             } else if (this.interfaceStatus === 'NOT_SELECTED') {
@@ -141,7 +136,7 @@ export default {
             }
         },
         getHoursLeft() {
-            const cycleEnd = this.GET_STAKING_POOL?.cycle_end;
+            const cycleEnd = this.dexStore.GET_STAKING_POOL?.cycle_end;
             const now = new Date().getTime() / 1000;
             const diff = cycleEnd - now;
 

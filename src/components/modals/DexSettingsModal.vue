@@ -330,12 +330,14 @@
 </template>
 
 <script lang="ts">
-import {mapActions, mapGetters} from 'vuex';
 import SwitchToggle from '@/components/ui/SwitchToggle.vue';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import computedMixins from '@/mixins/computedMixins.ts';
 import {profileService} from '@/api/coffeeApi/services/index.ts';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useSettingsStore} from "@/stores/settings";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: 'DexSettings',
@@ -376,20 +378,15 @@ export default {
         };
     },
     computed: {
-        ...mapGetters([
-            'GET_SLIPPAGE',
-            'GET_CASHBACK',
-            'GET_PRICE_IMPACT',
-            'GET_MAX_POOL_VOLATILITY',
-            'GET_MAX_INTERMEDIATE_TOKENS',
-            'GET_EXPERT_MODE_VALUE',
-            'GET_MAX_SPLITS',
-            'GET_DEX_WALLET_VERSION',
-            'GET_USER_SETTINGS',
-            'GET_PROOF_VERIFICATION',
-            'GET_DEX_WALLET',
-            'GET_LIQUIDITY_SOURCES'
-        ]),
+        dexSettingsStore() {
+          return useDexSettingsStore()
+        },
+        settingsStore() {
+          return useSettingsStore()
+        },
+        dexStore() {
+          return useDexStore()
+        },
         activeSlippageConditions() {
             let value = Number(this.slippage);
             if (value > 0 && value !== 1 && value !== 5 && value !== 10) {
@@ -407,7 +404,7 @@ export default {
             }
         },
         getExpertMode() {
-            return this.GET_EXPERT_MODE_VALUE;
+            return this.dexSettingsStore.GET_EXPERT_MODE_VALUE;
         },
         activeMaxSplitsConditions() {
             let value = Number(this.priceImpact);
@@ -419,20 +416,9 @@ export default {
         },
     },
     methods: {
-        ...mapActions([
-            'DEX_SLIPPAGE',
-            // 'DEX_CASHBACK',
-            'DEX_PRICE_IMPACT',
-            'DEX_MAX_POOL_VOLATILITY',
-            'DEX_MAX_INTERMEDIATE_TOKENS',
-            'CLEAR_DEX_EXPERTS_SETTINGS',
-            'DEX_EXPERT_MODE',
-            'DEX_MAX_SPLITS',
-            'DEX_LIQUIDITY_SOURCES',
-        ]),
         switchExpertMode() {
             const updatedExpertMode = !this.getExpertMode;
-            this.DEX_EXPERT_MODE(updatedExpertMode);
+            this.dexSettingsStore.DEX_EXPERT_MODE(updatedExpertMode);
             this.saveToStorage('expertMode', updatedExpertMode);
             this.toggleExpertsSettingsValues(updatedExpertMode);
         },
@@ -446,7 +432,7 @@ export default {
         // },
         changeSlippage(value, notSave) {
             this.slippage = value;
-            this.DEX_SLIPPAGE(Number(value));
+            this.dexSettingsStore.DEX_SLIPPAGE(Number(value));
             if (!notSave) {
                 this.saveToStorage('slippage', this.slippage);
             }
@@ -464,7 +450,7 @@ export default {
             } else if (value < 0) {
                 this.slippage = 1;
             }
-            this.DEX_SLIPPAGE(this.slippage);
+            this.dexSettingsStore.DEX_SLIPPAGE(this.slippage);
             this.saveToStorage('slippage', this.slippage);
         },
         blurSlippageInput() {
@@ -476,7 +462,7 @@ export default {
                 this.slippage = 1;
             }
 
-            this.DEX_SLIPPAGE(this.slippage);
+            this.dexSettingsStore.DEX_SLIPPAGE(this.slippage);
             this.saveToStorage('slippage', this.slippage);
         },
         changePriceImpactInput(event) {
@@ -494,7 +480,7 @@ export default {
                 this.priceImpact = 100;
             }
 
-            this.DEX_PRICE_IMPACT(this.priceImpact);
+            this.dexSettingsStore.DEX_PRICE_IMPACT(this.priceImpact);
             this.saveToStorage('priceImpact', this.priceImpact);
         },
         blurPriceImpactInput() {
@@ -508,33 +494,33 @@ export default {
                 this.priceImpact = 10;
             }
 
-            this.DEX_PRICE_IMPACT(this.priceImpact);
+            this.dexSettingsStore.DEX_PRICE_IMPACT(this.priceImpact);
             this.saveToStorage('priceImpact', this.priceImpact);
         },
         changePriceImpact(value, notSave) {
             this.priceImpact = value;
-            this.DEX_PRICE_IMPACT(value);
+            this.dexSettingsStore.DEX_PRICE_IMPACT(value);
             if (!notSave) {
                 this.saveToStorage('priceImpact', value);
             }
         },
         changeMaxPoolVolatility(value, notSave) {
             this.maxPoolVolatility = value;
-            this.DEX_MAX_POOL_VOLATILITY(value);
+            this.dexSettingsStore.DEX_MAX_POOL_VOLATILITY(value);
             if (!notSave) {
                 this.saveToStorage('maxPoolVolatility', value);
             }
         },
         changeMaxIntermediateTokens(value, notSave) {
             this.maxIntermediateTokens = value;
-            this.DEX_MAX_INTERMEDIATE_TOKENS(value);
+            this.dexSettingsStore.DEX_MAX_INTERMEDIATE_TOKENS(value);
             if (!notSave) {
                 this.saveToStorage('maxIntermediateTokens', value);
             }
         },
         changeMaxSplits(value, notSave) {
             this.maxSplits = value;
-            this.DEX_MAX_SPLITS(value);
+            this.dexSettingsStore.DEX_MAX_SPLITS(value);
             if (!notSave) {
                 this.saveToStorage('maxSplits', value);
             }
@@ -548,7 +534,7 @@ export default {
                 .filter(e => e.enabled)
                 .map(e => e.name);
 
-            this.DEX_LIQUIDITY_SOURCES(enabledSources);
+            this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(enabledSources);
 
             if (!notSave) {
                 this.saveToStorage('liquiditySources', enabledSources);
@@ -576,12 +562,12 @@ export default {
                     this.maxSplits = 1;
                 }
             }
-            this.DEX_MAX_SPLITS(this.maxSplits);
+            this.dexSettingsStore.DEX_MAX_SPLITS(this.maxSplits);
             this.saveToStorage('maxSplits', this.maxSplits);
         },
         async saveToStorage(key, value) {
             try {
-                let settings = this.GET_USER_SETTINGS;
+                let settings = this.settingsStore.GET_USER_SETTINGS;
                 if (!settings) {
                     let storage = JSON.parse(localStorage.getItem('dexSettings'));
                     if (storage) {
@@ -598,10 +584,10 @@ export default {
 
                 localStorage.removeItem('dexSettings');
                 localStorage.setItem('dexSettings', JSON.stringify(settings));
-                if (this.GET_PROOF_VERIFICATION && this.GET_DEX_WALLET) {
+                if (this.dexStore.GET_PROOF_VERIFICATION && this.dexStore.GET_DEX_WALLET) {
                     await profileService.writeStorage(
-                        this.GET_DEX_WALLET?.address,
-                        this.GET_PROOF_VERIFICATION,
+                        this.dexStore.GET_DEX_WALLET?.address,
+                        this.dexStore.GET_PROOF_VERIFICATION,
                         settings,
                     );
                 }
@@ -611,7 +597,7 @@ export default {
         },
         async checkStorageSettings() {
             try {
-                let settings = this.GET_USER_SETTINGS?.dexSettings;
+                let settings = this.settingsStore.GET_USER_SETTINGS?.dexSettings;
                 if (!settings) {
                     let storage = JSON.parse(localStorage.getItem('dexSettings'))?.dexSettings;
                     if (storage) {
@@ -622,11 +608,11 @@ export default {
                 }
 
                 if (settings.hasOwnProperty('expertMode')) {
-                    this.DEX_EXPERT_MODE(settings.expertMode);
+                    this.dexSettingsStore.DEX_EXPERT_MODE(settings.expertMode);
                 }
                 settings.hasOwnProperty('slippage')
                     ? this.changeSlippage(settings.slippage, true)
-                    : (this.slippage = this.GET_SLIPPAGE);
+                    : (this.slippage = this.dexSettingsStore.GET_SLIPPAGE);
                 // settings.hasOwnProperty("cashback") ? this.switchCashback(settings.cashback, true) : this.cashback = this.GET_CASHBACK
                 if (settings.hasOwnProperty('cashback')) {
                     delete settings.cashback;
@@ -635,22 +621,22 @@ export default {
                 if (this.getExpertMode) {
                     settings.hasOwnProperty('priceImpact')
                         ? this.changePriceImpact(settings.priceImpact, true)
-                        : (this.priceImpact = this.GET_PRICE_IMPACT);
+                        : (this.priceImpact = this.dexSettingsStore.GET_PRICE_IMPACT);
                     settings.hasOwnProperty('maxPoolVolatility')
                         ? this.changeMaxPoolVolatility(settings.maxPoolVolatility, true)
-                        : (this.maxPoolVolatility = this.GET_MAX_POOL_VOLATILITY);
+                        : (this.maxPoolVolatility = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY);
                     settings.hasOwnProperty('maxIntermediateTokens')
                         ? this.changeMaxIntermediateTokens(settings.maxIntermediateTokens, true)
-                        : (this.maxIntermediateTokens = this.GET_MAX_INTERMEDIATE_TOKENS);
+                        : (this.maxIntermediateTokens = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS);
                     settings.hasOwnProperty('maxSplits')
                         ? this.changeMaxSplits(settings.maxSplits, true)
-                        : (this.maxSplits = this.GET_MAX_SPLITS);
+                        : (this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS);
                     settings.hasOwnProperty('liquiditySources')
                         ? this.liquiditySources = this.liquiditySources.map(n => ({
                             name: n?.name,
                             enabled: settings.liquiditySources.some(source => source === n?.name),
                         }))
-                        : (this.liquiditySources = this.GET_LIQUIDITY_SOURCES.map(name => ({
+                        : (this.liquiditySources = this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map(name => ({
                             name: name,
                             enabled: this.liquiditySources.some(source => source.name === name),
                         })));
@@ -660,7 +646,7 @@ export default {
             }
         },
         toggleExpertsSettingsValues(expertModeValue) {
-            let settings = this.GET_USER_SETTINGS?.dexSettings;
+            let settings = this.settingsStore.GET_USER_SETTINGS?.dexSettings;
             if (!settings) {
                 let storage = JSON.parse(localStorage.getItem('dexSettings'))?.dexSettings;
                 if (storage) {
@@ -673,28 +659,28 @@ export default {
             if (expertModeValue) {
                 settings.hasOwnProperty('priceImpact')
                     ? this.changePriceImpact(settings.priceImpact, true)
-                    : this.changePriceImpact(this.GET_PRICE_IMPACT);
+                    : this.changePriceImpact(this.dexSettingsStore.GET_PRICE_IMPACT);
                 settings.hasOwnProperty('maxPoolVolatility')
                     ? this.changeMaxPoolVolatility(settings.maxPoolVolatility, true)
-                    : this.changeMaxPoolVolatility(this.GET_MAX_POOL_VOLATILITY);
+                    : this.changeMaxPoolVolatility(this.dexSettingsStore.GET_MAX_POOL_VOLATILITY);
                 settings.hasOwnProperty('maxIntermediateTokens')
                     ? this.changeMaxIntermediateTokens(settings.maxIntermediateTokens, true)
-                    : this.changeMaxIntermediateTokens(this.GET_MAX_INTERMEDIATE_TOKENS);
+                    : this.changeMaxIntermediateTokens(this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS);
                 settings.hasOwnProperty('maxSplits')
                     ? this.changeMaxSplits(settings.maxSplits, true)
-                    : (this.maxSplits = this.GET_MAX_SPLITS);
+                    : (this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS);
                 settings.hasOwnProperty('liquiditySources')
                     ? this.changeLiquiditySources(settings.liquiditySources, true)
-                    : (this.liquiditySources =  this.GET_LIQUIDITY_SOURCES.map(name => ({
+                    : (this.liquiditySources =  this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map(name => ({
                             name: name,
                             enabled: this.liquiditySources.some(source => source.name === name),
                         })));
             } else {
-                this.CLEAR_DEX_EXPERTS_SETTINGS();
-                this.priceImpact = this.GET_PRICE_IMPACT;
-                this.maxPoolVolatility = this.GET_MAX_POOL_VOLATILITY;
-                this.maxIntermediateTokens = this.GET_MAX_INTERMEDIATE_TOKENS;
-                this.maxSplits = this.GET_MAX_SPLITS;
+                this.dexSettingsStore.CLEAR_DEX_EXPERTS_SETTINGS();
+                this.priceImpact = this.dexSettingsStore.GET_PRICE_IMPACT;
+                this.maxPoolVolatility = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY;
+                this.maxIntermediateTokens = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS;
+                this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS;
             }
         },
         blurMaxSplitsInput() {
@@ -711,11 +697,11 @@ export default {
                     this.maxSplits = 4;
                 }
             }
-            this.DEX_MAX_SPLITS(this.maxSplits);
+            this.dexSettingsStore.DEX_MAX_SPLITS(this.maxSplits);
             this.saveToStorage('maxSplits', this.maxSplits);
         },
         isV5WalletChecker() {
-            this.isV5 = this.GET_DEX_WALLET_VERSION >= 5;
+            this.isV5 = this.dexStore.GET_DEX_WALLET_VERSION >= 5;
             return this.isV5;
         },
         closeTooltip() {
@@ -726,10 +712,10 @@ export default {
         },
     },
     watch: {
-        GET_DEX_WALLET_VERSION: {
+        'dexStore.GET_DEX_WALLET_VERSION': {
             handler() {
                 this.isV5WalletChecker();
-                let settings = this.GET_USER_SETTINGS;
+                let settings = this.settingsStore.GET_USER_SETTINGS;
                 if (!settings) {
                     settings = JSON.parse(localStorage.getItem('dexSettings'));
                 }
@@ -741,10 +727,10 @@ export default {
                 } else if (this.isV5 === false) {
                     this.changeMaxSplits(4);
                 }
-                this.DEX_MAX_SPLITS(this.maxSplits);
+                this.dexSettingsStore.DEX_MAX_SPLITS(this.maxSplits);
             },
         },
-        GET_USER_SETTINGS: {
+        'settingsStore.GET_USER_SETTINGS': {
             handler() {
                 this.checkStorageSettings();
             },
@@ -752,8 +738,8 @@ export default {
     },
     mounted() {
         this.checkStorageSettings();
-        // this.slippage = this.GET_SLIPPAGE
-        // this.priceImpact = this.GET_PRICE_IMPACT
+        // this.slippage = this.dexSettingsStore.GET_SLIPPAGE
+        // this.priceImpact = this.dexSettingsStore.GET_PRICE_IMPACT
         // this.cashback = this.GET_CASHBACK
     },
 };

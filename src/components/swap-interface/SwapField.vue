@@ -17,7 +17,7 @@ v<template>
                             {{ getTokenBalance }}
                         </p>
                         <div class="field__flex-group"
-                             v-if="position === 'up' && GET_DEX_WALLET"
+                             v-if="position === 'up' && dexStore.GET_DEX_WALLET"
                         >
                             <button class="field__btn"
                                     v-if="token.balance > 0"
@@ -145,10 +145,11 @@ import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexInput from "@/components/dex/DexInput.vue";
 import DexTrust from "@/components/dex/DexTrust.vue";
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
-import { mapActions, mapGetters } from 'vuex';
 import ChevronRightIcon from "@/assets/earn/pool-page/ChevronRightIcon.vue";
 import BalanceIcon from "@/assets/earn/swap-interface/BalanceIcon.vue";
 import DexRouteInfo from "@/components/dex/DexRouteInfo.vue";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
 
 export default {
     name: "SwapField",
@@ -206,22 +207,17 @@ export default {
         }
     },
     computed: {
-		...mapGetters([
-            "GET_DEX_WALLET",
-            "GET_LIMIT_FIRST_AMOUNT",
-            "GET_LIMIT_SECOND_AMOUNT",
-            "GET_SEND_AMOUNT",
-            "GET_RECEIVE_AMOUNT",
-            "GET_DEAL_CONDITIONS",
-            "GET_SWAP_MODE",
-            "GET_SEND_TOKEN",
-            "GET_RECEIVE_TOKEN"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
+        limitStore() {
+          return useLimitStore()
+        },
         isDisableInput() {
 		    return this.position !== 'up' && this.getRouteName === 'Dca'
         },
         showBalanceCondition() {
-            if (this.GET_DEX_WALLET !== null) {
+            if (this.dexStore.GET_DEX_WALLET !== null) {
                 return this.token !== null && this.token.hasOwnProperty('balance');
             } else {
                 return this.token !== null;
@@ -237,9 +233,9 @@ export default {
             }
         },
         getUsdPriceImpact() {
-            if (this.GET_DEAL_CONDITIONS !== null) {
-                let inputUsd = this.GET_SEND_TOKEN?.price_usd * Number(this.tokenValues?.first);
-                let outputUsd = this.GET_RECEIVE_TOKEN?.price_usd * Number(this.tokenValues?.second);
+            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                let inputUsd = this.dexStore.GET_SEND_TOKEN?.price_usd * Number(this.tokenValues?.first);
+                let outputUsd = this.dexStore.GET_RECEIVE_TOKEN?.price_usd * Number(this.tokenValues?.second);
                 let priceImpact = (inputUsd - outputUsd) / inputUsd * 100
 
                 this.DEX_CALCULATED_PI(-Number(priceImpact.toFixed(2)))
@@ -259,12 +255,12 @@ export default {
         },
         showValuesSkeleton() {
             return (
-                this.getRouteName === 'Dex' && this.GET_SWAP_MODE === 'default' && this.tokenValues.first !== ''
-                && Number(this.tokenValues.first) > 0 && this.GET_DEAL_CONDITIONS === null && this.position === 'down'
+                this.getRouteName === 'Dex' && this.dexStore.GET_SWAP_MODE === 'default' && this.tokenValues.first !== ''
+                && Number(this.tokenValues.first) > 0 && this.dexStore.GET_DEAL_CONDITIONS === null && this.position === 'down'
             )
             || (
-                this.getRouteName === 'Dex' && this.GET_SWAP_MODE === 'reverse' && this.tokenValues.second !== ''
-                && Number(this.tokenValues.first) > 0 && this.GET_DEAL_CONDITIONS === null && this.position === 'up'
+                this.getRouteName === 'Dex' && this.dexStore.GET_SWAP_MODE === 'reverse' && this.tokenValues.second !== ''
+                && Number(this.tokenValues.first) > 0 && this.dexStore.GET_DEAL_CONDITIONS === null && this.position === 'up'
             )
         },
         canTokenChange() {
@@ -351,8 +347,8 @@ export default {
             let balance = value
 
             if (this.getRouteName === 'Dex') {
-                const currentDeal = this.GET_DEAL_CONDITIONS
-                    ? JSON.parse(JSON.stringify(this.GET_DEAL_CONDITIONS))
+                const currentDeal = this.dexStore.GET_DEAL_CONDITIONS
+                    ? JSON.parse(JSON.stringify(this.dexStore.GET_DEAL_CONDITIONS))
                     : null;
 
                 const partnerFee = currentDeal?.partner_commission_ton || 0;

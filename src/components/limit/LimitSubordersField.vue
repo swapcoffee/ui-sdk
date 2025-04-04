@@ -11,7 +11,7 @@
             </button>
         </div>
         <SettingsInput
-            v-if="GET_LIMIT_ENABLE_SUBORDERS"
+            v-if="limitSettingsStore.GET_LIMIT_ENABLE_SUBORDERS"
             :class="{default_value: checkDefaultOrderValue}"
             :label-name="'Sub-orders'"
             :min-value="1"
@@ -39,8 +39,8 @@
 </template>
 
 <script>
-import {mapActions, mapGetters} from "vuex";
 import SettingsInput from "@/components/general/SettingsInput.vue";
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 
 export default {
     name: "LimitSubordersField",
@@ -63,12 +63,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_LIMIT_SUBORDERS",
-            "GET_LIMIT_ENABLE_SUBORDERS"
-        ]),
+        limitSettingsStore() {
+          return useLimitSettingsStore()
+        },
         getBtnText() {
-            if (this.GET_LIMIT_ENABLE_SUBORDERS) {
+            if (this.limitSettingsStore.GET_LIMIT_ENABLE_SUBORDERS) {
                 return this.$t('dcaSettings.disable')
             } else {
                 return this.$t('dcaSettings.enable')
@@ -82,17 +81,13 @@ export default {
         }
     },
     methods: {
-        ...mapActions([
-            'LIMIT_MAX_SUBORDERS',
-            'LIMIT_ENABLE_SUBORDERS'
-        ]),
         toggleSuborders() {
-            this.LIMIT_ENABLE_SUBORDERS(!this.GET_LIMIT_ENABLE_SUBORDERS)
+            this.limitSettingsStore.LIMIT_ENABLE_SUBORDERS(!this.limitSettingsStore.GET_LIMIT_ENABLE_SUBORDERS)
         },
         updateOrders(value) {
             this.maxSuborders = value
             console.log('updateOrders')
-            this.LIMIT_MAX_SUBORDERS(Number(value))
+            this.limitSettingsStore.LIMIT_MAX_SUBORDERS(Number(value))
         },
         setDefaultOrdersValue() {
             this.updateOrders(this.defaultOrdersValue.toString())

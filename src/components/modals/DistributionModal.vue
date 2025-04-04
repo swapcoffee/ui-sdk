@@ -55,8 +55,7 @@
 <script lang="ts">
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import computedMixins from '@/mixins/computedMixins.ts';
-import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue"
-import {useDexStore} from "@/stores/dex";
+import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue";
 
 export default {
     name: 'DistributionModal',
@@ -68,9 +67,6 @@ export default {
         };
     },
     computed: {
-        dexStore() {
-          return useDexStore()
-        },
         getCaption() {
             if (window.innerWidth > 640) {
                 return this.$t('dexRouteInfo.caption[0]');

@@ -271,7 +271,6 @@
 
 <script lang="ts">
 import lottie from 'lottie-web';
-import { mapActions, mapGetters } from 'vuex';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import { Address } from '@ton/core';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
@@ -281,6 +280,7 @@ import successAnimationData from '@/assets/lottie/success.json';
 import AppNotification from '@/components/AppNotification.vue';
 import { dexService } from '@/api/coffeeApi/services';
 import computedMixins from '@/mixins/computedMixins.ts';
+import {useDexStore} from "@/stores/dex";
 
 export default {
   name: 'DexSuccess',
@@ -320,17 +320,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([
-      'GET_TON_TOKENS',
-      'GET_SEND_TOKEN',
-      'GET_RECEIVE_TOKEN',
-      'GET_SEND_AMOUNT',
-      'GET_DEAL_CONDITIONS',
-      // 'GET_CASHBACK',
-      'GET_SWAP_MODE',
-      'GET_REFERRAL_INFO',
-      'GET_DEX_WALLET',
-    ]),
+    dexStore() {
+      return useDexStore()
+    },
     getBtnText() {
       if (this.routeCount === 4) {
         return 'Show all';
@@ -357,8 +349,8 @@ export default {
 
         return `${inputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
-        if (this.GET_DEAL_CONDITIONS !== null) {
-          return `${this.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)} ${this.GET_SEND_TOKEN?.symbol}`;
+        if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+          return `${this.dexStore.GET_DEAL_CONDITIONS?.input_amount.toFixed(2)} ${this.dexStore.GET_SEND_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -371,7 +363,7 @@ export default {
 
         return this.getTokenByAddress(address)?.image;
       } else {
-        return this.GET_SEND_TOKEN?.image;
+        return this.dexStore.GET_SEND_TOKEN?.image;
       }
     },
     getReceiveTotal() {
@@ -389,8 +381,8 @@ export default {
 
         return `${outputAmount.toFixed(2)} ${this.getTokenByAddress(address)?.symbol}`;
       } else {
-        if (this.GET_DEAL_CONDITIONS !== null) {
-          return `${this.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)} ${this.GET_RECEIVE_TOKEN?.symbol}`;
+        if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+          return `${this.dexStore.GET_DEAL_CONDITIONS?.output_amount.toFixed(2)} ${this.dexStore.GET_RECEIVE_TOKEN?.symbol}`;
         } else {
           return 'token';
         }
@@ -403,7 +395,7 @@ export default {
 
         return this.getTokenByAddress(address)?.image;
       } else {
-        return this.GET_RECEIVE_TOKEN?.image;
+        return this.dexStore.GET_RECEIVE_TOKEN?.image;
       }
     },
     getTransactionResult() {
@@ -463,7 +455,7 @@ export default {
       }
     },
     getProfitDisplay() {
-      let profit = (this.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
+      let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
       return profit > 100 ? '>100' : profit;
     },
     getPriceImpactDisplay() {
@@ -484,8 +476,8 @@ export default {
       }
     },
     getPriceImpact() {
-      if (this.GET_DEAL_CONDITIONS !== null) {
-        let priceImpact = this.GET_DEAL_CONDITIONS?.price_impact * 100;
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+        let priceImpact = this.dexStore.GET_DEAL_CONDITIONS?.price_impact * 100;
         return priceImpact.toFixed(2);
       } else {
         return 0;
@@ -540,10 +532,10 @@ export default {
     // 	} else {
     // 		rawIntermediateAddress = 'native'
     // 	}
-    // 	return this.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
+    // 	return this.dexStore.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
     // },
     getText() {
-      return this.$t('dexSuccess.resultText', { token: this.GET_RECEIVE_TOKEN?.symbol });
+      return this.$t('dexSuccess.resultText', { token: this.dexStore.GET_RECEIVE_TOKEN?.symbol });
     },
     getOurPrice() {
       let regexp = /[^0-9,.]/g;
@@ -557,15 +549,15 @@ export default {
       return market.toFixed(4);
     },
     getMarketPrice() {
-      let receive = this.GET_RECEIVE_TOKEN?.price_usd;
+      let receive = this.dexStore.GET_RECEIVE_TOKEN?.price_usd;
       return Number(receive.toFixed(4));
     },
     isWindows() {
       return /Windows/i.test(navigator.userAgent);
     },
     getTokenPrice() {
-      if (this.GET_DEAL_CONDITIONS !== null) {
-        return this.GET_DEAL_CONDITIONS?.input_usd;
+      if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+        return this.dexStore.GET_DEAL_CONDITIONS?.input_usd;
       } else {
         return 0;
       }
@@ -576,7 +568,6 @@ export default {
     // },
   },
   methods: {
-    ...mapActions(['DEX_SEND_TOKEN', 'DEX_RECEIVE_TOKEN', 'DEX_PROFIT_IMAGE']),
     handleOutsideClick() {
       // if (!this.isSnowfallActive) {
         this.$emit('closeSuccess');
@@ -627,14 +618,14 @@ export default {
     async getShareLink() {
       let newDate = new Date();
       let params = {
-        in: this.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
-        out: this.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
+        in: this.dexStore.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
+        out: this.dexStore.?.symbol.replace('₮', 'T'),
         profit: this.getProfitDisplay,
         market_price: this.getMarketPrice,
         our_price: this.getOurPrice,
         time: Math.floor(newDate / 1000),
         utc: (newDate.getTimezoneOffset() / 60) * -1,
-        ref: this.GET_REFERRAL_INFO?.link,
+        // ref: this.GET_REFERRAL_INFO?.link,
       };
 
       let url = this.createUrl(params);
@@ -696,7 +687,7 @@ export default {
         searchAddress = 'native';
       }
 
-      return this.GET_TON_TOKENS.find((find) => find.address === searchAddress);
+      return this.dexStore.GET_TON_TOKENS.find((find) => find.address === searchAddress);
     },
     findIntermediate(token) {
       let result = null;
@@ -739,17 +730,17 @@ export default {
       // } else {
       // 	rawIntermediateAddress = 'native'
       // }
-      // let intermediate = this.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
+      // let intermediate = this.dexStore.GET_TON_TOKENS.find((find) => find.address === rawIntermediateAddress)
       let necessaryToken = null;
 
-      if (this.GET_SWAP_MODE === 'default') {
-        necessaryToken = this.GET_RECEIVE_TOKEN;
+      if (this.dexStore.GET_SWAP_MODE === 'default') {
+        necessaryToken = this.dexStore.GET_RECEIVE_TOKEN;
       } else {
-        necessaryToken = this.GET_SEND_TOKEN;
+        necessaryToken = this.dexStore.GET_SEND_TOKEN;
       }
 
-      this.DEX_SEND_TOKEN(intermediate);
-      this.DEX_RECEIVE_TOKEN(necessaryToken);
+      this.dexStore.DEX_SEND_TOKEN(intermediate);
+      this.dexStore.DEX_RECEIVE_TOKEN(necessaryToken);
       setTimeout(() => {
         this.$router.replace({
           name: 'Dex',
