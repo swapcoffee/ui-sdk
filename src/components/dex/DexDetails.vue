@@ -248,14 +248,6 @@ export default {
         },
         toggleDetails() {
             this.showMore = !this.showMore;
-            const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
-            tracking.trackEvent(Events.EXCHANGE_DETAILS_OPEN, {
-                details: this.dexStore.GET_DEAL_CONDITIONS,
-                walletAddress,
-                sendToken: this.dexStore.GET_SEND_TOKEN,
-                receiveToken: this.dexStore.GET_RECEIVE_TOKEN,
-                slippage: this.dexSettingsStore.GET_SLIPPAGE,
-            });
         },
         hideTooltip(value) {
             let findIndex = this.tooltipList.findIndex((item) => item === value);

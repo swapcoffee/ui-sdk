@@ -72,9 +72,8 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import ModalDetails from "@/components/general/ModalDetails.vue";
-import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import loadingAnimationData from '@/assets/lottie/loading.json';
 import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
@@ -92,7 +91,6 @@ export default {
         AppNotification,
         TransactionShareIcon,
         SwapDealInfo,
-        PoolDetailsItem,
         ModalDetails
     },
     inject: ["modalState", "updateShowModal"],
@@ -281,11 +279,6 @@ export default {
                 utc: (newDate.getTimezoneOffset() / 60) * -1,
                 // ref: this.GET_REFERRAL_INFO?.link,
             };
-
-            tracking.trackEvent(Events.SHARE_BUTTON_CLICK, {
-                params: params,
-                walletAddress: this.dexStore.GET_DEX_WALLET?.address,
-            });
 
             let url = this.createUrl(params);
             let blob = await this.getImageAsBlob(url);

@@ -435,11 +435,6 @@ export default {
             this.DEX_EXPERT_MODE(updatedExpertMode);
             this.saveToStorage('expertMode', updatedExpertMode);
             this.toggleExpertsSettingsValues(updatedExpertMode);
-
-            tracking.trackEvent(Events.EXPERT_MODE_TOGGLE, {
-                expertMode: updatedExpertMode,
-                walletAddress: this.GET_DEX_WALLET?.address || 'No wallet',
-            });
         },
         // switchCashback(value, notSave) {
         // 	// console.log(value, 'CASHBACK VALUE')

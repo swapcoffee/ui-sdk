@@ -498,17 +498,6 @@ export default {
                 this.transactionStatus = await dexService.getTransactions(this.trInfo?.route_id);
                 this.showSuccess = true;
 
-                if (this.transactionStatus) {
-                    tracking.trackEvent(Events.DEX_EXCHANGE, {
-                        dealConditions: this.GET_DEAL_CONDITIONS,
-                        sendToken: this.GET_SEND_TOKEN,
-                        receiveToken: this.GET_RECEIVE_TOKEN,
-                        sendAmount: this.GET_SEND_AMOUNT,
-                        receiveAmount: this.GET_RECEIVE_AMOUNT,
-                        walletAddress: this.GET_DEX_WALLET?.address,
-                    });
-                }
-
                 // setTimeout(() => {
                 // 	this.testTransactionStatus()
                 // 	this.showSuccess = true
