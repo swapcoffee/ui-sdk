@@ -30,6 +30,7 @@ class DexService extends CoffeeSdkWrapper {
       output_amount,
       max_length,
       max_splits,
+      additional_data,
     } = requestParams;
 
     return await this.routingApi.buildRoute({
@@ -39,6 +40,7 @@ class DexService extends CoffeeSdkWrapper {
       output_amount,
       max_length,
       max_splits,
+      additional_data,
     });
   }
 
