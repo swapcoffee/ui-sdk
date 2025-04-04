@@ -55,6 +55,11 @@ import TransactionStatusModal from "@/components/modals/TransactionStatusModal.v
 import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 import resetLimitTokens from "@/mixins/resetLimitTokens";
 import { amountLimitWatcher } from "@/helpers/swap-interface/watchers";
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
+import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useDcaStore} from "@/stores/dca";
+import {useTransactionStore} from "@/stores/transaction";
 
 export default {
     name: "DcaPage",
@@ -119,29 +124,24 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_USER_TOKENS",
-            "GET_TON_TOKENS",
-            "GET_DEX_WALLET",
-            "GET_STRATEGIES_WALLET",
-            "GET_STRATEGIES_ELIGIBLE",
-            "GET_LIMIT_FIRST_TOKEN",
-            "GET_LIMIT_SECOND_TOKEN",
-            "GET_LIMIT_FIRST_AMOUNT",
-            "GET_LIMIT_SECOND_AMOUNT",
-            "GET_LIMIT_SUBORDERS",
-            "GET_LIMIT_INVOCATIONS",
-            "GET_DCA_EVERY_TIME",
-            "GET_SEND_TOKEN",
-            "GET_MIN_RANGE",
-            "GET_MAX_RANGE",
-            "GET_DCA_ENABLE_RANGE",
-            "GET_LIMIT_HISTORY",
-            "GET_DCA_EVERY_TIME"
-        ]),
+        dexStore() {
+          return useDexStore()
+        },
+        limitStore() {
+          return useLimitStore()
+        },
+        limitSettingsStore() {
+            return useLimitSettingsStore()
+        },
+        dcaStore() {
+          return useDcaStore()
+        },
+        transactionStore() {
+          return useTransactionStore()
+        },
         getTransactionStatus() {
             if (this.successModalState.mode === 'deploy-smart') {
-                if (this.GET_STRATEGIES_WALLET === null) {
+                if (this.limitStore.GET_STRATEGIES_WALLET === null) {
                     return "pending"
                 } else {
                     return 'success'
@@ -153,7 +153,7 @@ export default {
             }
         },
         getCancelStatus() {
-            let activeLength = this.GET_LIMIT_HISTORY.filter((item) => item?.status === 'active').length
+            let activeLength = this.limitStore.GET_LIMIT_HISTORY.filter((item) => item?.status === 'active').length
             if (this.historyActiveLength === activeLength) {
                 return 'pending'
             } else if (activeLength < this.historyActiveLength) {
@@ -162,9 +162,9 @@ export default {
             }
         },
         getDcaTransactionStatus() {
-            if (this.historyLength === this.GET_LIMIT_HISTORY.length) {
+            if (this.historyLength === this.limitStore.GET_LIMIT_HISTORY.length) {
                 return 'pending'
-            } else if (this.GET_LIMIT_HISTORY.length > this.historyLength) {
+            } else if (this.limitStore.GET_LIMIT_HISTORY.length > this.historyLength) {
                 removeLimitCheckerInterval()
                 return 'success'
             }
@@ -176,9 +176,9 @@ export default {
                 firstAmount: Number(this.tokenValues?.first),
                 secondAmount: 0,
                 slippage: this.getSlippage,
-                maxSuborders: this.GET_LIMIT_SUBORDERS,
-                maxInvocations: this.GET_LIMIT_INVOCATIONS * this.GET_LIMIT_SUBORDERS,
-                intervalSec: this.GET_DCA_EVERY_TIME
+                maxSuborders: this.limitSettingsStore.GET_LIMIT_SUBORDERS,
+                maxInvocations: this.limitSettingsStore.GET_LIMIT_INVOCATIONS * this.limitSettingsStore.GET_LIMIT_SUBORDERS,
+                intervalSec: this.dcaStore.GET_DCA_EVERY_TIME
             }
         },
         setCreateOrderBody() {
@@ -194,22 +194,22 @@ export default {
                 },
                 input_amount: (this.tokenValues?.first * Math.pow(10, this.getTokens.first?.decimals)).toString(),
                 slippage: this.getSlippage,
-                max_suborders: this.GET_LIMIT_SUBORDERS,
-                max_invocations: this.GET_LIMIT_SUBORDERS * this.GET_LIMIT_INVOCATIONS,
+                max_suborders: this.limitSettingsStore.GET_LIMIT_SUBORDERS,
+                max_invocations: this.limitSettingsStore.GET_LIMIT_SUBORDERS * this.limitSettingsStore.GET_LIMIT_INVOCATIONS,
                 settings: this.getOrderSettings
             }
         },
         getOrderSettings() {
             let asset = {
-                delay: this.GET_DCA_EVERY_TIME
+                delay: this.dcaStore.GET_DCA_EVERY_TIME
             }
-            if (this.GET_DCA_ENABLE_RANGE && this.GET_MAX_RANGE !== null && this.GET_MIN_RANGE !== null) {
-                asset.price_range_from = this.GET_MIN_RANGE < this.GET_MAX_RANGE
-                    ? this.GET_MIN_RANGE
-                    : this.GET_MAX_RANGE
-                asset.price_range_to = this.GET_MIN_RANGE < this.GET_MAX_RANGE
-                    ? this.GET_MAX_RANGE
-                    : this.GET_MIN_RANGE
+            if (this.dcaStore.GET_DCA_ENABLE_RANGE && this.dcaStore.GET_MAX_RANGE !== null && this.dcaStore.GET_MIN_RANGE !== null) {
+                asset.price_range_from = this.dcaStore.GET_MIN_RANGE < this.dcaStore.GET_MAX_RANGE
+                    ? this.dcaStore.GET_MIN_RANGE
+                    : this.dcaStore.GET_MAX_RANGE
+                asset.price_range_to = this.dcaStore.GET_MIN_RANGE < this.dcaStore.dcaStore.GET_MAX_RANGE
+                    ? this.dcaStore.GET_MAX_RANGE
+                    : this.dcaStore.GET_MIN_RANGE
             }
 
             return asset
@@ -217,24 +217,24 @@ export default {
         interfaceStatus() {
             if (this.processing.dca === true) {
                 return 'LOADING'
-            } else if (this.GET_DEX_WALLET === null) {
+            } else if (this.dexStore.GET_DEX_WALLET === null) {
                 return 'NOT_CONNECTED'
-            } else if (!this.GET_STRATEGIES_ELIGIBLE) {
+            } else if (!this.limitStore.GET_STRATEGIES_ELIGIBLE) {
                 return 'NOT_ELIGIBLE'
-            } else if (this.GET_STRATEGIES_ELIGIBLE && !this.GET_STRATEGIES_WALLET) {
+            } else if (this.limitStore.GET_STRATEGIES_ELIGIBLE && !this.limitStore.GET_STRATEGIES_WALLET) {
                 return 'NOT_STRATEGIES_WALLET'
-            } else if (this.GET_LIMIT_FIRST_AMOUNT === 0 && (this.tokenValues.first.length === 0 || Number(this.tokenValues.first) === 0)) {
+            } else if (this.limitStore.GET_LIMIT_FIRST_AMOUNT === 0 && (this.tokenValues.first.length === 0 || Number(this.tokenValues.first) === 0)) {
                 return 'NOT_AMOUNT'
             } else if (this.notEnoughConditions.reason === "noBalance") {
                 return 'NOT_ENOUGH'
-            } else if (this.GET_DCA_ENABLE_RANGE && !this.GET_MIN_RANGE || this.GET_DCA_ENABLE_RANGE && !this.GET_MAX_RANGE) {
+            } else if (this.dcaStore.GET_DCA_ENABLE_RANGE && !this.dcaStore.GET_MIN_RANGE || this.dcaStore.GET_DCA_ENABLE_RANGE && !this.dcaStore.GET_MAX_RANGE) {
                 return 'NOT_RANGE'
             } else {
                 return 'READY_DEX'
             }
         },
         notEnoughConditions() {
-            if (this.GET_LIMIT_FIRST_TOKEN?.balance < this.GET_LIMIT_FIRST_AMOUNT) {
+            if (this.limitStore.GET_LIMIT_FIRST_TOKEN?.balance < this.limitStore.GET_LIMIT_FIRST_AMOUNT) {
                 return {result: true, reason: 'noBalance'}
             }
 
@@ -242,8 +242,8 @@ export default {
         },
         getTokens() {
             return {
-                first: this.GET_LIMIT_FIRST_TOKEN,
-                second: this.GET_LIMIT_SECOND_TOKEN
+                first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+                second: this.limitStore.GET_LIMIT_SECOND_TOKEN
             }
         },
         getSlippage() {
@@ -254,23 +254,11 @@ export default {
         },
     },
     methods: {
-        ...mapActions([
-            "STRATEGIES_WALLET",
-            "STRATEGIES_ELIGIBLE",
-            "LIMIT_FIRST_TOKEN",
-            "LIMIT_SECOND_TOKEN",
-            "LIMIT_FIRST_AMOUNT",
-            "LIMIT_SECOND_AMOUNT",
-            "LIMIT_TOKEN_RATE",
-            "LIMIT_SEND_SUPPORTED_TOKENS",
-            "LIMIT_RECEIVE_SUPPORTED_TOKENS",
-            "SAVE_LIMIT_TRANSACTION_INFO"
-        ]),
         closeSuccess() {
             this.successModalState.show = false
             this.successModalState.mode = null
             this.clearValues()
-            this.SAVE_LIMIT_TRANSACTION_INFO(null)
+            this.transactionStore.SAVE_LIMIT_TRANSACTION_INFO(null)
             this.historyLength = 0
         },
         openSettingsModal() {
@@ -282,20 +270,20 @@ export default {
         },
         changeFirstValue(value) {
             this.tokenValues.first = value
-            this.LIMIT_FIRST_AMOUNT(Number(value))
+            this.limitStore.LIMIT_FIRST_AMOUNT(Number(value))
         },
         changeSecondValue(value) {
             this.tokenValues.second = value
-            this.LIMIT_SECOND_AMOUNT(Number(value))
+            this.limitStore.LIMIT_SECOND_AMOUNT(Number(value))
         },
         swapTokenPositions() {
             clearTimeout(this.debounce)
             this.debounce = setTimeout(() => {
                 this.isSwapPositions = true
-                let first = this.GET_LIMIT_SECOND_TOKEN
-                let second = this.GET_LIMIT_FIRST_TOKEN
-                this.LIMIT_FIRST_TOKEN(first)
-                this.LIMIT_SECOND_TOKEN(second)
+                let first = this.limitStore.GET_LIMIT_SECOND_TOKEN
+                let second = this.limitStore.GET_LIMIT_FIRST_TOKEN
+                this.limitStore.LIMIT_FIRST_TOKEN(first)
+                this.limitStore.LIMIT_SECOND_TOKEN(second)
 
                 setTimeout(() => {
                     this.isSwapPositions = false
@@ -311,7 +299,7 @@ export default {
             this.LIMIT_FIRST_TOKEN(value)
         },
         changeSecondToken(value) {
-            this.LIMIT_SECOND_TOKEN(value)
+            this.limitStore.LIMIT_SECOND_TOKEN(value)
         },
         updateProcessing(value, mode) {
             switch (mode) {
@@ -324,11 +312,11 @@ export default {
             }
         },
         setDefaultTokenPair() {
-            let native = this.GET_TON_TOKENS.find((item) => item.type === 'native')
-            let usdt = this.GET_TON_TOKENS.find((item) => item?.address === this.usdtAddress)
+            let native = this.dexStore.GET_TON_TOKENS.find((item) => item.type === 'native')
+            let usdt = this.dexStore.GET_TON_TOKENS.find((item) => item?.address === this.usdtAddress)
 
             if (native) {
-                this.LIMIT_FIRST_TOKEN(native)
+                this.limitStore.LIMIT_FIRST_TOKEN(native)
                 // this.getSupportedReceiveTokens(native)
             }
             if (usdt) this.LIMIT_SECOND_TOKEN(usdt)
@@ -337,7 +325,7 @@ export default {
             try {
                 let res = await strategiesService.getSupportedFromTokens('dca')
                 let tokens = await this.getTokensByAddress(res)
-                this.LIMIT_SEND_SUPPORTED_TOKENS(tokens)
+                this.limitStore.LIMIT_SEND_SUPPORTED_TOKENS(tokens)
                 return tokens
             } catch (err) {
                 console.error(err)
@@ -347,7 +335,7 @@ export default {
             try {
                 let res = await strategiesService.getSupportedToTokens(firstToken, 'dca')
                 let tokens = await this.getTokensByAddress(res)
-                this.LIMIT_RECEIVE_SUPPORTED_TOKENS(tokens)
+                this.limitStore.LIMIT_RECEIVE_SUPPORTED_TOKENS(tokens)
                 return tokens
             } catch (err) {
                 console.error(err)
@@ -356,7 +344,7 @@ export default {
         async getTokensByAddress(addresses) {
             try {
 
-                let tokensFromStore = this.GET_TON_TOKENS.filter((item) => {
+                let tokensFromStore = this.dexStore.GET_TON_TOKENS.filter((item) => {
                     let friendly = item.address === 'native'
                         ? item.address
                         : Address.parse(item.address).toString()
@@ -383,7 +371,7 @@ export default {
         },
         async dcaAction() {
             try {
-                if (!this.GET_DEX_WALLET) {
+                if (!this.dexStore.GET_DEX_WALLET) {
                     this.tonConnectUi.openModal()
                 } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
                     this.$router.push({name: 'Stake', params: {name: 'CES'}})
@@ -392,7 +380,7 @@ export default {
                     this.successModalState.mode = 'deploy-smart'
                     this.successModalState.show = true
                 } else {
-                    this.historyLength = this.GET_LIMIT_HISTORY.length
+                    this.historyLength = this.limitStore.GET_LIMIT_HISTORY.length
                     this.SAVE_LIMIT_TRANSACTION_INFO(this.setDcaTransactionInfo)
                     await createOrder(this.updateProcessing, this.setCreateOrderBody)
                     this.successModalState.mode = 'dca'
@@ -404,7 +392,7 @@ export default {
         },
         async cancelAction(id) {
             try {
-                this.historyActiveLength = this.GET_LIMIT_HISTORY.filter((item) => item?.status === 'active').length
+                this.historyActiveLength = this.limitStore.GET_LIMIT_HISTORY.filter((item) => item?.status === 'active').length
                 console.log('historyActiveLength', this.historyActiveLength)
                 let res = await cancelOrder(this.updateProcessing, {type: 'dca', id: id})
                 this.successModalState.mode = 'cancel'
@@ -415,11 +403,11 @@ export default {
         },
     },
     mounted() {
-        if (this.GET_STRATEGIES_ELIGIBLE) {
+        if (this.limitStore.GET_STRATEGIES_ELIGIBLE) {
             checkStrategiesWallet()
         }
 
-        if (this.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
+        if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
             if (this.$route.query?.ft || this.$route.query?.st) {
                 setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
             } else {
@@ -433,20 +421,20 @@ export default {
         }
     },
     unmounted() {
-        this.LIMIT_FIRST_AMOUNT(0)
-        this.LIMIT_SECOND_AMOUNT(0)
+        this.limitStore.LIMIT_FIRST_AMOUNT(0)
+        this.limitStore.LIMIT_SECOND_AMOUNT(0)
         this.resetLimitTokens();
     },
     watch: {
-        GET_TON_TOKENS: {
+        'dexStore.GET_TON_TOKENS': {
             handler() {
-                if (this.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
+                if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
                     if (this.$route.query?.ft || this.$route.query?.st) {
                         setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
                     } else {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
-                            if (this.GET_LIMIT_FIRST_TOKEN) {
+                            if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
                                 this.getSupportedSendTokens()
                             }
                         }, 300)
@@ -457,10 +445,10 @@ export default {
                 }
             }
         },
-        GET_LIMIT_FIRST_AMOUNT: {
+        'limitStore.GET_LIMIT_FIRST_AMOUNT': {
             handler() {
-                if (Number(this.tokenValues.first) !== Number(this.GET_LIMIT_FIRST_AMOUNT) && this.pageLoaded === false) {
-                    this.tokenValues.first = this.GET_LIMIT_FIRST_AMOUNT.toString()
+                if (Number(this.tokenValues.first) !== Number(this.limitStore.GET_LIMIT_FIRST_AMOUNT) && this.pageLoaded === false) {
+                    this.tokenValues.first = this.limitStore.GET_LIMIT_FIRST_AMOUNT.toString()
                 }
 
                 amountLimitWatcher({
@@ -472,26 +460,26 @@ export default {
                 })
             }
         },
-        GET_STRATEGIES_ELIGIBLE: {
+        'limitStore.GET_STRATEGIES_ELIGIBLE': {
             handler() {
-                if (this.GET_STRATEGIES_ELIGIBLE) {
+                if (this.limitStore.GET_STRATEGIES_ELIGIBLE) {
                     checkStrategiesWallet()
                 }
             }
         },
-        GET_LIMIT_FIRST_TOKEN: {
+        'limitStore.GET_LIMIT_FIRST_TOKEN': {
             handler() {
                 // this.clearValues()
-                if (this.GET_LIMIT_FIRST_TOKEN) {
-                    this.getSupportedReceiveTokens(this.GET_LIMIT_FIRST_TOKEN?.address)
+                if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
+                    this.getSupportedReceiveTokens(this.limitStore.GET_LIMIT_FIRST_TOKEN?.address)
                 }
             }
         },
-        GET_LIMIT_SECOND_TOKEN: {
+        'limitStore.GET_LIMIT_SECOND_TOKEN': {
             handler() {
                 // this.clearValues()
-                if (this.GET_LIMIT_SECOND_TOKEN) {
-                    this.getSupportedSendTokens(this.GET_LIMIT_SECOND_TOKEN?.address)
+                if (this.limitStore.GET_LIMIT_SECOND_TOKEN) {
+                    this.getSupportedSendTokens(this.limitStore.GET_LIMIT_SECOND_TOKEN?.address)
                 }
             }
         },

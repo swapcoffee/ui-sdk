@@ -19,6 +19,7 @@
 
 <script>
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
+import {useDexStore} from "@/stores/dex";
 
 export default {
   name: 'StakeTokenList',
@@ -41,11 +42,14 @@ export default {
     mode: String
   },
   computed: {
+    dexStore() {
+      return useDexStore()
+    }
   },
   methods: {
     isActiveItem(item) {
-      return this.mode === 'SEND' && this.GET_SEND_TOKEN?.symbol === item.symbol ||
-        this.mode === 'RECEIVE' && this.GET_RECEIVE_TOKEN?.symbol === item.symbol;
+      return this.mode === 'SEND' && this.dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
+        this.mode === 'RECEIVE' && this.dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol;
     }
   }
 };

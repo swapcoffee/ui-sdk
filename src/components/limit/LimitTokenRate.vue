@@ -63,6 +63,7 @@ import DexInput from "@/components/dex/DexInput.vue";
 import SwitchHorizontalIcon from "@/assets/earn/swap-interface/SwitchHorizontalIcon.vue";
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "LimitTokenRate",
@@ -103,15 +104,11 @@ export default {
         }
     },
     computed: {
-        ...mapGetters([
-            "GET_LIMIT_TON_TO_USDT",
-            "GET_LIMIT_STABLE_RATE",
-            "GET_LIMIT_FIRST_TOKEN",
-            "GET_LIMIT_SECOND_TOKEN",
-            "GET_TON_TOKENS"
-        ]),
+        dexStore() {
+            return useDexStore()
+        },
         showLoadingSkeleton() {
-            return !this.getTokens.first?.symbol || !this.getTokens.second?.symbol || this.GET_TON_TOKENS.length === 0
+            return !this.getTokens.first?.symbol || !this.getTokens.second?.symbol || this.dexStore.GET_TON_TOKENS.length === 0
         },
         isTonToUsdt() {
             if (this.first?.address === 'native' && this.second?.address === this.usdtAddress) {
@@ -129,10 +126,10 @@ export default {
             }
         },
         getNative() {
-            return this.GET_TON_TOKENS.find((token) => token.address === 'native')
+            return this.dexStore.GET_TON_TOKENS.find((token) => token.address === 'native')
         },
         getUsdt() {
-            return this.GET_TON_TOKENS.find((token) => token.address === this.usdtAddress)
+            return this.dexStore.GET_TON_TOKENS.find((token) => token.address === this.usdtAddress)
         },
         getTokens() {
             if (this.isTonToUsdt) {

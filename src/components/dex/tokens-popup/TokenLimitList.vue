@@ -18,6 +18,7 @@
 
 <script>
 import TokenItem from "@/components/dex/tokens-popup/TokenItem.vue";
+import {useLimitStore} from "@/stores/limit";
 
 export default {
     name: "TokenLimitList",
@@ -64,15 +65,14 @@ export default {
         return {}
     },
     computed: {
-        ...mapGetters([
-            'GET_LIMIT_FIRST_TOKEN',
-            'GET_LIMIT_SECOND_TOKEN'
-        ])
+      limitStore() {
+        return useLimitStore()
+      }
     },
     methods: {
         isActiveItem(item) {
-            return this.mode === 'SEND' && this.GET_LIMIT_FIRST_TOKEN?.symbol === item.symbol ||
-                this.mode === 'RECEIVE' && this.GET_LIMIT_SECOND_TOKEN?.symbol === item.symbol;
+            return this.mode === 'SEND' && this.limitStore.GET_LIMIT_FIRST_TOKEN?.symbol === item.symbol ||
+                this.mode === 'RECEIVE' && this.limitStore.GET_LIMIT_SECOND_TOKEN?.symbol === item.symbol;
         }
     }
 }

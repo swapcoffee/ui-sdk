@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
+import {useDexStore} from "@/stores/dex";
 
 export default {
   name: 'TokenList',
@@ -45,10 +46,9 @@ export default {
     activeFilter: Object
   },
   computed: {
-    ...mapGetters([
-      'GET_RECEIVE_TOKEN',
-      'GET_SEND_TOKEN'
-    ]),
+    dexStore() {
+      return useDexStore()
+    }
   },
   methods: {
     chooseToken(item) {
@@ -63,8 +63,8 @@ export default {
     generateClass(item, index) {
       const baseClass = 'token_' + (index + 1);
       const isActiveToken =
-        (this.mode === 'SEND' && (this.GET_SEND_TOKEN?.symbol === item.symbol || this.GET_RECEIVE_TOKEN?.symbol === item.symbol)) ||
-        (this.mode === 'RECEIVE' && (this.GET_SEND_TOKEN?.symbol === item.symbol || this.GET_RECEIVE_TOKEN?.symbol === item.symbol));
+        (this.mode === 'SEND' && (this.dexStore.GET_SEND_TOKEN?.symbol === item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol)) ||
+        (this.mode === 'RECEIVE' && (this.dexStore.GET_SEND_TOKEN?.symbol === item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol));
       return [
         baseClass,
         {'active_item': isActiveToken}

@@ -17,6 +17,7 @@
 import SearchIcon from '@/assets/dex/icons/SearchIcon.vue';
 import { Address } from '@ton/core';
 import { tokenService } from '@/api/coffeeApi/services';
+import {useDexStore} from "@/stores/dex";
 
 export default {
 	components: {
@@ -38,9 +39,9 @@ export default {
 		};
 	},
 	computed: {
-        ...mapGetters([
-            'GET_TON_TOKENS',
-        ]),
+    dexStore() {
+      return useDexStore()
+    },
 		inputValue: {
 			get() {
 				return this.modelValue;
@@ -69,7 +70,7 @@ export default {
 					let res = await tokenService.getSingleToken(this.inputValue);
 					if (res && res.metadata) {
                         const rawAddress = Address.parse(this.inputValue).toRawString();
-                        const balance = this.GET_TON_TOKENS.find(token => token.address === rawAddress)?.balance;
+                        const balance = this.dexStore.GET_TON_TOKENS.find(token => token.address === rawAddress)?.balance;
 
                         const unlistedToken = {
                             ...res.metadata,

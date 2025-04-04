@@ -8,6 +8,8 @@
 
 <script>
 
+import {useDexStore} from "@/stores/dex/index.ts";
+
 export default {
   props: {
     name: {
@@ -24,9 +26,9 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'GET_TOKEN_LABELS'
-    ])
+    dexStore() {
+      return useDexStore()
+    }
   },
   methods: {
     selectFilter() {
@@ -35,7 +37,7 @@ export default {
       if (this.value === 'all') {
         newFilter = { name: 'all', id: null };
       } else {
-        const filter = this.GET_TOKEN_LABELS.find(label => label.name === this.value);
+        const filter = this.dexStore.GET_TOKEN_LABELS.find(label => label.name === this.value);
         newFilter = { name: filter.name, id: filter.id };
       }
 

@@ -41,6 +41,7 @@
 
 <script>
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
+import {useDexStore} from "@/stores/dex";
 
 export default {
   name: 'DexUnstakeButton',
@@ -59,7 +60,9 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['GET_SEND_TOKEN', 'GET_STAKING_POOL', 'GET_SEND_AMOUNT']),
+    dexStore() {
+      return useDexStore()
+    },
     btnText() {
       if (this.getHoursLeft <= 0) {
         return this.$t('unstakeButton.unstakeNow');
@@ -75,18 +78,18 @@ export default {
       };
     },
     getTokenSymbol() {
-      return this.GET_SEND_TOKEN?.symbol;
+      return this.dexStore.GET_SEND_TOKEN?.symbol;
     },
     getInputAmount() {
-      return this.GET_SEND_AMOUNT;
+      return this.dexStore.GET_SEND_AMOUNT;
     },
     getOutputAmount() {
-      const rate = this.GET_STAKING_POOL?.exchange_rate;
+      const rate = this.dexStore.GET_STAKING_POOL?.exchange_rate;
 
       return this.getInputAmount * rate;
     },
     getHoursLeft() {
-      const cycleEnd = this.GET_STAKING_POOL?.cycle_end;
+      const cycleEnd = this.dexStore.GET_STAKING_POOL?.cycle_end;
       const now = new Date().getTime() / 1000;
 
       const diff = cycleEnd - now;

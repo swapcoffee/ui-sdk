@@ -238,7 +238,7 @@ export default {
                 let outputUsd = this.dexStore.GET_RECEIVE_TOKEN?.price_usd * Number(this.tokenValues?.second);
                 let priceImpact = (inputUsd - outputUsd) / inputUsd * 100
 
-                this.DEX_CALCULATED_PI(-Number(priceImpact.toFixed(2)))
+                this.dexStore.DEX_CALCULATED_PI(-Number(priceImpact.toFixed(2)))
                 return -Number(priceImpact.toFixed(2))
             }
         },
@@ -293,7 +293,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['DEX_CALCULATED_PI']),
         changeFocus(value) {
             this.inputFocused = value
         },

@@ -229,13 +229,9 @@ export default {
 		}
 	},
 	computed: {
-		...mapGetters([
-			'GET_PINNED_TOKENS',
-			'GET_TON_TOKENS',
-            'GET_USER_TOKENS',
-			'GET_TOKEN_LABELS',
-      'GET_SEND_TOKEN'
-		]),
+    dexStore() {
+      return dexStore()
+    },
     hasData() {
       if (this.status !== 'unlisted' && this.item?.imported !== true) {
         return (
@@ -352,8 +348,6 @@ export default {
 		},
 	},
 	methods: {
-    ...mapActions(['DEX_TON_TOKENS', 'DEX_SEND_TOKEN']),
-
     removeImportedToken(importedToken, event) {
       event.stopPropagation();
       event.preventDefault();
@@ -362,15 +356,15 @@ export default {
         .filter(token => token.address !== importedToken.address);
       localStorage.setItem('importTokens', JSON.stringify(tokens));
 
-      this.GET_TON_TOKENS.forEach(token => {
+      this.dexStore.GET_TON_TOKENS.forEach(token => {
         if (token.address === importedToken.address) {
           token.imported = false;
         }
       });
 
-      if (this.GET_SEND_TOKEN?.address === importedToken?.address) {
-        this.DEX_SEND_TOKEN(
-          this.GET_TON_TOKENS.find(token => token.address === 'native')
+      if (this.dexStore.GET_SEND_TOKEN?.address === importedToken?.address) {
+        this.dexStore.DEX_SEND_TOKEN(
+          this.dexStore.GET_TON_TOKENS.find(token => token.address === 'native')
         );
 
         const url = new URL(window.location.href);
@@ -383,7 +377,7 @@ export default {
     findLabels() {
 			if (this.item.hasOwnProperty("labels")) {
 				this.item?.labels.forEach((label) => {
-					let find = this.GET_TOKEN_LABELS.find((findItem) => label.label_id === findItem.id)
+					let find = this.dexStore.GET_TOKEN_LABELS.find((findItem) => label.label_id === findItem.id)
 					if (find) {
 						this.activeTags.push(find)
 					}
@@ -406,14 +400,14 @@ export default {
 		},
 		checkItemIsPinned(item) {
 			let pinTokens = []
-			this.GET_PINNED_TOKENS.slice().forEach((findItem) => {
+			this.dexStore.GET_PINNED_TOKENS.slice().forEach((findItem) => {
 				let findInUnpin = this.userUnpinnedTokens.find((find) => find?.address === findItem?.address)
 				if (findInUnpin) {
 					return
 				}
 				pinTokens.push(findItem)
 			})
-			let findNative = this.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native')
+			let findNative = this.dexStore.GET_PINNED_TOKENS.findIndex((item) => item?.address === 'native')
 			pinTokens.splice(findNative, 1)
 
       let findItem = this.userPinnedTokens.find((find) => find?.address === item?.address);

@@ -13,6 +13,8 @@
 
 <script>
 
+import {useDexStore} from "@/stores/dex";
+
 export default {
   props: {
     item: {
@@ -25,14 +27,13 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([
-      'GET_SEND_TOKEN',
-      'GET_RECEIVE_TOKEN'
-    ]),
+    dexStore() {
+      return useDexStore()
+    },
     isActive() {
       return (
-        (this.mode === 'SEND' && (this.GET_SEND_TOKEN?.symbol === this.item.symbol || this.GET_RECEIVE_TOKEN?.symbol === this.item.symbol)) ||
-        (this.mode === 'RECEIVE' && (this.GET_SEND_TOKEN?.symbol === this.item.symbol || this.GET_RECEIVE_TOKEN?.symbol === this.item.symbol))
+        (this.mode === 'SEND' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol)) ||
+        (this.mode === 'RECEIVE' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol))
       );
     }
   }
