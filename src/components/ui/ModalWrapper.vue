@@ -17,7 +17,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import CloseIcon from "@/assets/earn/all-pools/CloseIcon.vue";
 
 export default {

@@ -64,9 +64,8 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import DexReverseInfo from '@/components/dex/DexReverseInfo.vue';
-import DexTitle from '@/components/dex/DexTitle.vue';
 import DexYouSend from '@/components/dex/DexYouSend.vue';
 import DexButton from '@/components/dex/DexButton.vue';
 import DexInfo from '@/components/dex/DexInfo.vue';
@@ -115,7 +114,6 @@ export default {
         DexInfo,
         DexButton,
         DexYouSend,
-        DexTitle,
         DexReverseInfo,
     },
     data() {
@@ -529,17 +527,6 @@ export default {
                 await this.tonConnectUi.sendTransaction(this.getTransactionParams(this.trInfo));
                 this.transactionStatus = await dexService.getTransactions(this.trInfo?.route_id);
                 this.showSuccess = true;
-
-                if (this.transactionStatus) {
-                    tracking.trackEvent(Events.DEX_EXCHANGE, {
-                        dealConditions: this.GET_DEAL_CONDITIONS,
-                        sendToken: this.GET_SEND_TOKEN,
-                        receiveToken: this.GET_RECEIVE_TOKEN,
-                        sendAmount: this.GET_SEND_AMOUNT,
-                        receiveAmount: this.GET_RECEIVE_AMOUNT,
-                        walletAddress: this.GET_DEX_WALLET?.address,
-                    });
-                }
 
                 // setTimeout(() => {
                 // 	this.testTransactionStatus()

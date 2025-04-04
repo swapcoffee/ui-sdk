@@ -269,21 +269,18 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import lottie from 'lottie-web';
 import { mapActions, mapGetters } from 'vuex';
-import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
+import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import { Address } from '@ton/core';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import loadingAnimationData from '@/assets/lottie/loading.json';
 import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
 import AppNotification from '@/components/AppNotification.vue';
-import { tracking } from '@/tracking';
-import { Events } from '@/tracking/events.js';
 import { dexService } from '@/api/coffeeApi/services';
-// import DexSnowflake from '@/components/dex/DexSnowflake.vue';
-import computedMixins from '@/mixins/computedMixins.js';
+import computedMixins from '@/mixins/computedMixins.ts';
 
 export default {
   name: 'DexSuccess',
@@ -639,11 +636,6 @@ export default {
         utc: (newDate.getTimezoneOffset() / 60) * -1,
         ref: this.GET_REFERRAL_INFO?.link,
       };
-
-      tracking.trackEvent(Events.SHARE_BUTTON_CLICK, {
-        params: params,
-        walletAddress: this.GET_DEX_WALLET?.address,
-      });
 
       let url = this.createUrl(params);
       let blob = await this.getImageAsBlob(url);

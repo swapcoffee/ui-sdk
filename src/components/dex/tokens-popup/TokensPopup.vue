@@ -697,13 +697,6 @@ methods: {
 							}
 					}
 
-					if (this.isLpToken(item)) {
-							const walletAddress = this.dexStore.GET_DEX_WALLET?.address || 'No wallet';
-							tracking.trackEvent(Events.STAKE_TOKEN_TOGGLE, {
-									token: item.symbol,
-									walletAddress,
-							});
-					}
 			},
 	importToken() {
 		this.unlistedToken.imported = true
@@ -722,12 +715,7 @@ methods: {
 
 		localStorage.setItem('importTokens', JSON.stringify(storage))
 
-		this.dexStore.DEX_TON_TOKENS(allTokens)
-		const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
-		tracking.trackEvent(Events.TOKEN_IMPORT, {
-			tokenInfo: this.unlistedToken,
-			walletAddress,
-		});
+		this.DEX_TON_TOKENS(allTokens)
 		setTimeout(() => {
 			this.searchValue = ''
 			this.chooseToken(this.unlistedToken)

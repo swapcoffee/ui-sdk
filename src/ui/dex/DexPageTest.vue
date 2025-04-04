@@ -20,7 +20,6 @@
             :mode="tokenModalMode"
             @closePopup="modals.token = false"
         />
-<!--        TODO: Потестить v-if на DexSettings, для этого нужно логику mounted из настроек вынести на страницу dexPage-->
         <DexSettings
             v-if="modals.settings === true"
             @closeSettings="modals.settings = false"
@@ -314,7 +313,6 @@ export default {
                 dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
                 slippage: this.dexSettingsStore.GET_SLIPPAGE,
                 tonConnectUi: this.tonConnectUi,
-                trackingData: this.trackingData
             }
         }
     },

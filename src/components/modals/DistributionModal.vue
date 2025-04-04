@@ -103,14 +103,6 @@ export default {
         isCrossDex(route) {
             return route.dex.length > 1;
         },
-        trackRouteDetails() {
-            if (this.GET_DEAL_CONDITIONS) {
-                tracking.trackEvent(Events.ROUTE_DETAILS_OPEN, {
-                    dealConditions: this.GET_DEAL_CONDITIONS,
-                    walletAddress: this.GET_DEX_WALLET?.address || 'No wallet',
-                });
-            }
-        },
     },
 };
 </script>
