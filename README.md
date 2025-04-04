@@ -24,4 +24,4 @@ swap.coffee UI SDK is [MIT licensed](LICENSE).
 
 ## Copyright
 
-swap.coffee &copy; 2024
+swap.coffee &copy; 2025
