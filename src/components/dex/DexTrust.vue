@@ -41,7 +41,7 @@
     </tooltip-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
 
 export default {

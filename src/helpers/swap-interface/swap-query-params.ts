@@ -86,13 +86,13 @@ export async function setLimitTokensByQuery(url, getFirstList, getSecondList) {
 }
 
 export function writeSendQuery(url, value) {
-  let queryParams = new URLSearchParams(url.search);
-  queryParams.set("ft", toSafeAddress(value.address));
+  let queryParams = new URLSearchParams(url?.search);
+  queryParams.set("ft", toSafeAddress(value?.address));
 }
 
 export function writeReceiveQuery(url, value) {
-  let queryParams = new URLSearchParams(url.search);
-  queryParams.set("st", toSafeAddress(value.address));
+  let queryParams = new URLSearchParams(url?.search);
+  queryParams.set("st", toSafeAddress(value?.address));
 }
 
 export function writeQuery(url, queryParams) {

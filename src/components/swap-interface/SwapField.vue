@@ -143,11 +143,14 @@ import methodsMixins from "@/mixins/methodsMixins.ts";
 import computedMixins from "@/mixins/computedMixins.ts";
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexInput from "@/components/dex/DexInput.vue";
-import DexTrust from "@/components/dex/DexTrust.vue";
+
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
 import ChevronRightIcon from "@/assets/earn/pool-page/ChevronRightIcon.vue";
 import BalanceIcon from "@/assets/earn/swap-interface/BalanceIcon.vue";
 import DexRouteInfo from "@/components/dex/DexRouteInfo.vue";
+import DexTrust from "@/components/dex/DexTrust.vue";
+import SkeletonItem from "@/components/ui/SkeletonItem.vue";
+
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 
@@ -160,7 +163,8 @@ export default {
         TooltipWrapper,
         DexTrust,
         DexInput,
-        WalletIcon
+        WalletIcon,
+        SkeletonItem
     },
     inject: [
         'updateFirstValue',

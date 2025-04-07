@@ -73,6 +73,7 @@ function setAssetForCompare(data) {
 }
 
 export async function compareTokens(data) {
+  console.log(data, 'data')
   let { tokens, tokenAmounts, changePoolNotFound, changeRefreshInfo, createAbortController } = data;
   try {
     changePoolNotFound(false);

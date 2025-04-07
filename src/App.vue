@@ -42,6 +42,11 @@ export default {
       return useSettingsStore();
     }
   },
+  provide() {
+    return {
+      updateWalletInfo: this.updateWalletInfo
+    }
+  },
   methods: {
     subscribeConnect() {
       if (this.unsubscribeConnect) {

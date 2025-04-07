@@ -720,7 +720,7 @@ methods: {
 
 		localStorage.setItem('importTokens', JSON.stringify(storage))
 
-		this.DEX_TON_TOKENS(allTokens)
+		this.dexStore.DEX_TON_TOKENS(allTokens)
 		setTimeout(() => {
 			this.searchValue = ''
 			this.chooseToken(this.unlistedToken)
