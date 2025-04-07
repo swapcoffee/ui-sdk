@@ -3,77 +3,37 @@ import App from './App.vue';
 import i18n from './i18n';
 import { pinia } from './stores';
 import './main.css'
+import { DEFAULTS, PROVIDES, REQUIRED_FOR_MODE } from "@/settings-config.ts";
 import {TonConnectUI, THEME} from "@tonconnect/ui";
 
 export function createSwapWidget(selector, options = {}) {
-    const {
-        theme = import.meta.env.VITE_DEFAULT_THEME,
-        locale = import.meta.env.VITE_DEFAULT_LOCALE,
-        tonConnectManifest,
-        tonConnectUi,
-        payload,
-        injectionMode = 'tonConnect',
-        widgetReferral = null,
-        customFeeSettings = {
-            fixed_fee: null,
-            percentage_fee: null,
-            min_percentage_fee_fixed: null,
-            max_percentage_fee_fixed: null,
-        }
-    } = options;
+    const cfg = { ...DEFAULTS, ...options };
 
-    if (injectionMode !== 'tonConnect' && injectionMode !== 'payload') {
-        throw new Error('Invalid injection mode. Must be either "tonConnect" or "payload".');
+    if (!['tonConnect', 'payload'].includes(cfg.injectionMode)) {
+        throw new Error('InjectionMode must be "tonConnect" or "payload"');
     }
 
-    if (injectionMode === 'tonConnect') {
-        if (!tonConnectManifest) {
-            throw new Error('tonConnectManifest is required for "tonConnect" mode');
-        }
-        if (!tonConnectUi) {
-            throw new Error('tonConnectUi instance is required for "tonConnect" mode');
-        }
-    } else if (injectionMode === 'payload') {
-        if (!payload) {
-            throw new Error('Payload is required for "payload" mode');
+    for (const key of REQUIRED_FOR_MODE[cfg.injectionMode]) {
+        if (!cfg[key]) {
+            throw new Error(`${key} is required when injectionMode is "${cfg.injectionMode}"`);
         }
     }
 
     const app = createApp(App);
-
     app.use(i18n);
-
-    if (injectionMode === 'tonConnect') {
-        app.provide('tonConnectManifest', tonConnectManifest);
-        app.provide('tonConnectUi', tonConnectUi);
-        app.provide('payload', null);
-    } else if (injectionMode === 'payload') {
-        app.provide('payload', payload);
-        app.provide('tonConnectManifest', null);
-        app.provide('tonConnectUi', null);
-    }
-
-    app.provide('injectionMode', injectionMode);
-
-    if (widgetReferral) {
-        app.provide('widgetReferral', widgetReferral);
-        if (customFeeSettings) {
-            app.provide('customFeeSettings', customFeeSettings);
-        }
-    } else {
-        app.provide('widgetReferral', null);
-        app.provide('customFeeSettings', null);
-    }
-
-    i18n.global.locale.value = locale;
-
     app.use(pinia);
-    app.provide('widgetTheme', theme);
 
+    PROVIDES.forEach((key) => {
+        const provideKey = key === 'theme' ? 'widgetTheme' : key;
+        const value = cfg[key === 'widgetTheme' ? 'theme' : key];
+        app.provide(provideKey, value);
+    });
+
+    i18n.global.locale.value = cfg.locale;
     app.mount(selector);
-
-    applyTheme(selector, theme);
+    applyTheme(selector, cfg.theme);
 }
+
 
 const applyTheme = (selector, theme) => {
     const widgetElement = document.querySelector(selector);
