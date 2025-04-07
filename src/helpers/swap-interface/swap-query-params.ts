@@ -9,8 +9,21 @@ function getStore(storeHook) {
     console.error("Pinia is not initialized.");
     return null;
   }
-  return storeHook();
+  const store = storeHook();
+  if (!store) {
+    console.error("Store is not available.");
+  }
+  return store;
 }
+
+let dexStore,
+limitStore
+
+setTimeout(() => {
+   dexStore = getStore(useDexStore);
+   limitStore = getStore(useLimitStore);
+}, 100)
+
 
 function getSearchParams() {
   return new URLSearchParams(window.location.search);
@@ -86,6 +99,7 @@ export async function setLimitTokensByQuery(url, getFirstList, getSecondList) {
 }
 
 export function writeSendQuery(url, value) {
+  console.log(dexStore, 'dexStore')
   let queryParams = new URLSearchParams(url?.search);
   queryParams.set("ft", toSafeAddress(value?.address));
 }
@@ -138,8 +152,6 @@ function toRawAddress(address) {
 }
 
 function saveFirstToken(route, value) {
-  const dexStore = getStore(useDexStore);
-  const limitStore = getStore(useLimitStore);
   if (!dexStore || !limitStore) return;
 
   const actions = {
@@ -162,8 +174,6 @@ function saveFirstToken(route, value) {
 }
 
 function saveSecondToken(route, value) {
-  const dexStore = getStore(useDexStore);
-  const limitStore = getStore(useLimitStore);
   if (!dexStore || !limitStore) return;
 
   const actions = {
@@ -186,8 +196,6 @@ function saveSecondToken(route, value) {
 }
 
 function saveFirstAmount(route) {
-  const dexStore = getStore(useDexStore);
-  const limitStore = getStore(useLimitStore);
   if (!dexStore || !limitStore) return;
 
   const actions = {
@@ -213,8 +221,6 @@ function saveFirstAmount(route) {
 }
 
 function saveSecondAmount(route) {
-  const dexStore = getStore(useDexStore);
-  const limitStore = getStore(useLimitStore);
   if (!dexStore || !limitStore) return;
 
   const actions = {

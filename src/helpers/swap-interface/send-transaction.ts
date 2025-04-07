@@ -17,10 +17,13 @@ function getStore(storeHook) {
 	return storeHook();
 }
 
+let dexStore,
+	transactionStore
 
-const dexStore = getStore(useDexStore);
-const transactionStore = getStore(useTransactionStore);
-
+setTimeout(() => {
+	dexStore = getStore(useDexStore);
+	transactionStore = getStore(useTransactionStore);
+}, 100)
 
 export function clearRequestInterval() {
 	clearInterval(requestInterval)

@@ -19,8 +19,13 @@ function getStore(storeHook) {
   return storeHook();
 }
 
-const dexStore = getStore(useDexStore);
-const settingsStore = getStore(useDexSettingsStore);
+let dexStore,
+    settingsStore
+
+setTimeout(() => {
+   dexStore = getStore(useDexStore);
+   settingsStore = getStore(useDexSettingsStore);
+}, 100)
 
 function saveNewMaxSplits(wallet, maxSplits) {
   if (wallet?.version && settingsStore) {
@@ -74,6 +79,7 @@ function setAssetForCompare(data) {
 
 export async function compareTokens(data) {
   console.log(data, 'data')
+  console.log(dexStore, 'dexStore')
   let { tokens, tokenAmounts, changePoolNotFound, changeRefreshInfo, createAbortController } = data;
   try {
     changePoolNotFound(false);

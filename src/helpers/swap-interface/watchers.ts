@@ -16,7 +16,11 @@ function getStore(storeHook) {
   return storeHook();
 }
 
-const dexStore = getStore(useDexStore)
+let dexStore
+
+setTimeout(() => {
+  dexStore = getStore(useDexStore)
+}, 100)
 
 function abortRequest(controller) {
   if (controller !== null) {

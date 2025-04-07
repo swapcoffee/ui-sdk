@@ -44,6 +44,7 @@ export default {
 
 .dex__group {
   display: flex;
+  flex-direction: column;
   gap: 14px;
   margin: 0 auto;
 }
