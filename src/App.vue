@@ -164,7 +164,7 @@ export default {
     },
     async getContractVersion(address: string) {
       try {
-        let wallet = this.GET_DEX_WALLET;
+        let wallet = this.dexStore.GET_DEX_WALLET;
         if (!wallet.version) {
           let res = await tonApiService.getWalletVersion(address);
           if (res?.version > 0) {
@@ -180,7 +180,7 @@ export default {
     updateWalletInfo() {
       this.balanceRequestCount++;
       console.log("updateWalletInfo called", `Count: ${this.balanceRequestCount}`);
-      this.getAccountInfo(this.GET_DEX_WALLET)
+      this.getAccountInfo(this.dexStore.GET_DEX_WALLET)
     },
     async getPinnedTokens() {
       try {
@@ -191,39 +191,51 @@ export default {
       }
     },
     async getTonTokens(retryCount = 0) {
-      if (this.tokensRequestInProgress) {
-        return;
-      }
       try {
-        this.tokensRequestInProgress = true;
-        let res = await tokenService.getTokenList()
-        let tokens = []
-        res.forEach((item) => {
-          item.type = item.address === "0:0000000000000000000000000000000000000000000000000000000000000000" ? "native" : "jetton"
-          if (item.address === "0:0000000000000000000000000000000000000000000000000000000000000000") {
-            item.address = "native"
-          }
-          item.imported = false
-          tokens.push(item)
-        })
+        const toncoinAddress = "0:0000000000000000000000000000000000000000000000000000000000000000";
+        const toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
 
-        let importedToken = JSON.parse(localStorage.getItem('importTokens'))
-        if (importedToken) {
-          importedToken.forEach((item) => {
-            let findTokensItem = tokens.find((find) => find?.address === item?.address)
-            if (findTokensItem) {
-              return
-            }
-            tokens.push(item)
-          })
+        let opts = {
+          page: 1,
+          size: 50
+        };
+
+        let res = await tokenService.getTokenListV2(opts);
+        let tokens = res.items.map((item) => {
+          item.type = item.address === toncoinAddress ? "native" : "jetton";
+          item.address = item.address === toncoinAddress ? "native" : item.address;
+          item.imported = false;
+          item.listed = true;
+          return item;
+        });
+
+        if (!tokens.some(token => token.symbol === 'TON')) {
+          tokens.unshift({ ...toncoinData, type: "native", address: "native", imported: false });
         }
 
-        this.dexStore.DEX_TON_TOKENS(tokens)
-        this.checkQueryParams(tokens)
+        let tokensFromQuery = await this.loadTokensFromQueryParams() || [];
+        tokens = this.mergeArrays(tokens, tokensFromQuery);
 
-        if (this.GET_DEX_WALLET !== null) {
-          await this.getAccountInfo(this.dexStore.GET_DEX_WALLET)
+        let pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
+        tokens = this.mergeArrays(tokens, pinnedTokens);
+
+        this.tokensWithImported = await this.checkImportTokens(tokens);
+
+        this.dexStore.DEX_TOKENS_OPTIONS({ "current_page": res.page, "total_pages": res.pages });
+
+        // если не ждать балансов юзнуть здесь DEX_TON_TOKENS
+
+        this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
+
+        if (this.dexStore.GET_DEX_WALLET !== null) {
+          let userTokens = await this.getAccountInfo(this.dexStore.GET_DEX_WALLET);
+          this.tokensWithImported = this.mergeArrays(userTokens, this.tokensWithImported);
+          this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
         }
+
+        this.checkQueryParams(this.tokensWithImported);
+        this.checkTwaParams(this.tokensWithImported);
+
       } catch (err) {
         console.error(err);
         if (retryCount < 20) {
@@ -231,8 +243,113 @@ export default {
             this.getTonTokens(retryCount + 1);
           }, 5000);
         }
-      } finally {
-        this.tokensRequestInProgress = false;
+      }
+    },
+    async loadTokensFromQueryParams() {
+      // const { ft, st } = this.$route.query;
+      let ft, st = ''
+      const addresses = [];
+
+      if (ft && ft !== "TON") {
+        addresses.push(ft);
+      }
+      if (st && st !== "TON") {
+        addresses.push(st);
+      }
+
+      if (addresses.length > 0) {
+        try {
+          return await tokenService.getTokensByAddress(addresses);
+          // this.checkQueryParams(tokens);
+        } catch (error) {
+          console.error("Ошибка при загрузке жетонов:", error);
+        }
+      }
+    },
+    async checkImportTokens(tokens) {
+      let importedToken = JSON.parse(localStorage.getItem('importTokens'));
+      if (importedToken) {
+        importedToken.forEach((item) => {
+          tokens.unshift({
+            address: item?.address,
+            name: item?.name,
+            symbol: item?.symbol,
+            decimals: item?.decimals,
+            image: item?.image,
+            trust_score: 0,
+            imported: item?.imported,
+            balance: item?.balance,
+            tvl: 0,
+            id: null,
+            price_usd: 0,
+            price_change_24h: 0,
+            holders_count: 0,
+            external_id: null,
+            stacking_pool_id: null,
+            stacking_pool: null,
+            last_updated_at: null,
+            labels: []
+          });
+        });
+      }
+      return tokens;
+    },
+    mergeArrays(first, second) {
+      return first.concat(second)
+          .filter((obj, index, self) => {
+            return obj.id == null || index === self.findIndex((t) => t?.id === obj?.id);
+          });
+    },
+    checkTwaParams(mergeTokens) {
+      if (window?.Telegram?.WebApp?.platform !== 'unknown') {
+        let startParam = window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
+
+        if (window?.Telegram?.WebApp?.disableVerticalSwipes) {
+          window?.Telegram?.WebApp?.disableVerticalSwipes();
+        }
+
+        if (startParam) {
+          let params = startParam.split('_')
+
+          const refParam = params.find((param, index) => param === 'ref' && index + 1 < params.length)
+              ? params[params.indexOf('ref') + 1] : null;
+
+
+          const userRef = params.find((param, index) =>
+              (param === 'r' || param === 'referral' || param === 'user_referral') && index + 1 < params.length
+          )
+              ? params[params.indexOf('r') + 1]
+              : null;
+
+
+          if (refParam) {
+            sessionStorage.setItem('referral_name', JSON.stringify(refParam));
+          }
+
+          if (userRef) {
+            sessionStorage.setItem('user_referral', JSON.stringify(userRef));
+          }
+          if (params.length >= 4) {
+            let ft = params[1].toUpperCase()
+            let st = params[3].toUpperCase()
+            let fa = params[5]
+
+            let first = mergeTokens.find((item) => item.symbol === ft)
+            let second = mergeTokens.find((item) => item.symbol === st)
+            if (first) {
+              this.DEX_SEND_TOKEN(first)
+              this.LIMIT_FIRST_TOKEN(first)
+            }
+            if (second) {
+              this.DEX_RECEIVE_TOKEN(second)
+              this.LIMIT_SECOND_TOKEN(second)
+            }
+            if (fa) {
+              this.DEX_SEND_AMOUNT(fa)
+              this.LIMIT_FIRST_AMOUNT(fa)
+            }
+          }
+        }
       }
     },
     isAddress(value) {

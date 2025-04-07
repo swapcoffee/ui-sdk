@@ -1,4 +1,4 @@
-import { CoffeeSdkWrapper } from '@/api/coffeeApi/sdkWrapper';
+import { CoffeeSdkWrapper } from '@/api/coffeeApi/sdkWrapper.js';
 
 class TokenService extends CoffeeSdkWrapper {
   constructor() {
@@ -10,8 +10,9 @@ class TokenService extends CoffeeSdkWrapper {
     };
   }
 
-  async getTokenList() {
-    const url = `${this.baseUrl}/api/v1/tokens/1/tokens`;
+  async getTokenListV2(params) {
+    const query = new URLSearchParams(params).toString();
+    const url = query ? `${this.baseUrl}/api/v2/tokens?${query}` : `${this.baseUrl}/api/v2/tokens`;
     try {
       const response = await fetch(url, {
         method: 'GET',
@@ -25,8 +26,62 @@ class TokenService extends CoffeeSdkWrapper {
     }
   }
 
+  async getTokensByAddress(tokensList) {
+    const url = `${this.baseUrl}/api/v2/tokens/by-addresses`;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.defaultHeaders,
+        body: JSON.stringify(tokensList)
+      });
+
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+
   async getSingleToken(searchValue) {
     const url = `${this.tonApiBaseUrl}/jettons/${searchValue}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.defaultHeaders
+      });
+
+      const data = await response.json();
+      data["metadata"]["image"] = data["preview"];
+
+      return data;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTokensByLabel(labelId, page = 1, size = 50) {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      size: size.toString(),
+      label_id: labelId.toString()
+    }).toString();
+    const url = `${this.baseUrl}/api/v2/tokens?${params}`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.defaultHeaders
+      });
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async getTokenByAddress(address) {
+    const url = `${this.baseUrl}/api/v2/tokens/address/${address}`;
     try {
       const response = await fetch(url, {
         method: 'GET',
@@ -74,7 +129,21 @@ class TokenService extends CoffeeSdkWrapper {
     }
   }
 
+  async getTokensBySymbols(symbols) {
+    const url = `${this.baseUrl}/api/v2/tokens/by-symbols`;
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: this.defaultHeaders,
+        body: JSON.stringify(symbols)
+      });
 
+      return await response.json();
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
 }
 
 export default new TokenService();

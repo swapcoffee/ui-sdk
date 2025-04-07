@@ -1,20 +1,26 @@
 .swap-coffee__sdk-widget {
     --main-btn-disabled: #323232;
-    --main-blue: #4B76FF;
-    --main-green: #32D74B;
-    --main-red: #FF5449;
-    --main-purple: #C172FF;
-    --main-yellow: #FFCF55;
+    --main-blue: #4b76ff;
+    --main-green: #32d74b;
+    --main-purple: #c172ff;
+    --main-red: #ff5449;
+    --main-yellow: #ffcf55;
     --main-white: #fff;
     --main-white50: rgba(255, 255, 255, 0.5);
     --main-text-color: #fff;
+    --text-color-reverse: #181413;
+
     --iface-blur: 5px;
     --iface-r14: 14px;
     --iface-r20: 20px;
     --iface-r100: 100px;
-    --adv-color: #FF9839;
+    --adv-color: #ff9839;
+
+    --iface-grey12: rgba(12, 12, 13, 0.12);
+    --iface-blue-bg: #007aff;
 
     --iface-white2: rgba(255, 255, 255, 0.02);
+    --iface-white3: rgba(255, 255, 255, 0.03);
     --iface-white4: rgba(255, 255, 255, 0.04);
     --iface-white6: rgba(255, 255, 255, 0.06);
     --iface-white8: rgba(255, 255, 255, 0.08);
@@ -22,35 +28,56 @@
     --iface-white12: rgba(255, 255, 255, 0.12);
     --iface-white14: rgba(255, 255, 255, 0.14);
     --iface-white16: rgba(255, 255, 255, 0.16);
-    --iface-white20: rgba(255, 255, 255, 0.20);
+    --iface-white20: rgba(255, 255, 255, 0.2);
     --iface-white24: rgba(255, 255, 255, 0.24);
-    --iface-white40: rgba(255, 255, 255, 0.40);
+    --iface-white40: rgba(255, 255, 255, 0.4);
 
-    --iface-warn-text: #FFCF55;
-    --iface-warn-border: 255, 207, 85, 0.40;
+    --iface-black1: #191919;
+
+    --modal-bg: #191919;
+
+    --iface-blue30: rgba(0, 122, 255, 0.3);
+    --iface-blue40: rgba(0, 122, 255, 0.4);
+
+    --iface-warn-text: #ffcf55;
+    --iface-warn-border: 255, 207, 85, 0.4;
     --iface-warn-bg: 255, 207, 85, 0.06;
-    --iface-error-text: #FF5449;
-    --iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.20);
+    --iface-error-text: #ff5449;
+    --iface-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.2);
 
-    --tag-green-bg: rgba(50, 215, 75, 0.10);
-    --tag-purple-bg: rgba(193, 114, 255, 0.10);
+    --tag-purple-bg: rgba(193, 114, 255, 0.1);
+
+    --earn-accent: #007aff;
+    --earn-hover: #2c95ff;
+
+    --tag-green-bg: rgba(93, 255, 84, 0.1);
 }
 
 .swap-coffee__sdk-widget.theme-coffee {
-    --main-bg-color: #0A0706;
+    --main-bg-color: #13100f;
 
-    --iface-bg: #0A0706;
-    --iface-accent-color: #EA7A3B;
-    --iface-accent-hover: #EE9562;
+    --bronze: #F6D1B0;
+    --silver: #E3EEF5;
+    --gold: #FFEEAD;
+
+    --iface-bg: #0a0706;
+    --iface-accent-color: #ef904c;
+    --iface-accent-hover: #ffad73;
     --iface-send: rgba(255, 255, 255, 0.06);
     --iface-main-bg: #181413;
     --iface-main-border: transparent;
     --iface-tooltip-bg: #181413;
     --iface-without-bg: transparent;
 
+    --iface-grey12: rgba(12, 12, 13, 0.12);
+
     --iface-border-color: rgba(255, 255, 255, 0.1);
-    --iface-border-hover: rgba(255, 255, 255, 0.20);
+    --iface-border-hover: rgba(255, 255, 255, 0.2);
     --iface-border-active: rgba(255, 255, 255, 0.24);
+
+    --earn-bg: #181514;
+
+    ---tag-green-bg: rgba(93, 255, 84, 0.1);
 }
 
 .swap-coffee__sdk-widget.theme-dark {
@@ -71,36 +98,48 @@
 }
 
 .swap-coffee__sdk-widget.theme-light {
+    --bronze: #C79971;
+    --silver: #B3B6C0;
+    --gold: #E3C06F;
+
     --main-btn-disabled: #dfdfdf;
     --main-bg-color: #f8f8f8;
-    --main-text-color: #141414;
-    --main-green: #28CD41;
-    --main-red: #E64646;
-    --main-yellow: #FFA000;
-    --adv-color: #F07844;
+    --main-text-color: #0d0d0d;
+    --text-color-reverse: #fff;
+    --main-green: #10a37f;
+    --main-red: #ea3943;
+    --main-yellow: #ffab07;
+    --adv-color: #f07844;
 
     --iface-bg: #fff;
-    --iface-accent-color: #0A84FF;
-    --iface-accent-hover: #44A6FF;
+    --iface-accent-color: #0a84ff;
+    --iface-accent-hover: #44a6ff;
     --iface-send: rgba(20, 20, 20, 0.04);
     --iface-main-bg: #fff;
     --iface-main-border: rgba(20, 20, 20, 0.08);
-    --iface-tooltip-bg: #0A0A0A;
+    --iface-tooltip-bg: #fff;
     --iface-without-bg: transparent;
 
-    --iface-border-color: rgba(20, 20, 20, 0.08);
-    --iface-border-hover: rgba(20, 20, 20, 0.20);
-    --iface-border-active: rgba(20, 20, 20, 0.24);
+    --iface-grey12: rgba(12, 12, 13, 0.12);
+    --modal-bg: #fff;
 
-    --iface-white2: rgba(20, 20, 20, 0.02);
-    --iface-white4: rgba(20, 20, 20, 0.04);
+    --iface-border-color: rgba(20, 20, 20, 0.08);
+    --iface-border-hover: rgba(20, 20, 20, 0.2);
+    --iface-border-active: rgba(20, 20, 20, 0.24);
+    --iface-white2: rgba(13, 13, 13, 0.02);
+    --iface-white3: rgba(20, 20, 20, 0.03);
+    --iface-white4: rgba(13, 13, 13, 0.04);
     --iface-white6: rgba(20, 20, 20, 0.06);
-    --iface-white8: rgba(20, 20, 20, 0.08);
-    --iface-white10: rgba(20, 20, 20, 0.10);
-    --iface-white12: rgba(20, 20, 20, 0.12);
+    --iface-white8: rgba(13, 13, 13, 0.08);
+    --iface-white10: rgba(13, 13, 13, 0.1);
+    --iface-white12: rgba(13, 13, 13, 0.12);
     --iface-white14: rgba(20, 20, 20, 0.14);
     --iface-white16: rgba(20, 20, 20, 0.16);
-    --iface-white20: rgba(20, 20, 20, 0.20);
+    --iface-white20: rgba(20, 20, 20, 0.2);
     --iface-white24: rgba(20, 20, 20, 0.24);
-    --iface-white40: rgba(20, 20, 20, 0.40);
+    --iface-white40: rgba(20, 20, 20, 0.4);
+
+    --tag-green-bg: rgba(50, 215, 75, 0.1);
+
+    --earn-bg: #fff;
 }

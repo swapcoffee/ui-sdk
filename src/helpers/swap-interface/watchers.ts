@@ -8,7 +8,6 @@ let debounce = null;
 
 function getStore(storeHook) {
   const pinia = getActivePinia();
-  console.log('pinia', pinia);
   if (!pinia) {
     console.error('Pinia is not initialized.');
     return null;
