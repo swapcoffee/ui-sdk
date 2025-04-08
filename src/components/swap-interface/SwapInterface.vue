@@ -83,8 +83,8 @@ export default {
 		return {
             // routeInfo: this.GET_DEAL_CONDITIONS,
             updateTokenModalVisible: this.openTokenModal,
-			updateFirstValue: this.changeFirstValue,
-			updateSecondValue: this.changeSecondValue,
+			      updateFirstValue: this.changeFirstValue,
+			      updateSecondValue: this.changeSecondValue,
             tokenValues: this.tokenValues
 		}
 	},

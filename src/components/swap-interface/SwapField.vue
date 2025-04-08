@@ -311,7 +311,7 @@ export default {
                 return;
             }
 
-            if (!(this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.position === 'middle')) {
+            if (!(this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA && this.position === 'middle')) {
                 let input = document.getElementById(`${this.position}_input`);
                 if (input) input.focus();
             }

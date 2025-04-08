@@ -12,7 +12,7 @@ export default {
     name: "SwapCoffeeDarkIcon",
     mixins: [IconColorMixin],
     props: {
-        customCLass: {
+        customClass: {
             type: String,
             default() {
                 return ''

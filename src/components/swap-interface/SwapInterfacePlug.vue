@@ -1,7 +1,7 @@
 <template>
     <div class="plug">
         <div class="plug__icon-wrapper">
-            <SwapCoffeeDarkIcon class="plug__swap-logo"/>
+            <SwapCoffeeDarkIcon :custom-class="'plug__swap-logo'"/>
         </div>
         <div class="plug__info">
             <h4 class="plug__title">{{ title }}</h4>
