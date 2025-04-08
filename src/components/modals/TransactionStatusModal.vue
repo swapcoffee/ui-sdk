@@ -12,7 +12,9 @@
 </template>
 
 <script lang="ts">
+import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 import ModalStatusStep from "@/components/general/ModalStatusSteps.vue";
+
 import {clearRequestInterval} from "@/helpers/swap-interface/send-transaction.ts";
 import methodsMixins from "@/mixins/methodsMixins.ts";
 
@@ -22,7 +24,7 @@ import {useTransactionStore} from "@/stores/transaction";
 
 export default {
     name: "TransactionStatusModal",
-    components: {ModalStatusStep},
+    components: {ModalStatusStep, ModalWrapper},
     props: {
         status: {
             type: String,

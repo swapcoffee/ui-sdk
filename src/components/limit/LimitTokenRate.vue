@@ -58,16 +58,19 @@
 </template>
 
 <script>
+import methodsMixins from "@/mixins/methodsMixins.ts";
+import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
+
+import {useDexStore} from "@/stores/dex";
+
 import ChevronRightIcon from "@/assets/earn/pool-page/ChevronRightIcon.vue";
 import DexInput from "@/components/dex/DexInput.vue";
 import SwitchHorizontalIcon from "@/assets/earn/swap-interface/SwitchHorizontalIcon.vue";
-import methodsMixins from "@/mixins/methodsMixins.ts";
-import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
-import {useDexStore} from "@/stores/dex";
+import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 
 export default {
     name: "LimitTokenRate",
-    components: {SwitchHorizontalIcon, DexInput, ChevronRightIcon},
+    components: {SwitchHorizontalIcon, DexInput, ChevronRightIcon, SkeletonItem},
     mixins: [methodsMixins],
     props: {
         first: {

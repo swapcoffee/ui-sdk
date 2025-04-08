@@ -39,16 +39,19 @@
 
 <script>
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
-import {profileService} from "@/api/coffeeApi/services";
 import ModalSettingItem from "@/components/general/ModalSettingsItem.vue";
-import computedMixins from "@/mixins/computedMixins.ts"
+import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 
+import {profileService} from "@/api/coffeeApi/services";
+
+import computedMixins from "@/mixins/computedMixins.ts"
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+
 import {useSettingsStore} from "@/stores/settings";
 
 export default {
     name: "LimitSettingsModal",
-    components: {ModalSettingItem, SwitchToggle},
+    components: {ModalSettingItem, SwitchToggle, ModalWrapper},
     provide() {
         return {
             updateMaxSuborders: this.changeMaxSuborders,

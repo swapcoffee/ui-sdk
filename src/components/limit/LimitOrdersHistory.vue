@@ -69,15 +69,19 @@
 </template>
 
 <script lang="ts">
-import RefreshIcon from "@/assets/earn/swap-interface/RefreshIcon.vue";
-import CancelIcon from "@/assets/limit/CancelIcon.vue";
 import {strategiesService} from "@/api/coffeeApi/services";
-import LimitHistoryItem from "@/components/limit/LimitHistoryItem.vue";
+
 import computedMixins from "@/mixins/computedMixins.ts"
-import SkeletonItem from "@/components/ui/SkeletonItem.vue";
-import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
+
+import RefreshIcon from "@/assets/earn/swap-interface/RefreshIcon.vue";
+import CancelIcon from "@/assets/limit/CancelIcon.vue";
+import LimitHistoryItem from "@/components/limit/LimitHistoryItem.vue";
+import SkeletonItem from "@/components/ui/SkeletonItem.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+import TabItem from "@/components/ui/TabItem.vue";
 
 export default {
     name: "LimitOrdersHistory",
@@ -86,7 +90,8 @@ export default {
         SkeletonItem,
         LimitHistoryItem,
         CancelIcon,
-        RefreshIcon
+        RefreshIcon,
+        TabItem
     },
     mixins: [computedMixins],
     props: {

@@ -7,7 +7,7 @@
       <div class="dex__content">
         <DexPageTest :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex" />
         <DcaPage :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA" />
-        <LimitPage screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit" />
+        <LimitPage :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit" />
       </div>
     </div>
   </div>
@@ -15,9 +15,12 @@
 
 <script lang="ts">
 import { throttle } from "@/helpers/perfomance/perfomance";
-import DexPageTest from "@/ui/dex/DexPageTest.vue";
+
 import {useDexStore} from "@/stores/dex";
+
 import {SwapActiveTab} from "@/utils/types.ts";
+
+import DexPageTest from "@/ui/dex/DexPageTest.vue";
 import DcaPage from "@/ui/dca/DcaPage.vue";
 import LimitPage from "@/ui/limit/LimitPage.vue";
 
