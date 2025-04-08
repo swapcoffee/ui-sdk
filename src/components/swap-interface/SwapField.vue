@@ -153,6 +153,7 @@ import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "SwapField",
@@ -218,7 +219,7 @@ export default {
           return useLimitStore()
         },
         isDisableInput() {
-		    return this.position !== 'up' && this.getRouteName === 'Dca'
+		    return this.position !== 'up' && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
         },
         showBalanceCondition() {
             if (this.dexStore.GET_DEX_WALLET !== null) {
@@ -259,16 +260,16 @@ export default {
         },
         showValuesSkeleton() {
             return (
-                this.getRouteName === 'Dex' && this.dexStore.GET_SWAP_MODE === 'default' && this.tokenValues.first !== ''
+                    this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.dexStore.GET_SWAP_MODE === 'default' && this.tokenValues.first !== ''
                 && Number(this.tokenValues.first) > 0 && this.dexStore.GET_DEAL_CONDITIONS === null && this.position === 'down'
             )
             || (
-                this.getRouteName === 'Dex' && this.dexStore.GET_SWAP_MODE === 'reverse' && this.tokenValues.second !== ''
+                    this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.dexStore.GET_SWAP_MODE === 'reverse' && this.tokenValues.second !== ''
                 && Number(this.tokenValues.first) > 0 && this.dexStore.GET_DEAL_CONDITIONS === null && this.position === 'up'
             )
         },
         canTokenChange() {
-            return this.getRouteName === 'Dex' || this.getRouteName === 'Limit' || this.getRouteName === 'Dca' || this.getRouteName === 'Stake'
+            return this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
         },
         getTokenBalance() {
             if (this.token?.balance) {
@@ -310,7 +311,7 @@ export default {
                 return;
             }
 
-            if (!(this.getRouteName === 'Dca' && this.position === 'middle')) {
+            if (!(this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.position === 'middle')) {
                 let input = document.getElementById(`${this.position}_input`);
                 if (input) input.focus();
             }
@@ -349,7 +350,7 @@ export default {
         getAvailableBalance(value) {
             let balance = value
 
-            if (this.getRouteName === 'Dex') {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
                 const currentDeal = this.dexStore.GET_DEAL_CONDITIONS
                     ? JSON.parse(JSON.stringify(this.dexStore.GET_DEAL_CONDITIONS))
                     : null;

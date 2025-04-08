@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { DexState, TokensByLabelPayload } from "@/utils/types";
+import {DexState, SwapActiveTab, TokensByLabelPayload} from "@/utils/types";
 
 export const useDexStore = defineStore('dex', {
 	state: (): DexState => ({
@@ -40,6 +40,7 @@ export const useDexStore = defineStore('dex', {
 			activeTab: 'all',
 		},
 		calculatedPriceImpact: null,
+		swapActiveTab: SwapActiveTab.Dex
 	}),
 
 	actions: {
@@ -116,6 +117,9 @@ export const useDexStore = defineStore('dex', {
 				...item,
 				...this.tokensPopupState,
 			}
+		},
+		SET_SWAP_ACTIVE_TAB(item: SwapActiveTab) {
+			this.swapActiveTab = item;
 		}
 	},
 	getters: {
@@ -138,5 +142,6 @@ export const useDexStore = defineStore('dex', {
 		GET_STAKING_POOL: (state) => state.stakingPool,
 		GET_TOKENS_LOADED: (state) => state.areTokensLoaded,
 		GET_CALCULATED_PI: (state) => state.calculatedPriceImpact,
+		GET_SWAP_ACTIVE_TAB: (state) => state.swapActiveTab,
 	},
 });

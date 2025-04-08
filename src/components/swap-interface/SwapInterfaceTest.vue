@@ -2,8 +2,8 @@
     <div class="interface">
         <div class="interface__swap">
             <SwapFieldController
-                :firstToken="getTokens.first"
-                :secondToken="getTokens.second"
+                :firstToken="getTokens?.first"
+                :secondToken="getTokens?.second"
                 :routeInfo="routeInfo"
                 :interfaceStatus="interfaceStatus"
             />
@@ -22,11 +22,11 @@
 <!--            />-->
             <div class="interface__button-wrapper">
                 <DexButtonWrapper
-                    v-if="getRouteName === 'Dex'"
+                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
                     :interfaceStatus="interfaceStatus"
                 />
                 <LimitButtonWrapper
-                    v-if="getRouteName === 'Limit' || getRouteName === 'Dca'"
+                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA"
                     :interfaceStatus="interfaceStatus"
                 />
             </div>
@@ -35,10 +35,10 @@
             v-if="routeInfo && tokenValues?.second > 0 && tokenValues?.first !== ''"
         />
         <LimitDetails
-            v-if="getRouteName === 'Limit' && Number(tokenValues?.rate) > 0 && tokenValues?.first !== ''"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit && Number(tokenValues?.rate) > 0 && tokenValues?.first !== ''"
         />
         <DcaDetails
-            v-if="getRouteName === 'Dca' && Number(tokenValues?.first) > 0 && tokenValues?.first !== ''"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA && Number(tokenValues?.first) > 0 && tokenValues?.first !== ''"
         />
     </div>
 </template>
@@ -63,6 +63,7 @@ import LimitDetails from "@/components/limit/LimitDetails.vue";
 import DcaDetails from "@/components/dca/DcaDetails.vue";
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "SwapInterfaceTest",
@@ -116,6 +117,9 @@ export default {
         return {}
     },
     computed: {
+      SwapActiveTab() {
+        return SwapActiveTab
+      },
         dexStore() {
               return useDexStore();
         },
@@ -123,12 +127,12 @@ export default {
               return useLimitStore();
         },
         getTokens() {
-            if (this.getRouteName === 'Dex') {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
                 return {
                     first: this.dexStore.GET_SEND_TOKEN,
                     second: this.dexStore.GET_RECEIVE_TOKEN
                 }
-            } else if (this.getRouteName === 'Limit' || this.getRouteName === 'Dca') {
+            } else if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA) {
 				return {
 					first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
                     second: this.limitStore.GET_LIMIT_SECOND_TOKEN

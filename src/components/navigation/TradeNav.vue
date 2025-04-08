@@ -30,6 +30,8 @@ import NavigationTab from "@/components/general/NavigationTab.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";
 import DexNavigationModal from "@/components/modals/DexNavigationModal.vue";
 import computedMixins from "@/mixins/computedMixins";
+import {useDexStore} from "@/stores/dex";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: 'TradeNav',
@@ -42,25 +44,28 @@ export default {
     },
   mixins: [computedMixins],
     computed: {
+        dexStore() {
+          return useDexStore()
+        },
         navActions() {
            return [
                 {
                     text: this.$t('dexNavigation.swap'),
                     desc: this.$t('tradeMode.descriptions[0]'),
-                    action: () => this.linkTo('Dex'),
-                    isActive: this.getRouteName === 'Dex'
+                    action: () => this.dexStore.SET_SWAP_ACTIVE_TAB(SwapActiveTab.Dex),
+                    isActive: this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex
                 },
                 {
                     text: this.$t('dexNavigation.limit'),
                     desc: this.$t('tradeMode.descriptions[1]'),
-                    action: () => this.linkTo('Limit'),
-                    isActive: this.getRouteName === 'Limit'
+                    action: () => this.dexStore.SET_SWAP_ACTIVE_TAB(SwapActiveTab.Limit),
+                    isActive: this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit
                 },
                 {
                     text: "DCA",
                     desc: this.$t('tradeMode.descriptions[2]'),
-                    action: () => this.linkTo('Dca'),
-                    isActive: this.getRouteName === 'Dca'
+                    action: () => this.dexStore.SET_SWAP_ACTIVE_TAB(SwapActiveTab.DCA),
+                    isActive: this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
                 },
             ]
         },

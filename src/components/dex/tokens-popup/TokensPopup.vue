@@ -141,6 +141,7 @@ import {useDexStore} from "@/stores/dex/index.ts";
 import {useLimitStore} from "@/stores/limit/index.ts";
 import {useSettingsStore} from "@/stores/settings";
 import computedMixins from "@/mixins/computedMixins.ts";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
 name: 'TokensPopup',
@@ -236,7 +237,7 @@ computed: {
 					}
 			},
 			isLimitPage() {
-					return this.getRouteName === 'Limit' || this.getRouteName === 'Dca'
+					return this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
 			},
 	currentPageByTab() {
 		return this.dexStore.GET_TOKENS_POPUP_STATE.currentPageByTab;
@@ -988,7 +989,7 @@ mounted() {
 	}
 
 	setTimeout(() => {
-		if (this.getTarget && this.getRouteName === 'Dex') {
+		if (this.getTarget && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
 			this.observer.observe(this.getTarget);
 		}
 	}, 500);

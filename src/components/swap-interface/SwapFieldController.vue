@@ -25,20 +25,20 @@
             :routeInfo="routeInfo"
         />
         <LimitTokenRate
-            v-if="getRouteName === 'Limit'"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit"
             :position="'middle'"
             :first="firstToken"
             :second="secondToken"
         />
         <LimitSubordersField
-            v-if="getRouteName === 'Limit'"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit"
             :position="'down'"
         />
         <DcaSettingsField
-            v-if="getRouteName === 'Dca'"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA"
         />
         <DcaRangeField
-            v-if="getRouteName === 'Dca'"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA"
             :position="'down'"
         />
         <SwapInterfacePlug
@@ -62,7 +62,10 @@ import SwapInterfacePlug from "@/components/swap-interface/SwapInterfacePlug.vue
 import LimitSubordersField from "@/components/limit/LimitSubordersField.vue";
 import DcaSettingsField from "@/components/dca/DcaSettingsField.vue";
 import DcaRangeField from "@/components/dca/DcaRangeField.vue";
+
+
 import {useDexStore} from "@/stores/dex";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "SwapFieldController",
@@ -119,11 +122,14 @@ export default {
         return {}
     },
     computed: {
+      SwapActiveTab() {
+        return SwapActiveTab
+      },
       dexStore() {
         return useDexStore();
       },
         plugCondition() {
-			return (this.getRouteName === 'Limit' || this.getRouteName === 'Dca')
+			return (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA)
 				&& (!this.dexStore.GET_DEX_WALLET || this.interfaceStatus === 'NOT_ELIGIBLE' || this.interfaceStatus === 'NOT_STRATEGIES_WALLET')
         },
         getPlugTitle() {
@@ -155,27 +161,27 @@ export default {
             return (this.firstToken && this.secondToken)
         },
         getSecondPosition() {
-            return this.getRouteName === 'Dex' ? 'down' : 'middle'
+            return this.dexStore.GET_SWAP_ACTIVE_TAB ===  SwapActiveTab.Dex ? 'down' : 'middle'
         },
         getFirstTitle() {
-            switch (this.getRouteName) {
-                case "Dex":
+            switch (this.dexStore.GET_SWAP_ACTIVE_TAB) {
+                case SwapActiveTab.Dex:
                     return  this.$t('swapPlug.firstTitleDex')
-                case "Limit":
+                case SwapActiveTab.Limit:
                     return this.$t('swapPlug.firstTitleLimit')
-	            case "Dca":
+	            case SwapActiveTab.DCA:
 		            return this.$t('swapPlug.firstTitleDca')
                 default:
                     return this.$t('swapPlug.assetOne')
             }
         },
         getSecondTitle() {
-            switch (this.getRouteName) {
-                case "Dex":
+            switch (this.dexStore.GET_SWAP_ACTIVE_TAB) {
+                case SwapActiveTab.Dex:
                     return this.$t("dexInterface.youReceive")
-                case "Limit":
+                case SwapActiveTab.Limit:
                     return this.$t("swapPlug.secondTitleLimit")
-	            case "Dca":
+	            case SwapActiveTab.DCA:
 		            return this.$t('swapPlug.secondTitleDca')
                 default:
                     return this.$t('swapPlug.assetTwo')

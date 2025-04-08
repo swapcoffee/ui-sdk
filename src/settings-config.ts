@@ -14,12 +14,12 @@ export const DEFAULTS = {
     liquiditySourcesList: null,
     firstTokenAmount: 0,
     sendReceiveTokenAddresses: null,
-};
+} as const;
 
 export const REQUIRED_FOR_MODE = {
     tonConnect: ['tonConnectManifest', 'tonConnectUi'],
     payload: ['payload'],
-};
+} as const;
 
 export const PROVIDES = [
     'injectionMode',
@@ -34,4 +34,4 @@ export const PROVIDES = [
     'liquiditySourcesList',
     'firstTokenAmount',
     'sendReceiveTokenAddresses',
-];
+] as const;

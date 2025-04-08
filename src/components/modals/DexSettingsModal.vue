@@ -332,6 +332,7 @@
 <script lang="ts">
 import SwitchToggle from '@/components/ui/SwitchToggle.vue';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
+import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 import computedMixins from '@/mixins/computedMixins.ts';
 import {profileService} from '@/api/coffeeApi/services/index.ts';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
@@ -344,6 +345,7 @@ export default {
     components: {
         SwitchToggle,
         TooltipWrapper,
+        ModalWrapper
     },
     mixins: [computedMixins, transactionRoutesMixin],
     inject: ['updateSettingsModalVisible'],

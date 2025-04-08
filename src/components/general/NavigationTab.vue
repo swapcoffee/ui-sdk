@@ -2,7 +2,6 @@
     <button
         class="navigation-tab"
     >
-<!--        :class="{ active: getRouteName === 'Dex' }"-->
         {{ text }}
     </button>
 </template>

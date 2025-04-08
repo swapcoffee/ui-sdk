@@ -44,8 +44,8 @@ function getPoolSelector(maxVolatility, liquiditySources) {
 function setAssetForCompare(data) {
   let { wallet, tokens, tokenAmounts, maxIntermediate, maxVolatility, maxSplits, swapMode, liquiditySources } = data;
 
-  let fromTokenAddress = tokens.first.type !== 'native' ? Address.parse(tokens.first.address).toString() : 'native';
-  let toTokenAddress = tokens.second?.type !== 'native' ? Address.parse(tokens.second.address).toString() : 'native';
+  let fromTokenAddress = tokens?.first?.type !== 'native' ? Address.parse(tokens?.first?.address).toString() : 'native';
+  let toTokenAddress = tokens?.second?.type !== 'native' ? Address.parse(tokens?.second?.address).toString() : 'native';
 
   const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
   if (wallet?.version < 5 && referralName === 'tonkeeper') {

@@ -8,7 +8,7 @@
         <TradeNav v-else />
         <div class="swap-header__group">
             <button class="swap-header__button refresh-btn"
-                    v-if="getRouteName === 'Dex'"
+                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
                     @click="refreshCompare"
             >
                 <RefreshIcon
@@ -20,7 +20,7 @@
                     @click="updateSettingsModalVisible"
             >
                 <span class="btn-text"
-                    v-if="getRouteName === 'Dex'"
+                      v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
                 >
                     {{ getSettingsText }}
                 </span>
@@ -38,6 +38,7 @@ import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import computedMixins from "@/mixins/computedMixins.ts";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "SwapHeader",
@@ -67,6 +68,9 @@ export default {
         }
     },
     computed: {
+      SwapActiveTab() {
+        return SwapActiveTab
+      },
         dexStore() {
           return useDexStore();
         },
@@ -77,17 +81,17 @@ export default {
           return useDexSettingsStore()
         },
         getSettingsText() {
-            if (this.getRouteName === 'Dex') {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
                 return `${this.dexSettingsStore.GET_SLIPPAGE}% slippage`
             }
         },
         getTokens() {
-            if (this.getRouteName === 'Dex') {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
                 return {
                     first: this.dexStore.GET_SEND_TOKEN,
                     second: this.dexStore.GET_RECEIVE_TOKEN
                 }
-            } else if (this.getRouteName === 'Limit' || this.getRouteName === 'Dca') {
+            } else if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA) {
                 return {
                     first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
                     second: this.limitStore.GET_LIMIT_SECOND_TOKEN
@@ -96,19 +100,19 @@ export default {
         },
         shouldAnimate() {
             return (
-                (this.tokenValues.first > 0 || this.tokenValues.second > 0)
-                && this.getTokens.first !== null && this.getTokens.second !== null
-                && !this.refreshInfo && this.getRouteName === 'Dex'
-                && this.processing.dex !== true
+                (this.tokenValues?.first > 0 || this.tokenValues?.second > 0)
+                && this.getTokens?.first !== null && this.getTokens?.second !== null
+                && !this.refreshInfo && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex
+                && this.processing?.dex !== true
             );
         },
     },
     methods: {
         refreshCompare() {
             if (
-                this.getTokens.first !== null &&
-                this.getTokens.second !== null &&
-                this.tokenValues.first > 0
+                this.getTokens?.first !== null &&
+                this.getTokens?.second !== null &&
+                this.tokenValues?.first > 0
             ) {
                 this.$emit('refresh', 'compareTokens');
             }

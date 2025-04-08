@@ -73,6 +73,12 @@ export interface TokensPopupState {
     activeTab: string;
 }
 
+export enum SwapActiveTab {
+    Dex = 'Dex',
+    Limit = 'Limit',
+    DCA = 'Dca',
+}
+
 export interface DexState {
     dealConditions: any | null;
     pinnedTokens: any[];
@@ -94,6 +100,7 @@ export interface DexState {
     areTokensLoaded: boolean;
     tokensPopupState: TokensPopupState;
     calculatedPriceImpact: any | null;
+    swapActiveTab: SwapActiveTab
 }
 
 export interface TokensByLabelPayload {
