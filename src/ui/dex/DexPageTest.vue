@@ -259,8 +259,6 @@ export default {
                 tokens: this.getTokens,
                 amounts: this.tokenValues,
                 abortController: this.abortController,
-                router: this.$router,
-                route: this.$route,
                 refreshData: this.refreshData
             }
         },
@@ -477,8 +475,6 @@ export default {
                     this.tokenValues.first = String(this.dexStore.GET_SEND_AMOUNT)
                 }
 
-                sendAmountWatcher(this.amountWatcherData)
-
                 if (this.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
@@ -490,8 +486,6 @@ export default {
                 if (Number(this.tokenValues.second) !== this.dexStore.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
                     this.tokenValues.second = String(this.dexStore.GET_RECEIVE_AMOUNT)
                 }
-
-                receiveAmountWatcher(this.amountWatcherData)
 
                 if (this.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);

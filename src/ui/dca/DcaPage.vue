@@ -52,9 +52,7 @@ import {
 } from "@/helpers/strategies/strategies.ts";
 import {Address} from "@ton/core";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 import resetLimitTokens from "@/mixins/resetLimitTokens";
-import { amountLimitWatcher } from "@/helpers/swap-interface/watchers";
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
@@ -442,13 +440,6 @@ export default {
                     this.tokenValues.first = this.limitStore.GET_LIMIT_FIRST_AMOUNT.toString()
                 }
 
-                amountLimitWatcher({
-                    tokens: this.getTokens,
-                    amounts: this.tokenValues,
-                    router: this.$router,
-                    routeName: 'Dca',
-                    type: 'send'
-                })
             }
         },
         'limitStore.GET_STRATEGIES_ELIGIBLE': {
