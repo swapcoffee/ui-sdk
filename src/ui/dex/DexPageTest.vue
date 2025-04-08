@@ -67,6 +67,8 @@ import swapSettings from "@/mixins/swapSettings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction/index.ts";
+import {DEFAULT_ADDRESSES} from "@/utils/consts.ts";
+import {Address} from "@ton/core";
 
 export default {
     name: 'DexPageTest',
@@ -113,7 +115,7 @@ export default {
             modalState: this.successModalState
         }
     },
-    inject: ['updateWalletInfo'],
+    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses'],
     data() {
         return {
             modals: {
@@ -285,12 +287,6 @@ export default {
                 tabVisibility: this.isVisible
             }
         },
-        trackingData() {
-            return {
-                ...this.generalData,
-                wallet: this.dexStore.GET_DEX_WALLET
-            }
-        },
         stakeTransactionData() {
             return {
                 updateProcessing: this.updateProcessing,
@@ -419,6 +415,35 @@ export default {
                 removeInterval()
             }
         },
+      toRawAddress(address) {
+        try {
+          if (address === '0:0000000000000000000000000000000000000000000000000000000000000000') {
+            return "native";
+          }
+          const parsedAddress = Address.parseFriendly(address);
+          return parsedAddress.address.toRawString();
+        } catch (error) {
+          return address;
+        }
+      },
+        setDexTokens() {
+          const startTokensAddresses = this.sendReceiveTokenAddresses?.length > 0 ?
+              this.sendReceiveTokenAddresses
+              : DEFAULT_ADDRESSES;
+
+          const rawAddresses = startTokensAddresses.map(addr => this.toRawAddress(addr));
+
+
+          const startTokens = this.dexStore.GET_TON_TOKENS.filter(token =>
+              rawAddresses.includes(token.address)
+          );
+
+          console.log("startTokens", startTokens);
+
+          this.dexStore.DEX_SEND_TOKEN(startTokens[0]);
+          this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
+
+        },
         checkWindowSize() {
             this.screenSize = window.innerWidth
         }
@@ -447,6 +472,13 @@ export default {
         removeInterval()
     },
     watch: {
+        'dexStore.GET_TON_TOKENS': {
+          handler() {
+            if (!this.dexStore.GET_SEND_TOKEN && !this.dexStore.GET_RECEIVE_TOKEN) {
+              this.setDexTokens();
+            }
+          }
+        },
         'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
                 if (this.dexStore.GET_SWAP_MODE !== 'default') {

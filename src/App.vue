@@ -17,7 +17,7 @@ import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
 export default {
   name: "App",
   components: {SwapWidget},
-  inject: ['tonConnectUi', "injectionMode", 'payload', "sendReceiveTokenAddresses"],
+  inject: ['tonConnectUi', "injectionMode", 'payload', "sendReceiveTokenAddresses", "limitedJettonLists"],
   mixins: [tonConnectMixin, methodsMixins],
   shadow: true,
   data() {
@@ -28,6 +28,7 @@ export default {
       timeout: null,
       tokensRequestInProgress: false,
       balanceRequestInProgress: false,
+      toncoinData: null
     }
   },
   computed: {
@@ -188,24 +189,43 @@ export default {
     async getTonTokens(retryCount = 0) {
       try {
         const toncoinAddress = "0:0000000000000000000000000000000000000000000000000000000000000000";
-        const toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
+        const usdtAddress = ""
+        this.toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
+        let res;
+        let tokens;
 
-        let opts = {
-          page: 1,
-          size: 50
-        };
+        if (!this.limitedJettonLists?.length > 0) {
+          let opts = {
+            page: 1,
+            size: 50
+          };
 
-        let res = await tokenService.getTokenListV2(opts);
-        let tokens = res.items.map((item) => {
-          item.type = item.address === toncoinAddress ? "native" : "jetton";
-          item.address = item.address === toncoinAddress ? "native" : item.address;
-          item.imported = false;
-          item.listed = true;
-          return item;
-        });
+          res = await tokenService.getTokenListV2(opts);
+          if (res) {
+            tokens = res.items.map((item) => {
+              item.type = item.address === toncoinAddress ? "native" : "jetton";
+              item.address = item.address === toncoinAddress ? "native" : item.address;
+              item.imported = false;
+              item.listed = true;
+              return item;
+            });
+          }
+
+        } else {
+          res = await tokenService.getTokensByAddress(this.limitedJettonLists);
+          if (res) {
+            tokens = res.map((item) => {
+              item.type = item.address === toncoinAddress ? "native" : "jetton";
+              item.address = item.address === toncoinAddress ? "native" : item.address;
+              item.imported = false;
+              item.listed = true;
+              return item;
+            });
+          }
+        }
 
         if (!tokens.some(token => token.symbol === 'TON')) {
-          tokens.unshift({ ...toncoinData, type: "native", address: "native", imported: false });
+          tokens.unshift({ ...this.toncoinData, type: "native", address: "native", imported: false });
         }
 
         let widgetTokens = await this.loadStartTokensByConfig() || [];
@@ -423,8 +443,6 @@ export default {
     if (proof) {
       this.DEX_PROOF_VERIFICATION(proof)
     }
-
-    this.loadStartTokensByConfig();
 
     setTimeout(() => {
       if (this.GET_DEX_WALLET === null) {

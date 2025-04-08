@@ -160,7 +160,7 @@ components: {
 	TokenItem
 },
 mixins: [methodsMixins, computedMixins],
-	inject: ['updateFirstToken', 'updateSecondToken', 'updateTokenPositions'],
+	inject: ['updateFirstToken', 'updateSecondToken', 'updateTokenPositions', 'limitedJettonLists'],
 	props: {
 	mode: {
 		type: String,
@@ -425,6 +425,9 @@ methods: {
 		}
 	},
 	async preloadNextPage() {
+    if (this.limitedJettonLists?.length > 0) {
+      return;
+    }
 		if (this.isPreloading || !this.hasMoreTokens) return;
 
 		this.isPreloading = true;
@@ -467,6 +470,10 @@ methods: {
 		}
 	},
 	async showMoreTokens() {
+    if (this.limitedJettonLists?.length > 0) {
+      return;
+    }
+
 		if (this.isLoadingMore) return;
 
 		this.isLoadingMore = true;
