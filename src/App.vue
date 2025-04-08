@@ -9,11 +9,9 @@ import { toUserFriendlyAddress } from "@tonconnect/ui";
 import { useDexStore } from "@/stores/dex";
 import tonConnectMixin from "@/mixins/tonConnectMixin";
 import methodsMixins from "@/mixins/methodsMixins";
-import {useSettingsStore} from "@/stores/settings";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
-import {Address} from "@ton/core";
-import {tonApiService, profileService, tokenService} from "@/api/coffeeApi/services";
+import {tonApiService, tokenService} from "@/api/coffeeApi/services";
 
 export default {
   name: "App",
@@ -32,15 +30,12 @@ export default {
     }
   },
   computed: {
-    GET_DEX_WALLET() {
-      return this.dexStore.GET_DEX_WALLET
-    },
     dexStore() {
       return useDexStore();
     },
-    settingsStore() {
-      return useSettingsStore();
-    }
+    GET_DEX_WALLET() {
+      return this.dexStore.GET_DEX_WALLET
+    },
   },
   provide() {
     return {
@@ -223,8 +218,6 @@ export default {
 
         this.dexStore.DEX_TOKENS_OPTIONS({ "current_page": res.page, "total_pages": res.pages });
 
-        // если не ждать балансов юзнуть здесь DEX_TON_TOKENS
-
         this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
 
         if (this.dexStore.GET_DEX_WALLET !== null) {
@@ -232,9 +225,6 @@ export default {
           this.tokensWithImported = this.mergeArrays(userTokens, this.tokensWithImported);
           this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
         }
-
-        this.checkQueryParams(this.tokensWithImported);
-        this.checkTwaParams(this.tokensWithImported);
 
       } catch (err) {
         console.error(err);
@@ -260,9 +250,8 @@ export default {
       if (addresses.length > 0) {
         try {
           return await tokenService.getTokensByAddress(addresses);
-          // this.checkQueryParams(tokens);
         } catch (error) {
-          console.error("Ошибка при загрузке жетонов:", error);
+          console.error(error);
         }
       }
     },
@@ -299,145 +288,6 @@ export default {
           .filter((obj, index, self) => {
             return obj.id == null || index === self.findIndex((t) => t?.id === obj?.id);
           });
-    },
-    checkTwaParams(mergeTokens) {
-      if (window?.Telegram?.WebApp?.platform !== 'unknown') {
-        let startParam = window?.Telegram?.WebApp?.initDataUnsafe?.start_param;
-
-        if (window?.Telegram?.WebApp?.disableVerticalSwipes) {
-          window?.Telegram?.WebApp?.disableVerticalSwipes();
-        }
-
-        if (startParam) {
-          let params = startParam.split('_')
-
-          const refParam = params.find((param, index) => param === 'ref' && index + 1 < params.length)
-              ? params[params.indexOf('ref') + 1] : null;
-
-
-          const userRef = params.find((param, index) =>
-              (param === 'r' || param === 'referral' || param === 'user_referral') && index + 1 < params.length
-          )
-              ? params[params.indexOf('r') + 1]
-              : null;
-
-
-          if (refParam) {
-            sessionStorage.setItem('referral_name', JSON.stringify(refParam));
-          }
-
-          if (userRef) {
-            sessionStorage.setItem('user_referral', JSON.stringify(userRef));
-          }
-          if (params.length >= 4) {
-            let ft = params[1].toUpperCase()
-            let st = params[3].toUpperCase()
-            let fa = params[5]
-
-            let first = mergeTokens.find((item) => item.symbol === ft)
-            let second = mergeTokens.find((item) => item.symbol === st)
-            if (first) {
-              this.DEX_SEND_TOKEN(first)
-              this.LIMIT_FIRST_TOKEN(first)
-            }
-            if (second) {
-              this.DEX_RECEIVE_TOKEN(second)
-              this.LIMIT_SECOND_TOKEN(second)
-            }
-            if (fa) {
-              this.DEX_SEND_AMOUNT(fa)
-              this.LIMIT_FIRST_AMOUNT(fa)
-            }
-          }
-        }
-      }
-    },
-    isAddress(value) {
-      try {
-        if (value === 'native') {
-          return 'TON'
-        }
-
-        Address.parseFriendly(value);
-        return true;
-      } catch (error) {
-        return false;
-      }
-    },
-    toRawAddress(address) {
-      try {
-        if (address === 'native') {
-          return 'TON'
-        }
-
-        const parsedAddress = Address.parseFriendly(address);
-        return parsedAddress.address.toRawString();
-      } catch (error) {
-        return address;
-      }
-    },
-    checkQueryParams(mergeTokens) {
-      const urlParams = new URLSearchParams(window.location.search);
-
-      if (urlParams.has('ref')) {
-        sessionStorage.setItem('referral_name', JSON.stringify(urlParams.get('ref')));
-      }
-      if (urlParams.has('referral') || urlParams.has('r')) {
-        sessionStorage.setItem('user_referral', JSON.stringify(urlParams.get('referral') || urlParams.get('r')));
-      }
-
-      if (urlParams.has('ft') && urlParams.has('st')) {
-        let first, second;
-
-        const ftRawAddress = this.isAddress(urlParams.get('ft')) ? this.toRawAddress(urlParams.get('ft')) : null;
-        const stRawAddress = this.isAddress(urlParams.get('st')) ? this.toRawAddress(urlParams.get('st')) : null;
-
-        first = mergeTokens.find((item) => item.address === ftRawAddress) ||
-            mergeTokens.find((item) => item.symbol === urlParams.get('ft'));
-
-        second = mergeTokens.find((item) => item.address === stRawAddress) ||
-            mergeTokens.find((item) => item.symbol === urlParams.get('st'));
-
-        if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first);
-        }
-        if (second) {
-          this.dexStore.DEX_RECEIVE_TOKEN(second);
-        }
-
-        setTimeout(() => {
-          if (urlParams.has('fa') && Number(urlParams.get('fa')) > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(urlParams.get('fa')));
-          } else if (urlParams.has('sa') && Number(urlParams.get('sa')) > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(urlParams.get('sa')));
-          }
-        }, 10);
-
-      } else if (urlParams.has('ft')) {
-        let first;
-
-        const ftRawAddress = this.isAddress(urlParams.get('ft')) ? this.toRawAddress(urlParams.get('ft')) : null;
-        first = mergeTokens.find((item) => item.address === ftRawAddress) ||
-            mergeTokens.find((item) => item.symbol === urlParams.get('ft'));
-
-        if (first) {
-          this.dexStore.DEX_SEND_TOKEN(first);
-        }
-
-        setTimeout(() => {
-          if (urlParams.has('fa') && Number(urlParams.get('fa')) > 0) {
-            this.dexStore.DEX_SEND_AMOUNT(Number(urlParams.get('fa')));
-          } else if (urlParams.has('sa') && Number(urlParams.get('sa')) > 0) {
-            this.dexStore.DEX_RECEIVE_AMOUNT(Number(urlParams.get('sa')));
-          }
-        }, 10);
-
-      } else {
-        const findToken = mergeTokens.find((item) => item.type === 'native');
-        if (findToken) {
-          this.dexStore.DEX_SEND_TOKEN(findToken);
-        }
-      }
     },
     async getTokenLabels() {
       try {

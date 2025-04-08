@@ -367,12 +367,6 @@ export default {
         this.dexStore.DEX_SEND_TOKEN(
           this.dexStore.GET_TON_TOKENS.find(token => token.address === 'native')
         );
-
-        const url = new URL(window.location.href);
-        if (url.searchParams.get('ft') !== 'TON') {
-          url.searchParams.set('ft', 'TON');
-          window.history.replaceState({}, '', url);
-        }
       }
     },
     findLabels() {

@@ -23,7 +23,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
 import InformationIcon from '@/assets/dex/icons/InformationIcon.vue';
 import { Address } from '@ton/core';

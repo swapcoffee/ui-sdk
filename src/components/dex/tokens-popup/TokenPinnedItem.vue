@@ -11,7 +11,7 @@
   </li>
 </template>
 
-<script>
+<script lang="ts">
 
 import {useDexStore} from "@/stores/dex";
 

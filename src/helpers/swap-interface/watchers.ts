@@ -1,5 +1,5 @@
 import { compareTokens } from "@/helpers/swap-interface/compare";
-import { readyCompareCondition, toSafeAddress } from '@/helpers/swap-interface/swap';
+import { readyCompareCondition } from '@/helpers/swap-interface/swap';
 import { useDexStore } from "@/stores/dex";
 import {getActivePinia} from "pinia";
 

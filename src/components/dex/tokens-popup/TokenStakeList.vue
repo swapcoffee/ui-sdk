@@ -17,7 +17,7 @@
   </ul>
 </template>
 
-<script>
+<script lang="ts">
 import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
 import {useDexStore} from "@/stores/dex";
 

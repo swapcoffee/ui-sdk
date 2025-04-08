@@ -134,8 +134,6 @@ import TokenUnlisted from '@/components/dex/tokens-popup/TokenUnlisted.vue';
 import TokenStakeList from '@/components/dex/tokens-popup/TokenStakeList.vue';
 import TokenLimitList from "@/components/dex/tokens-popup/TokenLimitList.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
-import {writeReceiveQuery, writeSendQuery} from "@/helpers/swap-interface/swap-query-params.ts";
-
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useLimitStore} from "@/stores/limit/index.ts";
@@ -680,24 +678,18 @@ methods: {
 									this.closePopup()
 							} else {
 									if (this.getTokens.second?.address === item?.address) {
-											writeSendQuery(this.$route, this.getTokens.second)
-											writeReceiveQuery(this.$route, this.getTokens.first)
 											this.updateTokenPositions()
 											this.closePopup()
 									} else if (this.getTokens.first?.address !== item?.address) {
-											writeSendQuery(this.$route, item)
 											this.updateFirstToken(item)
 											this.closePopup()
 									}
 							}
 					} else if (this.mode === 'RECEIVE') {
 							if (this.getTokens.first?.address === item?.address) {
-									writeSendQuery(this.$route, this.getTokens.second)
-									writeReceiveQuery(this.$route, this.getTokens.first)
 									this.updateTokenPositions()
 									this.closePopup()
 							} else if (this.getTokens.second?.address !== item?.address) {
-									writeReceiveQuery(this.$route, item)
 									this.updateSecondToken(item);
 									this.closePopup();
 							}

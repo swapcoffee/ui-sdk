@@ -6,7 +6,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
 import {useDexStore} from "@/stores/dex/index.ts";
 

@@ -51,12 +51,12 @@ import {
 } from "@/helpers/swap-interface/send-transaction.ts";
 import {
     changeSettingsWatcher, expertModeWatcher,
-    receiveAmountWatcher, receiveTokenWatcher,
+    receiveTokenWatcher,
     refreshAll,
     refreshDex,
     removeInterval,
     removeTimeout,
-    sendAmountWatcher, sendTokenWatcher
+    sendTokenWatcher
 } from "@/helpers/swap-interface/watchers.ts";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import {defineAsyncComponent} from "vue";
