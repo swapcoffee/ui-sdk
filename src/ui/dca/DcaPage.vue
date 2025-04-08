@@ -317,7 +317,7 @@ export default {
                 this.limitStore.LIMIT_FIRST_TOKEN(native)
                 // this.getSupportedReceiveTokens(native)
             }
-            if (usdt) this.LIMIT_SECOND_TOKEN(usdt)
+            if (usdt) this.limitStore.LIMIT_SECOND_TOKEN(usdt)
         },
         async getSupportedSendTokens() {
             try {

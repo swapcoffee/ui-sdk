@@ -466,7 +466,7 @@ export default {
             let usdt = this.dexStore.GET_TON_TOKENS.find((item) => item?.address === this.usdtAddress)
 
             if (native) {
-                this.LIMIT_FIRST_TOKEN(native)
+                this.limitStore.LIMIT_FIRST_TOKEN(native)
                 // this.getSupportedReceiveTokens(native.address)
             }
             if (usdt) this.limitStore.LIMIT_SECOND_TOKEN(usdt)
