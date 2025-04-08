@@ -81,101 +81,6 @@ export function setDebounceForRequest(
   }, 200);
 }
 
-export function amountLimitWatcher({ tokens, amounts, routeName, type }) {
-  const isSend = type === 'send';
-  const amountKey = isSend ? 'fa' : 'sa';
-  const amount = isSend ? amounts.first : amounts.second;
-
-  if (amount > 0) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('ft', toSafeAddress(tokens.first?.address));
-    url.searchParams.set('st', toSafeAddress(tokens.second?.address));
-    url.searchParams.set(amountKey, amount);
-    window.history.pushState({}, '', url.toString());
-  }
-}
-
-export function sendAmountWatcher({
-                                    tokens,
-                                    amounts,
-                                    abortController,
-                                    route,
-                                    refreshData,
-                                  }) {
-  if (tokens.first !== null && tokens.second !== null && amounts.first > 0) {
-    refreshAll(refreshData);
-    const url = new URL(window.location.href);
-    url.searchParams.set('ft', toSafeAddress(tokens.first?.address));
-    url.searchParams.set('st', toSafeAddress(tokens.second?.address));
-    url.searchParams.set('fa', amounts.first);
-    window.history.pushState({}, '', url.toString());
-  } else if (tokens.first !== null && amounts.first > 0) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('ft', toSafeAddress(tokens.first?.address));
-    url.searchParams.set('fa', amounts.first);
-    window.history.pushState({}, '', url.toString());
-  } else {
-    abortRequest(abortController);
-
-    if (amounts.first === 0) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('fa');
-
-      if (tokens.first !== null && tokens.first?.address) {
-        url.searchParams.set('ft', toSafeAddress(tokens.first?.address));
-      }
-
-      window.history.pushState({}, '', url.toString());
-    }
-
-    if (tokens.second === null) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('st');
-      window.history.pushState({}, '', url.toString());
-    }
-
-    clearInterval(interval);
-  }
-}
-
-export function receiveAmountWatcher({
-                                       tokens,
-                                       amounts,
-                                       abortController,
-                                       route,
-                                       refreshData,
-                                     }) {
-  if (tokens.first !== null && tokens.second !== null && amounts.second > 0) {
-    refreshAll(refreshData);
-    const url = new URL(window.location.href);
-    url.searchParams.set('ft', toSafeAddress(tokens.first?.address));
-    url.searchParams.set('st', toSafeAddress(tokens.second?.address));
-    url.searchParams.set('sa', amounts.second);
-    window.history.pushState({}, '', url.toString());
-  } else {
-    abortRequest(abortController);
-
-    if (amounts.second === 0) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('sa');
-
-      if (tokens.second !== null && tokens.second?.address) {
-        url.searchParams.set('sa', toSafeAddress(tokens.second?.address));
-      }
-
-      window.history.pushState({}, '', url.toString());
-    }
-
-    if (tokens.second === null) {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('st');
-      window.history.pushState({}, '', url.toString());
-    }
-
-    clearInterval(interval);
-  }
-}
-
 export function sendTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }) {
   if (readyCompareCondition(tokens, amounts)) {
     refreshAll(refreshData);
@@ -216,7 +121,6 @@ export function changeSettingsWatcher({ tokens, amounts, dealConditions, refresh
 export function expertModeWatcher({ tokens, amounts, _, refreshData }) {
   if (readyCompareCondition(tokens, amounts)) {
     refreshAll(refreshData);
-    receiveAmountWatcher();
   }
 }
 
