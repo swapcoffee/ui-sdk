@@ -79,6 +79,7 @@ createSwapWidget('#swap-widget-component', {
     },
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "TEST_WIDGET_REFERRAL",
+    sendReceiveTokenAddresses: ["0:0000000000000000000000000000000000000000000000000000000000000000", "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"],
     customFeeSettings: {
         percentage_fee: 3000,
         min_percentage_fee_fixed: '50000000',
