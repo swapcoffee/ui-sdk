@@ -39,7 +39,6 @@
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import {defineAsyncComponent} from "vue";
-import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import {strategiesService, tokenService} from "@/api/coffeeApi/services";
 import {Address} from "@ton/core";
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
@@ -52,9 +51,7 @@ import {
 } from "@/helpers/strategies/strategies.ts";
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import {setLimitTokensByQuery} from "@/helpers/swap-interface/swap-query-params.ts";
 import resetLimitTokens from "@/mixins/resetLimitTokens";
-import { amountLimitWatcher } from "@/helpers/swap-interface/watchers";
 import {useLimitStore} from "@/stores/limit";
 import {useDexStore} from "@/stores/dex";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
@@ -83,7 +80,6 @@ export default {
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")
         }),
-        SwapInterface,
         DexSettings: defineAsyncComponent(() => {
             return import('@/components/modals/DexSettingsModal.vue');
         }),
@@ -383,21 +379,12 @@ export default {
                  const availableReceiveTokens = this.limitStore.GET_LIMIT_RECEIVE_LIST;
                  if (!availableReceiveTokens.some(token => token.address === this.getTokens.second.address)) {
                      this.changeSecondToken(availableReceiveTokens[0]);
-                     const { query } = this.$route;
-                    //  if (query.st) {
-                    //      delete query.st;
-                    //      this.$router.replace({ query });
-                    //  }
                  }
          } else if (changedToken === 'receive') {
                 const availableSendTokens = this.limitStore.GET_LIMIT_SEND_LIST;
                 if (!availableSendTokens.some(token => token.address === this.getTokens.first.address)) {
                     this.changeFirstToken(availableSendTokens[0]);
-                    const { query } = this.$route;
-                    // if (query.ft) {
-                    //     delete query.ft;
-                    //     this.$router.replace({ query });
-                    // }
+
                 }
             }
         },
@@ -448,7 +435,7 @@ export default {
                 if (!this.dexStore.GET_DEX_WALLET) {
                     this.tonConnectUi.openModal()
                 } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
-                    this.$router.push({name: 'Stake', params: {name: 'CES'}})
+                    // this.$router.push({name: 'Stake', params: {name: 'CES'}})
                 } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                     await createStrategiesWallet(this.updateProcessing)
                     this.successModalState.mode = 'deploy-smart'
@@ -539,12 +526,8 @@ export default {
         }
 
         if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
-            if (this.$route.query?.ft || this.$route.query?.st) {
-                setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
-            } else {
                 this.setDefaultTokenPair()
                 this.getSupportedSendTokens()
-            }
             setTimeout(() => {
                 this.pageLoaded = true
             }, 500)
@@ -559,16 +542,12 @@ export default {
         'dexStore.GET_TON_TOKENS': {
             handler() {
                 if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
-                    if (this.$route.query?.ft || this.$route.query?.st) {
-                        setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
-                    } else {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
                             if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
                                 this.getSupportedSendTokens()
                             }
                         }, 300)
-                    }
                     setTimeout(() => {
                         this.pageLoaded = true
                     }, 500)
@@ -633,14 +612,6 @@ export default {
                         this.tokenValues.second = '0'
                     }
                 }, 200)
-
-                amountLimitWatcher({
-                    tokens: this.getTokens,
-                    amounts: this.tokenValues,
-                    router: this.$router,
-                    routeName: 'Limit',
-                    type: 'send'
-                })
 
                 setTimeout(() => {
                     this.isAutochange = false

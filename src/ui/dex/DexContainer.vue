@@ -17,18 +17,13 @@
 </template>
 
 <script lang="ts">
-import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import {disablePageScroll, enablePageScroll} from "scroll-lock";
 import computedMixins from "@/mixins/computedMixins.ts"
-import ChartWrapper from "@/components/dex/ChartWrapper.vue";
 import {throttle} from "@/helpers/perfomance/perfomance.ts";
 import { createTabVisibilityWatcher } from '@/helpers/swap-interface/watchers.ts';
 
 export default {
     name: "DexContainer",
-    components: {
-        SwapInterface
-    },
     mixins: [computedMixins],
     props: {
         tonConnectUi: {

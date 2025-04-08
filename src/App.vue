@@ -174,7 +174,6 @@ export default {
     },
     updateWalletInfo() {
       this.balanceRequestCount++;
-      console.log("updateWalletInfo called", `Count: ${this.balanceRequestCount}`);
       this.getAccountInfo(this.dexStore.GET_DEX_WALLET)
     },
     async getPinnedTokens() {
@@ -208,7 +207,6 @@ export default {
           tokens.unshift({ ...toncoinData, type: "native", address: "native", imported: false });
         }
 
-        let tokensFromQuery = await this.loadTokensFromQueryParams() || [];
         tokens = this.mergeArrays(tokens, tokensFromQuery);
 
         let pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
@@ -232,26 +230,6 @@ export default {
           setTimeout(() => {
             this.getTonTokens(retryCount + 1);
           }, 5000);
-        }
-      }
-    },
-    async loadTokensFromQueryParams() {
-      // const { ft, st } = this.$route.query;
-      let ft, st = ''
-      const addresses = [];
-
-      if (ft && ft !== "TON") {
-        addresses.push(ft);
-      }
-      if (st && st !== "TON") {
-        addresses.push(st);
-      }
-
-      if (addresses.length > 0) {
-        try {
-          return await tokenService.getTokensByAddress(addresses);
-        } catch (error) {
-          console.error(error);
         }
       }
     },
