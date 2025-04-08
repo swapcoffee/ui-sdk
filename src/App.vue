@@ -1,6 +1,6 @@
 <template>
   <SwapWidget
-      :tonConnectUi="tonConnectUi"
+      :ton-connect="tonConnectUi"
   />
 </template>
 

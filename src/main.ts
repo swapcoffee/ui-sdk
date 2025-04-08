@@ -3,10 +3,10 @@ import App from './App.vue';
 import i18n from './i18n';
 import { pinia } from './stores';
 import './main.css'
-import { DEFAULTS, PROVIDES, REQUIRED_FOR_MODE } from "@/settings-config.ts";
+import {DEFAULT_SETTINGS_INTERFACE, DEFAULTS, PROVIDES, REQUIRED_FOR_MODE} from "@/settings-config.ts";
 import {TonConnectUI, THEME} from "@tonconnect/ui";
 
-export function createSwapWidget(selector, options = {}) {
+export function createSwapWidget(selector, options: DEFAULT_SETTINGS_INTERFACE = {}) {
     const cfg = { ...DEFAULTS, ...options };
 
     if (!['tonConnect', 'payload'].includes(cfg.injectionMode)) {
@@ -71,7 +71,7 @@ const tonConnectUiInstance = new TonConnectUI({
 
 
 createSwapWidget('#swap-widget-component', {
-    theme: 'light',
+        theme:  'light',
     locale: 'en',
     injectionMode: "tonConnect",
     tonConnectManifest: {

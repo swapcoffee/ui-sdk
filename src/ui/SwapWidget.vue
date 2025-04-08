@@ -5,9 +5,21 @@
         <div id="limit_history" class="dex__history"></div>
       </div>
       <div class="dex__content">
-        <DexPageTest :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex" />
-        <DcaPage :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA" />
-        <LimitPage :screen-size="600" v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit" />
+        <DexPageTest
+            :screen-size="600"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
+            :ton-connect-ui="tonConnect"
+        />
+        <DcaPage
+            :screen-size="600"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA"
+            :ton-connect-ui="tonConnect"
+        />
+        <LimitPage
+            :screen-size="600"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit"
+            :ton-connect-ui="tonConnect"
+        />
       </div>
     </div>
   </div>
@@ -31,6 +43,12 @@ export default {
     return {
       screenSize: window.innerWidth,
     };
+  },
+  props: {
+    tonConnect: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     SwapActiveTab() {

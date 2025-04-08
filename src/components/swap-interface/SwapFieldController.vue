@@ -41,12 +41,6 @@
             v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA"
             :position="'down'"
         />
-        <SwapInterfacePlug
-            v-if="plugCondition"
-            :title="getPlugTitle"
-            :firstText="getPlugFirstText"
-            :secondText="getPlugSecondText"
-        />
     </div>
 </template>
 
@@ -58,7 +52,6 @@ import DisabledSwitch from "@/assets/earn/swap-interface/DisabledSwitch.vue";
 import computedMixins from "@/mixins/computedMixins.ts"
 import LimitTokenRate from "@/components/limit/LimitTokenRate.vue";
 import SwapCoffeeDarkIcon from "@/assets/limit/SwapCoffeeDarkIcon.vue";
-import SwapInterfacePlug from "@/components/swap-interface/SwapInterfacePlug.vue";
 import LimitSubordersField from "@/components/limit/LimitSubordersField.vue";
 import DcaSettingsField from "@/components/dca/DcaSettingsField.vue";
 import DcaRangeField from "@/components/dca/DcaRangeField.vue";
@@ -74,7 +67,6 @@ export default {
         DcaRangeField,
         DcaSettingsField,
         LimitSubordersField,
-        SwapInterfacePlug,
         SwapCoffeeDarkIcon,
         LimitTokenRate,
         DisabledSwitch,
@@ -128,35 +120,6 @@ export default {
       dexStore() {
         return useDexStore();
       },
-        plugCondition() {
-			return (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA)
-				&& (!this.dexStore.GET_DEX_WALLET || this.interfaceStatus === 'NOT_ELIGIBLE' || this.interfaceStatus === 'NOT_STRATEGIES_WALLET')
-        },
-        getPlugTitle() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
-                return this.$t('swapPlug.titleClosed')
-            } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
-                return this.$t('swapPlug.titleReady')
-            } else if (this.interfaceStatus === "LOADING") {
-                return this.$t('swapPlug.titleLoading')
-            }
-        },
-        getPlugFirstText() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
-                return this.$t('swapPlug.descriptionTextClosed')
-            } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
-                return this.$t('swapPlug.descriptionTextReady')
-            } else if (this.interfaceStatus === "LOADING") {
-                return this.$t('swapPlug.descriptionTextLoading')
-            }
-        },
-        getPlugSecondText() {
-            if (this.interfaceStatus === 'NOT_ELIGIBLE' || !this.dexStore.GET_DEX_WALLET) {
-                return this.$t('swapPlug.description2TextClosed')
-            } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
-                return this.$t(`swapPlug.description2TextReady`)
-            }
-        },
         canSwapTokenPositions() {
             return (this.firstToken && this.secondToken)
         },

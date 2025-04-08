@@ -44,27 +44,27 @@ export default {
                 this.loadingState === true
             );
         },
-        buttonText() {
-            if (this.processing.limit === true) {
-                return 'Creating'
-            } else if (this.processing.createWallet) {
-                return 'Deploying'
-            } else if (this.interfaceStatus === 'NOT_CONNECTED') {
-                return this.$t('dexButton.connectWallet');
-            } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
-                return this.$t('dexButton.stakeOneThousand');
-            } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
-				return this.$t('dexButton.deploySmartContract');
-            } else if (this.interfaceStatus === 'NOT_ENOUGH' && this.tokenValues.first > 0) {
-                return this.$t('dexButton.notEnough');
-            } else if (this.interfaceStatus === 'NOT_AMOUNT') {
-                return this.$t('dexButton.enterAmount');
-            } else if (this.interfaceStatus === 'NOT_RANGE') {
-                return this.$t('dexButton.choosePriceRange')
-            } else if (this.interfaceStatus === 'READY_DEX') {
-                return this.$t('dexButton.createOrder')
-            }
-        },
+      buttonText() {
+        if (this.processing.limit === true) {
+          return 'Creating'
+        } else if (this.processing.createWallet) {
+          return 'Deploying'
+        } else if (this.interfaceStatus === 'NOT_CONNECTED') {
+          return this.$t('dexButton.connectWallet');
+        } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
+          return this.$t('dexButton.stakeOneThousand');
+        } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
+          return this.$t('dexButton.deploySmartContract');
+        } else if (this.interfaceStatus === 'NOT_ENOUGH' && this.tokenValues.first > 0) {
+          return this.$t('dexButton.notEnough');
+        } else if (this.interfaceStatus === 'NOT_AMOUNT') {
+          return this.$t('dexButton.enterAmount');
+        } else if (this.interfaceStatus === 'NOT_RANGE') {
+          return this.$t('dexButton.choosePriceRange')
+        } else if (this.interfaceStatus === 'READY_DEX') {
+          return this.$t('dexButton.createOrder')
+        }
+      },
     },
     mounted() {
         setTimeout(() => {
