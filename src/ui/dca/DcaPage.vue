@@ -374,7 +374,7 @@ export default {
                 if (!this.dexStore.GET_DEX_WALLET) {
                     this.tonConnectUi.openModal()
                 } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
-                    this.$router.push({name: 'Stake', params: {name: 'CES'}})
+                    //TODO: SWAP-COFFEE LINK TO STAKING // this.$router.push({name: 'Stake', params: {name: 'CES'}})
                 } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                     await createStrategiesWallet(this.updateProcessing)
                     this.successModalState.mode = 'deploy-smart'
@@ -408,16 +408,11 @@ export default {
         }
 
         if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
-            if (this.$route.query?.ft || this.$route.query?.st) {
-                setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
-            } else {
                 this.setDefaultTokenPair()
                 this.getSupportedSendTokens()
-            }
             setTimeout(() => {
                 this.pageLoaded = true
             }, 500)
-            // this.pageLoaded = true
         }
     },
     unmounted() {
@@ -429,16 +424,12 @@ export default {
         'dexStore.GET_TON_TOKENS': {
             handler() {
                 if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
-                    if (this.$route.query?.ft || this.$route.query?.st) {
-                        setLimitTokensByQuery(this.$route, this.getSupportedSendTokens, this.getSupportedReceiveTokens)
-                    } else {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
                             if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
                                 this.getSupportedSendTokens()
                             }
                         }, 300)
-                    }
                     setTimeout(() => {
                         this.pageLoaded = true
                     }, 500)

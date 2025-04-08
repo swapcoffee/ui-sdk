@@ -41,7 +41,6 @@
 </template>
 
 <script lang="ts">
-import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import {
     clearRequestInterval,
@@ -79,7 +78,6 @@ export default {
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")
         }),
-        SwapInterface,
         DexSettings: defineAsyncComponent(() => {
             return import('@/components/modals/DexSettingsModal.vue');
         }),
