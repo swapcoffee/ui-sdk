@@ -12,11 +12,12 @@ import methodsMixins from "@/mixins/methodsMixins";
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
 import {tonApiService, tokenService} from "@/api/coffeeApi/services";
+import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
 
 export default {
   name: "App",
   components: {SwapWidget},
-  inject: ['tonConnectUi', "injectionMode", 'payload'],
+  inject: ['tonConnectUi', "injectionMode", 'payload', "sendReceiveTokenAddresses"],
   mixins: [tonConnectMixin, methodsMixins],
   shadow: true,
   data() {
@@ -207,7 +208,8 @@ export default {
           tokens.unshift({ ...toncoinData, type: "native", address: "native", imported: false });
         }
 
-        tokens = this.mergeArrays(tokens, tokensFromQuery);
+        let widgetTokens = await this.loadStartTokensByConfig() || [];
+        tokens = this.mergeArrays(tokens, widgetTokens);
 
         let pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
         tokens = this.mergeArrays(tokens, pinnedTokens);
@@ -273,6 +275,17 @@ export default {
         this.dexStore.DEX_TOKEN_LABELS(res?.items)
       } catch(err) {
         console.error(err)
+      }
+    },
+    async loadStartTokensByConfig() {
+      const addresses = (this.sendReceiveTokenAddresses?.length > 0)
+          ? this.sendReceiveTokenAddresses
+          : DEFAULT_ADDRESSES;
+
+      try {
+        return await tokenService.getTokensByAddress(addresses);
+      } catch (e) {
+        console.error(e);
       }
     },
     async getAccountInfo(wallet) {
@@ -410,6 +423,8 @@ export default {
     if (proof) {
       this.DEX_PROOF_VERIFICATION(proof)
     }
+
+    this.loadStartTokensByConfig();
 
     setTimeout(() => {
       if (this.GET_DEX_WALLET === null) {

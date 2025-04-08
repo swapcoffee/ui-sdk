@@ -8,3 +8,9 @@ export const ReadonlySdkEvent = Object.freeze({
 } as const);
 
 export type EventAction = (typeof ReadonlySdkEvent)[keyof typeof ReadonlySdkEvent];
+
+export const DEFAULT_ADDRESSES = [
+    "0:0000000000000000000000000000000000000000000000000000000000000000",
+    "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"
+];
+
