@@ -31,7 +31,7 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
-      mev_protection
+      mev_protection,
       pool_selector
     } = requestParams;
 
@@ -43,7 +43,7 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
-      mev_protection
+      mev_protection,
       pool_selector: pool_selector ?? {
         ...pool_selector,
         dexes: dexes ?? ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers']
