@@ -306,14 +306,14 @@
                     </div>
                 </div>
 
-                <p class="settings__text">
+                <p class="settings__text" v-if="!liquiditySourcesList?.length > 0">
                     {{ $t('dexSettings.sources.title') }}
                 </p>
-                <p class="settings__description">
+                <p class="settings__description" v-if="!liquiditySourcesList?.length > 0">
                     {{ $t('dexSettings.sources.text') }}
                 </p>
 
-                <div class="settings__block">
+                <div class="settings__block" v-if="!liquiditySourcesList?.length > 0">
                     <ul class="settings__block-list">
                         <li v-for="source in liquiditySources" :key="source" class="settings__block-item block-item">
                             <div class="block-item__left">
@@ -358,7 +358,7 @@ export default {
         MevSettings
     },
     mixins: [computedMixins, transactionRoutesMixin],
-    inject: ['updateSettingsModalVisible'],
+    inject: ['updateSettingsModalVisible', 'liquiditySourcesList'],
     data() {
         return {
             cashback: false,
@@ -542,6 +542,8 @@ export default {
             }
         },
         changeLiquiditySources(value, notSave) {
+            if (this.liquiditySourcesList?.length > 0) return;
+
             this.liquiditySources = this.liquiditySources.map(el =>
                 el.name === value ? { ...el, enabled: !el.enabled } : el
             );

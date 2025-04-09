@@ -18,13 +18,19 @@ export function generatePayload() {
 }
 
 export default {
-  inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode'],
+  inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode', "liquiditySourcesList"],
   computed: {
     dexStore() {
       return useDexStore();
     },
     dexSettingsStore() {
       return useDexSettingsStore();
+    },
+    customLiquiditySourcesList() {
+      if (this.liquiditySourcesList.length > 0) {
+        return this.liquiditySourcesList;
+      }
+      return null;
     },
     settingsStore() {
       return useSettingsStore();
@@ -263,12 +269,10 @@ export default {
           maxPoolVolatility: this.GET_MAX_POOL_VOLATILITY,
           maxIntermediateTokens: this.GET_MAX_INTERMEDIATE_TOKENS,
           maxSplits: this.GET_MAX_SPLITS,
-          liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
           mevProtection: this.dexSettingsStore.GET_MEV_PROTECTION_VALUE,
-          mevMinValueUsd: this.dexSettingsStore.GET_MEV_MIN_USD
+          mevMinValueUsd: this.dexSettingsStore.GET_MEV_MIN_USD,
+          liquiditySources: this.customLiquiditySourcesList ? this.customLiquiditySourcesList : this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
         };
-
-        console.log(dex, 'dex')
 
         await profileService.writeStorage(
           this.GET_DEX_WALLET?.address,
