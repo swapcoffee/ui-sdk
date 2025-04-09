@@ -2,6 +2,7 @@ import dedustIcon from '@/assets/contributors/dedust-icon.png';
 import stonfiIcon from '@/assets/contributors/stonfi-icon.png';
 import stonfiV2Icon from '@/assets/contributors/stonfi-v2-icon.png';
 import toncoIcon from '@/assets/contributors/tonco.png';
+import tonstakersIcon from '@/assets/contributors/tonstakers.svg';
 import { useDexStore } from "@/stores/dex";
 
 export default {
@@ -79,6 +80,11 @@ export default {
           return {
             name: 'TONCO',
             imageUrl: toncoIcon,
+          };
+        case 'tonstakers':
+          return {
+            name: 'Tonstakers',
+            imageUrl: tonstakersIcon,
           };
       }
       throw new Error('Unknown DEX source name');

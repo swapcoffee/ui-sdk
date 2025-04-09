@@ -36,16 +36,19 @@ function saveNewMaxSplits(wallet, maxSplits) {
 }
 
 function getPoolSelector(maxVolatility, liquiditySources) {
-  const result = { dexes: liquiditySources };
+  const result = {
+    dexes: liquiditySources,
+  };
+
   if (Number(maxVolatility) !== -1) {
-    result.max_volatility = maxVolatility / 100;
+    result.max_volatility = maxVolatility / 100 ;
   }
+
   return result;
 }
 
 function setAssetForCompare(data) {
-  let { wallet, tokens, tokenAmounts, maxIntermediate, maxVolatility, maxSplits, swapMode, liquiditySources, mevProtection } = data;
-
+  let { wallet, tokens, tokenAmounts, maxIntermediate, maxVolatility, maxSplits, swapMode, liquiditySources, mevProtection, customFeeSettings, widgetReferral } = data;
   let fromTokenAddress = tokens?.first?.type !== 'native' ? Address.parse(tokens?.first?.address).toString() : 'native';
   let toTokenAddress = tokens?.second?.type !== 'native' ? Address.parse(tokens?.second?.address).toString() : 'native';
 
@@ -55,10 +58,11 @@ function setAssetForCompare(data) {
   }
   // =============
 
-  const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
-  if (wallet?.version < 5 && referralName === 'tonkeeper') {
+  if (widgetReferral && customFeeSettings) {
     maxSplits = 3;
   }
+
+  console.log(liquiditySources)
 
   let asset = {
     input_token: { blockchain: 'ton', address: fromTokenAddress },
@@ -73,7 +77,7 @@ function setAssetForCompare(data) {
   if (wallet) {
     asset.additional_data = {
       sender_address: Address.parseRaw(wallet.address).toString(),
-      referral_name: isInsideWalletBrowser('tonkeeper') ? 'tonkeeper' : referralName,
+      referral_name: widgetReferral,
     };
   }
 

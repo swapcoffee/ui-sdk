@@ -123,7 +123,7 @@ export default {
             modalState: this.successModalState
         }
     },
-    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount'],
+    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount', 'customFeeSettings', 'widgetReferral'],
     data() {
         return {
             modals: {
@@ -245,7 +245,9 @@ export default {
                 changeRefreshInfo: this.changeRefreshInfo,
                 createAbortController: this.createAbortController,
                 liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
-                mevProtection: false
+                mevProtection: false,
+                customFeeSettings: this.customFeeSettings,
+                widgetReferral: this.widgetReferral,
             }
 
             if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE && ((Number(this.tokenValues.first) * Number(this.getTokens?.first?.price_usd)) >= Number(this.dexSettingsStore.GET_MEV_MIN_USD))) {
@@ -318,6 +320,8 @@ export default {
                 wallet: this.dexStore.GET_DEX_WALLET,
                 dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
                 slippage: this.dexSettingsStore.GET_SLIPPAGE,
+                widgetReferral: this.widgetReferral,
+                customFeeSettings: this.customFeeSettings,
                 tonConnectUi: this.tonConnectUi,
             }
 
@@ -471,7 +475,7 @@ export default {
           this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
 
           if (this.firstTokenAmount) {
-            this.changeFirstValue(this.firstTokenAmount)
+            this.changeFirstValue(String(this.firstTokenAmount));
           }
 
         },

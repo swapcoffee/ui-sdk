@@ -120,6 +120,8 @@ export async function dexTransaction({
                                          wallet,
                                          dealConditions,
                                          slippage,
+										 widgetReferral,
+										 customFeeSettings,
                                          tonConnectUi,
 	                                     mevProtection = false
                                      }) {
@@ -149,14 +151,13 @@ export async function dexTransaction({
 
         const sender = Address.parseRaw(wallet?.address).toString();
 
-        const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
-
         const trInfo = (await dexService.getRouteTransactions(
             dealConditions,
             sender,
             slippage / 100,
-            referralName,
-			mevProtection
+						mevProtection,
+			widgetReferral,
+			customFeeSettings,
         ))?.data;
 
         transactionStore.SAVE_SWAP_TRANSACTION_INFO(trInfo);
