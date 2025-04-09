@@ -437,7 +437,7 @@ export default {
           const startTokens = this.dexStore.GET_TON_TOKENS.filter(token =>
               rawAddresses.includes(token.address)
           );
-
+          console.log(this.dexStore.GET_TON_TOKENS);
           this.dexStore.DEX_SEND_TOKEN(startTokens[0]);
           this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
 

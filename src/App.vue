@@ -13,6 +13,7 @@ import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
 import SwapWidget from "@/ui/SwapWidget.vue";
 import {tonApiService, tokenService} from "@/api/coffeeApi/services";
 import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
+import {Address} from "@ton/core";
 
 export default {
   name: "App",
@@ -79,7 +80,7 @@ export default {
 
           this.dexStore.DEX_WALLET(account);
           // this.getContractVersion(walletMeta.address);
-          this.DEX_PROOF_VERIFICATION(verify);
+          this.dexStore.DEX_PROOF_VERIFICATION(verify);
           this.getUserSettings();
         } else {
           this.dexStore.DEX_WALLET(null);
@@ -98,9 +99,9 @@ export default {
             account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
             const proof = JSON.parse(localStorage.getItem('tonProof_ver') || '{}');
             if (proof) {
-              this.DEX_WALLET(account);
+              this.dexStore.DEX_WALLET(account);
               this.getContractVersion(account.userFriendlyAddress);
-              this.DEX_PROOF_VERIFICATION(proof);
+              this.dexStore.DEX_PROOF_VERIFICATION(proof);
               this.getUserSettings();
             } else {
               console.log('disconnect');
@@ -124,9 +125,9 @@ export default {
 
           const proof = verify.proof || {};
           if (proof.timestamp) {
-            this.DEX_WALLET(account);
+            this.dexStore.DEX_WALLET(account);
             this.getContractVersion(account.userFriendlyAddress);
-            this.DEX_PROOF_VERIFICATION(proof);
+            this.dexStore.DEX_PROOF_VERIFICATION(proof);
             this.getUserSettings();
           } else {
             console.log('disconnect');
@@ -193,78 +194,82 @@ export default {
         const cesAddress = "EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1";
 
         if (this.limitedJettonLists?.length > 0) {
-          if (!this.limitedJettonLists.includes(usdtAddress)) {
-            this.limitedJettonLists.push(usdtAddress);
-          }
-
-          if (!this.limitedJettonLists.includes(cesAddress)) {
-            this.limitedJettonLists.push(cesAddress);
-          }
+          if (!this.limitedJettonLists.includes(usdtAddress)) this.limitedJettonLists.push(usdtAddress);
+          if (!this.limitedJettonLists.includes(cesAddress)) this.limitedJettonLists.push(cesAddress);
         }
 
         this.toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
+
         let res;
-        let tokens;
+        let tokens = [];
 
-        if (!this.limitedJettonLists?.length > 0) {
-          let opts = {
-            page: 1,
-            size: 50
-          };
+        const hasLimitedList = !!this.limitedJettonLists?.length;
 
-          res = await tokenService.getTokenListV2(opts);
+        if (!hasLimitedList) {
+          res = await tokenService.getTokenListV2({ page: 1, size: 50 });
           if (res) {
-            tokens = res.items.map((item) => {
-              item.type = item.address === toncoinAddress ? "native" : "jetton";
-              item.address = item.address === toncoinAddress ? "native" : item.address;
-              item.imported = false;
-              item.listed = true;
-              return item;
-            });
+            tokens = res.items.map((item) => ({
+              ...item,
+              type: item.address === toncoinAddress ? "native" : "jetton",
+              address: item.address === toncoinAddress ? "native" : item.address,
+              imported: false,
+              listed: true
+            }));
           }
-
         } else {
           res = await tokenService.getTokensByAddress(this.limitedJettonLists);
           if (res) {
-            tokens = res.map((item) => {
-              item.type = item.address === toncoinAddress ? "native" : "jetton";
-              item.address = item.address === toncoinAddress ? "native" : item.address;
-              item.imported = false;
-              item.listed = true;
-              return item;
-            });
+            tokens = res.map((item) => ({
+              ...item,
+              type: item.address === toncoinAddress ? "native" : "jetton",
+              address: item.address === toncoinAddress ? "native" : item.address,
+              imported: false,
+              listed: true
+            }));
           }
         }
 
         if (!tokens.some(token => token.symbol === 'TON')) {
-          tokens.unshift({ ...this.toncoinData, type: "native", address: "native", imported: false });
+          tokens.unshift({
+            ...this.toncoinData,
+            type: "native",
+            address: "native",
+            imported: false
+          });
         }
 
-        let widgetTokens = await this.loadStartTokensByConfig() || [];
+        const widgetTokens = await this.loadStartTokensByConfig() || [];
+        const pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
+
         tokens = this.mergeArrays(tokens, widgetTokens);
-
-        let pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
-
         tokens = this.mergeArrays(tokens, pinnedTokens);
 
         this.tokensWithImported = this.checkImportTokens(tokens);
+        this.dexStore.DEX_TOKENS_OPTIONS({ current_page: res?.page, total_pages: res?.pages });
 
-        this.dexStore.DEX_TOKENS_OPTIONS({ "current_page": res.page, "total_pages": res.pages });
+        const wallet = this.dexStore.GET_DEX_WALLET;
+        if (wallet !== null) {
+          const userTokens = await this.getAccountInfo(wallet);
+          this.tokensWithImported = this.mergeArrays(userTokens, this.tokensWithImported);
+        }
 
         this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
 
-        if (this.dexStore.GET_DEX_WALLET !== null) {
-          let userTokens = await this.getAccountInfo(this.dexStore.GET_DEX_WALLET);
-          this.tokensWithImported = this.mergeArrays(userTokens, this.tokensWithImported);
-          this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
-        }
+        const formattedLimitedJettons = [
+          ...new Set([...(this.limitedJettonLists ?? []), ...(this.sendReceiveTokenAddresses ?? [])])
+        ].map(t => this.toRawAddress(t));
+
+        this.dexStore.DEX_TON_TOKENS(
+            this.dexStore.GET_TON_TOKENS.map(t => ({
+              ...t,
+              importedFromConfig: formattedLimitedJettons.includes(this.toRawAddress(t?.address))
+            }))
+        );
 
       } catch (err) {
         console.error(err);
         if (retryCount < 20) {
-          setTimeout(() => {
-            this.getTonTokens(retryCount + 1);
-          }, 5000);
+          setTimeout(() => this.getTonTokens(retryCount + 1), 5000);
         }
       }
     },
@@ -297,9 +302,12 @@ export default {
       return tokens;
     },
     mergeArrays(first, second) {
-      return first.concat(second)
+      const saveFirst = Array.isArray(first) ? first : []
+      const saveSecond = Array.isArray(second) ? second : []
+
+      return saveFirst.concat(saveSecond)
           .filter((obj, index, self) => {
-            return obj.id == null || index === self.findIndex((t) => t?.id === obj?.id);
+            return obj?.id == null || index === self.findIndex((t) => t?.id === obj?.id);
           });
     },
     async getTokenLabels() {
@@ -316,7 +324,7 @@ export default {
           : DEFAULT_ADDRESSES;
 
       try {
-        return await tokenService.getTokensByAddress(addresses);
+        return tokenService.getTokensByAddress(addresses);
       } catch (e) {
         console.error(e);
       }
@@ -336,6 +344,7 @@ export default {
         }
 
         let mergedTokens = await this.mergeTonTokens(walletInfo);
+
         this.dexStore.DEX_USER_TOKENS(mergedTokens);
 
         return mergedTokens
@@ -369,10 +378,21 @@ export default {
         throw err;
       }
     },
+    toRawAddress(address) {
+      try {
+        if (address === 'native') {
+          return 'TON';
+        }
+        const parsedAddress = Address.parseFriendly(address);
+        return parsedAddress.address.toRawString();
+      } catch (error) {
+        return address;
+      }
+    },
     async mergeTonTokens(walletInfo) {
       let jettons = await this.getTonJettons(walletInfo)
       let toncoin = this.dexStore.GET_TON_TOKENS.find((item) => item.address === 'native')
-      if (walletInfo?.balance) {
+      if (walletInfo?.balance && toncoin) {
         toncoin.balance = walletInfo?.balance / Math.pow(10, toncoin?.decimals)
       }
       if (jettons.length === 0) {
@@ -380,6 +400,16 @@ export default {
       } else if (jettons.length > 0 && !jettons.find((item) => item.name === toncoin.name)) {
         jettons.unshift(toncoin)
       }
+
+      const formatedLimitedJettons = (this.limitedJettonLists ?? []).map(t => this.toRawAddress(t))
+
+      const limitedJettons = jettons.filter(t => formatedLimitedJettons.includes(this.toRawAddress(t?.address)))
+          .map(t => ({
+            ...t,
+            balance: t?.balance,
+          }))
+      jettons = this.mergeArrays(limitedJettons, jettons)
+
       return jettons
     },
     async getTonJettons(wallet) {
@@ -451,12 +481,12 @@ export default {
       wallet.userFriendlyAddress = toUserFriendlyAddress(wallet?.address)
       wallet.imgUrl = walletInfoStorage?.imageUrl
       if (tonConnectStorage) {
-        this.DEX_WALLET(wallet)
+        this.dexStore.DEX_WALLET(wallet)
       }
       this.getTonTokens();
     }
     if (proof) {
-      this.DEX_PROOF_VERIFICATION(proof)
+      this.dexStore.DEX_PROOF_VERIFICATION(proof)
     }
 
     setTimeout(() => {

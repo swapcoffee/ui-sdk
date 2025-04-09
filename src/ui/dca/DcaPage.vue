@@ -362,9 +362,12 @@ export default {
             }
         },
         mergeArrays(first, second) {
-            return first.concat(second)
+            const saveFirst = Array.isArray(first) ? first : []
+            const saveSecond = Array.isArray(second) ? second : []
+
+            return saveFirst.concat(saveSecond)
                 .filter((obj, index, self) => {
-                    return obj.id == null || index === self.findIndex((t) => t?.id === obj?.id);
+                    return obj?.id == null || index === self.findIndex((t) => t?.id === obj?.id);
                 });
         },
         async dcaAction() {
@@ -379,7 +382,7 @@ export default {
                     this.successModalState.show = true
                 } else {
                     this.historyLength = this.limitStore.GET_LIMIT_HISTORY.length
-                    this.SAVE_LIMIT_TRANSACTION_INFO(this.setDcaTransactionInfo)
+                    this.transactionStore.SAVE_LIMIT_TRANSACTION_INFO(this.setDcaTransactionInfo)
                     await createOrder(this.updateProcessing, this.setCreateOrderBody)
                     this.successModalState.mode = 'dca'
                     this.successModalState.show = true

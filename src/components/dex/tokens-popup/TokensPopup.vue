@@ -279,16 +279,15 @@ computed: {
 	},
 	getAllTokens() {
 		let array = []
-
 		this.dexStore.GET_TON_TOKENS.forEach((item) => {
 			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
-			if (findItem?.balance > 0) {
-				return;
-			}
+            if (findItem?.balance > 0) {
+              return;
+            }
 
-							if (item?.listed || item?.imported) {
+          if (item?.listed || item?.imported || item?.importedFromConfig) {
 									array.push(item);
-							}
+          }
 		});
 
 		let sortedArray = array
@@ -314,7 +313,7 @@ computed: {
 	},
 	getYourTokens() {
 		return this.dexStore.GET_USER_TOKENS
-			.filter((item) => item.balance > 0 && (item.listed || item.imported))
+			.filter((item) => item.balance > 0 && (item.listed || item.imported || item.importedFromConfig))
 			.sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
 			.sort((a, b) => b.imported - a.imported)
 			.sort((a, b) => this.checkItemIsPinned(b) - this.checkItemIsPinned(a))
@@ -586,7 +585,7 @@ methods: {
 		this.searchResults = tokenList.filter(token =>
 			token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
 			token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())
-							&& (token?.listed || token?.imported)
+							&& (token?.listed || token?.imported || token?.importedFromConfig)
 		);
 		this.emptyResponse = this.searchResults.length === 0;
 	},
@@ -622,7 +621,7 @@ methods: {
 				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
 					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
 				token.balance > 0 &&
-									(token?.listed || token?.imported)
+									(token?.listed || token?.imported || token?.importedFromConfig)
 			);
 
 			userTokens.forEach(token => {
@@ -633,7 +632,7 @@ methods: {
 				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
 					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
 				(!token.balance || token.balance === 0)
-									&& (token?.listed || token?.imported)
+									&& (token?.listed || token?.imported || token?.importedFromConfig)
 			);
 
 			otherUserTokens.forEach(token => {

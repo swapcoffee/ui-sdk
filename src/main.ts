@@ -86,7 +86,7 @@ createSwapWidget('#swap-widget-component', {
     },
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "TEST_WIDGET_REFERRAL",
-    sendReceiveTokenAddresses: ["EQCQZpelevHNsbw5IUtwSa4Cs8kqWww0KsYeDri9kwS18eCz", "EQAVfEY2iKSpEkUhgFLFWAgHeSz2NH2XV-MvDuiKF5plSbsU"],
+    sendReceiveTokenAddresses: ["0:a5d12e31be87867851a28d3ce271203c8fa1a28ae826256e73c506d94d49edad", "EQAVfEY2iKSpEkUhgFLFWAgHeSz2NH2XV-MvDuiKF5plSbsU"],
     limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE","EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     customFeeSettings: {
         percentage_fee: 3000,
