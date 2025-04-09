@@ -49,13 +49,13 @@ import {
     unstakeTransaction
 } from "@/helpers/swap-interface/send-transaction.ts";
 import {
-    changeSettingsWatcher, expertModeWatcher,
-    receiveTokenWatcher,
-    refreshAll,
-    refreshDex,
-    removeInterval,
-    removeTimeout,
-    sendTokenWatcher
+  changeSettingsWatcher, expertModeWatcher, receiveAmountWatcher,
+  receiveTokenWatcher,
+  refreshAll,
+  refreshDex,
+  removeInterval,
+  removeTimeout, sendAmountWatcher,
+  sendTokenWatcher
 } from "@/helpers/swap-interface/watchers.ts";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import {defineAsyncComponent} from "vue";
@@ -115,7 +115,7 @@ export default {
             modalState: this.successModalState
         }
     },
-    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses'],
+    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount'],
     data() {
         return {
             modals: {
@@ -185,11 +185,7 @@ export default {
             return this.dexStore.GET_RECEIVE_TOKEN !== null && this.dexStore.GET_SEND_TOKEN !== null && this.dexStore.GET_SEND_AMOUNT > 0 && this.dexStore.GET_DEAL_CONDITIONS === null;
         },
         firstLoading() {
-            // let route = this.$route
-            // if (route.query?.ft && route.query?.st) {
-            //     return this.dexStore.GET_DEAL_CONDITIONS === null && this.dexStore.GET_TON_TOKENS.length === 0
-            // }
-          return false
+          return this.dexStore.GET_DEAL_CONDITIONS === null && this.dexStore.GET_TON_TOKENS.length === 0
         },
         notEnoughConditions() {
             const userTonBalance = this.dexStore.GET_USER_TOKENS.find(
@@ -441,6 +437,10 @@ export default {
           this.dexStore.DEX_SEND_TOKEN(startTokens[0]);
           this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
 
+          if (this.firstTokenAmount) {
+            this.changeFirstValue(this.firstTokenAmount)
+          }
+
         },
         checkWindowSize() {
             this.screenSize = window.innerWidth
@@ -505,6 +505,8 @@ export default {
                     this.tokenValues.first = String(this.dexStore.GET_SEND_AMOUNT)
                 }
 
+                sendAmountWatcher(this.amountWatcherData)
+
                 if (this.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
@@ -516,6 +518,8 @@ export default {
                 if (Number(this.tokenValues.second) !== this.dexStore.GET_RECEIVE_AMOUNT && this.pageLoaded === false) {
                     this.tokenValues.second = String(this.dexStore.GET_RECEIVE_AMOUNT)
                 }
+
+                receiveAmountWatcher(this.amountWatcherData)
 
                 if (this.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);

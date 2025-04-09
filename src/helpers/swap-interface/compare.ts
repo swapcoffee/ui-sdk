@@ -77,8 +77,6 @@ function setAssetForCompare(data) {
 }
 
 export async function compareTokens(data) {
-  console.log(data, 'data')
-  console.log(dexStore, 'dexStore')
   let { tokens, tokenAmounts, changePoolNotFound, changeRefreshInfo, createAbortController } = data;
   try {
     changePoolNotFound(false);

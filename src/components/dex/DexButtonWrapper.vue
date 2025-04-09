@@ -9,11 +9,15 @@
         :color-scheme="btn.colorScheme"
         @click="btn.action"
     >
+      <template v-if="btn.icon" #icon>
+        <component :is="btn.icon" />
+      </template>
     </swap-button>
 </template>
 
 <script>
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
+import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 
 import {useDexStore} from "@/stores/dex";
 
@@ -52,7 +56,8 @@ export default {
                     visible: this.canStake,
                     disabled: this.processing.stake || !this.dexStore.GET_DEAL_CONDITIONS,
                     loading: this.processing.stake || !this.dexStore.GET_DEAL_CONDITIONS,
-                    colorScheme: 'light'
+                    colorScheme: 'light',
+                    icon: null
 
                 },
                 {
@@ -62,8 +67,8 @@ export default {
                     visible: this.canUnstake,
                     disabled: this.processing.unstake || !this.dexStore.GET_DEAL_CONDITIONS,
                     loading: this.processing.unstake || !this.dexStore.GET_DEAL_CONDITIONS,
-                    colorScheme: 'light'
-
+                    colorScheme: 'light',
+                    icon: null
                 },
                 {
                     type: "dex",
@@ -72,7 +77,8 @@ export default {
                     visible: true,
                     disabled: this.dexDisabled,
                     loading: this.interfaceStatus === "LOADING",
-                    colorScheme: 'accent'
+                    colorScheme: 'accent',
+                    icon: (!this.dexStore.GET_DEX_WALLET && this.interfaceStatus !== "LOADING") ? WalletIcon : null
                 }
             ]
         },

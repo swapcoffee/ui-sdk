@@ -81,6 +81,39 @@ export function setDebounceForRequest(
   }, 200);
 }
 
+export function sendAmountWatcher({
+                                    tokens,
+                                    amounts,
+                                    abortController,
+                                    refreshData,
+                                  }) {
+  const hasInputToken = tokens.first !== null;
+  const hasAmount = amounts.first > 0;
+
+  if (hasInputToken && hasAmount) {
+    refreshAll(refreshData);
+  } else {
+    abortRequest(abortController);
+    clearInterval(interval);
+  }
+}
+
+
+export function receiveAmountWatcher({
+                                       tokens,
+                                       amounts,
+                                       abortController,
+                                       refreshData,
+                                     }) {
+  if (tokens.first !== null && tokens.second !== null && amounts.second > 0) {
+    refreshAll(refreshData);
+  } else {
+    abortRequest(abortController);
+    clearInterval(interval);
+  }
+}
+
+
 export function sendTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }) {
   if (readyCompareCondition(tokens, amounts)) {
     refreshAll(refreshData);

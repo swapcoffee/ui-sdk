@@ -8,7 +8,7 @@
     </button>
 </template>
 
-<script>
+<script lang="ts">
 import TooltipWrapper from "@/components/ui/TooltipWrapper.vue";
 
 export default {
@@ -54,6 +54,42 @@ export default {
         border: none;
         outline: none;
         transition: .2s;
+    }
+
+    @keyframes Shimmer {
+      0% {
+        background-position: -150px 0px;
+      }
+      25% {
+        background-position: 0 0;
+      }
+      50% {
+        background-position: -150px 0px;
+      }
+      75% {
+        background-position: 0 0;
+      }
+      100% {
+        background-position: -150px 0px;
+      }
+    }
+
+    @keyframes Loader {
+      0% {
+        transform: rotateZ(0deg);
+      }
+      100% {
+        transform: rotateZ(360deg);
+      }
+    }
+
+    @keyframes LoaderReverse {
+      0% {
+        transform: rotateZ(0deg);
+      }
+      100% {
+        transform: rotateZ(-360deg);
+      }
     }
 
     .accent {

@@ -15,7 +15,7 @@ export default {
     props: {
         isWhite: {
             type: Boolean,
-            default: false
+            default: true
         }
     },
     data() {

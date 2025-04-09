@@ -56,10 +56,11 @@
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import computedMixins from '@/mixins/computedMixins.ts';
 import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue";
+import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 
 export default {
     name: 'DistributionModal',
-    components: {CrossArrowIcon},
+    components: {ModalWrapper, CrossArrowIcon},
     mixins: [transactionRoutesMixin, computedMixins],
     data() {
         return {
@@ -83,13 +84,12 @@ export default {
         },
     },
     mounted() {
-        this.trackRouteDetails();
+
     },
     methods: {
         showMore() {
             if (this.routeCount === 4) {
                 this.routeCount = 20;
-                this.trackRouteDetails();
             } else {
                 this.routeCount = 4;
             }
@@ -146,8 +146,8 @@ export default {
     margin-right: 6px;
 }
 
-.light-theme .custom-arrow {
-    filter: invert(1);
+.swap-coffee__sdk-widget .theme-light .custom-arrow {
+  filter: invert(1) !important;
 }
 
 
