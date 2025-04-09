@@ -1,3 +1,4 @@
+import type {TonConnectUI} from "@tonconnect/ui";
 
 export enum SWAP_WIDGET_THEME {
     LIGHT = 'light',
@@ -14,29 +15,57 @@ export enum SWAP_WIDGET_LOCALE {
     FA = 'fa'
 }
 
-export interface CUSTOM_FEE_SETTINGS_INTERFACE {
-    fixed_fee: number | null;
+export interface CustomFeeSettingsInterface {
+    fixed_fee?: number | null;
     percentage_fee: number | null;
-    min_percentage_fee_fixed: number | null;
-    max_percentage_fee_fixed: number | null;
+    min_percentage_fee_fixed: string | null;
+    max_percentage_fee_fixed: string | null;
 }
 
-export interface DEFAULT_SETTINGS_INTERFACE {
+export interface PayloadConnectionInterface {
+    wallet_meta: PayloadConnectionWalletMetaInterface,
+    verify: PayloadConnectionVerifyInterface
+}
+
+export interface PayloadConnectionWalletMetaInterface {
+    address: string;
+}
+
+export interface PayloadConnectionVerifyInterface {
+    public_key: string;
+    wallet_state_init: string;
+    proof: PayloadConnectionProofInterface
+}
+
+export interface PayloadConnectionProofInterface {
+    timestamp: number;
+    domain_len: number;
+    domain_val: string;
+    payload: string;
+    signature: string;
+}
+
+export interface DefaultSettingsInterface {
     theme: SWAP_WIDGET_THEME;
     locale: SWAP_WIDGET_LOCALE;
     injectionMode: 'tonConnect' | 'payload';
+    tonConnectManifest?: {
+        url: string;
+    };
+    tonConnectUi?: TonConnectUI
     widgetReferral?: string | null;
-    customFeeSettings?: CUSTOM_FEE_SETTINGS_INTERFACE,
+    customFeeSettings?: CustomFeeSettingsInterface,
     limitDcaVisibility?: boolean
-    limitedJettonLists?: Array<string>
-    liquiditySourcesList?: Array<string>
+    limitedJettonLists?: Array<string> | null;
+    liquiditySourcesList?: Array<string> | null;
     firstTokenAmount?: number
-    sendReceiveTokenAddresses?: Array<string>
+    sendReceiveTokenAddresses?: Array<string> | null;
+    payload?: PayloadConnectionInterface
 }
 
-export const DEFAULTS: DEFAULT_SETTINGS_INTERFACE = {
-    theme: import.meta.env.VITE_DEFAULT_THEME as SWAP_WIDGET_THEME,
-    locale: import.meta.env.VITE_DEFAULT_LOCALE as SWAP_WIDGET_LOCALE,
+export const DEFAULTS: DefaultSettingsInterface = {
+    theme: import.meta.env.VITE_DEFAULT_THEME,
+    locale: import.meta.env.VITE_DEFAULT_LOCALE,
     injectionMode: 'tonConnect',
     widgetReferral: null,
     customFeeSettings: {

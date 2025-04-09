@@ -151,9 +151,9 @@ import DexRouteInfo from "@/components/dex/DexRouteInfo.vue";
 import DexTrust from "@/components/dex/DexTrust.vue";
 import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 
-import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {SwapActiveTab} from "@/utils/types.ts";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "SwapField",
@@ -219,7 +219,7 @@ export default {
           return useLimitStore()
         },
         isDisableInput() {
-		    return this.position !== 'up' && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
+		      return this.position !== 'up' && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
         },
         showBalanceCondition() {
             if (this.dexStore.GET_DEX_WALLET !== null) {

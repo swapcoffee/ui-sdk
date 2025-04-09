@@ -232,6 +232,7 @@ export default {
         tokens = this.mergeArrays(tokens, widgetTokens);
 
         let pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
+
         tokens = this.mergeArrays(tokens, pinnedTokens);
 
         this.tokensWithImported = await this.checkImportTokens(tokens);
@@ -324,6 +325,8 @@ export default {
 
         let mergedTokens = await this.mergeTonTokens(walletInfo);
         this.dexStore.DEX_USER_TOKENS(mergedTokens);
+
+        return mergedTokens
       } catch (err) {
         console.log(err);
       } finally {
@@ -445,7 +448,7 @@ export default {
     }
 
     setTimeout(() => {
-      if (this.GET_DEX_WALLET === null) {
+      if (this.dexStore.GET_DEX_WALLET === null) {
         this.getTonTokens()
       }
     }, 1000)
@@ -458,7 +461,7 @@ export default {
     this.dexStore.CLEAR_DEX_STORE()
   },
   watch: {
-    GET_DEX_WALLET: {
+    'dexStore.GET_DEX_WALLET': {
       handler() {
         let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
         if (this.dexStore.GET_DEX_WALLET !== null) {

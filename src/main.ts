@@ -1,12 +1,19 @@
-import { createApp } from 'vue';
+import {createApp} from 'vue';
 import App from './App.vue';
 import i18n from './i18n';
-import { pinia } from './stores';
+import {pinia} from './stores';
 import './main.css'
-import {DEFAULT_SETTINGS_INTERFACE, DEFAULTS, PROVIDES, REQUIRED_FOR_MODE} from "@/settings-config.ts";
-import {TonConnectUI, THEME} from "@tonconnect/ui";
+import {
+    DefaultSettingsInterface,
+    DEFAULTS,
+    PROVIDES,
+    REQUIRED_FOR_MODE,
+    SWAP_WIDGET_LOCALE,
+    SWAP_WIDGET_THEME
+} from "@/settings-config.ts";
+import {THEME, TonConnectUI} from "@tonconnect/ui";
 
-export function createSwapWidget(selector, options: DEFAULT_SETTINGS_INTERFACE = {}) {
+export function createSwapWidget(selector, options: DefaultSettingsInterface = {}) {
     const cfg = { ...DEFAULTS, ...options };
 
     if (!['tonConnect', 'payload'].includes(cfg.injectionMode)) {
@@ -71,8 +78,8 @@ const tonConnectUiInstance = new TonConnectUI({
 
 
 createSwapWidget('#swap-widget-component', {
-        theme:  'light',
-    locale: 'en',
+    theme:  SWAP_WIDGET_THEME.LIGHT,
+    locale: SWAP_WIDGET_LOCALE.EN,
     injectionMode: "tonConnect",
     tonConnectManifest: {
         "url": "https://swap.coffee/tonconnect-manifest.json",
@@ -80,7 +87,7 @@ createSwapWidget('#swap-widget-component', {
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "TEST_WIDGET_REFERRAL",
     sendReceiveTokenAddresses: ["EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1"],
-    limitedJettonLists: ["EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
+    // limitedJettonLists: ["EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     customFeeSettings: {
         percentage_fee: 3000,
         min_percentage_fee_fixed: '50000000',
