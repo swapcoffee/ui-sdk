@@ -15,6 +15,14 @@ export enum SWAP_WIDGET_LOCALE {
     FA = 'fa'
 }
 
+export enum SWAP_WIDGET_LIQUIDITY_SOURCES {
+    TONCO = 'tonco',
+    TONSTAKERS = 'tonstakers',
+    DEDUST = 'dedust',
+    STONFI_V2 = 'stonfi_v2',
+    STONFI = 'stonfi',
+}
+
 export interface CustomFeeSettingsInterface {
     fixed_fee?: number | null;
     percentage_fee: number | null;
@@ -57,7 +65,7 @@ export interface DefaultSettingsInterface {
     customFeeSettings?: CustomFeeSettingsInterface,
     limitDcaVisibility?: boolean
     limitedJettonLists?: Array<string> | null;
-    liquiditySourcesList?: Array<string> | null;
+    liquiditySourcesList?: Array<SWAP_WIDGET_LIQUIDITY_SOURCES> | null;
     firstTokenAmount?: number
     sendReceiveTokenAddresses?: Array<string> | null;
     payload?: PayloadConnectionInterface
@@ -79,6 +87,7 @@ export const DEFAULTS: DefaultSettingsInterface = {
     liquiditySourcesList: null,
     firstTokenAmount: 0,
     sendReceiveTokenAddresses: null,
+
 } as const;
 
 export const REQUIRED_FOR_MODE = {
