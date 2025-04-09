@@ -128,25 +128,6 @@ export async function dexTransaction({
     try {
         updateProcessing(true, 'dex');
 
-		// TODO: remove this on fix
-		/// ============================================
-		let {tokens} = compareAsset
-		let fromTokenAddress = 'native';
-		let toTokenAddress = 'native';
-
-		if (tokens.first.type !== 'native') {
-			fromTokenAddress = Address.parse(tokens.first?.address).toString();
-		}
-
-		if (tokens.second?.type !== 'native') {
-			toTokenAddress = Address.parse(tokens.second?.address).toString();
-		}
-
-		if (fromTokenAddress === TSTON_ADDRESS || toTokenAddress === TSTON_ADDRESS) {
-			mevProtection = false
-		}
-		// ==============================================
-
         await compareTokens(compareAsset);
 
         const sender = Address.parseRaw(wallet?.address).toString();

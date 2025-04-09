@@ -52,12 +52,6 @@ function setAssetForCompare(data) {
   let fromTokenAddress = tokens?.first?.type !== 'native' ? Address.parse(tokens?.first?.address).toString() : 'native';
   let toTokenAddress = tokens?.second?.type !== 'native' ? Address.parse(tokens?.second?.address).toString() : 'native';
 
-  // ============= // TODO: remove this on fix
-  if (fromTokenAddress === TSTON_ADDRESS || toTokenAddress === TSTON_ADDRESS) {
-    mevProtection = false
-  }
-  // =============
-
   if (widgetReferral && customFeeSettings) {
     maxSplits = 3;
   }
