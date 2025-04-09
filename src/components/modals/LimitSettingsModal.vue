@@ -37,7 +37,7 @@
     </modal-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import SwitchToggle from "@/components/ui/SwitchToggle.vue";
 import ModalSettingItem from "@/components/general/ModalSettingsItem.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
@@ -48,6 +48,7 @@ import computedMixins from "@/mixins/computedMixins.ts"
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 
 import {useSettingsStore} from "@/stores/settings";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "LimitSettingsModal",
@@ -79,6 +80,9 @@ export default {
         }
     },
     computed: {
+        dexStore() {
+          return useDexStore()
+        },
         limitSettingsStore() {
           return useLimitSettingsStore()
         },
@@ -86,7 +90,7 @@ export default {
           return useSettingsStore()
         },
         getTitle() {
-            return `${this.getRouteName} ${this.$t('dexSettings.caption').toLowerCase()}`
+            return `${this.dexStore.GET_SWAP_ACTIVE_TAB} ${this.$t('dexSettings.caption').toLowerCase()}`
         },
         getExpertMode() {
             return this.limitSettingsStore.GET_LIMIT_EXPERT_MODE

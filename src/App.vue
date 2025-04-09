@@ -397,7 +397,7 @@ export default {
       }
       if (jettons.length === 0) {
         jettons.unshift(toncoin)
-      } else if (jettons.length > 0 && !jettons.find((item) => item.name === toncoin.name)) {
+      } else if (jettons.length > 0 && !jettons.find((item) => item?.name === toncoin?.name)) {
         jettons.unshift(toncoin)
       }
 

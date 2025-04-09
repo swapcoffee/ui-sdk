@@ -37,7 +37,7 @@ class StrategiesService extends CoffeeSdkWrapper {
         const url = `${this.baseUrl}/eligibility/from-tokens?`
         try {
             const response = await fetch(url + new URLSearchParams({
-                type: type,
+                type: type.toLowerCase(),
             }),
         {
                 method: "GET"

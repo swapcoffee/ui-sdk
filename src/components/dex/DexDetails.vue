@@ -93,7 +93,7 @@
                         </transition>
                     </div>
                 </div>
-                <p class="dex__value">≈ {{ getMinimumReceive }} {{ GET_RECEIVE_TOKEN?.symbol }}</p>
+                <p class="dex__value">≈ {{ getMinimumReceive }} {{ dexStore.GET_RECEIVE_TOKEN?.symbol }}</p>
             </div>
             <div class="dex__row">
                 <p class="dex__name">
