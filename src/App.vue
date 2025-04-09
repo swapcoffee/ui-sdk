@@ -14,11 +14,12 @@ import SwapWidget from "@/ui/SwapWidget.vue";
 import {tonApiService, tokenService} from "@/api/coffeeApi/services";
 import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
 import {Address} from "@ton/core";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 
 export default {
   name: "App",
   components: {SwapWidget},
-  inject: ['tonConnectUi', "injectionMode", 'payload', "sendReceiveTokenAddresses", "limitedJettonLists"],
+  inject: ['tonConnectUi', "injectionMode", 'payload', "sendReceiveTokenAddresses", "limitedJettonLists", "liquiditySourcesList"],
   mixins: [tonConnectMixin, methodsMixins],
   shadow: true,
   data() {
@@ -35,6 +36,9 @@ export default {
   computed: {
     dexStore() {
       return useDexStore();
+    },
+    dexSettingsStore() {
+      return useDexSettingsStore();
     },
     GET_DEX_WALLET() {
       return this.dexStore.GET_DEX_WALLET
@@ -503,6 +507,14 @@ export default {
     this.dexStore.CLEAR_DEX_STORE()
   },
   watch: {
+    liquiditySourcesList: {
+      handler() {
+        if (this.liquiditySourcesList?.length > 0) {
+          this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(this.liquiditySourcesList)
+        }
+      },
+      immediate: true,
+    },
     'dexStore.GET_DEX_WALLET': {
       handler() {
         let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))

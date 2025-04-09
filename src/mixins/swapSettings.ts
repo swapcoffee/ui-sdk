@@ -5,6 +5,7 @@ export default {
   data() {
     return {};
   },
+  inject: ['liquiditySourcesList'],
   computed: {
     dexSettingsStore() {
       return useDexSettingsStore();
@@ -36,9 +37,6 @@ export default {
         }
 
         if (this.dexSettingsStore.GET_EXPERT_MODE_VALUE) {
-          if (settings.hasOwnProperty('liquiditySources')) {
-            this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(settings.liquiditySources);
-          }
           if (settings.hasOwnProperty('priceImpact')) this.dexSettingsStore.DEX_PRICE_IMPACT(settings.priceImpact);
 
           if (settings.hasOwnProperty('maxPoolVolatility'))
@@ -48,6 +46,11 @@ export default {
             this.dexSettingsStore.DEX_MAX_INTERMEDIATE_TOKENS(settings.maxIntermediateTokens);
 
           if (settings.hasOwnProperty('maxSplits')) this.dexSettingsStore.DEX_MAX_SPLITS(settings.maxSplits);
+
+          if (settings.hasOwnProperty('liquiditySources')) {
+            if (this.liquiditySourcesList?.length > 0) return;
+            this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(settings.liquiditySources);
+          }
         }
       } catch (err) {
         console.error(err);
