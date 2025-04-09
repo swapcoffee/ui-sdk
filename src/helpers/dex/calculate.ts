@@ -5,13 +5,19 @@ export function setTransactionMessage(data, cashback, transactions) {
         let array = [];
 
         for (let tx of transactions) {
-            array.push({
+            let txObj = {
                 address: Address.parse(tx.address).toString({
                     bounceable: true,
                 }),
                 amount: tx.value,
                 payload: tx.cell,
-            });
+            }
+
+            if (tx.stateInit) {
+                txObj.stateInit = tx.stateInit;
+            }
+
+            array.push(txObj);
         }
 
         if (cashback === true) {

@@ -227,6 +227,9 @@
       "text": "Hasta {gasFee} TON",
       "integrator": "Tarifa del integrador"
     },
+    "mev": {
+      "name": "Tarifa de Protección MEV"
+    },
     "economy": "Tu economía",
     "distribution": "Plan de distribución"
   },
@@ -980,5 +983,39 @@
     "share": "Compartir",
     "close": "Cerrar",
     "copyToClipboard": "¡Copiar al portapapeles!"
+  },
+  "mevProtect": {
+    "title": "Protección MEV",
+    "status": {
+      "enabled": "Habilitar",
+      "disabled": "Deshabilitar"
+    },
+    "settings": {
+      "first": {
+        "title": "Protección MEV",
+        "description": "Protege tus intercambios de ataques MEV en el 99% de los casos.",
+        "description2": "¡Descuento!",
+        "oldPrice": "Anterior: 0.5 TON",
+        "newPrice": "Nuevo: 0.25 TON por división."
+      },
+      "second": {
+        "title": "Intercambios multi-hop",
+        "description": "Usar Protección MEV en intercambios con tokens intermedios",
+        "description2": "Nota: La Protección MEV solo protege el primer salto y no afecta los siguientes saltos en la ruta",
+        "yes": "Sí",
+        "no": "No"
+      },
+      "third": {
+        "title": "Cantidad mínima de intercambio",
+        "description": "Usar Protección MEV solo para intercambios que excedan la cantidad",
+        "customField": "Personalizado"
+      },
+      "fourth": {
+        "title": "Información adicional",
+        "description1": "La Protección MEV protege solo el primer salto y no afecta los siguientes saltos en la ruta.",
+        "description2": "La Protección MEV no garantiza protección, pero utiliza las máximas capacidades de la blockchain para proteger.",
+        "description3": "La Protección MEV no permite emular transacciones."
+      }
+    }
   }
 }

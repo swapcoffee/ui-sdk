@@ -1,6 +1,10 @@
 <template>
     <div class="interface">
-        <div class="interface__swap">
+        <div
+            class="interface__swap"
+            :class="{ 'interface__swap--green': dexSettingsStore.GET_MEV_PROTECTION_VALUE && dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex }"
+        >
+            <MevPlug v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex" />
             <SwapFieldController
                 :firstToken="getTokens?.first"
                 :secondToken="getTokens?.second"
@@ -44,6 +48,14 @@
 </template>
 
 <script lang="ts">
+import computedMixins from "@/mixins/computedMixins.ts"
+
+import {SwapActiveTab} from "@/utils/types.ts";
+
+import {useDexStore} from "@/stores/dex";
+import {useLimitStore} from "@/stores/limit";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+
 import SwapFieldController from "@/components/swap-interface/SwapFieldController.vue";
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
@@ -52,7 +64,6 @@ import DexReverseInfo from "@/components/dex/DexReverseInfo.vue";
 import DexStakeButton from "@/components/dex/DexStakeButton.vue";
 import DexUnstakeButton from "@/components/dex/DexUnstakeButton.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
-import computedMixins from "@/mixins/computedMixins.ts"
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexButtonWrapper from "@/components/dex/DexButtonWrapper.vue";
 import DexDetails from "@/components/dex/DexDetails.vue";
@@ -60,9 +71,7 @@ import LimitButtonWrapper from "@/components/limit/LimitButtonWrapper.vue";
 import SwapInfo from "@/components/swap-interface/SwapInfo.vue";
 import LimitDetails from "@/components/limit/LimitDetails.vue";
 import DcaDetails from "@/components/dca/DcaDetails.vue";
-import {useDexStore} from "@/stores/dex";
-import {useLimitStore} from "@/stores/limit";
-import {SwapActiveTab} from "@/utils/types.ts";
+import MevPlug from "@/components/dex/MevPlug.vue";
 
 export default {
     name: "SwapInterfaceTest",
@@ -81,7 +90,8 @@ export default {
         DexInfo,
         SwapHeader,
         SwapButton,
-        SwapFieldController
+        SwapFieldController,
+        MevPlug
     },
     mixins: [computedMixins],
     inject: ['tokenValues'],
@@ -124,6 +134,9 @@ export default {
         limitStore() {
               return useLimitStore();
         },
+        dexSettingsStore() {
+          return useDexSettingsStore()
+        },
         getTokens() {
             if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
                 return {
@@ -156,6 +169,58 @@ export default {
     padding: 6px;
     border-radius: 14px;
     border: 1px solid var(--iface-white6);
+}
+
+.interface__swap--green {
+  position: relative;
+  background: linear-gradient(var(--earn-bg), var(--earn-bg)) padding-box,
+  linear-gradient(
+      var(--angle),
+      rgba(153, 255, 148, 0.06),
+      rgba(153, 255, 148, 0.1)
+  ) border-box;
+  animation: 6s snake linear infinite;
+}
+
+.theme-light .interface__swap--green {
+  border: 1px solid rgba(13, 13, 13, 0.06);
+}
+
+.theme-light .interface__swap--green {
+  background: linear-gradient(var(--earn-bg), var(--earn-bg)) padding-box,
+  linear-gradient(
+      var(--angle),
+      rgba(13, 13, 13, 0.06),
+      rgba(153, 255, 148, 1)
+  ) border-box;
+}
+
+.theme-light .interface__swap--green::after {
+  background: rgba(95, 180, 159, 0.04);
+}
+
+.interface__swap--green::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(127, 255, 15, 0.02);
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+@keyframes snake {
+  to {
+    --angle: 360deg;
+  }
+}
+
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
 }
 
 .interface__button-wrapper {

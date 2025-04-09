@@ -225,6 +225,9 @@
             "text": "Up to {gasFee} TON",
             "integrator": "Integrator fee"
         },
+        "mev": {
+            "name": "MEV Protect fee"
+        },
         "economy": "Your Economy",
         "distribution": "Distribution Plan"
     },
@@ -969,5 +972,39 @@
         "share": "Share",
         "close": "Close",
         "copyToClipboard": "Copy to clipboard!"
+    },
+    "mevProtect": {
+        "title": "MEV Protect",
+        "status": {
+            "enabled": "Enable",
+            "disabled": "Disable"
+        },
+        "settings": {
+            "first": {
+                "title": "MEV Protect",
+                "description": "Protect your swaps from MEV attacks in 99% cases.",
+                "description2": "Discount!",
+                "oldPrice": "Old: 0.5 TON",
+                "newPrice": "New: 0.25 TON per split."
+            },
+            "second": {
+                "title": "Multi-hop swaps",
+                "description": "Use MEV Protect in exchanges with intermediate tokens",
+                "description2": "Note: MEV Protect protects only the first hop, and does not affect the next hops in the route",
+                "yes": "Yes",
+                "no": "No"
+            },
+            "third": {
+                "title": "Minimum swap amount",
+                "description": "Use MEV Protect only for exchanges exceeding the amount",
+                "customField": "Custom"
+            },
+            "fourth": {
+                "title": "Additional information",
+                "description1": "MEV Protect protects only the first hop, and does not affect the next hops in the route.",
+                "description2": "MEV Protect does not guarantee protection, but uses the maximum capabilities of the blockchain for protection. ",
+                "description3": "MEV Protect does not allow emulate transaction. "
+            }
+        }
     }
 }

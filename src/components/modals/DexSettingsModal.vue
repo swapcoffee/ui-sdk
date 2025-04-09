@@ -6,62 +6,68 @@
         @closeModal="$emit('closeSettings')"
     >
         <div class="settings__content custom-scroll" :class="{ show_expert: getExpertMode }">
-            <div class="settings__expert-mode">
-                <div class="settings__group">
-                    <div class="settings__info">
-                        <img src="../../assets/dex/expert-mode.svg" alt="gift icon" class="settings__icon"/>
-                        <p class="settings__name">
-                            {{ $t('dexSettings.expert.title') }}
-                        </p>
-                    </div>
-                    <p class="settings__text-info">
-                        {{ $t('dexSettings.expert.text') }}
-                    </p>
-                </div>
-                <switch-toggle :class="{ active_switch: getExpertMode }" @click="switchExpertMode"/>
-            </div>
+          <div>
             <p class="settings__text">
-                {{ $t('dexSettings.slippage.title') }}
+              {{ $t('dexSettings.slippage.title') }}
             </p>
             <p class="settings__description">
-                {{ $t('dexSettings.slippage.text') }}
+              {{ $t('dexSettings.slippage.text') }}
             </p>
             <label for="" class="settings__label">
-                <input
-                    v-model="slippage"
-                    type="text"
-                    class="settings__input"
-                    inputmode="decimal"
-                    step="any"
-                    lang="en"
-                    :class="{ active_input: activeSlippageConditions }"
-                    @blur="blurSlippageInput"
-                    @input="changeSlippageInput"
-                />
+              <input
+                  v-model="slippage"
+                  type="text"
+                  class="settings__input"
+                  inputmode="decimal"
+                  step="any"
+                  lang="en"
+                  :class="{ active_input: activeSlippageConditions }"
+                  @blur="blurSlippageInput"
+                  @input="changeSlippageInput"
+              />
             </label>
-            <div class="settings__button-block">
-                <button
-                    class="settings__button"
-                    :class="{ active: Number(slippage) === 1 }"
-                    @click="changeSlippage(1)"
-                >
-                    1%
-                </button>
-                <button
-                    class="settings__button"
-                    :class="{ active: Number(slippage) === 5 }"
-                    @click="changeSlippage(5)"
-                >
-                    5%
-                </button>
-                <button
-                    class="settings__button"
-                    :class="{ active: Number(slippage) === 10 }"
-                    @click="changeSlippage(10)"
-                >
-                    10%
-                </button>
+            <div class="block-slippage">
+              <button
+                  class="settings__button"
+                  :class="{ active: Number(slippage) === 1 }"
+                  @click="changeSlippage(1)"
+              >
+                1%
+              </button>
+              <button
+                  class="settings__button"
+                  :class="{ active: Number(slippage) === 5 }"
+                  @click="changeSlippage(5)"
+              >
+                5%
+              </button>
+              <button
+                  class="settings__button"
+                  :class="{ active: Number(slippage) === 10 }"
+                  @click="changeSlippage(10)"
+              >
+                10%
+              </button>
             </div>
+          </div>
+
+          <MevSettings :is-hidden="true" class="block-settings" />
+
+            <div class="settings__item-mode">
+              <div class="settings__group">
+                <div class="settings__info">
+                  <img src="../../assets/dex/expert-mode.svg" alt="gift icon" class="settings__icon"/>
+                  <p class="settings__name">
+                    {{ $t('dexSettings.expert.title') }}
+                  </p>
+                </div>
+                <p class="settings__text-info">
+                  {{ $t('dexSettings.expert.text') }}
+                </p>
+              </div>
+              <switch-toggle :class="{ active_switch: getExpertMode }" @click="switchExpertMode"/>
+            </div>
+
             <div v-show="getExpertMode" class="settings__show-more">
                 <p class="settings__text">
                     {{ $t('dexSettings.priceImpact.title') }}
@@ -333,19 +339,23 @@
 import SwitchToggle from '@/components/ui/SwitchToggle.vue';
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
+import MevSettings from "@/components/dex/MevSettings.vue";
+
 import computedMixins from '@/mixins/computedMixins.ts';
 import {profileService} from '@/api/coffeeApi/services/index.ts';
-import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useSettingsStore} from "@/stores/settings";
 import {useDexStore} from "@/stores/dex";
+
+import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
 
 export default {
     name: 'DexSettings',
     components: {
         SwitchToggle,
         TooltipWrapper,
-        ModalWrapper
+        ModalWrapper,
+        MevSettings
     },
     mixins: [computedMixins, transactionRoutesMixin],
     inject: ['updateSettingsModalVisible'],
@@ -750,172 +760,187 @@ export default {
 <style scoped>
 
 .settings__content {
-    max-height: 582px;
-    height: auto;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 0 18px 18px 18px;
+  max-height: 582px;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0 18px 18px 18px;
 }
 
 .cashback {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--iface-white6);
-    margin-bottom: 20px;
-    gap: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
+  gap: 0 20px;
 }
 
-.settings__expert-mode {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--iface-white6);
-    margin-bottom: 20px;
+.settings__item-mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
 }
 
 .settings__info {
-    margin-bottom: 5px;
-    display: flex;
-    align-items: center;
+  margin-bottom: 5px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
 }
 
 .settings__icon {
-    margin-right: 5px;
-    width: 20px;
-    height: 20px;
+  margin-right: 5px;
+  width: 20px;
+  height: 20px;
 }
 
 .settings__name {
-    font-size: 14px;
-    font-family: Harmony-Medium, sans-serif;
+  font-size: 14px;
+  font-family: Harmony-Medium, sans-serif;
 }
 
 .settings__text-info {
-    font-size: 14px;
-    line-height: 16px;
-    color: #8c8c8d;
+  font-size: 14px;
+  line-height: 16px;
+  color: #8c8c8d;
 }
 
 .settings__text {
-    margin-bottom: 5px;
-    font-size: 14px;
-    font-family: Harmony-Medium, sans-serif;
+  margin-bottom: 5px;
+  font-size: 14px;
+  font-family: Harmony-Medium, sans-serif;
 }
 
 .settings__description {
-    margin-bottom: 15px;
-    font-size: 14px;
-    line-height: 16px;
-    font-weight: 400;
-    color: #8c8c8d;
+  margin-bottom: 15px;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: 400;
+  color: #8c8c8d;
 }
 
 .settings__input {
-    transition: 0.15s;
-    margin-bottom: 10px;
-    padding: 15px 20px 15px 20px;
-    width: 100%;
-    max-height: 46px;
-    border-radius: 14px;
-    outline: none;
-    border: 1px solid var(--iface-white14);
-    background: transparent;
-    text-align: center;
-    font-size: 14px;
-    font-family: Harmony-Medium, sans-serif;
-    line-height: 16px;
+  background: var(--iface-white6);
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 10px 12px;
+  text-align: center;
+  border-radius: 12px;
+  transition: 0.15s;
+  outline: none;
+  border: 0px solid var(--iface-white6);
 }
 
 .settings__input:hover {
-    border: 1px solid var(--iface-white24);
-    background: var(--iface-white4);
+  background: var(--iface-white4);
 }
 
 .settings__input:active {
-    border: 2px solid var(--iface-accent-color);
-    background: var(--main-bg-color);
+  background: var(--iface-white6);
 }
 
 .settings__input:focus {
-    border: 2px solid var(--iface-accent-color);
-    background: var(--main-bg-color);
+  background: var(--iface-white6);
+}
+
+.settings__input:disabled {
+  cursor: not-allowed;
 }
 
 .active_input {
-    border: 1px solid var(--iface-accent-color);
-    color: var(--iface-accent-color);
+  border: 1px solid var(--iface-accent-color);
+  color: var(--iface-accent-color);
 }
 
 .active_input:hover {
-    border: 1px solid var(--iface-accent-color);
-    color: var(--iface-accent-color);
-    background: var(--iface-white4);
+  border: 1px solid var(--iface-accent-color);
+  color: var(--iface-accent-color);
+  background: var(--iface-white4);
+}
+
+.block-slippage {
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
 }
 
 .settings__button-block {
-    display: flex;
-    gap: 0 10px;
-    margin-bottom: 8px;
+  display: flex;
+  gap: 0 10px;
+  margin-bottom: 8px;
 }
 
 .show_expert .settings__button-block {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--iface-white6);
-    margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
+}
+
+.block-settings {
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
 }
 
 .settings__button {
-    transition: 0.15s;
-    width: 100%;
-    height: 40px;
-    border-radius: 14px;
-    border: 1px solid var(--iface-white14);
-    background: transparent;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
+  transition: 0.15s;
+  width: 100%;
+  height: 40px;
+  border-radius: 14px;
+  border: 1px solid var(--iface-white14);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
 }
 
 .settings__button:hover {
-    border: 1px solid var(--iface-white24);
+  border: 1px solid var(--iface-white24);
 }
 
 .active,
 .active:hover {
-    border: 1px solid var(--iface-accent-color);
-    color: var(--iface-accent-color);
+  border: 1px solid var(--iface-accent-color);
+  color: var(--iface-accent-color);
 }
 
 .yellow_status.active {
-    border: 1px solid var(--main-yellow);
-    background: transparent;
-    color: var(--main-yellow);
+  border: 1px solid var(--main-yellow);
+  background: transparent;
+  color: var(--main-yellow);
 }
 
 .red_status.active {
-    border: 1px solid var(--main-red);
-    background: transparent;
-    color: var(--main-red);
+  border: 1px solid var(--main-red);
+  background: transparent;
+  color: var(--main-red);
 }
 
 .settings__button-column {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .intermediate-token {
-    padding-bottom: 20px;
-    border-bottom: 1px solid var(--iface-white6);
-    margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--iface-white6);
+  margin-bottom: 20px;
 }
 
 .settings__button-group {
-    display: flex;
-    align-items: center;
-    gap: 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 0 10px;
 }
 
 /*.settings__ignore-btn {
@@ -941,118 +966,119 @@ export default {
 }*/
 
 .description-color {
-    margin-right: 4px;
-    font-weight: 400;
-    color: #4a7cfd;
+  margin-right: 4px;
+  font-weight: 400;
+  color: #4a7cfd;
 }
 
 .custom-scroll::-webkit-scrollbar-track {
-    margin: 5px 0 15px 0;
+  margin: 5px 0 15px 0;
 }
 
 .info-wrapper {
-    position: relative;
+  position: relative;
 }
 
 .word-wrap {
-    display: inline-block;
-    max-width: 100%;
-    word-wrap: break-word;
-    word-break: break-word;
-    white-space: normal;
-    overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .tooltip-icon {
-    position: absolute;
-    top: 1px;
+  position: absolute;
+  top: 1px;
 }
 
 .btn-tooltip {
-    max-width: 98%;
-    z-index: 100;
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-49.5%);
+  max-width: 98%;
+  z-index: 100;
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-49.5%);
 }
 
 .theme-light svg path {
-    fill: #141414;
+  fill: #141414;
 }
 
 .settings__block {
-    padding: 14px;
-    border-radius: 12px;
-    background: var(--iface-white4);
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--iface-white4);
 }
 
 .block-item {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 14px 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 14px 0;
 }
 
 .block-item:first-child {
-    padding: 0 0 14px 0;
+  padding: 0 0 14px 0;
 }
 
 .block-item:last-child {
-    padding: 14px 0 0 0;
+  padding: 14px 0 0 0;
 }
 
 .block-item:not(:last-child):after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 1px;
-    background: var(--iface-white6);
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: var(--iface-white6);
 }
 
 .block-item__left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .block-item__img {
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    object-fit: cover;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .block-item__title {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 @media screen and (max-width: 768px) {
-    .settings__content {
-        max-height: calc(100dvh - 66px);
-        height: auto;
-        overflow-y: auto;
-    }
+  .settings__content {
+    max-height: calc(100dvh - 66px);
+    height: auto;
+    overflow-y: auto;
+  }
 
-    .btn-tooltip {
-        position: fixed;
-        z-index: 100;
-        bottom: 40px;
-        left: 50%;
-        transform: translateX(-49.5%);
-    }
+  .btn-tooltip {
+    position: fixed;
+    z-index: 100;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-49.5%);
+  }
 }
 
 @media screen and (max-height: 650px) {
-    .settings__content {
-        max-height: calc(100dvh - 66px);
-        height: auto;
-        overflow-y: auto;
-    }
+  .settings__content {
+    max-height: calc(100dvh - 66px);
+    height: auto;
+    overflow-y: auto;
+  }
 }
 </style>
+

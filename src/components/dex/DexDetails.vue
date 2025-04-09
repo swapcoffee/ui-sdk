@@ -109,6 +109,12 @@
                 </p>
                 <p class="dex__value">{{ getEstimatedCashbackAndFee.fee }}</p>
             </div>
+            <div class="dex__row" v-if="getMevFeeDisplay">
+              <p class="dex__name">
+                {{ $t('dexDetails.mev.name') }}
+              </p>
+              <p class="dex__value">{{ getMevFeeDisplay }} TON</p>
+            </div>
             <div class="dex__row">
                 <p class="dex__name">
                     {{ $t('dexDetails.economy') }}
@@ -163,6 +169,16 @@ export default {
                 return `1 ${first?.symbol} ≈ ${this.prettyNumber(reverseCalc, 2)} ${second?.symbol}`
             }
             return `1 ${second?.symbol} ≈ ${this.prettyNumber(calc, 2)} ${first?.symbol}`
+        },
+        getMevFeeDisplay() {
+          if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE) {
+            if (this.dexStore.GET_DEAL_CONDITIONS?.mev_protection_fee) {
+              return this.dexStore.GET_DEAL_CONDITIONS?.mev_protection_fee
+            } else {
+              return  false
+            }
+          }
+          return false
         },
         getOutputUsd() {
             if (this.isReverse) {

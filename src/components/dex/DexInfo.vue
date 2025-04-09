@@ -59,6 +59,7 @@ export default {
 
 .theme-light .dex__info-icon path {
   fill: var(--main-red);
+  stroke: #000 !important;
 }
 
 .dex__info-text {

@@ -264,7 +264,11 @@ export default {
           maxIntermediateTokens: this.GET_MAX_INTERMEDIATE_TOKENS,
           maxSplits: this.GET_MAX_SPLITS,
           liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
+          mevProtection: this.dexSettingsStore.GET_MEV_PROTECTION_VALUE,
+          mevMinValueUsd: this.dexSettingsStore.GET_MEV_MIN_USD
         };
+
+        console.log(dex, 'dex')
 
         await profileService.writeStorage(
           this.GET_DEX_WALLET?.address,

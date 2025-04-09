@@ -1,6 +1,6 @@
 import { Address } from "@ton/core";
 import { dexService } from "@/api/coffeeApi/services";
-import { compareTokens } from "@/helpers/swap-interface/compare";
+import {compareTokens, TSTON_ADDRESS} from "@/helpers/swap-interface/compare";
 import { setTransactionMessage } from "@/helpers/dex/calculate";
 import { useDexStore } from "@/stores/dex";
 import { useTransactionStore } from "@/stores/transaction";
@@ -121,9 +121,29 @@ export async function dexTransaction({
                                          dealConditions,
                                          slippage,
                                          tonConnectUi,
+	                                     mevProtection = false
                                      }) {
     try {
         updateProcessing(true, 'dex');
+
+		// TODO: remove this on fix
+		/// ============================================
+		let {tokens} = compareAsset
+		let fromTokenAddress = 'native';
+		let toTokenAddress = 'native';
+
+		if (tokens.first.type !== 'native') {
+			fromTokenAddress = Address.parse(tokens.first?.address).toString();
+		}
+
+		if (tokens.second?.type !== 'native') {
+			toTokenAddress = Address.parse(tokens.second?.address).toString();
+		}
+
+		if (fromTokenAddress === TSTON_ADDRESS || toTokenAddress === TSTON_ADDRESS) {
+			mevProtection = false
+		}
+		// ==============================================
 
         await compareTokens(compareAsset);
 
@@ -136,6 +156,7 @@ export async function dexTransaction({
             sender,
             slippage / 100,
             referralName,
+			mevProtection
         ))?.data;
 
         transactionStore.SAVE_SWAP_TRANSACTION_INFO(trInfo);

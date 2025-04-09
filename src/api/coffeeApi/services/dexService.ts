@@ -31,6 +31,7 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
+      mev_protection
     } = requestParams;
 
     return await this.routingApi.buildRoute({
@@ -41,6 +42,7 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
+      mev_protection
     });
   }
 
@@ -78,6 +80,7 @@ class DexService extends CoffeeSdkWrapper {
       route: any,
       senderAddress: string,
       slippage: number,
+      mevProtection = false,
       referralName?: string,
       feeSettings?: FeeSettings
   ): Promise<ApiTransactionsResponse> {
@@ -85,6 +88,7 @@ class DexService extends CoffeeSdkWrapper {
       sender_address: senderAddress,
       slippage: slippage,
       paths: route.data?.paths || route.paths,
+      mev_protection: mevProtection
     };
 
     if (referralName) {

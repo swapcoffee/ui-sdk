@@ -1,10 +1,30 @@
 <template>
 	<div class="dex__info">
 		<div class="dex__high-price">
-			<svg class="dex__info-icon" xmlns="http://www.w3.org/2000/svg" width="19" height="18" viewBox="0 0 19 18" fill="none">
-				<path d="M2.75 9C2.75 12.7274 5.77181 15.75 9.5 15.75C13.2282 15.75 16.25 12.7274 16.25 9C16.25 5.27181 13.2282 2.25 9.5 2.25C5.77181 2.25 2.75 5.27181 2.75 9Z" stroke="#FFCF55" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-				<path d="M9.50428 11.7699V8.5452M9.5 6.26569V6.21826" stroke="#FFCF55" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-			</svg>
+      <svg
+          class="dex__info-icon"
+          :class="{ 'theme-light-icon': settingsStore.GET_THEME === 'light' }"
+          xmlns="http://www.w3.org/2000/svg"
+          width="19"
+          height="18"
+          viewBox="0 0 19 18"
+          fill="none"
+      >
+        <path
+            d="M2.75 9C2.75 12.7274 5.77181 15.75 9.5 15.75C13.2282 15.75 16.25 12.7274 16.25 9C16.25 5.27181 13.2282 2.25 9.5 2.25C5.77181 2.25 2.75 5.27181 2.75 9Z"
+            stroke="#EA3943"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+        <path
+            d="M9.50428 11.7699V8.5452M9.5 6.26569V6.21826"
+            stroke="#EA3943"
+            stroke-width="1.4"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+        />
+      </svg>
 			<p class="dex__info-text">{{ $t("dexInfo.exactOut") }}</p>
 		</div>
 		<p class="dex__description">{{ $t("dexInfo.reverseSwap") }}</p>
@@ -12,11 +32,18 @@
 </template>
 
 <script lang="ts">
+import {useSettingsStore} from "@/stores/settings";
+
 export default {
   name: 'DexReverseInfo',
   data() {
     return {};
   },
+  computed: {
+    settingsStore() {
+      return useSettingsStore()
+    }
+  }
 };
 </script>
 
@@ -39,11 +66,12 @@ export default {
 }
 
 .dex__info-icon {
-	margin-right: 5px;
+  margin-right: 5px;
 }
 
 .theme-light .dex__info-icon path {
-	fill: var(--main-yellow);
+  fill: var(--main-red);
+  stroke: #000 !important;
 }
 
 .dex__info-text {

@@ -29,8 +29,11 @@
             @closeModal="closeSuccess"
             :status="'pending'"
         />
+        <MevSettingPopup
+            @closeModal="modals.mevSettings = false"
+            v-if="modals.mevSettings"
+        />
 <!--      Убрать trInfo и transaction из пропсов, поменять на геттеры -->
-
 <!--        <DexSuccess-->
 <!--            v-if="modals.success === true"-->
 <!--            :trInfo="GET_TRANSACTION_INFO"-->
@@ -41,13 +44,21 @@
 </template>
 
 <script lang="ts">
+import {Address} from "@ton/core";
+import {defineAsyncComponent} from "vue";
+
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
-import {
-    clearRequestInterval,
-    dexTransaction,
-    stakeTransaction,
-    unstakeTransaction
-} from "@/helpers/swap-interface/send-transaction.ts";
+import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
+import DexSuccess from "@/components/dex/DexSuccess.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+import MevSettingPopup from "@/components/dex/MevSettingsPopup.vue";
+
+import swapSettings from "@/mixins/swapSettings.ts";
+import {useDexStore} from "@/stores/dex/index.ts";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useTransactionStore} from "@/stores/transaction/index.ts";
+import {DEFAULT_ADDRESSES} from "@/utils/consts.ts";
+
 import {
   changeSettingsWatcher, expertModeWatcher, receiveAmountWatcher,
   receiveTokenWatcher,
@@ -57,25 +68,20 @@ import {
   removeTimeout, sendAmountWatcher,
   sendTokenWatcher
 } from "@/helpers/swap-interface/watchers.ts";
-import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
-import {defineAsyncComponent} from "vue";
-import DexSuccess from "@/components/dex/DexSuccess.vue";
-import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 
-import swapSettings from "@/mixins/swapSettings.ts";
-
-import {useDexStore} from "@/stores/dex/index.ts";
-import {useDexSettingsStore} from "@/stores/dex/settings.ts";
-import {useTransactionStore} from "@/stores/transaction/index.ts";
-import {DEFAULT_ADDRESSES} from "@/utils/consts.ts";
-import {Address} from "@ton/core";
+import {
+  clearRequestInterval,
+  dexTransaction,
+  stakeTransaction,
+  unstakeTransaction
+} from "@/helpers/swap-interface/send-transaction.ts";
 
 export default {
     name: 'DexPageTest',
     components: {
         TransactionStatusModal,
-	    DexSuccess,
-	    SwapHeader,
+	      DexSuccess,
+	      SwapHeader,
         SwapInterfaceTest,
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")
@@ -83,6 +89,7 @@ export default {
         DexSettings: defineAsyncComponent(() => {
             return import('@/components/modals/DexSettingsModal.vue');
         }),
+        MevSettingPopup
     },
     mixins: [swapSettings],
     props: {
@@ -104,6 +111,7 @@ export default {
             updateSettingsModalVisible: this.openSettingsModal,
             updateTokenModalVisible: this.openTokenModal,
             updateShowModal: this.closeSuccess,
+            updateMevModal: this.openMevModal,
             updateFirstValue: this.changeFirstValue,
             updateTokenPositions: this.swapTokenPositions,
             updateSecondValue: this.changeSecondValue,
@@ -121,6 +129,7 @@ export default {
             modals: {
                 token: false,
                 settings: false,
+                mevSettings: false
             },
             successModalState: {
                 mode: 'swap',
@@ -224,7 +233,7 @@ export default {
             return {result: false, reason: null};
         },
         assetForCompare() {
-            return {
+            let asset = {
                 wallet: this.dexStore.GET_DEX_WALLET,
                 tokens: this.getTokens,
                 tokenAmounts: this.tokenValues,
@@ -235,8 +244,18 @@ export default {
                 changePoolNotFound: this.changePoolNotFound,
                 changeRefreshInfo: this.changeRefreshInfo,
                 createAbortController: this.createAbortController,
-                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
+                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
+                mevProtection: false
             }
+
+            if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE && ((Number(this.tokenValues.first) * Number(this.getTokens?.first?.price_usd)) >= Number(this.dexSettingsStore.GET_MEV_MIN_USD))) {
+              asset = {
+                ...asset,
+                mevProtection: true
+              }
+            }
+
+            return asset
         },
         getTokens() {
             return {
@@ -293,7 +312,7 @@ export default {
             }
         },
         dexTransactionData() {
-            return {
+            let data = {
                 updateProcessing: this.updateProcessing,
                 compareAsset: this.assetForCompare,
                 wallet: this.dexStore.GET_DEX_WALLET,
@@ -301,6 +320,17 @@ export default {
                 slippage: this.dexSettingsStore.GET_SLIPPAGE,
                 tonConnectUi: this.tonConnectUi,
             }
+
+            if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE && ((Number(this.tokenValues.first) * Number(this.getTokens.first.price_usd)) >= Number(this.dexSettingsStore.GET_MEV_MIN_USD))) {
+              data = {
+                ...data,
+                mevProtection: true
+              }
+            }
+
+            console.log(data)
+
+            return data
         }
     },
     methods: {
@@ -316,6 +346,9 @@ export default {
 	    },
         openSettingsModal() {
             this.modals.settings = true
+        },
+        openMevModal() {
+            this.modals.mevSettings = true
         },
         openTokenModal(value) {
             this.tokenModalMode = value
@@ -566,6 +599,16 @@ export default {
                 expertModeWatcher(this.changeSettingsWatcherData)
             },
         },
+        'dexSettingsStore.GET_MEV_PROTECTION_VALUE': {
+          handler() {
+            changeSettingsWatcher(this.changeSettingsWatcherData)
+          }
+        },
+        'dexSettingsStore.GET_MEV_MIN_USD': {
+          handler() {
+            changeSettingsWatcher(this.changeSettingsWatcherData)
+          }
+        }
     }
 }
 </script>

@@ -225,6 +225,9 @@
       "text": "最多 {gasFee} TON",
       "integrator": "集成商费用"
     },
+    "mev": {
+      "name": "MEV 保护费用"
+    },
     "economy": "您的经济",
     "distribution": "分配计划"
   },
@@ -976,6 +979,40 @@
     "share": "分享",
     "close": "关闭",
     "copyToClipboard": "复制到剪贴板！"
+  },
+  "mevProtect": {
+    "title": "MEV 保护",
+    "status": {
+      "enabled": "启用",
+      "disabled": "禁用"
+    },
+    "settings": {
+      "first": {
+        "title": "MEV 保护",
+        "description": "在 99% 的情况下保护您的兑换免受 MEV 攻击。",
+        "description2": "折扣！",
+        "oldPrice": "旧价格：0.5 TON",
+        "newPrice": "新价格：每次分割 0.25 TON"
+      },
+      "second": {
+        "title": "多跳兑换",
+        "description": "在包含中间代币的兑换中使用 MEV 保护",
+        "description2": "注意：MEV 保护仅保护第一跳，不影响路径中的后续跳跃",
+        "yes": "是",
+        "no": "否"
+      },
+      "third": {
+        "title": "最小兑换金额",
+        "description": "仅对超过此金额的兑换使用 MEV 保护",
+        "customField": "自定义"
+      },
+      "fourth": {
+        "title": "附加信息",
+        "description1": "MEV 保护仅保护第一跳，不影响路径中的后续跳跃。",
+        "description2": "MEV 保护不保证完全保护，但会利用区块链的最大能力进行保护。",
+        "description3": "MEV 保护不允许模拟交易。"
+      }
+    }
   }
 }
 

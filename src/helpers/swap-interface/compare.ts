@@ -9,6 +9,8 @@ import { useDexSettingsStore } from '@/stores/dex/settings';
 let routeInfoResponse = null;
 let routeRequestCounter = 0;
 
+export const TSTON_ADDRESS = Address.parse("EQC98_qAmNEptUtPc7W6xdHh_ZHrBUFpw5Ft_IzNU20QAJav").toString()
+
 function getStore(storeHook) {
   const pinia = getActivePinia();
   if (!pinia) {
@@ -42,10 +44,16 @@ function getPoolSelector(maxVolatility, liquiditySources) {
 }
 
 function setAssetForCompare(data) {
-  let { wallet, tokens, tokenAmounts, maxIntermediate, maxVolatility, maxSplits, swapMode, liquiditySources } = data;
+  let { wallet, tokens, tokenAmounts, maxIntermediate, maxVolatility, maxSplits, swapMode, liquiditySources, mevProtection } = data;
 
   let fromTokenAddress = tokens?.first?.type !== 'native' ? Address.parse(tokens?.first?.address).toString() : 'native';
   let toTokenAddress = tokens?.second?.type !== 'native' ? Address.parse(tokens?.second?.address).toString() : 'native';
+
+  // ============= // TODO: remove this on fix
+  if (fromTokenAddress === TSTON_ADDRESS || toTokenAddress === TSTON_ADDRESS) {
+    mevProtection = false
+  }
+  // =============
 
   const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
   if (wallet?.version < 5 && referralName === 'tonkeeper') {
@@ -59,6 +67,7 @@ function setAssetForCompare(data) {
     pool_selector: getPoolSelector(maxVolatility, liquiditySources),
     max_splits: maxSplits,
     additional_data: null,
+    mev_protection: mevProtection
   };
 
   if (wallet) {

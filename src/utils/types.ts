@@ -60,6 +60,8 @@ export interface DexSettingsState {
     isExpertMode: boolean;
     maxSplitsValue: number;
     liquiditySources: string[];
+    isMevProtectionEnabled: boolean;
+    useMevVolumeUsd: number;
 }
 
 export interface TokenPagination {

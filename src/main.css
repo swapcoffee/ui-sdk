@@ -1,3 +1,112 @@
+@font-face {
+    font-family: Harmony-Thin;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Thin.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Thin.woff") format("woff");
+    font-style: normal;
+    font-weight: 100;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: Harmony-Light;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Light.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Light.woff") format("woff");
+    font-style: normal;
+    font-weight: 300;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: Harmony-Regular;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Regular.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Regular.woff") format("woff");
+    font-style: normal;
+    font-weight: 400;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: Harmony-Medium;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Medium.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Medium.woff") format("woff");
+    font-style: normal;
+    font-weight: 500;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: Harmony-Bold;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Bold.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Bold.woff") format("woff");
+    font-style: normal;
+    font-weight: 700;
+    font-display: fallback;
+}
+
+@font-face {
+    font-family: Harmony-Black;
+    src: url("@/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff2") format("woff2"),
+    url("@/fonts/HarmonyOS/HarmonyOS_Sans_Black.woff") format("woff");
+    font-style: normal;
+    font-weight: 900;
+    font-display: fallback;
+}
+
+
+.swap-coffee__sdk-widget {
+    font-family: Harmony-Medium, sans-serif;
+}
+
+.swap-coffee__sdk-widget * a {
+    text-decoration: none;
+    color: #fff;
+    font-family: Harmony-Medium, sans-serif;
+    font-weight: 500;
+}
+
+.swap-coffee__sdk-widget * h1,
+.swap-coffee__sdk-widget * h2,
+.swap-coffee__sdk-widget * h3,
+.swap-coffee__sdk-widget * h4 {
+    margin: 0;
+    font-family: Harmony-Bold, sans-serif;
+    color: var(--main-text-color);
+}
+
+.swap-coffee__sdk-widget * p {
+    margin: 0;
+    font-size: 16px;
+    line-height: normal;
+    font-family: Harmony-Regular, sans-serif;
+    color: var(--main-text-color);
+}
+
+.swap-coffee__sdk-widget * li {
+    font-family: Harmony-Regular, sans-serif;
+    color: var(--main-text-color);
+}
+
+.swap-coffee__sdk-widget * button {
+    cursor: pointer;
+    font-family: Harmony-Medium, sans-serif;
+    color: var(--main-text-color);
+}
+
+.swap-coffee__sdk-widget * input {
+    font-family: Harmony-Regular, sans-serif;
+    color: var(--main-text-color);
+}
+
+.swap-coffee__sdk-widget * textarea {
+    font-family: Harmony-Regular, sans-serif;
+}
+
+.swap-coffee__sdk-widget * input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .swap-coffee__sdk-widget {
     --main-btn-disabled: #323232;
     --main-blue: #4b76ff;

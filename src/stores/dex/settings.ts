@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import { DexSettingsState } from "@/utils/types";
 
+import type { DexSettingsState } from "@/utils/types";
 
 export const useDexSettingsStore = defineStore('dex-settings', {
     state: (): DexSettingsState => ({
@@ -11,6 +11,8 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         isExpertMode: false,
         maxSplitsValue: 4,
         liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'tonco'],
+        isMevProtectionEnabled: false,
+        useMevVolumeUsd: 10
     }),
     actions: {
         DEX_SLIPPAGE(value: number) {
@@ -48,6 +50,12 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         DEX_LIQUIDITY_SOURCES(value: string[]) {
             this.liquiditySources = value;
         },
+        DEX_MEV_PROTECTION(value: boolean) {
+            this.isMevProtectionEnabled = value
+        },
+        DEX_MEV_MIN_USD(value: number) {
+            this.useMevVolumeUsd = value;
+        }
     },
     getters: {
         GET_SLIPPAGE: (state): number => state.slippage,
@@ -57,5 +65,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         GET_EXPERT_MODE_VALUE: (state): boolean => state.isExpertMode,
         GET_MAX_SPLITS: (state): number => state.maxSplitsValue,
         GET_LIQUIDITY_SOURCES: (state): string[] => state.liquiditySources,
+        GET_MEV_PROTECTION_VALUE: (state): boolean => state.isMevProtectionEnabled,
+        GET_MEV_MIN_USD: (state): number => state.useMevVolumeUsd,
     },
 });
