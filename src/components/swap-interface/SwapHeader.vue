@@ -1,13 +1,8 @@
 <template>
     <div class="swap-header">
-        <h1 class="swap-header__title"
-            v-if="title"
-        >
-            {{ title }}
-        </h1>
-        <TradeNav v-else />
-        <div class="swap-header__group">
-            <button class="swap-header__button refresh-btn"
+        <TradeNav v-if="limitDcaVisibility" />
+      <div :class="['swap-header__group', { 'right': !limitDcaVisibility }]">
+      <button class="swap-header__button refresh-btn"
                     v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
                     @click="refreshCompare"
             >
@@ -42,15 +37,9 @@ import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "SwapHeader",
-    inject: ["updateSettingsModalVisible", "tokenValues", "processing"],
+    inject: ["updateSettingsModalVisible", "tokenValues", "processing", "limitDcaVisibility"],
     mixins: [computedMixins],
     props: {
-        title: {
-            type: String,
-            default() {
-                return ''
-            }
-        },
         refreshInfo: {
             type: Boolean,
             data() {
@@ -126,6 +115,10 @@ export default {
         display: flex;
         align-items: center;
         justify-content: space-between;
+    }
+
+    .right {
+      margin-left: auto;
     }
 
     .swap-header__title {

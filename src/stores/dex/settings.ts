@@ -10,7 +10,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         maxIntermediateTokens: 1,
         isExpertMode: false,
         maxSplitsValue: 4,
-        liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'tonco'],
+        liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers'],
     }),
     actions: {
         DEX_SLIPPAGE(value: number) {
@@ -32,7 +32,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
             this.maxIntermediateTokens = 1;
             this.maxSplitsValue = 4;
             this.isExpertMode = false;
-            this.liquiditySources = ['dedust', 'stonfi', 'stonfi_v2', 'tonco'];
+            this.liquiditySources = ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers'];
         },
         CLEAR_DEX_EXPERTS_SETTINGS() {
             this.priceImpact = 10;

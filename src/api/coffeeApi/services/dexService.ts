@@ -31,6 +31,7 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
+      pool_selector
     } = requestParams;
 
     return await this.routingApi.buildRoute({
@@ -41,6 +42,10 @@ class DexService extends CoffeeSdkWrapper {
       max_length,
       max_splits,
       additional_data,
+      pool_selector: pool_selector ?? {
+        ...pool_selector,
+        dexes: dexes ?? ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers']
+      },
     });
   }
 

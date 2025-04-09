@@ -124,8 +124,12 @@ export default {
           if (!array.includes('Coffee')) {
             array.push('Coffee')
           }
+        } else if (item?.dex === 'tonstakers') {
+          if (!array.includes('Tonstakers')) {
+            array.push('Tonstakers')
+          }
         }
-			})
+      })
 			if (array.length === 2) {
 				return `${array[0]}, ${array[1]}`
 			} else if (array.length === 1) {

@@ -115,7 +115,7 @@ export default {
             modalState: this.successModalState
         }
     },
-    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount'],
+    inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount', 'customFeeSettings', 'widgetReferral'],
     data() {
         return {
             modals: {
@@ -235,7 +235,9 @@ export default {
                 changePoolNotFound: this.changePoolNotFound,
                 changeRefreshInfo: this.changeRefreshInfo,
                 createAbortController: this.createAbortController,
-                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
+                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
+                customFeeSettings: this.customFeeSettings,
+                widgetReferral: this.widgetReferral,
             }
         },
         getTokens() {
@@ -299,6 +301,8 @@ export default {
                 wallet: this.dexStore.GET_DEX_WALLET,
                 dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
                 slippage: this.dexSettingsStore.GET_SLIPPAGE,
+                widgetReferral: this.widgetReferral,
+                customFeeSettings: this.customFeeSettings,
                 tonConnectUi: this.tonConnectUi,
             }
         }
@@ -438,7 +442,7 @@ export default {
           this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
 
           if (this.firstTokenAmount) {
-            this.changeFirstValue(this.firstTokenAmount)
+            this.changeFirstValue(String(this.firstTokenAmount));
           }
 
         },

@@ -121,6 +121,10 @@
                 </p>
                 <p class="dex__value value_green">{{ getEstimatedCashbackAndFee.cashback }}</p>
             </div>
+          <div class="dex__row">
+            <p class="dex__name">Integrator Fee</p>
+            <p class="dex__value">≈ {{ partnerFee }} TON</p>
+          </div>
         </div>
         <!--		</transition>-->
     </div>
@@ -139,6 +143,7 @@ export default {
     name: 'DexDetails',
     components: {DetailsIcon, TooltipWrapper},
     mixins: [transactionRoutesMixin, methodsMixins],
+    inject: ["customFeeSettings"],
     data() {
         return {
             showMore: false,
@@ -195,6 +200,22 @@ export default {
                 fee: !!partnerFee ? formatAmount(partnerFee, '≈ ') + ' TON'  : null
             };
         },
+      partnerFee() {
+        const feeSettings = this.customFeeSettings;
+        const transactionAmount = this.dexStore.GET_DEAL_CONDITIONS?.input_amount
+
+        if (!feeSettings || !transactionAmount) {
+          return 0;
+        }
+
+        const percentageFee = (transactionAmount * feeSettings.percentage_fee) / 1_000_000;
+        const minFee = Number(feeSettings.min_percentage_fee_fixed);
+        const maxFee = Number(feeSettings.max_percentage_fee_fixed);
+
+        const result = Math.min(Math.max(percentageFee, minFee), maxFee)
+
+        return this.formatTon(result);
+      },
         getClassImpact() {
             if (this.getPriceImpact <= -5) {
                 return 'red-impact';
@@ -246,6 +267,11 @@ export default {
         showTooltip(value) {
             this.tooltipList.push(value);
         },
+      formatTon(nanotons, decimals = 9) {
+        const divisor = Math.pow(10, decimals);
+        const tons = parseFloat(nanotons) / divisor;
+        return tons.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      },
         toggleDetails() {
             this.showMore = !this.showMore;
         },
@@ -317,6 +343,10 @@ export default {
 .arrow-icon {
     width: 18px;
     height: 18px;
+}
+
+.theme-light .arrow-icon {
+  filter: invert(1);
 }
 
 .active .arrow-icon {

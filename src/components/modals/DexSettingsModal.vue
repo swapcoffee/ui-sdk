@@ -359,24 +359,28 @@ export default {
             maxSplits: 0,
             isV5: false,
             showTooltip: false,
-            liquiditySources: [
-                {
-                    name: 'dedust',
-                    enabled: true,
-                },
-                {
-                    name: 'stonfi',
-                    enabled: true,
-                },
-                {
-                    name: 'stonfi_v2',
-                    enabled: true,
-                },
-                {
-                    name: 'tonco',
-                    enabled: true,
-                }
-            ],
+          liquiditySources: [
+            {
+              name: 'dedust',
+              enabled: true,
+            },
+            {
+              name: 'stonfi',
+              enabled: true,
+            },
+            {
+              name: 'stonfi_v2',
+              enabled: true,
+            },
+            {
+              name: 'tonco',
+              enabled: true,
+            },
+            {
+              name: 'tonstakers',
+              enabled: true,
+            }
+          ],
         };
     },
     computed: {
