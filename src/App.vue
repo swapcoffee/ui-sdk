@@ -189,7 +189,19 @@ export default {
     async getTonTokens(retryCount = 0) {
       try {
         const toncoinAddress = "0:0000000000000000000000000000000000000000000000000000000000000000";
-        const usdtAddress = ""
+        const usdtAddress = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
+        const cesAddress = "EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1";
+
+        if (this.limitedJettonLists?.length > 0) {
+          if (!this.limitedJettonLists.includes(usdtAddress)) {
+            this.limitedJettonLists.push(usdtAddress);
+          }
+
+          if (!this.limitedJettonLists.includes(cesAddress)) {
+            this.limitedJettonLists.push(cesAddress);
+          }
+        }
+
         this.toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
         let res;
         let tokens;
@@ -235,7 +247,7 @@ export default {
 
         tokens = this.mergeArrays(tokens, pinnedTokens);
 
-        this.tokensWithImported = await this.checkImportTokens(tokens);
+        this.tokensWithImported = this.checkImportTokens(tokens);
 
         this.dexStore.DEX_TOKENS_OPTIONS({ "current_page": res.page, "total_pages": res.pages });
 
@@ -256,7 +268,7 @@ export default {
         }
       }
     },
-    async checkImportTokens(tokens) {
+    checkImportTokens(tokens) {
       let importedToken = JSON.parse(localStorage.getItem('importTokens'));
       if (importedToken) {
         importedToken.forEach((item) => {
