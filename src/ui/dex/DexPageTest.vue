@@ -438,8 +438,6 @@ export default {
               rawAddresses.includes(token.address)
           );
 
-          console.log("startTokens", startTokens);
-
           this.dexStore.DEX_SEND_TOKEN(startTokens[0]);
           this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
 
