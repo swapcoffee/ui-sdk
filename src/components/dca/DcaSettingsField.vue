@@ -6,7 +6,6 @@
         </div>
         <div class="settings-field__group">
             <settings-input
-                :class="{default_value: checkDefaultTime }"
                 :reverse-icon="showSelect"
                 :with-select="true"
                 :label-name="timeMode"
@@ -18,13 +17,12 @@
             >
                 <CustomSelect
                     v-if="showSelect"
-                    :select-list="Object.keys(this.getTimeUnits)"
+                    :select-list="Object.keys(getTimeUnits)"
                     @updateSelect="updateSelect"
                     @closeSelect="closeSelect"
                 />
             </settings-input>
             <SettingsInput
-                :class="{default_value: checkDefaultOrders }"
                 :label-name="$t('dcaSettings.orders')"
                 :min-value="2"
                 :max-value="255"

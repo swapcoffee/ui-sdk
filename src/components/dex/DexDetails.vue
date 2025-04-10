@@ -136,7 +136,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin.ts';
 import methodsMixins from '@/mixins/methodsMixins.ts';

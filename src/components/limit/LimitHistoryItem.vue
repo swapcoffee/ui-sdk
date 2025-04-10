@@ -6,8 +6,8 @@
             <div class="item__row">
                 <div class="item__info">
                     <div class="item__icon-wrapper">
-                        <img :src="getFirstImage" alt="" class="item__icon">
-                        <img :src="getSecondImage" alt="" class="item__icon second-icon">
+                        <img :src="getFirstImage" alt="icon" class="item__icon">
+                        <img :src="getSecondImage" alt="icon" class="item__icon second-icon">
                     </div>
                     <div class="item__path">
                         <p class="item__path-text">{{ displayInputToken }}</p>

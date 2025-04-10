@@ -24,7 +24,7 @@
     </modal-wrapper>
 </template>
 
-<script>
+<script lang="ts">
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 import DoneIcon from "@/assets/dex/icons/Done.vue";
 

@@ -40,6 +40,7 @@
 
 <script lang="ts">
 import SettingsInput from "@/components/general/SettingsInput.vue";
+
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 
 export default {

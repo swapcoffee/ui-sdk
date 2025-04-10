@@ -15,7 +15,7 @@
     </swap-button>
 </template>
 
-<script>
+<script lang="ts">
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 

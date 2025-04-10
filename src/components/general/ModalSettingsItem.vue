@@ -27,9 +27,9 @@
 
 <script lang="ts">
 import ModalSettingButton from "@/components/general/ModalSettingsButton.vue";
-
 import ModalSettingsInput from "@/components/general/ModalSettingsInput.vue";
 import DexInput from "@/components/dex/DexInput.vue";
+
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 
 export default {

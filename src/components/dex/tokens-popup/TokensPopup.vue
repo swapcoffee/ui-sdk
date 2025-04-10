@@ -117,10 +117,9 @@
 </template>
 
 <script lang="ts">
-import {Address} from '@ton/core';
-import methodsMixins from '@/mixins/methodsMixins.ts';
-import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
 import {profileService, tokenService} from '@/api/coffeeApi/services';
+
+import TokenItem from '@/components/dex/tokens-popup/TokenItem.vue';
 import CloseIcon from '@/assets/dex/icons/CloseIcon.vue';
 import SearchIcon from '@/assets/dex/icons/SearchIcon.vue';
 import LiquidityIcon from '@/assets/dex/icons/LiquidityIcon.vue';
@@ -134,11 +133,15 @@ import TokenUnlisted from '@/components/dex/tokens-popup/TokenUnlisted.vue';
 import TokenStakeList from '@/components/dex/tokens-popup/TokenStakeList.vue';
 import TokenLimitList from "@/components/dex/tokens-popup/TokenLimitList.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue";
+
+import methodsMixins from '@/mixins/methodsMixins.ts';
+import computedMixins from "@/mixins/computedMixins.ts";
+
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useLimitStore} from "@/stores/limit/index.ts";
 import {useSettingsStore} from "@/stores/settings";
-import computedMixins from "@/mixins/computedMixins.ts";
+
 import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
@@ -344,7 +347,7 @@ computed: {
 			return this.getAllTokens.slice(0, this.displayedTokensCount);
 		} else {
 			return this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
-				return !this.dexStore.GET_USER_TOKENS.some((f) => el.id === f.id);
+				return !this.dexStore.GET_USER_TOKENS.some((f) => el?.id === f?.id);
 			});
 		}
 	},
@@ -353,7 +356,7 @@ computed: {
 			return this.getYourTokens
 		} else {
 			return this.dexStore.GET_TOKENS_BY_LABEL(this.activeFilter.id).filter((el) => {
-				return this.dexStore.GET_USER_TOKENS.some((f) => el.id === f.id);
+				return this.dexStore.GET_USER_TOKENS.some((f) => el?.id === f?.id);
 			});
 		}
 	},

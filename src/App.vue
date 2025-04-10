@@ -5,16 +5,23 @@
 </template>
 
 <script lang="ts">
-import { toUserFriendlyAddress } from "@tonconnect/ui";
-import { useDexStore } from "@/stores/dex";
+import {Address} from "@ton/core";
+
 import tonConnectMixin from "@/mixins/tonConnectMixin";
 import methodsMixins from "@/mixins/methodsMixins";
-import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
-import SwapWidget from "@/ui/SwapWidget.vue";
-import {tonApiService, tokenService} from "@/api/coffeeApi/services";
-import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
-import {Address} from "@ton/core";
+
+import { toUserFriendlyAddress } from "@tonconnect/ui";
+
+import { useDexStore } from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+
+import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
+
+import SwapWidget from "@/ui/SwapWidget.vue";
+
+import {tonApiService, tokenService} from "@/api/coffeeApi/services";
+
+import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
 
 export default {
   name: "App",

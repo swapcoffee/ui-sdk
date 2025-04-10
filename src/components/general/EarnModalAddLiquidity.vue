@@ -12,7 +12,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import ModalDetails from "@/components/general/ModalDetails.vue";
 import PoolDetailsItem from "@/components/earn/pool-page/PoolDetailsItem.vue";
 import PoolHeading from "@/components/earn/pool-page/PoolHeading.vue";

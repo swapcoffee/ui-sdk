@@ -540,7 +540,7 @@ export default {
 
                 sendAmountWatcher(this.amountWatcherData)
 
-                if (this.GET_DEAL_CONDITIONS !== null) {
+                if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },
@@ -554,7 +554,7 @@ export default {
 
                 receiveAmountWatcher(this.amountWatcherData)
 
-                if (this.GET_DEAL_CONDITIONS !== null) {
+                if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },

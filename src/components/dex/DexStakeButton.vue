@@ -28,6 +28,7 @@
 
 <script lang="ts">
 import TooltipWrapper from '@/components/ui/TooltipWrapper.vue';
+
 import { useDexStore } from "@/stores/dex";
 
 export default {

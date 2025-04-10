@@ -48,7 +48,7 @@
 	</div>
 </template>
 
-<script>
+<script lang="ts">
 import DexInput from '@/components/dex/DexInput.vue';
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import {useDexStore} from "@/stores/dex";

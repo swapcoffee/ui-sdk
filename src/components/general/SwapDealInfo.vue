@@ -12,7 +12,9 @@
 
 <script lang="ts">
 import methodsMixins from "@/mixins/methodsMixins.ts";
+
 import RouteRightIcon from "@/assets/general/RouteRightIcon.vue";
+
 import {useDexStore} from "@/stores/dex";
 
 export default {

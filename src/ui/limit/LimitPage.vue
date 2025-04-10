@@ -36,12 +36,18 @@
 </template>
 
 <script lang="ts">
+import {defineAsyncComponent} from "vue";
+import {Address} from "@ton/core";
+
+import resetLimitTokens from "@/mixins/resetLimitTokens";
+
+import {strategiesService, tokenService} from "@/api/coffeeApi/services";
+
+import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
-import {defineAsyncComponent} from "vue";
-import {strategiesService, tokenService} from "@/api/coffeeApi/services";
-import {Address} from "@ton/core";
-import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+
 import {
     cancelOrder,
     checkStrategiesWallet,
@@ -49,9 +55,9 @@ import {
     createStrategiesWallet,
     removeLimitCheckerInterval
 } from "@/helpers/strategies/strategies.ts";
+
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
-import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
-import resetLimitTokens from "@/mixins/resetLimitTokens";
+
 import {useLimitStore} from "@/stores/limit";
 import {useDexStore} from "@/stores/dex";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
@@ -664,22 +670,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: 400px;
-    max-width: 400px;
-}
-
-@media screen and (max-width: 1220px) {
-    .limit-page {
-        width: 440px;
-        max-width: 440px;
-        margin: 0 auto;
-    }
-}
-
-@media screen and (max-width: 576px) {
-    .limit-page {
-        width: 100%;
-        max-width: 100%;
-    }
+    width: 100%;
+    max-width: 100%;
 }
 </style>

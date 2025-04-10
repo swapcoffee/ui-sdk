@@ -342,7 +342,9 @@ import ModalWrapper from "@/components/ui/ModalWrapper.vue";
 import MevSettings from "@/components/dex/MevSettings.vue";
 
 import computedMixins from '@/mixins/computedMixins.ts';
+
 import {profileService} from '@/api/coffeeApi/services/index.ts';
+
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useSettingsStore} from "@/stores/settings";
 import {useDexStore} from "@/stores/dex";

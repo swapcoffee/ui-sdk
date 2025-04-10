@@ -33,6 +33,7 @@ import {useLimitStore} from "@/stores/limit";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
 import {useDexStore} from "@/stores/dex";
 import {useDcaStore} from "@/stores/dca";
+import {useSettingsStore} from "@/stores/settings";
 
 export default {
     name: 'DcaDetails',
@@ -58,32 +59,35 @@ export default {
         dcaStore() {
           return useDcaStore()
         },
+        settingsStore() {
+          return useSettingsStore()
+        },
         getDetails() {
             return [
                 {
                     title: this.$t('dcaDetails.details[0]'),
                     text: this.displaySellTotal,
-                    textColor: '#fff'
+                    textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
                 {
                     title: this.$t('dcaDetails.details[1]'),
                     text: this.displaySellPerOrder,
-                    textColor: '#fff'
+                    textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
                 {
                     title: this.$t('dcaDetails.details[2]'),
                     text: this.displayToBuy,
-                    textColor: '#fff'
+                    textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
                 {
                     title: this.$t('dcaDetails.details[3]'),
                     text: this.displayOrderInterval,
-                    textColor: '#fff'
+                    textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
                 {
                     title: this.$t('dcaDetails.details[4]'),
                     text: this.displayEndDate,
-                    textColor: '#fff'
+                    textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
             ]
         },

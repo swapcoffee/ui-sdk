@@ -55,13 +55,13 @@
 
 <script lang="ts">
 import transactionRoutesMixin from "@/mixins/transactionRoutesMixin.ts";
+
 import FailedRouteIcon from "@/assets/interface/FailedRouteIcon.vue";
 import SuccessRouteIcon from "@/assets/interface/SuccessRouteIcon.vue";
 import PendingRouteIcon from "@/assets/interface/PendingRouteIcon.vue";
 import CrossArrowIcon from "@/assets/dex/icons/CrossArrowIcon.vue";
 
 import {useTransactionStore} from "@/stores/transaction";
-import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "ModalStatusRouteInfo",
@@ -75,9 +75,6 @@ export default {
     computed: {
         transactionStore() {
           return useTransactionStore()
-        },
-        dexStore() {
-          return useDexStore()
         },
         getTransactions() {
             return this.transactionStore.GET_SWAP_TRANSACTION_STATUS?.splits

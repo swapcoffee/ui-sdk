@@ -145,7 +145,7 @@ export default {
                 }
             } else if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA) {
 				return {
-					first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
+					          first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
                     second: this.limitStore.GET_LIMIT_SECOND_TOKEN
                 }
             }

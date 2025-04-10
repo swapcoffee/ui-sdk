@@ -8,7 +8,7 @@
     </swap-button>
 </template>
 
-<script>
+<script lang="ts">
 import SwapButton from "@/components/swap-interface/SwapButton.vue";
 
 export default {

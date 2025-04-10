@@ -65,11 +65,13 @@
 </template>
 
 <script lang="ts">
-import ModalDetails from "@/components/general/ModalDetails.vue";
+import lottie from "lottie-web";
+
 import loadingAnimationData from '@/assets/lottie/loading.json';
 import failedAnimationData from '@/assets/lottie/failed.json';
 import successAnimationData from '@/assets/lottie/success.json';
-import lottie from "lottie-web";
+
+import ModalDetails from "@/components/general/ModalDetails.vue";
 import SwapDealInfo from "@/components/general/SwapDealInfo.vue";
 import TransactionShareIcon from "@/assets/general/TransactionShareIcon.vue";
 import AppNotification from "@/components/AppNotification.vue";

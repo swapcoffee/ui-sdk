@@ -18,7 +18,7 @@ export function generatePayload() {
 }
 
 export default {
-  inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode', "liquiditySourcesList"],
+  inject: ['tonConnectManifest', 'tonConnectUi', 'payload', 'injectionMode', "liquiditySourcesList", "widgetTheme"],
   computed: {
     dexStore() {
       return useDexStore();
@@ -26,17 +26,17 @@ export default {
     dexSettingsStore() {
       return useDexSettingsStore();
     },
-    customLiquiditySourcesList() {
-      if (this.liquiditySourcesList.length > 0) {
-        return this.liquiditySourcesList;
-      }
-      return null;
-    },
     settingsStore() {
       return useSettingsStore();
     },
     limitStore() {
       return useLimitStore();
+    },
+    customLiquiditySourcesList() {
+      if (this.liquiditySourcesList.length > 0) {
+        return this.liquiditySourcesList;
+      }
+      return null;
     },
     GET_PROOF_VERIFICATION() {
       return this.dexStore.GET_PROOF_VERIFICATION;
@@ -88,7 +88,7 @@ export default {
       try {
         let settingsRes = await profileService.readStorage(
             address,
-            this.dexStore.GET_PROOF_VERIFICATION
+            this.GET_PROOF_VERIFICATION
         );
 
         const settings = settingsRes.data;
@@ -157,12 +157,12 @@ export default {
     },
     async getContractVersion(address) {
       try {
-        let wallet = this.dexStore.GET_DEX_WALLET;
+        let wallet = this.GET_DEX_WALLET;
         if (!wallet.version) {
           let res = await tonApiService.getWalletVersion(address);
           if (res?.data?.version > 0) {
             wallet.version = res?.data?.version;
-            this.dexStore.DEX_WALLET(wallet);
+            this.DEX_WALLET(wallet);
             this.dexStore.DEX_WALLET_VERSION(res?.data?.version);
           }
         }
@@ -173,14 +173,13 @@ export default {
     checkEligibleFromStorage() {
       let eligible = JSON.parse(localStorage.getItem('hasEligible'))
       if (eligible) {
-        this.
-        STRATEGIES_ELIGIBLE(eligible)
+        this.limitStore.STRATEGIES_ELIGIBLE(eligible)
       }
       checkStrategiesEligible(this.tonConnectUi, this.GET_DEX_WALLET, this.GET_PROOF_VERIFICATION)
 
       let wallet = JSON.parse(localStorage.getItem('hasStrategiesWallet'))
       if (wallet) {
-        this.STRATEGIES_WALLET(wallet)
+        this.limitStore.STRATEGIES_WALLET(wallet)
       }
     },
     prepareAccountData(account, walletInfo) {
@@ -287,4 +286,12 @@ export default {
       }
     },
   },
+  watch: {
+    widgetTheme: {
+      immediate: true,
+      handler(newTheme: string) {
+        this.settingsStore.SET_THEME(newTheme);
+      },
+    }
+  }
 };

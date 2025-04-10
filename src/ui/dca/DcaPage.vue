@@ -36,13 +36,18 @@
 </template>
 
 <script lang="ts">
+import {Address} from "@ton/core";
+
 import DexSuccess from "@/components/dex/DexSuccess.vue";
 import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import LimitOrdersHistory from "@/components/limit/LimitOrdersHistory.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+
 import {strategiesService, tokenService} from "@/api/coffeeApi/services";
+
 import {
     cancelOrder,
     checkStrategiesWallet,
@@ -50,9 +55,9 @@ import {
     createStrategiesWallet,
     removeLimitCheckerInterval
 } from "@/helpers/strategies/strategies.ts";
-import {Address} from "@ton/core";
-import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
+
 import resetLimitTokens from "@/mixins/resetLimitTokens";
+
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
@@ -477,22 +482,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: 400px;
-    max-width: 400px;
-}
-
-@media screen and (max-width: 1220px) {
-    .dca-page {
-        width: 440px;
-        max-width: 440px;
-        margin: 0 auto;
-    }
-}
-
-@media screen and (max-width: 576px) {
-    .dca-page {
-        width: 100%;
-        max-width: 100%;
-    }
+    width: 100%;
+    max-width: 100%;
 }
 </style>

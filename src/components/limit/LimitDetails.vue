@@ -35,6 +35,7 @@ import DetailsItem from "@/components/general/DetailsItem.vue";
 import {useLimitStore} from "@/stores/limit";
 import {useDexStore} from "@/stores/dex";
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useSettingsStore} from "@/stores/settings";
 
 export default {
     name: 'LimitDetails',
@@ -58,29 +59,32 @@ export default {
          limitSettingsStore() {
            return useLimitSettingsStore()
          },
+         settingsStore() {
+           return useSettingsStore()
+         },
         getDetails() {
-		    return [
-			    {
-					title: this.$t('limitDetails.titleSend'),
-                    text: this.displaySend,
-                    textColor: '#fff'
+          return [
+                {
+                title: this.$t('limitDetails.titleSend'),
+                          text: this.displaySend,
+                          textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
+                      },
+                {
+                  title: this.$t('limitDetails.titleReceive'),
+                  text: this.displayReceive,
+                          textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
                 },
-			    {
-				    title: this.$t('limitDetails.titleReceive'),
-				    text: this.displayReceive,
-                    textColor: '#fff'
-			    },
-			    {
-				    title: this.$t('limitDetails.titleRate'),
-				    text: this.displayRate,
-                    textColor: '#5DFF54'
-			    },
-			    {
-				    title: this.$t('limitDetails.titleSuborders'),
-				    text: this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString(),
-				    textColor: '#fff'
-			    }
-            ]
+                {
+                  title: this.$t('limitDetails.titleRate'),
+                  text: this.displayRate,
+                          textColor: '#5DFF54'
+                },
+                {
+                  title: this.$t('limitDetails.titleSuborders'),
+                  text: this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString(),
+                  textColor: this.settingsStore.GET_THEME === 'light' ? '#000' : '#fff'
+                }
+          ]
         },
         getTokens() {
             return {

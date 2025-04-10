@@ -103,6 +103,7 @@ export const PROVIDES = [
     'widgetReferral',
     'customFeeSettings',
     'widgetTheme',
+    'locale',
     'limitDcaVisibility',
     'limitedJettonLists',
     'liquiditySourcesList',

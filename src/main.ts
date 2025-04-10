@@ -79,7 +79,7 @@ const tonConnectUiInstance = new TonConnectUI({
 
 createSwapWidget('#swap-widget-component', {
     theme:  SWAP_WIDGET_THEME.LIGHT,
-    locale: SWAP_WIDGET_LOCALE.EN,
+    locale: SWAP_WIDGET_LOCALE.RU,
     injectionMode: "tonConnect",
     tonConnectManifest: {
         "url": "https://swap.coffee/tonconnect-manifest.json",
@@ -87,7 +87,7 @@ createSwapWidget('#swap-widget-component', {
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "evaa",
     firstTokenAmount: 50,
-    limitDcaVisibility: false,
+    limitDcaVisibility: true,
     liquiditySourcesList: [
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,

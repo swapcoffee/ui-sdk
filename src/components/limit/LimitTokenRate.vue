@@ -57,7 +57,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import {stableRateTokens} from "@/helpers/strategies/stable-rate-tokens.ts";
 

@@ -16,7 +16,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import LimitDetailsItem from "@/components/limit/LimitDetailsItem.vue";
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import computedMixins from "@/mixins/computedMixins.ts";
