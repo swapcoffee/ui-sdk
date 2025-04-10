@@ -397,7 +397,7 @@ export default {
             try {
                 if (this.interfaceStatus === 'NOT_CONNECTED') {
                     if (this.tonConnectUi?.wallet !== null) {
-                        this.DEX_WALLET(this.tonConnectUi?.wallet?.account);
+                        this.dexStore.DEX_WALLET(this.tonConnectUi?.wallet?.account);
                     } else {
                         await this.showTonconnect();
                     }
@@ -457,29 +457,32 @@ export default {
           return address;
         }
       },
-        setDexTokens() {
-          const startTokensAddresses = this.sendReceiveTokenAddresses?.length > 0 ?
-              this.sendReceiveTokenAddresses
-              : DEFAULT_ADDRESSES;
+      setDexTokens() {
+        const startTokensAddresses: string[] = this.sendReceiveTokenAddresses?.length > 0 ?
+            this.sendReceiveTokenAddresses
+            : DEFAULT_ADDRESSES
 
-          const rawAddresses = startTokensAddresses.map(addr => this.toRawAddress(addr));
+        const rawAddresses: string[] = startTokensAddresses.map(addr => this.toRawAddress(addr));
 
+        const startTokens = this.dexStore.GET_TON_TOKENS.filter(token =>
+            rawAddresses.includes(token.address)
+        );
 
-          const startTokens = this.dexStore.GET_TON_TOKENS.filter(token =>
-              rawAddresses.includes(token.address)
-          );
-          console.log(this.dexStore.GET_TON_TOKENS);
-          this.dexStore.DEX_SEND_TOKEN(startTokens[0]);
-          this.dexStore.DEX_RECEIVE_TOKEN(startTokens[1]);
+        const [ rawSend, rawReceive ] = rawAddresses
 
-          if (this.firstTokenAmount) {
-            this.changeFirstValue(String(this.firstTokenAmount));
-          }
+        const sendToken = startTokens?.find(t => this.toRawAddress(t?.address) === rawSend)
+        const receiveToken = startTokens?.find(t => this.toRawAddress(t?.address) === rawReceive)
 
-        },
-        checkWindowSize() {
-            this.screenSize = window.innerWidth
+        this.dexStore.DEX_SEND_TOKEN(sendToken);
+        this.dexStore.DEX_RECEIVE_TOKEN(receiveToken);
+
+        if (this.firstTokenAmount) {
+          this.changeFirstValue(String(this.firstTokenAmount));
         }
+      },
+      checkWindowSize() {
+        this.screenSize = window.innerWidth
+      }
     },
     mounted() {
         document.addEventListener('keydown', (e) => {
@@ -489,11 +492,6 @@ export default {
         })
 
         document.addEventListener('visibilitychange', this.observingTabVisibilityChange);
-
-        if (window?.Telegram?.WebApp && window.Telegram.WebApp.platform !== 'unknown') {
-            window.Telegram.WebApp.ready();
-            window.Telegram.WebApp.expand();
-        }
 
         // if ((!this.GET_SEND_TOKEN || !this.GET_RECEIVE_TOKEN) && this.GET_TON_TOKENS) {
         //     setSwapTokensByQuery(this.$route, this.GET_TON_TOKENS)

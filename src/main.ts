@@ -95,7 +95,7 @@ createSwapWidget('#swap-widget-component', {
         SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
         SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
     ],
-    sendReceiveTokenAddresses: ["EQCQZpelevHNsbw5IUtwSa4Cs8kqWww0KsYeDri9kwS18eCz", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1"],
+    sendReceiveTokenAddresses: ["EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs", "EQBsosmcZrD6FHijA7qWGLw5wo_aH8UN435hi935jJ_STORM"],
     limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE","EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     customFeeSettings: {
         percentage_fee: 3000,

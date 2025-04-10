@@ -260,7 +260,7 @@ export default {
         this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
 
         const formattedLimitedJettons = [
-          ...new Set([...(this.limitedJettonLists ?? []), ...(this.sendReceiveTokenAddresses ?? [])])
+          ...new Set([...(this.sendReceiveTokenAddresses ?? []), ...(this.limitedJettonLists ?? [])])
         ].map(t => this.toRawAddress(t));
 
         this.dexStore.DEX_TON_TOKENS(
