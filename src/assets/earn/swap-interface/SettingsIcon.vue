@@ -7,7 +7,7 @@
     </svg>
 </template>
 
-<script>
+<script lang="ts">
 import IconColorMixin from '@/mixins/IconColorMixin.ts';
 
 export default {

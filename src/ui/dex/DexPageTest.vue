@@ -620,22 +620,7 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: 400px;
-    max-width: 400px;
+  width: 100%;
+  max-width: 100%;
 }
-
-@media screen and (max-width: 1220px) {
-    .dex-page {
-        width: 440px;
-        max-width: 440px;
-        margin: 0 auto;
-    }
-}
-
-    @media screen and (max-width: 576px) {
-        .dex-page {
-            width: 100%;
-            max-width: 100%;
-        }
-    }
 </style>

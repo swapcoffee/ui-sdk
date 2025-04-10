@@ -1,6 +1,10 @@
 <template>
     <div class="swap-header">
         <TradeNav v-if="limitDcaVisibility" />
+      <button class="title__back-btn" @click="redirectToSwapCoffee" v-else>
+        <span class="by-text slippage-text">powered by</span>
+        <img :src="logoSrc" alt="swap-logo" class="swap-logo">
+      </button>
       <div :class="['swap-header__group', { 'right': !limitDcaVisibility }]">
       <button class="swap-header__button refresh-btn"
                     v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
@@ -34,10 +38,12 @@ import {useLimitStore} from "@/stores/limit";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import computedMixins from "@/mixins/computedMixins.ts";
 import {SwapActiveTab} from "@/utils/types.ts";
+import darkLogo from "@/assets/header/logo-dark.svg"
+import lightLogo from "@/assets/header/swap-logo.svg"
 
 export default {
     name: "SwapHeader",
-    inject: ["updateSettingsModalVisible", "tokenValues", "processing", "limitDcaVisibility"],
+    inject: ["updateSettingsModalVisible", "tokenValues", "processing", "limitDcaVisibility", "widgetTheme"],
     mixins: [computedMixins],
     props: {
         refreshInfo: {
@@ -60,6 +66,9 @@ export default {
       SwapActiveTab() {
         return SwapActiveTab
       },
+        logoSrc() {
+          return this.widgetTheme === "light" ? darkLogo : lightLogo;
+        },
         dexStore() {
           return useDexStore();
         },
@@ -97,6 +106,9 @@ export default {
         },
     },
     methods: {
+      redirectToSwapCoffee() {
+        window.open("https://swap.coffee/dex", "_blank");
+      },
         refreshCompare() {
             if (
                 this.getTokens?.first !== null &&
@@ -126,6 +138,24 @@ export default {
         line-height: normal;
         font-weight: 400;
     }
+
+    .title__back-btn {
+      padding-left: 5px;
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      border: none;
+      background: none;
+      font-weight: 400;
+      font-size: 14px;
+      gap: 4px;
+    }
+
+    .swap-logo {
+      height: 20px;
+      width: 80px;
+    }
+
 
     .swap-header__group {
         display: flex;

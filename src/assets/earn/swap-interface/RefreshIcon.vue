@@ -97,6 +97,24 @@ export default {
     height: 20px;
 }
 
+@keyframes Loader {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes LoaderReverse {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(-360deg);
+  }
+}
+
 .refresh {
     animation: 1s forwards ease-out Loader;
 }

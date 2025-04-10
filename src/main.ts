@@ -1,16 +1,16 @@
-import {createApp} from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
 import i18n from './i18n';
-import {pinia} from './stores';
+import { pinia } from './stores';
 import './main.css'
 import {
     DEFAULTS,
     type DefaultSettingsInterface,
     PROVIDES,
     REQUIRED_FOR_MODE,
-    SWAP_WIDGET_LIQUIDITY_SOURCES,
     SWAP_WIDGET_LOCALE,
-    SWAP_WIDGET_THEME
+    SWAP_WIDGET_THEME,
+    SWAP_WIDGET_LIQUIDITY_SOURCES
 } from "@/settings-config.ts";
 import {THEME, TonConnectUI} from "@tonconnect/ui";
 
@@ -87,15 +87,15 @@ createSwapWidget('#swap-widget-component', {
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "evaa",
     firstTokenAmount: 50,
-    limitDcaVisibility: true,
-    // liquiditySourcesList: [
-    //     SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
-    //     SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,
-    //     SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
-    //     SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
-    //     SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
-    // ],
-    sendReceiveTokenAddresses: ["EQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h", "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"],
+    limitDcaVisibility: false,
+    liquiditySourcesList: [
+        SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
+        SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,
+        SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
+        SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
+        SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
+    ],
+    sendReceiveTokenAddresses: ["EQCQZpelevHNsbw5IUtwSa4Cs8kqWww0KsYeDri9kwS18eCz", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1"],
     limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE","EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     customFeeSettings: {
         percentage_fee: 3000,
