@@ -441,7 +441,6 @@ export default {
       }
     },
     checkEligibleFromStorage() {
-      console.log('checkEligibleFromStorage');
       let eligible = JSON.parse(localStorage.getItem('hasEligible'))
       if (eligible) {
         this.limitStore.STRATEGIES_ELIGIBLE(eligible)
