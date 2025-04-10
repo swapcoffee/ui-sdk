@@ -1,14 +1,13 @@
-import {createApp} from 'vue';
+import { createApp } from 'vue';
 import App from './App.vue';
 import i18n from './i18n';
-import {pinia} from './stores';
+import { pinia } from './stores';
 import './main.css'
 import {
-    DEFAULTS,
     DefaultSettingsInterface,
+    DEFAULTS,
     PROVIDES,
     REQUIRED_FOR_MODE,
-    SWAP_WIDGET_LIQUIDITY_SOURCES,
     SWAP_WIDGET_LOCALE,
     SWAP_WIDGET_THEME
 } from "@/settings-config.ts";
@@ -88,7 +87,7 @@ createSwapWidget('#swap-widget-component', {
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "evaa",
     firstTokenAmount: 50,
-    limitDcaVisibility: true,
+    limitDcaVisibility: false,
     liquiditySourcesList: [
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,

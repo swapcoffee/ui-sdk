@@ -75,24 +75,25 @@ export default {
 <style scoped>
 .dex {
   display: flex;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dex__group {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin: 0 auto;
+  width: 100%;
+  max-width: 100%;
 }
 
 .dex__column-flex {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  width: 100%;
+  max-width: 100%;
 }
 
-.dex__history {
-  width: 686px;
-}
 
 .hidden {
   width: 0;
