@@ -173,6 +173,24 @@ export default {
     animation: 1s forwards linear infinite Loader;
 }
 
+@keyframes Loader {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(360deg);
+  }
+}
+
+@keyframes LoaderReverse {
+  0% {
+    transform: rotateZ(0deg);
+  }
+  100% {
+    transform: rotateZ(-360deg);
+  }
+}
+
 .succeeded path {
     fill: var(--main-green);
 }
