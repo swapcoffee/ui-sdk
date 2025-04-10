@@ -258,7 +258,7 @@ export default {
           });
         }
 
-        const widgetTokens = await this.loadStartTokensByConfig() || [];
+        const widgetTokens = await this.loadStartTokensByConfig();
         const pinnedTokens = JSON.parse(localStorage.getItem('pinnedTokens')) || [];
 
         tokens = this.mergeArrays(tokens, widgetTokens);
@@ -517,15 +517,18 @@ export default {
     let wallet = tonConnectStorage?.connectEvent?.payload?.items[0]
     let proof = JSON.parse(localStorage.getItem('tonProof_ver'))
     if (wallet) {
+      if (proof) {
+        this.dexStore.DEX_PROOF_VERIFICATION(proof)
+      }
       wallet.userFriendlyAddress = toUserFriendlyAddress(wallet?.address)
       wallet.imgUrl = walletInfoStorage?.imageUrl
       if (tonConnectStorage) {
         this.dexStore.DEX_WALLET(wallet)
       }
-      this.getTonTokens();
-    }
-    if (proof) {
-      this.dexStore.DEX_PROOF_VERIFICATION(proof)
+
+      if (this.dexStore.GET_DEX_WALLET && this.dexStore.GET_PROOF_VERIFICATION) {
+            this.getTonTokens()
+      }
     }
 
     setTimeout(() => {
@@ -553,9 +556,8 @@ export default {
     'dexStore.GET_DEX_WALLET': {
       handler() {
         let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
-        if (this.dexStore.GET_DEX_WALLET !== null) {
-          console.log('wallet connected')
-          // if (this.loadInfoCount === 0) {
+        if (this.dexStore.GET_DEX_WALLET !== null && this.dexStore.GET_PROOF_VERIFICATION) {
+          if (this.loadInfoCount === 0) {
             this.getTonTokens()
           // }
           if (tonConnectStorage) {
@@ -564,7 +566,8 @@ export default {
         } else {
           this.loadInfoCount = 0
         }
-      }
+      },
+      deep: true,
     },
   }
 }
