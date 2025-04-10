@@ -33,14 +33,6 @@
                 :withoutHeading="true"
                 :status="status"
             />
-            <button
-                class="transaction__btn share-btn"
-                v-if="modalState.mode === 'swap'"
-                @click="getShareLink"
-            >
-                <TransactionShareIcon />
-                Share
-            </button>
         </div>
         <div class="transaction__group"
             v-else
@@ -266,79 +258,6 @@ export default {
                 name: this.status,
                 animationData: this.getLottieById,
             });
-        },
-        async getShareLink() {
-            let newDate = new Date();
-            let params = {
-                in: this.dexStore.GET_SEND_TOKEN?.symbol.replace('₮', 'T'),
-                out: this.dexStore.GET_RECEIVE_TOKEN?.symbol.replace('₮', 'T'),
-                profit: this.getProfitDisplay,
-                market_price: this.getMarketPrice,
-                our_price: this.getOurPrice,
-                time: Math.floor(newDate / 1000),
-                utc: (newDate.getTimezoneOffset() / 60) * -1,
-                // ref: this.GET_REFERRAL_INFO?.link,
-            };
-
-            let url = this.createUrl(params);
-            let blob = await this.getImageAsBlob(url);
-
-            if (this.isWindows) {
-                await this.copyToClipboard(blob);
-            } else {
-                await this.shareResult(blob);
-            }
-        },
-        async copyToClipboard(blob) {
-            try {
-                let item = new ClipboardItem({ 'image/png': blob.data });
-                await navigator.clipboard.write([item]);
-                this.showShareError();
-            } catch (err) {
-                console.error(err);
-            }
-        },
-        async shareResult(blob) {
-            try {
-                let file = new File([blob.data], 'result.png', { type: 'image/png' });
-                let data = {
-                    // text: this.getText,
-                    files: [file],
-                };
-                if (navigator.share && navigator.canShare(data)) {
-                    await navigator.share(data);
-                } else {
-                    await this.copyToClipboard(blob);
-                }
-            } catch (err) {
-                console.error(err);
-            }
-        },
-        async getImageAsBlob(url) {
-            try {
-                const response = await fetch(url);
-                return await response.blob();
-            } catch (err) {
-                console.error(err);
-            }
-        },
-        createUrl(params) {
-            if (params !== null) {
-                let query = `?in_token=${params?.in}&out_token=${params?.out}&profit_percent=${params?.profit}&market_price=${params?.market_price}&our_price=${params?.our_price}&time=${params?.time}&utc_offset=${params?.utc}&ref=${params?.ref}`;
-                return 'https://img.swap.coffee/v1/image/profits' + query;
-            } else {
-                return '';
-            }
-        },
-        showShareError() {
-            this.showNotification = true;
-            if (this.noticeTimeout) {
-                clearTimeout(this.noticeTimeout);
-            }
-            this.noticeTimeout = setTimeout(() => {
-                this.showNotification = false;
-                this.noticeTimeout = null;
-            }, 3000);
         },
         closeNotification() {
             this.showNotification = false;

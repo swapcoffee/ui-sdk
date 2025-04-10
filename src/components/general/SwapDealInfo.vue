@@ -78,4 +78,8 @@ export default {
     width: 16px;
     height: 16px;
 }
+
+.theme-light .arrow-icon {
+  filter: invert(1);
+}
 </style>
