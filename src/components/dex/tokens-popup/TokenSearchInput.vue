@@ -70,42 +70,52 @@ export default {
         return address;
       }
     },
-		async performSearch() {
-			if (this.$parent.activeFilter && this.$parent.activeFilter.name !== 'all') {
-				this.$emit('updateUnlistedToken', null);
-				return;
-			}
+    async performSearch() {
+      if (this.$parent.activeFilter && this.$parent.activeFilter.name !== 'all') {
+        this.$emit('updateUnlistedToken', null);
+        return;
+      }
 
-			if (this.isAddress(this.inputValue) || this.inputValue.length > 10) {
-				try {
-					let res = await tokenService.getSingleToken(this.inputValue);
-					if (res && res.metadata) {
+      if (this.isAddress(this.inputValue) || this.inputValue.length > 10) {
+        try {
+          let res = await tokenService.getSingleToken(this.inputValue);
+          if (res && res.metadata) {
             const rawAddress = this.toRawAddress(this.inputValue);
 
-            const userTokensBalances = this.dexStore.GET_USER_TOKENS_BALANCES.find(t => this.toRawAddress(t?.jetton?.address) === rawAddress)
+            const userTokensBalances = this.dexStore.GET_USER_TOKENS_BALANCES.find(t => this.toRawAddress(t?.jetton?.address) === rawAddress);
 
-            const balance = this.dexStore.GET_TON_TOKENS.find(token => token.address === rawAddress)?.balance ?? (userTokensBalances?.balance / Math.pow(10, userTokensBalances?.jetton?.decimals)) ?? 0;
+            let balance = 0;
+            let priceUsd = 0;
 
-            const balanceInUsd = userTokensBalances?.price?.prices?.USD * (userTokensBalances?.balance / Math.pow(10, userTokensBalances?.jetton?.decimals));
+            if (userTokensBalances) {
+              balance = userTokensBalances?.balance / Math.pow(10, userTokensBalances?.jetton?.decimals);
+              priceUsd = userTokensBalances?.price?.prices?.USD
+            } else {
+              const tonToken = this.dexStore.GET_TON_TOKENS.find(token => token?.address === rawAddress);
+              if (tonToken) {
+                balance = tonToken?.balance;
+                priceUsd = tonToken?.price_usd;
+              }
+            }
 
             const unlistedToken = {
               ...res.metadata,
-              price_usd: balanceInUsd || 0,
+              price_usd: priceUsd || 0,
               balance: balance || 0,
-            }
+            };
 
-						this.$emit('updateUnlistedToken', unlistedToken);
-					} else {
-						this.$emit('updateUnlistedToken', null);
-					}
-				} catch (err) {
-					console.error(err);
-					this.$emit('updateUnlistedToken', null);
-				}
-			} else {
-				this.$emit('updateUnlistedToken', null);
-			}
-		},
+            this.$emit('updateUnlistedToken', unlistedToken);
+          } else {
+            this.$emit('updateUnlistedToken', null);
+          }
+        } catch (err) {
+          console.error(err);
+          this.$emit('updateUnlistedToken', null);
+        }
+      } else {
+        this.$emit('updateUnlistedToken', null);
+      }
+    },
 		handleFocus() {
 			if (window.innerWidth <= 640) {
 				setTimeout(() => {

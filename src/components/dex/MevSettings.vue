@@ -193,10 +193,10 @@ export default {
       this.saveToStorage('mevProtectionVolumeUsd', valueUsd);
     },
     blurInput() {
-      if (this.mevMinValueUsd < 10) {
-        this.mevMinValueUsd = 10;
-        this.dexSettingsStore.DEX_MEV_MIN_USD(this.mevMinValueUsd);
-      }
+      // if (this.mevMinValueUsd < 10) {
+      //   this.mevMinValueUsd = 10;
+      //   this.dexSettingsStore.DEX_MEV_MIN_USD(this.mevMinValueUsd);
+      // }
     },
     async saveToStorage(key, value) {
       try {

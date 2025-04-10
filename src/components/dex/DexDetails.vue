@@ -127,7 +127,7 @@
                 </p>
                 <p class="dex__value value_green">{{ getEstimatedCashbackAndFee.cashback }}</p>
             </div>
-          <div class="dex__row">
+          <div class="dex__row" v-if="Number(partnerFee) !== 0">
             <p class="dex__name">Integrator Fee</p>
             <p class="dex__value">≈ {{ partnerFee }} TON</p>
           </div>
