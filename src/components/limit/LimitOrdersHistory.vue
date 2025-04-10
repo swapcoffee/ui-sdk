@@ -162,7 +162,7 @@ export default {
                 let res = await strategiesService.getOrders(
                     this.dexStore.GET_DEX_WALLET?.address,
                     this.dexStore.GET_PROOF_VERIFICATION,
-                    this.dexStore.GET_SWAP_ACTIVE_TAB,
+                    this.dexStore.GET_SWAP_ACTIVE_TAB.toLowerCase(),
                     true
                 )
 

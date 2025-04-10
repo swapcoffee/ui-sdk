@@ -60,9 +60,8 @@
 					</div>
 					<div class="custom-scroll tokens-popup__scroll-block" id="scroll"
 							 :style="{'max-height': `${maxHeight}`}" v-if="!isStakingPage">
-							<div v-if="loading" class="loading-blur"></div>
-							<div v-if="loading" class="loader-image"></div>
-							<div class="empty-search"
+            <div :class="['loading-blur', { hidden: !loading }]" v-show="true"></div>
+            <div class="empty-search"
 									 v-if="emptyResponse && !unlistedToken"
 							>
 									<p class="empty-search__text">
@@ -602,7 +601,6 @@ methods: {
 	},
 	async fetchTokens() {
 		if (this.searchValue.trim().length === 0) {
-			this.searchResults = [];
 			this.emptyResponse = false;
 			this.loading = false;
 			return;
@@ -616,7 +614,7 @@ methods: {
 			};
 
 			const response = await tokenService.getTokenListV2(params);
-			let apiResults = response.items || [];
+			let apiResults = response.items;
 
 			const uniqueTokensMap = new Map();
 
@@ -919,51 +917,6 @@ methods: {
 			}, 1000)
 		}
 	},
-	// updateTokensList(selectedToken) {
-	// 	this.GET_TON_TOKENS = this.GET_TON_TOKENS.filter(token => token.address !== selectedToken.address);
-	// 	this.GET_TON_TOKENS.unshift(selectedToken);
-	// 	this.DEX_TON_TOKENS(this.GET_TON_TOKENS);
-	// },
-	// addedSendQuery(value) {
-	// 	let queryParams = {
-	// 		ft: this.toSafeAddress(value.address)
-	// 	}
-	// 	if (this.GET_RECEIVE_TOKEN !== null) {
-	// 		queryParams.st = this.toSafeAddress(this.GET_RECEIVE_TOKEN?.address);
-	// 	}
-	// 	if (this.GET_SWAP_MODE === 'default') {
-	// 		if (this.GET_SEND_AMOUNT > 0) {
-	// 			queryParams.fa = this.GET_SEND_AMOUNT
-	// 		}
-	// 	} else if (this.GET_SWAP_MODE === 'reverse') {
-	// 		if (this.GET_RECEIVE_AMOUNT > 0) {
-	// 			queryParams.sa = this.GET_RECEIVE_AMOUNT
-	// 		}
-	// 	}
-	// 	if (!this.isStakingPage) {
-	// 		this.$router.push({name: 'Dex', query: queryParams})
-	// 	}
-	// },
-	// addedReceiveQuery(value) {
-	// 	let queryParams = {
-	// 		ft: this.toSafeAddress(this.GET_SEND_TOKEN?.address)
-	// 	}
-	// 	if (value !== null) {
-	// 		queryParams.st = this.toSafeAddress(value.address);
-	// 	}
-	// 	if (this.GET_SWAP_MODE === 'default') {
-	// 		if (this.GET_SEND_AMOUNT > 0) {
-	// 			queryParams.fa = this.GET_SEND_AMOUNT
-	// 		}
-	// 	} else if (this.GET_SWAP_MODE === 'reverse') {
-	// 		if (this.GET_RECEIVE_AMOUNT > 0) {
-	// 			queryParams.sa = this.GET_RECEIVE_AMOUNT
-	// 		}
-	// 	}
-	// 	if (!this.isStakingPage) {
-	// 		this.$router.push({name: 'Dex', query: queryParams})
-	// 	}
-	// },
 },
 mounted() {
 	const scrollContainer = document.getElementById('scroll');
@@ -1057,7 +1010,6 @@ beforeUnmount() {
 watch: {
 	searchValue(newValue) {
 		if (newValue.trim().length === 0) {
-			this.searchResults = [];
 			this.emptyResponse = false;
 			this.loading = false;
 			if (this.activeFilter.name === 'all') {
@@ -1217,30 +1169,38 @@ watch: {
 }
 
 .loading-blur {
-position: absolute;
-top: 256px;
-left: 0;
-right: 0;
-bottom: 0;
-z-index: 1;
-background: rgba(28, 28, 28, 0.32);
-backdrop-filter: blur(4px);
-pointer-events: none;
-border-radius: 0 0 20px 20px;
+  position: absolute;
+  top: 256px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+  border-radius: 0 0 20px 20px;
+  pointer-events: none;
+  transition: backdrop-filter 0.3s ease, opacity 0.3s ease;
 }
 
-.loader-image {
-position: absolute;
-top: 57%;
-left: 37%;
-width: 100px;
-height: 100px;
-transform: translate(-50%, -50%);
-background: url(/src/assets/dex/loader.png) no-repeat;
-background-size: cover;
-animation: 1s forwards linear infinite Loader;
-z-index: 2;
+.loading-blur.hidden {
+  backdrop-filter: blur(0);
+  opacity: 0;
 }
+
+.loading-blur {
+  animation: pulseBlur 0.8s infinite ease-in-out;
+}
+
+@keyframes pulseBlur {
+  0%, 100% {
+    backdrop-filter: blur(2px);
+  }
+  50% {
+    backdrop-filter: blur(5px);
+  }
+}
+
+
+
 
 .custom-scroll::-webkit-scrollbar-track {
 	margin: 5px 0 15px 0;
