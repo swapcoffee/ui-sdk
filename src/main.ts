@@ -87,7 +87,7 @@ createSwapWidget('#swap-widget-component', {
     tonConnectUi: tonConnectUiInstance,
     widgetReferral: "evaa",
     firstTokenAmount: 50,
-    limitDcaVisibility: false,
+    limitDcaVisibility: true,
     liquiditySourcesList: [
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,

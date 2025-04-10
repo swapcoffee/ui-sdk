@@ -15,6 +15,7 @@ import {tonApiService, tokenService} from "@/api/coffeeApi/services";
 import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
 import {Address} from "@ton/core";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {checkStrategiesEligible} from "@/helpers/strategies/strategies.ts";
 
 export default {
   name: "App",
@@ -107,6 +108,7 @@ export default {
               this.getContractVersion(account.userFriendlyAddress);
               this.dexStore.DEX_PROOF_VERIFICATION(proof);
               this.getUserSettings();
+              this.checkEligibleFromStorage();
             } else {
               console.log('disconnect');
               this.disconnectWallet();
@@ -161,7 +163,7 @@ export default {
 
       localStorage.setItem("tonProof_ver", JSON.stringify(verification));
       this.dexStore.DEX_PROOF_VERIFICATION(verification);
-
+      this.checkEligibleFromStorage();
       this.getUserSettings();
     },
     async getContractVersion(address: string) {
@@ -436,6 +438,19 @@ export default {
         // sleep 1 seconds and retry
         await new Promise((resolve) => setTimeout(resolve, 1000))
         return await this.getTonJettons(wallet)
+      }
+    },
+    checkEligibleFromStorage() {
+      console.log('checkEligibleFromStorage');
+      let eligible = JSON.parse(localStorage.getItem('hasEligible'))
+      if (eligible) {
+        this.limitStore.STRATEGIES_ELIGIBLE(eligible)
+      }
+      checkStrategiesEligible(this.tonConnectUi, this.dexStore.GET_DEX_WALLET, this.dexStore.GET_PROOF_VERIFICATION)
+
+      let wallet = JSON.parse(localStorage.getItem('hasStrategiesWallet'))
+      if (wallet) {
+        this.limitStore.STRATEGIES_WALLET(wallet)
       }
     },
     async disconnectWallet() {
