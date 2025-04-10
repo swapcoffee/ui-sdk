@@ -413,7 +413,6 @@ export default {
       } else if (jettons.length > 0 && !jettons.find((item) => item?.name === toncoin?.name)) {
         jettons.unshift(toncoin)
       }
-
       return jettons
     },
     async getTonJettons(wallet) {
@@ -421,6 +420,8 @@ export default {
         let array = []
         let tokensWithBalance = this.dexStore.GET_TON_TOKENS
         let jettons = await tonApiService.getTonJettons(toUserFriendlyAddress(wallet.address))
+
+        console.log("jettons", jettons)
 
         jettons?.balances.forEach((item) => {
           let findItem = this.dexStore.GET_TON_TOKENS.find((find) => item.jetton.address === find.address)
@@ -439,6 +440,9 @@ export default {
           }
         })
 
+        if (jettons?.balances) {
+          this.dexStore.SET_USER_TOKENS_BALANCES(jettons?.balances)
+        }
         this.dexStore.DEX_TON_TOKENS(tokensWithBalance)
         return array
       } catch (err) {

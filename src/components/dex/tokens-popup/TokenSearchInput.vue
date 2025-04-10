@@ -59,6 +59,17 @@ export default {
 				this.performSearch();
 			}, 300);
 		},
+    toRawAddress(address) {
+      try {
+        if (address === 'native') {
+          return 'TON';
+        }
+        const parsedAddress = Address.parseFriendly(address);
+        return parsedAddress.address.toRawString();
+      } catch (error) {
+        return address;
+      }
+    },
 		async performSearch() {
 			if (this.$parent.activeFilter && this.$parent.activeFilter.name !== 'all') {
 				this.$emit('updateUnlistedToken', null);
@@ -69,14 +80,19 @@ export default {
 				try {
 					let res = await tokenService.getSingleToken(this.inputValue);
 					if (res && res.metadata) {
-                        const rawAddress = Address.parse(this.inputValue).toRawString();
-                        const balance = this.dexStore.GET_TON_TOKENS.find(token => token.address === rawAddress)?.balance;
+            const rawAddress = this.toRawAddress(this.inputValue);
 
-                        const unlistedToken = {
-                            ...res.metadata,
-                            price_usd: 0,
-                            balance: balance || 0,
-                        }
+            const userTokensBalances = this.dexStore.GET_USER_TOKENS_BALANCES.find(t => this.toRawAddress(t?.jetton?.address) === rawAddress)
+
+            const balance = this.dexStore.GET_TON_TOKENS.find(token => token.address === rawAddress)?.balance ?? (userTokensBalances?.balance / Math.pow(10, userTokensBalances?.jetton?.decimals)) ?? 0;
+
+            const balanceInUsd = userTokensBalances?.price?.prices?.USD * (userTokensBalances?.balance / Math.pow(10, userTokensBalances?.jetton?.decimals));
+
+            const unlistedToken = {
+              ...res.metadata,
+              price_usd: balanceInUsd || 0,
+              balance: balance || 0,
+            }
 
 						this.$emit('updateUnlistedToken', unlistedToken);
 					} else {

@@ -102,7 +102,8 @@ export interface DexState {
     areTokensLoaded: boolean;
     tokensPopupState: TokensPopupState;
     calculatedPriceImpact: any | null;
-    swapActiveTab: SwapActiveTab
+    swapActiveTab: SwapActiveTab;
+    usersTokensBalances: any[];
 }
 
 export interface TokensByLabelPayload {

@@ -40,6 +40,7 @@ export const useDexStore = defineStore('dex', {
 			activeTab: 'all',
 		},
 		calculatedPriceImpact: null,
+		usersTokensBalances: [],
 		swapActiveTab: SwapActiveTab.Dex
 	}),
 
@@ -120,6 +121,9 @@ export const useDexStore = defineStore('dex', {
 		},
 		SET_SWAP_ACTIVE_TAB(item: SwapActiveTab) {
 			this.swapActiveTab = item;
+		},
+		SET_USER_TOKENS_BALANCES(item: any[]) {
+			this.usersTokensBalances = item;
 		}
 	},
 	getters: {
@@ -143,5 +147,6 @@ export const useDexStore = defineStore('dex', {
 		GET_TOKENS_LOADED: (state) => state.areTokensLoaded,
 		GET_CALCULATED_PI: (state) => state.calculatedPriceImpact,
 		GET_SWAP_ACTIVE_TAB: (state) => state.swapActiveTab,
+		GET_USER_TOKENS_BALANCES: (state) => state.usersTokensBalances,
 	},
 });
