@@ -9,7 +9,8 @@ import {
     PROVIDES,
     REQUIRED_FOR_MODE,
     SWAP_WIDGET_LOCALE,
-    SWAP_WIDGET_THEME
+    SWAP_WIDGET_THEME,
+    SWAP_WIDGET_LIQUIDITY_SOURCES
 } from "@/settings-config.ts";
 import {THEME, TonConnectUI} from "@tonconnect/ui";
 
