@@ -5,7 +5,7 @@ import {pinia} from './stores';
 import './main.css'
 import {
     DEFAULTS,
-    DefaultSettingsInterface,
+    type DefaultSettingsInterface,
     PROVIDES,
     REQUIRED_FOR_MODE,
     SWAP_WIDGET_LIQUIDITY_SOURCES,
@@ -14,7 +14,7 @@ import {
 } from "@/settings-config.ts";
 import {THEME, TonConnectUI} from "@tonconnect/ui";
 
-export function createSwapWidget(selector, options: DefaultSettingsInterface = {}) {
+export function createSwapWidget(selector, options: DefaultSettingsInterface) {
     const cfg = { ...DEFAULTS, ...options };
 
     if (!['tonConnect', 'payload'].includes(cfg.injectionMode)) {
@@ -60,7 +60,6 @@ const tonConnectUiInstance = new TonConnectUI({
     },
 });
 
-
 // export const payload = {
 //     wallet_meta: {
 //         address: "0:e867df1c40a11d2aa28ee003b6da58cec7518df463f93b72185c8aabbcbe3b1a",
@@ -89,14 +88,14 @@ createSwapWidget('#swap-widget-component', {
     widgetReferral: "evaa",
     firstTokenAmount: 50,
     limitDcaVisibility: true,
-    liquiditySourcesList: [
-        SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
-        SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,
-        SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
-        SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
-        SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
-    ],
-    sendReceiveTokenAddresses: ["EQCQZpelevHNsbw5IUtwSa4Cs8kqWww0KsYeDri9kwS18eCz", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1"],
+    // liquiditySourcesList: [
+    //     SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
+    //     SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,
+    //     SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
+    //     SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
+    //     SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
+    // ],
+    sendReceiveTokenAddresses: ["EQCJbp0kBpPwPoBG-U5C-cWfP_jnksvotGfArPF50Q9Qiv9h", "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs"],
     limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE","EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     customFeeSettings: {
         percentage_fee: 3000,
@@ -104,4 +103,3 @@ createSwapWidget('#swap-widget-component', {
         max_percentage_fee_fixed: '4000000000',
     },
 });
-

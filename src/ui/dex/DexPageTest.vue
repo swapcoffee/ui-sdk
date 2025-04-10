@@ -198,7 +198,7 @@ export default {
         },
         notEnoughConditions() {
             const userTonBalance = this.dexStore.GET_USER_TOKENS.find(
-                (item) => item.address === 'native'
+                (item) => item?.address === 'native'
             );
 
             const tonGas = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas + 0.00001;
@@ -218,7 +218,7 @@ export default {
             }
 
             const findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
-                (item) => item.address === this.dexStore.GET_SEND_TOKEN?.address
+                (item) => item?.address === this.dexStore.GET_SEND_TOKEN?.address
             );
 
             const hasEnoughBalance =
@@ -331,8 +331,6 @@ export default {
                 mevProtection: true
               }
             }
-
-            console.log(data)
 
             return data
         }

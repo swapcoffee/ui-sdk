@@ -280,7 +280,7 @@ computed: {
 	getAllTokens() {
 		let array = []
 		this.dexStore.GET_TON_TOKENS.forEach((item) => {
-			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
+			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find?.symbol === item?.symbol);
             if (findItem?.balance > 0) {
               return;
             }
@@ -293,12 +293,12 @@ computed: {
 		let sortedArray = array
 							.sort((a, b) => b.tvl - a.tvl)
 			.sort((a, b) => this.checkItemIsPinned(b) - this.checkItemIsPinned(a))
-			.sort((a, b) => b.imported - a.imported)
+			.sort((a, b) => b?.imported - a?.imported)
 
 		let pinnedArray = [];
 
 		this.getPinnedList.forEach((item) => {
-			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find.symbol === item.symbol);
+			let findItem = this.dexStore.GET_USER_TOKENS.find((find) => find?.symbol === item?.symbol);
 			if (findItem?.balance > 0) {
 				return;
 			}
@@ -313,9 +313,9 @@ computed: {
 	},
 	getYourTokens() {
 		return this.dexStore.GET_USER_TOKENS
-			.filter((item) => item.balance > 0 && (item.listed || item.imported || item.importedFromConfig))
+			.filter((item) => item?.balance > 0 && (item?.listed || item?.imported || item?.importedFromConfig))
 			.sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
-			.sort((a, b) => b.imported - a.imported)
+			.sort((a, b) => b?.imported - a?.imported)
 			.sort((a, b) => this.checkItemIsPinned(b) - this.checkItemIsPinned(a))
 	},
 	getPinnedList() {
@@ -327,11 +327,11 @@ computed: {
 					array.push(findNative);
 				}
 			} else {
-				let findInUnpin = this.userUnpinnedTokens.find((find) => item.address === find.address);
+				let findInUnpin = this.userUnpinnedTokens.find((find) => item?.address === find?.address);
 				if (findInUnpin) {
 					return;
 				}
-				let findToken = this.dexStore.GET_TON_TOKENS.find((find) => item.address === find.address);
+				let findToken = this.dexStore.GET_TON_TOKENS.find((find) => item?.address === find?.address);
 				if (findToken) {
 					array.push(findToken);
 				}
@@ -618,9 +618,9 @@ methods: {
 			const uniqueTokensMap = new Map();
 
 			const userTokens = this.dexStore.GET_USER_TOKENS.filter(token =>
-				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
-				token.balance > 0 &&
+				(token?.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+					token?.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
+				token?.balance > 0 &&
 									(token?.listed || token?.imported || token?.importedFromConfig)
 			);
 
@@ -629,15 +629,15 @@ methods: {
 			});
 
 			const otherUserTokens = this.dexStore.GET_USER_TOKENS.filter(token =>
-				(token.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
-					token.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
-				(!token.balance || token.balance === 0)
+				(token?.name.toLowerCase().includes(this.searchValue.toLowerCase()) ||
+					token?.symbol.toLowerCase().includes(this.searchValue.toLowerCase())) &&
+				(!token?.balance || token?.balance === 0)
 									&& (token?.listed || token?.imported || token?.importedFromConfig)
 			);
 
 			otherUserTokens.forEach(token => {
-				if (!uniqueTokensMap.has(token.address)) {
-					uniqueTokensMap.set(token.address, token);
+				if (!uniqueTokensMap.has(token?.address)) {
+					uniqueTokensMap.set(token?.address, token);
 				}
 			});
 
@@ -657,15 +657,15 @@ methods: {
 			this.searchResults = Array.from(uniqueTokensMap.values());
 
 			this.searchResults.sort((a, b) => {
-				if ((a.balance > 0) && (!b.balance || b.balance === 0)) return -1;
-				if ((!a.balance || a.balance === 0) && (b.balance > 0)) return 1;
+				if ((a?.balance > 0) && (!b?.balance || b?.balance === 0)) return -1;
+				if ((!a?.balance || a?.balance === 0) && (b?.balance > 0)) return 1;
 
-				if (a.balance > 0 && b.balance > 0) {
-					const aBalanceUsd = a.balance * (a.price_usd || 0);
-					const bBalanceUsd = b.balance * (b.price_usd || 0);
+				if (a?.balance > 0 && b?.balance > 0) {
+					const aBalanceUsd = a?.balance * (a?.price_usd || 0);
+					const bBalanceUsd = b?.balance * (b?.price_usd || 0);
 					if (aBalanceUsd !== bBalanceUsd) return bBalanceUsd - aBalanceUsd;
 				}
-				return (b.tvl || 0) - (a.tvl || 0);
+				return (b?.tvl || 0) - (a?.tvl || 0);
 			});
 
 			this.emptyResponse = this.searchResults.length === 0 && !this.unlistedToken;
@@ -846,7 +846,7 @@ methods: {
 		return this.stakeTokens.map((tokenData) => {
 			const token = tokenData.token;
 			const metadata = token.metadata;
-			const balance = tokenData.balance
+			const balance = tokenData?.balance ?? 0
 			const normalizer = tokenData.normalizer;
 
 			return {

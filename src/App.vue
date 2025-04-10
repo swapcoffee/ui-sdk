@@ -405,15 +405,6 @@ export default {
         jettons.unshift(toncoin)
       }
 
-      const formatedLimitedJettons = (this.limitedJettonLists ?? []).map(t => this.toRawAddress(t))
-
-      const limitedJettons = jettons.filter(t => formatedLimitedJettons.includes(this.toRawAddress(t?.address)))
-          .map(t => ({
-            ...t,
-            balance: t?.balance,
-          }))
-      jettons = this.mergeArrays(limitedJettons, jettons)
-
       return jettons
     },
     async getTonJettons(wallet) {

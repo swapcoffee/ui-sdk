@@ -56,8 +56,6 @@ function setAssetForCompare(data) {
     maxSplits = 3;
   }
 
-  console.log(liquiditySources)
-
   let asset = {
     input_token: { blockchain: 'ton', address: fromTokenAddress },
     output_token: { blockchain: 'ton', address: toTokenAddress },

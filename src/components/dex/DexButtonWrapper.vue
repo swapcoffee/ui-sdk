@@ -97,7 +97,7 @@ export default {
         },
         canUnstake() {
             let findTokenInUser = this.dexStore.GET_USER_TOKENS.find(
-                (item) => item.symbol === this.dexStore.GET_SEND_TOKEN?.symbol,
+                (item) => item?.symbol === this.dexStore.GET_SEND_TOKEN?.symbol,
             );
             let enoughBalance = findTokenInUser && findTokenInUser?.balance >= this.dexStore.GET_SEND_AMOUNT;
             let validAmount = this.dexStore.GET_SEND_AMOUNT > 0 && enoughBalance;
