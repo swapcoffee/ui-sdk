@@ -310,7 +310,7 @@ export default {
 				} else if (typeof reduceNum === 'object') {
 					return reduceNum.result + reduceNum.unit
 				} else {
-					return 0
+					return reduceNum
 				}
 			} else {
 				return 0
@@ -328,7 +328,7 @@ export default {
 				} else if (typeof reduceNum === 'object') {
 					return reduceNum.result + reduceNum.unit
 				} else {
-					return 0
+					return reduceNum
 				}
 			} else {
 				return 0
