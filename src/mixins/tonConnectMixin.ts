@@ -198,7 +198,30 @@ export default {
       this.getUserSettings();
       this.checkEligibleFromStorage();
     },
-    async disconnectWallet(userFriendlyAddress) {
+    clearStores() {
+      this.dexStore.SET_USER_TOKENS_BALANCES([]);
+
+      this.dexStore.DEX_TON_TOKENS(this.dexStore.GET_TON_TOKENS.map(t => ({
+        ...t,
+        balance: 0
+      })))
+
+      this.dexStore.DEX_USER_TOKENS(this.dexStore.GET_USER_TOKENS.map(t => ({
+        ...t,
+        balance: 0
+      })))
+
+      this.dexStore.DEX_SEND_TOKEN({
+        ...this.dexStore.GET_SEND_TOKEN,
+        balance: 0
+      })
+
+      this.dexStore.DEX_RECEIVE_TOKEN({
+        ...this.dexStore.GET_RECEIVE_TOKEN,
+        balance: 0
+      })
+    },
+    async disconnectWallet(userFriendlyAddress: string) {
       try {
         if (isInsideWalletBrowser('tonkeeper')) {
           if (userFriendlyAddress) {
@@ -212,7 +235,12 @@ export default {
 
         if (this.tonConnectUi.wallet !== null) {
           await this.tonConnectUi.disconnect();
+          this.dexSettingsStore.CLEAR_DEX_SETTINGS();
+
           this.DEX_WALLET(null);
+
+          this.clearStores();
+
           localStorage.removeItem('tonProof_ver');
           localStorage.removeItem('hasEligible');
           localStorage.removeItem('hasStrategiesWallet');
