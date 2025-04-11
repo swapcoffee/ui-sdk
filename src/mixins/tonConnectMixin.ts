@@ -107,9 +107,6 @@ export default {
             this.GET_DEX_WALLET?.address,
             this.GET_PROOF_VERIFICATION,
         );
-        if (settings?.data?.lastWalletConnectionTime) {
-          this.settingsStore.SAVE_LAST_WALLET_CONNECTION_TIME(settings?.data?.lastWalletConnectionTime);
-        }
         if (settings?.data?.dexSettings && settings?.data?.globalSettings) {
           this.SAVE_USER_SETTINGS(settings?.data);
         } else {
@@ -136,7 +133,6 @@ export default {
       } else {
         this.tonConnectUi.connectionRestored.then((restored) => {
           if (restored) {
-            console.log('connection restored');
             const account = this.tonConnectUi.account;
             account.userFriendlyAddress = toUserFriendlyAddress(this.tonConnectUi.account.address);
             account.imgUrl = this.tonConnectUi.walletInfo.imageUrl;
@@ -146,11 +142,10 @@ export default {
               this.DEX_PROOF_VERIFICATION(proof);
               this.getUserSettings();
             } else {
-              console.log('disconnect');
               this.disconnectWallet();
             }
           } else {
-            console.log('Connection was not restored.');
+
           }
         });
       }

@@ -19,7 +19,7 @@ export const useSettingsStore = defineStore('settings', {
 			const currentIndex = this.availableThemes.indexOf(this.theme);
 			this.theme = this.availableThemes[(currentIndex + 1) % this.availableThemes.length];
 		},
-		SAVE_LAST_WALLET_CONNECTION_TIME(item) {
+		SAVE_LAST_WALLET_CONNECTION_TIME(item: any) {
 			this.lastWalletConnectionTime = item;
 		},
 	},
