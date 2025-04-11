@@ -315,8 +315,9 @@ export default {
           )
     },
     getYourTokens() {
+      console.log(this.dexStore.GET_USER_TOKENS)
       return this.dexStore.GET_USER_TOKENS
-          .filter((item) => item?.balance > 0 && (item?.listed || item?.imported || item?.importedFromConfig))
+          .filter((item) => item?.balance > 0)
           .sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
           .sort((a, b) => b?.imported - a?.imported)
           .sort((a, b) => this.checkItemIsPinned(b) - this.checkItemIsPinned(a))
