@@ -264,12 +264,12 @@ export default {
           tokenList: this.searchResults
         },
         {
-          condition: !this.isLimitPage && this.filteredYourTokens.length > 0 && this.searchValue.length === 0,
+          condition: (!this.isLimitPage && this.filteredYourTokens.length > 0) || this.loading,
           title: this.$t('dexTokens.titles[0]'),
           tokenList: this.filteredYourTokens,
         },
         {
-          condition: !this.isLimitPage && this.filteredAllTokens.length > 0 && this.searchValue.length === 0,
+          condition: (!this.isLimitPage && this.filteredYourTokens.length > 0) || this.loading,
           title: this.$t('dexTokens.titles[1]'),
           tokenList: this.filteredAllTokens,
         },
@@ -315,7 +315,6 @@ export default {
           )
     },
     getYourTokens() {
-      console.log(this.dexStore.GET_USER_TOKENS)
       return this.dexStore.GET_USER_TOKENS
           .filter((item) => item?.balance > 0)
           .sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
