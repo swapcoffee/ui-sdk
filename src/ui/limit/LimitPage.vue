@@ -473,7 +473,6 @@ export default {
 
             if (native) {
                 this.limitStore.LIMIT_FIRST_TOKEN(native)
-                // this.getSupportedReceiveTokens(native.address)
             }
             if (usdt) this.limitStore.LIMIT_SECOND_TOKEN(usdt)
         },
@@ -481,7 +480,6 @@ export default {
             try {
                 const res = await strategiesService.getSupportedFromTokens('limit')
                 const tokens = await this.getTokensByAddress(res)
-      
                 this.limitStore.LIMIT_SEND_SUPPORTED_TOKENS(tokens)
                 return tokens
             } catch (err) {
@@ -548,7 +546,7 @@ export default {
     watch: {
         'dexStore.GET_TON_TOKENS': {
             handler() {
-                if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
+                if (this.dexStore.GET_TON_TOKENS.length > 0) {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
                             if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
@@ -559,7 +557,8 @@ export default {
                         this.pageLoaded = true
                     }, 500)
                 }
-            }
+            },
+          deep: true
         },
         'limitStore.GET_LIMIT_RECEIVE_LIST': {
             handler() {
