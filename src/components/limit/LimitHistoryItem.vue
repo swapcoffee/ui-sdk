@@ -249,6 +249,8 @@ export default {
     font-weight: 500;
 }
 
+
+
 .item__share-link {
     display: flex;
     opacity: 0.6;

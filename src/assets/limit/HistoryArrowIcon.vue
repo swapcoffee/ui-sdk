@@ -19,5 +19,7 @@ export default {
 </script>
 
 <style scoped>
-
+.theme-light svg path {
+  filter: invert(1);
+}
 </style>
