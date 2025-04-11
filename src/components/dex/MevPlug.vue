@@ -37,7 +37,7 @@ import {profileService} from "@/api/coffeeApi/services";
 export default {
   name: 'MevPlug',
   components: { RightChevronIcon, ProtectIcon },
-  inject: ['updateMevModal'],
+  inject: ['updateMevModal', 'liquiditySourcesList'],
   computed: {
     dexSettingsStore() {
       return useDexSettingsStore()
@@ -100,6 +100,29 @@ export default {
         if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.mevProtection) {
           this.isMevEnabled = this.settingsStore.GET_USER_SETTINGS?.dexSettings.mevProtection;
           this.dexSettingsStore.DEX_MEV_PROTECTION(this.isMevEnabled);
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.slippage) {
+          this.dexSettingsStore.DEX_SLIPPAGE(this.settingsStore.GET_USER_SETTINGS?.dexSettings.slippage);
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxIntermediateTokens) {
+          this.dexSettingsStore.DEX_MAX_INTERMEDIATE_TOKENS(this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxIntermediateTokens);
+        }
+        if (!this.liquiditySourcesList?.length) {
+          if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.liquiditySources) {
+            this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(this.settingsStore.GET_USER_SETTINGS?.dexSettings.liquiditySources);
+          }
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.expertMode) {
+          this.dexSettingsStore.DEX_EXPERT_MODE(this.settingsStore.GET_USER_SETTINGS?.dexSettings.expertMode);
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxPoolVolatility) {
+          this.dexSettingsStore.DEX_MAX_POOL_VOLATILITY(this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxPoolVolatility);
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.priceImpact) {
+          this.dexSettingsStore.DEX_PRICE_IMPACT(this.settingsStore.GET_USER_SETTINGS?.dexSettings.priceImpact);
+        }
+        if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxSplits) {
+          this.dexSettingsStore.DEX_MAX_SPLITS(this.settingsStore.GET_USER_SETTINGS?.dexSettings.maxSplits);
         }
         if (this.settingsStore.GET_USER_SETTINGS?.dexSettings.mevProtectionVolumeUsd) {
           this.dexSettingsStore.DEX_MEV_MIN_USD(this.settingsStore.GET_USER_SETTINGS?.dexSettings.mevProtectionVolumeUsd);
