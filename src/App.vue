@@ -392,6 +392,7 @@ export default {
     async getBalanceFromTonApi(wallet) {
       try {
         let res = await tonApiService.getTonWalletInfo(wallet.address);
+
         return res?.balance;
       } catch (err) {
         throw err;

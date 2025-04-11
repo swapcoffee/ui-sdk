@@ -220,6 +220,17 @@ export default {
         ...this.dexStore.GET_RECEIVE_TOKEN,
         balance: 0
       })
+
+      this.limitStore.LIMIT_FIRST_TOKEN({
+        ...this.limitStore.GET_LIMIT_FIRST_TOKEN,
+        balance: 0
+      })
+
+      this.limitStore.LIMIT_SECOND_TOKEN({
+        ...this.limitStore.GET_LIMIT_SECOND_TOKEN,
+        balance: 0
+      })
+
     },
     async disconnectWallet(userFriendlyAddress: string) {
       try {

@@ -76,7 +76,6 @@ const tonConnectUiInstance = new TonConnectUI({
 //     payload
 // });
 
-
 createSwapWidget('#swap-widget-component', {
     theme:  SWAP_WIDGET_THEME.LIGHT,
     locale: SWAP_WIDGET_LOCALE.RU,
