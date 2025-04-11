@@ -275,7 +275,7 @@ export default {
         },
         {
           condition: this.isLimitPage,
-          title: `${this.getRouteName} tokens`,
+          title: `${this.dexStore.GET_SWAP_ACTIVE_TAB} tokens`,
           tokenList: this.sortedLimitTokensList
         },
       ];
@@ -737,7 +737,6 @@ export default {
           this.closePopup();
         }
       }
-
     },
     importToken() {
       this.unlistedToken.imported = true

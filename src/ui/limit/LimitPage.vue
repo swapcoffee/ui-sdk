@@ -220,7 +220,7 @@ export default {
         },
         getSuborders() {
             let first = this.tokenValues.first * this.limitStore.GET_LIMIT_FIRST_TOKEN?.price_usd
-            if (!this.dexStore.GET_LIMIT_ENABLE_SUBORDERS) {
+            if (!this.limitSettingsStore.GET_LIMIT_ENABLE_SUBORDERS) {
                 if (first < 100) {
                     return 1
                 } else if (first <= 1000) {
@@ -468,8 +468,8 @@ export default {
             }
         },
         setDefaultTokenPair() {
-            let native = this.dexStore.GET_TON_TOKENS.find((item) => item.type === 'native')
-            let usdt = this.dexStore.GET_TON_TOKENS.find((item) => item?.address === this.usdtAddress)
+            const native = this.dexStore.GET_TON_TOKENS.find((item) => item.type === 'native')
+            const usdt = this.dexStore.GET_TON_TOKENS.find((item) => item?.address === this.usdtAddress)
 
             if (native) {
                 this.limitStore.LIMIT_FIRST_TOKEN(native)
@@ -479,8 +479,9 @@ export default {
         },
         async getSupportedSendTokens() {
             try {
-                let res = await strategiesService.getSupportedFromTokens('limit')
-                let tokens = await this.getTokensByAddress(res)
+                const res = await strategiesService.getSupportedFromTokens('limit')
+                const tokens = await this.getTokensByAddress(res)
+      
                 this.limitStore.LIMIT_SEND_SUPPORTED_TOKENS(tokens)
                 return tokens
             } catch (err) {
@@ -489,8 +490,8 @@ export default {
         },
         async getSupportedReceiveTokens(firstToken) {
             try {
-                let res = await strategiesService.getSupportedToTokens(firstToken, 'limit')
-                let tokens = await this.getTokensByAddress(res)
+                const res = await strategiesService.getSupportedToTokens(firstToken, 'limit')
+                const tokens = await this.getTokensByAddress(res)
                 this.limitStore.LIMIT_RECEIVE_SUPPORTED_TOKENS(tokens)
                 return tokens
             } catch (err) {
@@ -499,13 +500,13 @@ export default {
         },
         async getTokensByAddress(addresses) {
             try {
-
-                let tokensFromStore = this.dexStore.GET_TON_TOKENS.filter((item) => {
-                    let friendly = item.address === 'native'
+                const tokensFromStore = this.dexStore.GET_TON_TOKENS.filter((item) => {
+                    const friendly = item.address === 'native'
                         ? item.address
                         : Address.parse(item.address).toString()
                     return addresses.includes(friendly)
                 })
+
 
                 const filteredAddresses = addresses.filter((address) => {
                     if (address !== 'native') {
@@ -513,7 +514,7 @@ export default {
                     }
                 })
 
-                let res = await tokenService.getTokensByAddress(filteredAddresses)
+                const res = await tokenService.getTokensByAddress(filteredAddresses)
                 return this.mergeArrays(tokensFromStore, res)
             } catch (err) {
                 throw err
@@ -584,10 +585,14 @@ export default {
         'limitStore.GET_LIMIT_SECOND_TOKEN': {
             handler() {
                 this.rateEdited = false
-                // this.clearValues()
+
                 if (this.limitStore.GET_LIMIT_SECOND_TOKEN) {
-                    this.getSupportedSendTokens(this.limitStore.GET_LIMIT_SECOND_TOKEN?.address)
+                    this.getSupportedSendTokens()
                 }
+
+              setTimeout(() => {
+                this.pageLoaded = true
+              }, 500)
             }
         },
         'limitStore.GET_STRATEGIES_ELIGIBLE': {
