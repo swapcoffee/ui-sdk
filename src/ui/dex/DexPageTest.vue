@@ -508,6 +508,32 @@ export default {
             if (!this.dexStore.GET_SEND_TOKEN && !this.dexStore.GET_RECEIVE_TOKEN) {
               this.setDexTokens();
             }
+
+            if (this.dexStore.GET_SEND_TOKEN) {
+              const rawBalanceSendToken = this.dexStore.GET_USER_TOKENS_BALANCES.find(
+                  (i) => this.toRawAddress(i?.jetton?.address) === this.toRawAddress(this.dexStore.GET_SEND_TOKEN?.address))
+
+              const sendRawTokenBalance = Number(rawBalanceSendToken?.balance ?? 0);
+              const sendTokenDecimals = rawBalanceSendToken?.jetton?.decimals ?? this.dexStore.GET_SEND_TOKEN?.decimals
+
+              this.dexStore.DEX_SEND_TOKEN({
+                ...this.dexStore.GET_SEND_TOKEN,
+                balance: sendRawTokenBalance / Math.pow(10, sendTokenDecimals)
+              })
+            }
+
+            if (this.dexStore.GET_RECEIVE_TOKEN) {
+              const rawBalanceReceiveToken = this.dexStore.GET_USER_TOKENS_BALANCES.find(
+                  (i) => this.toRawAddress(i?.jetton?.address) === this.toRawAddress(this.dexStore.GET_RECEIVE_TOKEN?.address))
+
+              const receiveTokenBalance = Number(rawBalanceReceiveToken?.balance ?? 0)
+              const receiveTokenDecimals = rawBalanceReceiveToken?.jetton?.decimals ?? this.dexStore.GET_RECEIVE_TOKEN?.decimals
+
+              this.dexStore.DEX_RECEIVE_TOKEN({
+                ...this.dexStore.GET_RECEIVE_TOKEN,
+                balance: receiveTokenBalance / Math.pow(10, receiveTokenDecimals)
+              })
+            }
           }
         },
         'dexStore.GET_DEAL_CONDITIONS': {

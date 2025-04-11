@@ -203,9 +203,7 @@ export default {
     },
     async getTonTokens(retryCount = 0) {
       try {
-        if (this.isLoadingTokens) {
-          return
-        }
+        if (this.isLoadingTokens) return;
 
         this.isLoadingTokens = true;
 
@@ -228,7 +226,7 @@ export default {
         if (!hasLimitedList) {
           res = await tokenService.getTokenListV2({ page: 1, size: 50 });
           if (res) {
-            tokens = res.items.map((item) => ({
+            tokens = res.items.map(item => ({
               ...item,
               type: item.address === toncoinAddress ? "native" : "jetton",
               address: item.address === toncoinAddress ? "native" : item.address,
@@ -239,7 +237,7 @@ export default {
         } else {
           res = await tokenService.getTokensByAddress(this.limitedJettonLists);
           if (res) {
-            tokens = res.map((item) => ({
+            tokens = res.map(item => ({
               ...item,
               type: item.address === toncoinAddress ? "native" : "jetton",
               address: item.address === toncoinAddress ? "native" : item.address,
@@ -264,42 +262,33 @@ export default {
         tokens = this.mergeArrays(tokens, widgetTokens);
         tokens = this.mergeArrays(tokens, pinnedTokens);
 
-        this.tokensWithImported = this.checkImportTokens(tokens);
+        let preparedTokens = this.checkImportTokens(tokens);
         this.dexStore.DEX_TOKENS_OPTIONS({ current_page: res?.page, total_pages: res?.pages });
 
-
-
-        // TODO: REFACTOR IT
-        this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
-
         const wallet = this.dexStore.GET_DEX_WALLET;
+
         if (wallet !== null) {
-          const userTokens = await this.getAccountInfo(wallet);
-
-          this.tokensWithImported = this.mergeArrays(userTokens, this.tokensWithImported);
+          const userTokens = await this.getAccountInfo(wallet, preparedTokens);
+          preparedTokens = this.mergeArrays(userTokens, preparedTokens);
         }
-
-
-        this.dexStore.DEX_TON_TOKENS(this.tokensWithImported);
 
         const formattedLimitedJettons = [
           ...new Set([...(this.sendReceiveTokenAddresses ?? []), ...(this.limitedJettonLists ?? [])])
         ].map(t => this.toRawAddress(t));
 
-        this.dexStore.DEX_TON_TOKENS(
-            this.dexStore.GET_TON_TOKENS.map(t => ({
-              ...t,
-              importedFromConfig: formattedLimitedJettons.includes(this.toRawAddress(t?.address))
-            }))
-        );
+        const finalTokens = preparedTokens.map(t => ({
+          ...t,
+          importedFromConfig: formattedLimitedJettons.includes(this.toRawAddress(t?.address))
+        }));
 
+        this.dexStore.DEX_TON_TOKENS(finalTokens);
       } catch (err) {
         console.error(err);
         if (retryCount < 20) {
           setTimeout(() => this.getTonTokens(retryCount + 1), 5000);
         }
       } finally {
-        this.isLoadingTokens = false
+        this.isLoadingTokens = false;
       }
     },
     checkImportTokens(tokens) {
@@ -358,7 +347,7 @@ export default {
         console.error(e);
       }
     },
-    async getAccountInfo(wallet) {
+    async getAccountInfo(wallet, preparedTokens?: any) {
       if (this.balanceRequestInProgress) {
         return;
       }
@@ -373,7 +362,7 @@ export default {
           balance: Number(balance),
         }
 
-        let mergedTokens = await this.mergeTonTokens(walletInfo);
+        let mergedTokens = await this.mergeTonTokens(walletInfo, preparedTokens);
 
         this.dexStore.DEX_USER_TOKENS(mergedTokens);
 
@@ -419,10 +408,12 @@ export default {
         return address;
       }
     },
-    async mergeTonTokens(walletInfo) {
+    async mergeTonTokens(walletInfo, preparedTokens?: any) {
       try {
-        let jettons = await this.getTonJettons(walletInfo)
-        let toncoin = this.dexStore.GET_TON_TOKENS.find((item) => item.address === 'native')
+        const tokens = preparedTokens ?? this.dexStore.GET_TON_TOKENS;
+
+        let jettons = await this.getTonJettons(walletInfo, preparedTokens)
+        let toncoin = tokens.find((item) => item.address === 'native')
         if (walletInfo?.balance && toncoin) {
           toncoin.balance = walletInfo?.balance / Math.pow(10, toncoin?.decimals)
         }
@@ -436,14 +427,15 @@ export default {
         console.error(err);
       }
     },
-    async getTonJettons(wallet) {
+    async getTonJettons(wallet, preparedTokens?: any) {
       try {
         let array = []
-        let tokensWithBalance = this.dexStore.GET_TON_TOKENS
+        let tokensWithBalance = preparedTokens ?? this.dexStore.GET_TON_TOKENS;
+
         let jettons = await tonApiService.getTonJettons(toUserFriendlyAddress(wallet.address))
 
         jettons?.balances.forEach((item) => {
-          let findItem = this.dexStore.GET_TON_TOKENS.find((find) => item.jetton.address === find.address)
+          let findItem = preparedTokens.find((find) => item.jetton.address === find.address)
           if (findItem) {
             findItem.balance = item?.balance / Math.pow(10, findItem?.decimals)
             array.push(findItem)
@@ -524,10 +516,6 @@ export default {
       wallet.imgUrl = walletInfoStorage?.imageUrl
       if (tonConnectStorage) {
         this.dexStore.DEX_WALLET(wallet)
-      }
-
-      if (this.dexStore.GET_DEX_WALLET && this.dexStore.GET_PROOF_VERIFICATION) {
-            this.getTonTokens()
       }
     }
 
