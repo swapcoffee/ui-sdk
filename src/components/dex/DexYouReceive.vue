@@ -1,7 +1,7 @@
 <template>
     <div class="dex__you-receive">
         <div class="dex__content_empty"
-             v-if="dexStore.GET_RECEIVE_TOKEN === null && !getRouteQuery"
+             v-if="dexStore.GET_RECEIVE_TOKEN === null"
              @click="$emit('chooseReceiveToken')"
         >
             <p class="dex__text_empty">{{ $t("dexInterface.selectToken") }}</p>
@@ -9,7 +9,6 @@
         <div class="dex__content"
              v-else
              @click.self="focusInput"
-             :class="{active: inputFocused}"
         >
             <div class="dex__content-wrapper">
                 <div class="dex__group group-margin">
@@ -41,7 +40,7 @@
                     >
                         <p class="token-price">~${{ getTokenPrice }}</p>
                         <p class="token-impact"
-                           v-show="this.dexStore.GET_DEAL_CONDITIONS?.output_usd > 0"
+                           v-show="dexStore.GET_DEAL_CONDITIONS?.output_usd > 0"
                            :class="getClassImpact"
                         >
                             ({{ getPriceImpactDisplay }}%)
@@ -123,13 +122,8 @@ export default {
       dexStore() {
           return useDexStore()
       },
-        getRouteQuery() {
-            if (this.$route.query?.st) {
-                return true
-            }
-        },
         showTokenSkeleton() {
-            if (this.getRouteQuery && this.dexStore.GET_RECEIVE_TOKEN === null) {
+            if (this.dexStore.GET_RECEIVE_TOKEN === null) {
                 return true
             }
         },
@@ -146,7 +140,7 @@ export default {
             }
         },
         getTokenPrice() {
-            if (this.GET_DEAL_CONDITIONS !== null) {
+            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                 return this.prettyNumber(this.dexStore.GET_DEAL_CONDITIONS?.output_usd, 2)
             } else {
                 return 0
@@ -214,7 +208,7 @@ export default {
         },
         'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
-                if (this.GET_SWAP_MODE !== 'reverse') {
+                if (this.dexStore.GET_SWAP_MODE !== 'reverse') {
                     if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                         this.dexStore.GET_DEAL_CONDITIONS?.output_amount > 0 ? this.youReceive = this.dexStore.GET_DEAL_CONDITIONS.output_amount.toFixed(4) : this.youReceive = '0'
                     } else {

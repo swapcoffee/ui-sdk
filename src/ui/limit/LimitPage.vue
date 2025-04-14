@@ -549,13 +549,13 @@ export default {
                 if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
-                            if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
+                            if (this.limitStore.GET_LIMIT_FIRST_TOKEN ) {
                                 this.getSupportedSendTokens()
                             }
                         }, 300)
-                    setTimeout(() => {
-                        this.pageLoaded = true
-                    }, 500)
+                  setTimeout(() => {
+                    this.pageLoaded = true
+                  }, 5000)
                 }
             },
         },
@@ -583,7 +583,7 @@ export default {
         'limitStore.GET_LIMIT_SECOND_TOKEN': {
             handler() {
                 this.rateEdited = false
-
+                console.log('1', this.limitStore.GET_LIMIT_SECOND_TOKEN)
                 if (this.limitStore.GET_LIMIT_SECOND_TOKEN) {
                     this.getSupportedSendTokens()
                 }
@@ -602,7 +602,7 @@ export default {
         },
         'limitStore.GET_LIMIT_FIRST_AMOUNT': {
             handler() {
-                if (Number(this.tokenValues.first) !== this.limitStore.GET_LIMIT_FIRST_AMOUNT && this.pageLoaded === false) {
+                if (Number(this.tokenValues.first) !== this.limitStore.GET_LIMIT_FIRST_AMOUNT && !this.pageLoaded) {
                     this.tokenValues.first = this.limitStore.GET_LIMIT_FIRST_AMOUNT.toString()
                 }
 

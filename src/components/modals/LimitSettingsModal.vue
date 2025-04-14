@@ -136,10 +136,10 @@ export default {
 
                 localStorage.removeItem('limitSettings');
                 localStorage.setItem('limitSettings', JSON.stringify(settings));
-                if (this.GET_PROOF_VERIFICATION && this.GET_DEX_WALLET) {
+                if (this.dexStore.GET_PROOF_VERIFICATION && this.dexStore.GET_DEX_WALLET) {
                     await profileService.writeStorage(
-                        this.GET_DEX_WALLET?.address,
-                        this.GET_PROOF_VERIFICATION,
+                        this.dexStore.GET_DEX_WALLET?.address,
+                        this.dexStore.GET_PROOF_VERIFICATION,
                         settings,
                     );
                 }

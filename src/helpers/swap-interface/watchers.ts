@@ -124,7 +124,7 @@ export function sendTokenWatcher({ tokens, amounts, dealConditions, stakingPool,
       tokens.first?.stacking_pool_id == null ||
       stakingPool?.id !== tokens.first?.stacking_pool_id
     ) {
-      dexStore.DEX_STAKING_POOL(null);
+      dexStore?.DEX_STAKING_POOL(null);
     }
   }
 }
@@ -139,7 +139,7 @@ export function receiveTokenWatcher({ tokens, amounts, dealConditions, stakingPo
       tokens.first?.stacking_pool_id == null ||
       stakingPool?.id !== tokens.second?.stacking_pool_id
     ) {
-      dexStore.DEX_STAKING_POOL(null);
+      dexStore?.DEX_STAKING_POOL(null);
     }
   }
 }

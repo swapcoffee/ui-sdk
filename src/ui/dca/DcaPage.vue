@@ -210,7 +210,7 @@ export default {
                 asset.price_range_from = this.dcaStore.GET_MIN_RANGE < this.dcaStore.GET_MAX_RANGE
                     ? this.dcaStore.GET_MIN_RANGE
                     : this.dcaStore.GET_MAX_RANGE
-                asset.price_range_to = this.dcaStore.GET_MIN_RANGE < this.dcaStore.dcaStore.GET_MAX_RANGE
+                asset.price_range_to = this.dcaStore.GET_MIN_RANGE < this.dcaStore.GET_MAX_RANGE
                     ? this.dcaStore.GET_MAX_RANGE
                     : this.dcaStore.GET_MIN_RANGE
             }
@@ -299,7 +299,7 @@ export default {
             }
         },
         changeFirstToken(value) {
-            this.LIMIT_FIRST_TOKEN(value)
+            this.limitStore.LIMIT_FIRST_TOKEN(value)
         },
         changeSecondToken(value) {
             this.limitStore.LIMIT_SECOND_TOKEN(value)

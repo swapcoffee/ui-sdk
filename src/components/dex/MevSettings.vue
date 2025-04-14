@@ -150,6 +150,7 @@ import { profileService } from '@/api/coffeeApi/services';
 
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useSettingsStore} from "@/stores/settings";
 
 export default {
   name: 'MevSettings',
@@ -172,6 +173,9 @@ export default {
     },
     dexSettingsStore() {
       return useDexSettingsStore()
+    },
+    settingsStore() {
+      return useSettingsStore()
     },
     isDefaultValue() {
       return this.mevMinValueUsd === 10 || this.mevMinValueUsd === 100 || this.mevMinValueUsd === 500 || this.mevMinValueUsd === 1000;
@@ -200,7 +204,7 @@ export default {
     },
     async saveToStorage(key, value) {
       try {
-        let settings = this.GET_USER_SETTINGS;
+        let settings = this.settingsStore.GET_USER_SETTINGS;
         if (!settings) {
           let storage = JSON.parse(localStorage.getItem('dexSettings'));
           if (storage) {

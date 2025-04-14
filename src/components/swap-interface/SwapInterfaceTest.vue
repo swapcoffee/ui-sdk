@@ -68,7 +68,7 @@ import WalletIcon from "@/assets/earn/swap-interface/WalletIcon.vue";
 import DexButtonWrapper from "@/components/dex/DexButtonWrapper.vue";
 import DexDetails from "@/components/dex/DexDetails.vue";
 import LimitButtonWrapper from "@/components/limit/LimitButtonWrapper.vue";
-import SwapInfo from "@/components/swap-interface/SwapInfo.vue";
+
 import LimitDetails from "@/components/limit/LimitDetails.vue";
 import DcaDetails from "@/components/dca/DcaDetails.vue";
 import MevPlug from "@/components/dex/MevPlug.vue";
@@ -78,7 +78,6 @@ export default {
     components: {
 	    DcaDetails,
         LimitDetails,
-        SwapInfo,
 	    LimitButtonWrapper,
         DexDetails,
         DexButtonWrapper,
