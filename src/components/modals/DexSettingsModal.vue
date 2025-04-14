@@ -350,6 +350,8 @@ import {useSettingsStore} from "@/stores/settings";
 import {useDexStore} from "@/stores/dex";
 
 import transactionRoutesMixin from '@/mixins/transactionRoutesMixin';
+import {dispatchSdkEvent} from "@/helpers/events";
+import {ReadonlySdkEvent} from "@/utils/consts.ts";
 
 export default {
     name: 'DexSettings',
@@ -605,6 +607,7 @@ export default {
                 localStorage.removeItem('dexSettings');
                 localStorage.setItem('dexSettings', JSON.stringify(settings));
                 if (this.dexStore.GET_PROOF_VERIFICATION && this.dexStore.GET_DEX_WALLET) {
+                  dispatchSdkEvent(ReadonlySdkEvent.SWAP_SETTINGS_UPDATED, settings)
                     await profileService.writeStorage(
                         this.dexStore.GET_DEX_WALLET?.address,
                         this.dexStore.GET_PROOF_VERIFICATION,

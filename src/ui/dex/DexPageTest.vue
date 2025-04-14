@@ -57,7 +57,7 @@ import swapSettings from "@/mixins/swapSettings.ts";
 import {useDexStore} from "@/stores/dex/index.ts";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction/index.ts";
-import {DEFAULT_ADDRESSES} from "@/utils/consts.ts";
+import { DEFAULT_ADDRESSES, ReadonlySdkEvent } from "@/utils/consts.ts";
 
 import {
   changeSettingsWatcher, expertModeWatcher, receiveAmountWatcher,
@@ -75,6 +75,7 @@ import {
   stakeTransaction,
   unstakeTransaction
 } from "@/helpers/swap-interface/send-transaction.ts";
+import { dispatchSdkEvent } from "@/helpers/events";
 
 export default {
     name: 'DexPageTest',
@@ -542,6 +543,10 @@ export default {
         },
         'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
+                if (this.GET_DEAL_CONDITIONS !== null) {
+                  dispatchSdkEvent(ReadonlySdkEvent.ROUTE_BUILT, this.GET_DEAL_CONDITIONS);
+                }
+
                 if (this.dexStore.GET_SWAP_MODE !== 'default') {
                     if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                         this.dexStore.GET_DEAL_CONDITIONS?.input_amount > 0

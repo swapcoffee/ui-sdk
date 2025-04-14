@@ -21,6 +21,8 @@ import methodsMixins from "@/mixins/methodsMixins.ts";
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction";
+import {dispatchSdkEvent} from "@/helpers/events";
+import {ReadonlySdkEvent} from "@/utils/consts.ts";
 
 export default {
     name: "TransactionStatusModal",
@@ -71,6 +73,7 @@ export default {
                 let findSucceeded = trResult.splits.find((item) => item?.status === 'succeeded');
 
                 if (findSucceeded && !findPending && !findPartiallyComplete) {
+                    dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, trResult);
                     return 'success';
                 } else if (findPending || findPartiallyComplete) {
                     return 'pending';

@@ -1,3 +1,5 @@
+import type { EventAction } from "@/utils/consts";
+
 export default {
   methods: {
     reduceNum(num: number): string | { result: string; unit: string } {
@@ -33,30 +35,6 @@ export default {
       const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 
       return fractionalPart !== undefined ? `${formattedInteger}.${fractionalPart}` : formattedInteger;
-    },
-
-    filterNumber(num: number): string {
-      return String(num).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-    },
-
-    getLocaleForCountry(countryCode: string): string {
-      const locales: Record<string, string> = {
-        ES: 'es', AR: 'es', BO: 'es', CL: 'es', CO: 'es', CR: 'es', CU: 'es', DO: 'es',
-        EC: 'es', GT: 'es', HN: 'es', MX: 'es', NI: 'es', PA: 'es', PY: 'es', PE: 'es',
-        PR: 'es', SV: 'es', UY: 'es', VE: 'es', GQ: 'es',
-
-        CN: 'zh', HK: 'en', TW: 'en',
-
-        UA: 'ua',
-
-        BY: 'ru', RU: 'ru',
-
-        IR: 'fa',
-
-        FR: 'fr', CD: 'fr',
-      };
-
-      return locales[countryCode] || 'en';
-    },
+    }
   },
 };
