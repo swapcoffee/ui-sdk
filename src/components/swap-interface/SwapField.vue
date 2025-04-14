@@ -222,11 +222,7 @@ export default {
 		      return this.position !== 'up' && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
         },
         showBalanceCondition() {
-            if (this.dexStore.GET_DEX_WALLET !== null) {
-                return this.token !== null && this.token.hasOwnProperty('balance');
-            } else {
-                return this.token !== null;
-            }
+          return this.token !== null;
         },
         getClassImpact() {
             if (this.getUsdPriceImpact <= -5) {
