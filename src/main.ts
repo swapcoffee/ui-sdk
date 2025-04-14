@@ -1,8 +1,11 @@
 import { createApp } from 'vue';
+
 import App from './App.vue';
+
 import i18n from './i18n';
+
 import { pinia } from './stores';
-import './main.css'
+
 import {
     DEFAULTS,
     type DefaultSettingsInterface,
@@ -13,6 +16,10 @@ import {
     SWAP_WIDGET_LIQUIDITY_SOURCES
 } from "@/settings-config.ts";
 import {THEME, TonConnectUI} from "@tonconnect/ui";
+
+import {clickOutside} from "@/directives/click-outside.ts";
+
+import './main.css'
 
 export function createSwapWidget(selector, options: DefaultSettingsInterface) {
     const cfg = { ...DEFAULTS, ...options };
@@ -39,6 +46,7 @@ export function createSwapWidget(selector, options: DefaultSettingsInterface) {
 
     i18n.global.locale.value = cfg.locale;
     app.mount(selector);
+    app.directive('click-outside', clickOutside);
     applyTheme(selector, cfg.theme);
 }
 

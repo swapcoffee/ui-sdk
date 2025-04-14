@@ -546,7 +546,7 @@ export default {
     watch: {
         'dexStore.GET_TON_TOKENS': {
             handler() {
-                if (this.dexStore.GET_TON_TOKENS.length > 0) {
+                if (this.dexStore.GET_TON_TOKENS.length > 0 && !this.pageLoaded) {
                         this.setDefaultTokenPair()
                         setTimeout(() => {
                             if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
@@ -558,7 +558,6 @@ export default {
                     }, 500)
                 }
             },
-          deep: true
         },
         'limitStore.GET_LIMIT_RECEIVE_LIST': {
             handler() {

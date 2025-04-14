@@ -7,14 +7,20 @@ let wallet = null;
 let proof = null;
 let tonConnectUi = null;
 
-function getStore() {
+function getStore(storeHook) {
 	const pinia = getActivePinia();
 	if (!pinia) {
-		console.error("Pinia is not initialized. Ensure app.use(pinia) is called.");
+		console.error('Pinia is not initialized.');
 		return null;
 	}
-	return useLimitStore();
+	return storeHook();
 }
+
+let limitStore: any
+
+setTimeout(() => {
+	limitStore = getStore(useLimitStore)
+}, 100)
 
 function setWalletChecker() {
 	interval = setInterval(() => {
@@ -38,12 +44,9 @@ export async function checkStrategiesEligible(tonConnect, userWallet, userProof)
 	wallet = userWallet;
 	proof = userProof;
 
-	const store = getStore();
-	if (!store) return;
-
 	try {
 		let res = await strategiesService.checkUserIsEligible(wallet?.address, proof);
-		store.STRATEGIES_ELIGIBLE(res);
+		limitStore?.STRATEGIES_ELIGIBLE(res);
 		localStorage.setItem("hasEligible", JSON.stringify(res));
 	} catch (err) {
 		console.error(err);
@@ -51,12 +54,10 @@ export async function checkStrategiesEligible(tonConnect, userWallet, userProof)
 }
 
 export async function checkStrategiesWallet() {
-	const store = getStore();
-	if (!store) return;
 
 	try {
 		let res = await strategiesService.checkWalletAddress(wallet?.address, proof);
-		store.STRATEGIES_WALLET(res?.data);
+		limitStore?.STRATEGIES_WALLET(res?.data);
 		localStorage.setItem("hasStrategiesWallet", JSON.stringify(res?.data));
 
 		if (interval) clearInterval(interval);
@@ -66,9 +67,6 @@ export async function checkStrategiesWallet() {
 }
 
 export async function createStrategiesWallet(updateProcessing) {
-	const store = getStore();
-	if (!store) return;
-
 	try {
 		updateProcessing(true, "create-wallet");
 		let res = await strategiesService.createStrategiesWallet(wallet?.address, proof);
@@ -94,9 +92,6 @@ export async function createStrategiesWallet(updateProcessing) {
 }
 
 export async function createOrder(updateProcessing, orderBody) {
-	const store = getStore();
-	if (!store) return;
-
 	updateProcessing(true, "order");
 	try {
 		let res = await strategiesService.createOrder(wallet?.address, proof, orderBody);
@@ -121,9 +116,6 @@ export async function createOrder(updateProcessing, orderBody) {
 }
 
 export async function cancelOrder(updateProcessing, orderBody) {
-	const store = getStore();
-	if (!store) return;
-
 	try {
 		updateProcessing(true, "cancel");
 		let res = await strategiesService.cancelOrderById(wallet?.address, proof, orderBody?.id);
@@ -148,12 +140,9 @@ export async function cancelOrder(updateProcessing, orderBody) {
 }
 
 async function checkOrderHistory(type) {
-	const store = getStore();
-	if (!store) return;
-
 	try {
 		let res = await strategiesService.getOrders(wallet?.address, proof, type, true);
-		store.LIMIT_HISTORY(res?.data);
+		limitStore?.LIMIT_HISTORY(res?.data);
 	} catch (err) {
 		console.error(err);
 	}

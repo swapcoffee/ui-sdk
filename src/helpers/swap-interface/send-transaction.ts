@@ -81,7 +81,7 @@ export async function stakeTransaction({
             this.tonConnectUi.closeModal('action-cancelled');
         }
 
-		dexStore.DEX_SEND_AMOUNT(0)
+		dexStore?.DEX_SEND_AMOUNT(0)
     } catch (err) {
         console.error(err)
 	} finally {
@@ -141,7 +141,7 @@ export async function dexTransaction({
 			customFeeSettings,
         ))?.data;
 
-        transactionStore.SAVE_SWAP_TRANSACTION_INFO(trInfo);
+        transactionStore?.SAVE_SWAP_TRANSACTION_INFO(trInfo);
 
         try {
             await tonConnectUi.sendTransaction(setTransactionParams(dealConditions, trInfo));
@@ -151,7 +151,7 @@ export async function dexTransaction({
 
         const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
 
-		transactionStore.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
+		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
 
         setRequestInterval(trInfo);
 
@@ -165,7 +165,7 @@ export async function dexTransaction({
 async function checkTransactionStatus(trInfo) {
 	try {
 		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
-		transactionStore.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus)
+		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus)
 	} catch (err) {
 		console.error(err);
 	}

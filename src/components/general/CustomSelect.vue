@@ -43,6 +43,7 @@ export default {
         background: rgba(255, 255, 255, 0.10);
         box-shadow: 0px 4px 30px 0px rgba(0, 0, 0, 0.15);
         backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
     }
 
     .custom-select__item {
