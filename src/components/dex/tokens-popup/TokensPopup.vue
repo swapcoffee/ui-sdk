@@ -143,6 +143,8 @@ import {useSettingsStore} from "@/stores/settings";
 
 import {SwapActiveTab} from "@/utils/types.ts";
 import {Address} from "@ton/core";
+import {ReadonlySdkEvent} from "@/utils/consts.ts";
+import {dispatchSdkEvent} from "@/helpers/events";
 
 export default {
   name: 'TokensPopup',
@@ -714,6 +716,9 @@ export default {
       }
     },
     chooseToken(item) {
+      const previousToken = this.mode === "SEND" ? this.dexStore.GET_SEND_TOKEN : this.dexStore.GET_RECEIVE_TOKEN;
+
+      dispatchSdkEvent(ReadonlySdkEvent.TOKEN_CHANGED, { prev: previousToken, curr: item });
       if (this.mode === 'SEND') {
         if (this.isStakingPage) {
           this.updateFirstToken(item)
@@ -758,6 +763,7 @@ export default {
       setTimeout(() => {
         this.searchValue = ''
         this.chooseToken(this.unlistedToken)
+        dispatchSdkEvent(ReadonlySdkEvent.TOKEN_IMPORTED, this.unlistedToken)
       }, 200)
     },
     pinToken(item) {

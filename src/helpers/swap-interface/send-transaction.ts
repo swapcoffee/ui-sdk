@@ -5,6 +5,8 @@ import { setTransactionMessage } from "@/helpers/dex/calculate";
 import { useDexStore } from "@/stores/dex";
 import { useTransactionStore } from "@/stores/transaction";
 import {getActivePinia} from "pinia";
+import { dispatchSdkEvent } from "@/helpers/events";
+import { ReadonlySdkEvent } from "@/utils/consts.ts";
 
 let requestInterval = null
 
@@ -142,6 +144,8 @@ export async function dexTransaction({
         ))?.data;
 
         transactionStore?.SAVE_SWAP_TRANSACTION_INFO(trInfo);
+
+		dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
 
         try {
             await tonConnectUi.sendTransaction(setTransactionParams(dealConditions, trInfo));
