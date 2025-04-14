@@ -14,6 +14,7 @@ import { toUserFriendlyAddress } from "@tonconnect/ui";
 
 import { useDexStore } from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useLimitStore} from "@/stores/limit";
 import {checkStrategiesEligible} from "@/helpers/strategies/strategies.ts";
 
 import {pinnedTokens} from "@/helpers/dex/pinnedTokens";
@@ -48,6 +49,9 @@ export default {
     },
     dexSettingsStore() {
       return useDexSettingsStore();
+    },
+    limitStore() {
+      return useLimitStore()
     },
     GET_DEX_WALLET() {
       return this.dexStore.GET_DEX_WALLET
@@ -280,8 +284,22 @@ export default {
           ...t,
           importedFromConfig: formattedLimitedJettons.includes(this.toRawAddress(t?.address))
         }));
-
         this.dexStore.DEX_TON_TOKENS(finalTokens);
+
+        if (this.limitStore.GET_LIMIT_SECOND_TOKEN && this.dexStore.GET_USER_TOKENS.length) {
+          this.limitStore.LIMIT_SECOND_TOKEN({
+            ...this.limitStore.GET_LIMIT_SECOND_TOKEN,
+            balance: this.dexStore.GET_USER_TOKENS?.find(t => t.address === this.limitStore.GET_LIMIT_SECOND_TOKEN?.address)?.balance ?? 0
+          })
+        }
+
+        if (this.limitStore.GET_LIMIT_FIRST_TOKEN && this.dexStore.GET_USER_TOKENS.length) {
+          this.limitStore.LIMIT_FIRST_TOKEN({
+            ...this.limitStore.GET_LIMIT_FIRST_TOKEN,
+            balance: this.dexStore.GET_USER_TOKENS?.find(t => t.address === this.limitStore.GET_LIMIT_FIRST_TOKEN?.address)?.balance ?? 0
+          })
+        }
+
       } catch (err) {
         console.error(err);
         if (retryCount < 20) {
