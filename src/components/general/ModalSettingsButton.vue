@@ -39,6 +39,10 @@ export default {
         color: rgba(255, 255, 255, 0.8);
     }
 
+    .theme-light .setting__button:hover {
+      color: var(--main-text-color);
+    }
+
     .active_btn,
     .active_btn:hover {
         border: 1px solid var(--iface-accent-color);
