@@ -132,7 +132,5 @@ dist
 /.idea/misc.xml
 /.idea/modules.xml
 /.idea/swap-sdk.iml
-/public/tonconnect-manifest.json
 /.idea/vcs.xml
 /.idea/
-/.github/
