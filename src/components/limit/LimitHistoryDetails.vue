@@ -278,13 +278,19 @@ export default {
                 return this.displayCurrentOutputToken
             }
         },
-        displayCurrentAveragePrice() {
-            let calc = this.getStatus === 'active'
-                ? (this.getCurrentInput / this.getCurrentOutput)
-                : (this.getInputAmount / this.getCurrentOutput)
-            return `${this.prettyNumber(calc, 4)} ${this.getFirstToken} / ${this.getSecondToken}`
-        },
-        displayPriceRange() {
+      displayCurrentAveragePrice() {
+        const output = this.getCurrentOutput;
+        if (output === 0) {
+          return `— ${this.getFirstToken} / ${this.getSecondToken}`;
+        }
+
+        const calc = this.getStatus === 'active'
+            ? (this.getCurrentInput / output)
+            : (this.getInputAmount / output);
+
+        return `${this.prettyNumber(calc, 4)} ${this.getFirstToken} / ${this.getSecondToken}`;
+      },
+      displayPriceRange() {
             return `0.1 - 0.45 ${this.getFirstToken}`
         },
         getEstimatedDate() {
