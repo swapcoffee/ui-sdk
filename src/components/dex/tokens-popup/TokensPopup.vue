@@ -269,7 +269,7 @@ export default {
           tokenList: this.filteredYourTokens,
         },
         {
-          condition: (!this.isLimitPage && this.filteredYourTokens.length > 0) || this.loading,
+          condition: (!this.isLimitPage && this.filteredAllTokens.length > 0) || this.loading,
           title: this.$t('dexTokens.titles[1]'),
           tokenList: this.filteredAllTokens,
         },
