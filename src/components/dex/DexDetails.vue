@@ -250,7 +250,7 @@ export default {
         },
         getProfitDisplay() {
             let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100).toFixed(2);
-            return profit > 100 ? '>100' : profit;
+            return Number(profit) > 100 ? '>100' : profit;
         },
         getGasFeeDisplay() {
             let gasFee = this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas * 1.0;
