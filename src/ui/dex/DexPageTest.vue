@@ -543,8 +543,8 @@ export default {
         },
         'dexStore.GET_DEAL_CONDITIONS': {
             handler() {
-                if (this.GET_DEAL_CONDITIONS !== null) {
-                  dispatchSdkEvent(ReadonlySdkEvent.ROUTE_BUILT, this.GET_DEAL_CONDITIONS);
+                if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                  dispatchSdkEvent(ReadonlySdkEvent.ROUTE_BUILT, this.dexStore.GET_DEAL_CONDITIONS);
                 }
 
                 if (this.dexStore.GET_SWAP_MODE !== 'default') {
