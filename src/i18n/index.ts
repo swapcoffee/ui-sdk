@@ -16,7 +16,7 @@ export async function loadLocaleMessages(locale: any) {
     }
 
     try {
-        const response = await fetch(`https://raw.githubusercontent.com/swapcoffee/translations-repo/main/${locale}.json`);
+        const response = await fetch(`https://raw.githubusercontent.com/swapcoffee/i18n/main/${locale}.json`);
         const messages = await response.json();
 
         i18n.global.setLocaleMessage(locale, messages);
