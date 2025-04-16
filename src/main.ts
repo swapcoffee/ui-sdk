@@ -2,7 +2,7 @@ import { createApp } from 'vue';
 
 import App from './App.vue';
 
-import i18n from './i18n';
+import { i18n, loadLocaleMessages} from './i18n';
 
 import { pinia } from './stores';
 
@@ -10,18 +10,17 @@ import {
     DEFAULTS,
     type DefaultSettingsInterface,
     PROVIDES,
-    REQUIRED_FOR_MODE,
+    REQUIRED_FOR_MODE, SWAP_WIDGET_LIQUIDITY_SOURCES, SWAP_WIDGET_LOCALE, SWAP_WIDGET_THEME,
     // SWAP_WIDGET_LOCALE,
     // SWAP_WIDGET_THEME,
     // SWAP_WIDGET_LIQUIDITY_SOURCES
 } from "@/settings-config.ts";
-// import {THEME, TonConnectUI} from "@tonconnect/ui";
 
 import {clickOutside} from "@/directives/click-outside.ts";
 
 import './main.css'
 
-export function createSwapWidget(selector, options: DefaultSettingsInterface) {
+export async function createSwapWidget(selector, options: DefaultSettingsInterface) {
     const cfg = { ...DEFAULTS, ...options };
 
     if (!['tonConnect', 'payload'].includes(cfg.injectionMode)) {
@@ -35,6 +34,7 @@ export function createSwapWidget(selector, options: DefaultSettingsInterface) {
     }
 
     const app = createApp(App);
+
     app.use(i18n);
     app.use(pinia);
 
@@ -44,7 +44,7 @@ export function createSwapWidget(selector, options: DefaultSettingsInterface) {
         app.provide(provideKey, value);
     });
 
-    i18n.global.locale.value = cfg.locale;
+    await loadLocaleMessages(cfg?.locale ?? 'en');
     app.mount(selector);
     app.directive('click-outside', clickOutside);
     applyTheme(selector, cfg.theme);
@@ -67,14 +67,13 @@ const applyTheme = (selector, theme) => {
 //         theme: THEME.DARK,
 //     },
 // });
-
-// export const payload = {
-//     wallet_meta: {
+//
+//  export const payload = {
+//      wallet_meta: {
 //         address: "0:e867df1c40a11d2aa28ee003b6da58cec7518df463f93b72185c8aabbcbe3b1a",
 //     },
 //     verify: {"public_key":"1aa6150cea2170a5a850892318425279fcb79db2d1d77130230d8e30c2abbb35","wallet_state_init":"te6cckECFgEAAwQAAgE0ARUBFP8A9KQT9LzyyAsCAgEgAxACAUgEBwLm0AHQ0wMhcbCSXwTgItdJwSCSXwTgAtMfIYIQcGx1Z70ighBkc3RyvbCSXwXgA/pAMCD6RAHIygfL/8nQ7UTQgQFA1yH0BDBcgQEI9ApvoTGzkl8H4AXTP8glghBwbHVnupI4MOMNA4IQZHN0crqSXwbjDQUGAHgB+gD0BDD4J28iMFAKoSG+8uBQghBwbHVngx6xcIAYUATLBSbPFlj6Ahn0AMtpF8sfUmDLPyDJgED7AAYAilAEgQEI9Fkw7UTQgQFA1yDIAc8W9ADJ7VQBcrCOI4IQZHN0coMesXCAGFAFywVQA88WI/oCE8tqyx/LP8mAQPsAkl8D4gIBIAgPAgEgCQ4CAVgKCwA9sp37UTQgQFA1yH0BDACyMoHy//J0AGBAQj0Cm+hMYAIBIAwNABmtznaiaEAga5Drhf/AABmvHfaiaEAQa5DrhY/AABG4yX7UTQ1wsfgAWb0kK29qJoQICga5D6AhhHDUCAhHpJN9KZEM5pA+n/mDeBKAG3gQFImHFZ8xhAT48oMI1xgg0x/TH9MfAvgju/Jk7UTQ0x/TH9P/9ATRUUO68qFRUbryogX5AVQQZPkQ8qP4ACSkyMsfUkDLH1Iwy/9SEPQAye1U+A8B0wchwACfbFGTINdKltMH1AL7AOgw4CHAAeMAIcAC4wABwAORMOMNA6TIyx8Syx/L/xESExQAbtIH+gDU1CL5AAXIygcVy//J0Hd0gBjIywXLAiLPFlAF+gIUy2sSzMzJc/sAyEAUgQEI9FHypwIAcIEBCNcY+gDTP8hUIEeBAQj0UfKnghBub3RlcHSAGMjLBcsCUAbPFlAE+gIUy2oSyx/LP8lz+wACAGyBAQjXGPoA0z8wUiSBAQj0WfKnghBkc3RycHSAGMjLBcsCUAXPFlAD+gITy2rLHxLLP8lz+wAACvQAye1UAFEAAAAAKamjFxqmFQzqIXClqFCJIxhCUnn8t52y0ddxMCMNjjDCq7s1QH69tGQ=","proof":{"timestamp":1733138437,"domain_len":11,"domain_val":"swap.coffee","payload":"0MllhaYxFCsNZAcZnlyr4ZPImsPL1wsY","signature":"uq6/e/RANyred6NzWZ8Rd/AeJPZwzym/srIDytfz/VPk6V9jQ+LrmeVQigD0KYH6ACAa/9VHB4D9dOZs+aUtAA=="}}
-// }
-//
+//  }
 //
 // createSwapWidget('#swap-widget-component', {
 //     theme: 'dark',
