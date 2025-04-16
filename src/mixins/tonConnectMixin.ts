@@ -33,7 +33,7 @@ export default {
       return useLimitStore();
     },
     customLiquiditySourcesList() {
-      if (this.liquiditySourcesList.length > 0) {
+      if ((this.liquiditySourcesList?.length ?? 0) > 0) {
         return this.liquiditySourcesList;
       }
       return null;

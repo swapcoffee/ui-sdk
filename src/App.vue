@@ -565,7 +565,7 @@ export default {
         let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
         if (this.dexStore.GET_DEX_WALLET !== null && this.dexStore.GET_PROOF_VERIFICATION) {
           // if (this.loadInfoCount === 0) {
-            this.getTonTokens()
+          this.getTonTokens()
           // }
           if (tonConnectStorage) {
             this.loadInfoCount++
