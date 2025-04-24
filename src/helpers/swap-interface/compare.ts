@@ -23,10 +23,13 @@ function getStore(storeHook) {
 let dexStore,
     settingsStore
 
-setTimeout(() => {
-   dexStore = getStore(useDexStore);
-   settingsStore = getStore(useDexSettingsStore);
-}, 100)
+let intervalId = setInterval(() => {
+  dexStore = getStore(useDexStore);
+  settingsStore = getStore(useDexSettingsStore);
+  if(dexStore !== null && settingsStore !== null) {
+    clearInterval(intervalId);
+  }
+}, 500);
 
 function saveNewMaxSplits(wallet, maxSplits) {
   if (wallet?.version && settingsStore) {
