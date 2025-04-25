@@ -7,10 +7,15 @@ export const i18n = createI18n({
 });
 
 const loadedLanguages = new Set();
+const supportedLocales = new Set(['en', 'es', 'fa', 'fr', 'ru', 'ua', 'zh']);
 
-export async function loadLocaleMessages(locale: any) {
+export async function loadLocaleMessages(locale: string) {
+    if (!supportedLocales.has(locale)) {
+        console.warn(`Unsupported locale: ${locale}. Falling back to 'en'.`);
+        locale = 'en';
+    }
+
     if (loadedLanguages.has(locale)) {
-        console.log(`Locale "${locale}" already loaded.`);
         i18n.global.locale.value = locale;
         return;
     }
@@ -21,6 +26,7 @@ export async function loadLocaleMessages(locale: any) {
 
         i18n.global.setLocaleMessage(locale, messages);
         loadedLanguages.add(locale);
+
         i18n.global.locale.value = locale;
     } catch (err) {
         console.error(`Failed to load messages for locale: ${locale}`, err);
