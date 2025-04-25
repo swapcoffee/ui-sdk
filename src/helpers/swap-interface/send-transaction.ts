@@ -22,10 +22,13 @@ function getStore(storeHook) {
 let dexStore,
 	transactionStore
 
-setTimeout(() => {
+let intervalId = setInterval(() => {
 	dexStore = getStore(useDexStore);
 	transactionStore = getStore(useTransactionStore);
-}, 100)
+	if(dexStore !== null && transactionStore !== null) {
+		clearInterval(intervalId);
+	}
+}, 500);
 
 export function clearRequestInterval() {
 	clearInterval(requestInterval)

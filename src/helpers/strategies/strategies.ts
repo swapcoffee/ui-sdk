@@ -18,9 +18,12 @@ function getStore(storeHook) {
 
 let limitStore: any
 
-setTimeout(() => {
+let intervalId = setInterval(() => {
 	limitStore = getStore(useLimitStore)
-}, 100)
+	if(limitStore !== null) {
+		clearInterval(intervalId);
+	}
+}, 500);
 
 function setWalletChecker() {
 	interval = setInterval(() => {

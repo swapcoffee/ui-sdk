@@ -17,9 +17,12 @@ function getStore(storeHook) {
 
 let dexStore
 
-setTimeout(() => {
+let intervalId = setInterval(() => {
   dexStore = getStore(useDexStore)
-}, 100)
+  if(dexStore !== null) {
+    clearInterval(intervalId);
+  }
+}, 500);
 
 function abortRequest(controller) {
   if (controller !== null) {
