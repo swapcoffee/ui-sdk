@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="https://swap.coffee" target="blank"><img src="https://avatars.githubusercontent.com/u/171727895?s=400&u=f6a9b30455abed8c09dc7d4e6108eb21d0715ade&v=4" width="130" alt="swap.coffee logo" /></a>
+  <a href="https://swap.coffee" target="blank"><img src="/assets/logo.svg" width="130" alt="swap.coffee logo" /></a>
 </p>
 
 <p align="center">User Interface SDK of swap.coffee DEX aggregator for integration in web applications</p>
