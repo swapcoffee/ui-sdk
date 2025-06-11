@@ -58,6 +58,21 @@ export function getDexSourceDataByName(name) {
                 name: 'TONCO',
                 imageUrl: 'https://app.tonco.io/favicon.ico',
             };
+        case 'tonstakers':
+            return {
+                name: 'Tonstakers',
+                imageUrl: 'https://tonstakers.com/favicon.ico',
+            };
+        case 'colossus':
+            return {
+                name: 'Colossus',
+                imageUrl: 'https://titan.tg/favicon.ico',
+            };
+        case 'torch_finance':
+            return {
+                name: 'Torch Finance',
+                imageUrl: 'https://torch.finance/favicon.svg',
+            };
     }
     throw new Error('Unknown DEX source name');
 }

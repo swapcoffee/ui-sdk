@@ -387,11 +387,23 @@ export default {
               enabled: true,
             },
             {
+              name: 'coffee',
+              enabled: true,
+            },
+            {
               name: 'tonco',
               enabled: true,
             },
             {
               name: 'tonstakers',
+              enabled: true,
+            },
+            {
+              name: 'colossus',
+              enabled: true,
+            },
+            {
+              name: 'torch_finance',
               enabled: true,
             }
           ],

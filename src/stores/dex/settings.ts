@@ -10,7 +10,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         maxIntermediateTokens: 1,
         isExpertMode: false,
         maxSplitsValue: 4,
-        liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers'],
+        liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'coffee', 'tonco', 'tonstakers', 'colossus', 'torch_finance'],
         isMevProtectionEnabled: false,
         useMevVolumeUsd: 10
     }),
@@ -34,7 +34,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
             this.maxIntermediateTokens = 1;
             this.maxSplitsValue = 4;
             this.isExpertMode = false;
-            this.liquiditySources = ['dedust', 'stonfi', 'stonfi_v2', 'tonco', 'tonstakers'];
+            this.liquiditySources = ['dedust', 'stonfi', 'stonfi_v2', 'coffee', 'tonco', 'tonstakers', 'colossus', 'torch_finance'];
         },
         CLEAR_DEX_EXPERTS_SETTINGS() {
             this.priceImpact = 10;
