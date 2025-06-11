@@ -5,7 +5,7 @@ import toncoIcon from '@/assets/contributors/tonco.png';
 import tonstakersIcon from '@/assets/contributors/tonstakers.svg';
 import colossusIcon from '@/assets/contributors/colossus_icon.png';
 import torchFinanceIcon from '@/assets/contributors/torch_icon.svg';
-import coffeeIcon from '@/assets/contributors/coffee_icon.svg';
+import coffeeIcon from '@/assets/contributors/coffee_icon.webp';
 import { useDexStore } from "@/stores/dex";
 
 export default {
