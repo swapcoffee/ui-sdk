@@ -3,6 +3,9 @@ import stonfiIcon from '@/assets/contributors/stonfi-icon.png';
 import stonfiV2Icon from '@/assets/contributors/stonfi-v2-icon.png';
 import toncoIcon from '@/assets/contributors/tonco.png';
 import tonstakersIcon from '@/assets/contributors/tonstakers.svg';
+import colossusIcon from '@/assets/contributors/colossus_icon.png';
+import torchFinanceIcon from '@/assets/contributors/torch_icon.svg';
+import coffeeIcon from '@/assets/contributors/coffee_icon.svg';
 import { useDexStore } from "@/stores/dex";
 
 export default {
@@ -73,8 +76,7 @@ export default {
         case 'coffee':
           return {
             name: 'Coffee',
-            imageUrl:
-                'https://cdn.swap.coffee/p/LKbSJ2413eBgkVIfIxFQIan7D9qg-L4FADExR_FG8e8/rs:fill:200:200:1/g:no/aHR0cHM6Ly9naXRodWIuY29tL3N3YXAtY29mZmVlL3BpYy9ibG9iL21haW4vc3dhcGNvZmZlZWxvZ28ucG5nP3Jhdz10cnVl.webp',
+            imageUrl: coffeeIcon,
           };
         case 'tonco':
           return {
@@ -85,6 +87,16 @@ export default {
           return {
             name: 'Tonstakers',
             imageUrl: tonstakersIcon,
+          };
+        case 'colossus':
+          return {
+            name: 'Colossus',
+            imageUrl: colossusIcon,
+          };
+        case 'torch_finance':
+          return {
+            name: 'Torch Finance',
+            imageUrl: torchFinanceIcon,
           };
       }
       throw new Error('Unknown DEX source name');

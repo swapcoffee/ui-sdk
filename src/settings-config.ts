@@ -21,6 +21,9 @@ export enum SWAP_WIDGET_LIQUIDITY_SOURCES {
     DEDUST = 'dedust',
     STONFI_V2 = 'stonfi_v2',
     STONFI = 'stonfi',
+    COFFEE = 'coffee',
+    COLOSSUS = 'colossus',
+    TORCH_FINANCE = 'torch_finance',
 }
 
 export interface CustomFeeSettingsInterface {

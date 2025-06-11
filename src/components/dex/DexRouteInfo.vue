@@ -128,6 +128,14 @@ export default {
           if (!array.includes('Tonstakers')) {
             array.push('Tonstakers')
           }
+        } else if (item?.dex === 'colossus') {
+          if (!array.includes('Colossus')) {
+            array.push('Colossus')
+          }
+        } else if (item?.dex === 'torch_finance') {
+          if (!array.includes('Torch Finance')) {
+            array.push('Torch Finance')
+          }
         }
       })
 			if (array.length === 2) {
