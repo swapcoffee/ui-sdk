@@ -169,6 +169,79 @@ export async function dexTransaction({
     }
 }
 
+export async function multiTransaction({
+										   updateProcessing,
+										   compareAsset,
+										   wallet,
+										   dealConditions,
+										   slippage,
+										   tonConnectUi,
+										   trackingData,
+										   mevProtection = false
+									   }) {
+	try {
+		updateProcessing(true, 'multi');
+		// await multiCompare(compareAsset);
+
+		let paths = []
+		dealConditions.routes.forEach((item) => {
+			paths.push(...item.paths)
+		})
+
+		const trInfo = await prebuildTransaction(paths, wallet?.address, slippage, mevProtection)
+
+		const transactionDataToSave = {
+			...dealConditions,
+			route_id: trInfo?.route_id,
+			send_tokens: Array.from(trackingData?.tokens.values()),
+			send_amounts: trackingData?.amounts,
+			receive_token_symbol: dealConditions?.output_token?.metadata?.symbol,
+			receive_token_image: dealConditions?.output_token?.metadata?.image_url,
+			receive_amount: dealConditions?.total_output_amount
+		}
+
+		transactionStore?.SAVE_SWAP_TRANSACTION_INFO(trInfo);
+		localStorage.setItem('transactionInfo', JSON.stringify(transactionDataToSave));
+
+		try {
+			await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
+		} catch (e) {
+			this.tonConnectUi.closeModal('action-cancelled');
+		}
+
+		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
+		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
+
+		// trackingTransaction(transactionStatus, trackingData);
+	} catch (err) {
+		throw err;
+	} finally {
+		updateProcessing(false, 'multi');
+	}
+}
+
+async function prebuildTransaction(paths, walletAddress, slippage, mevProtection) {
+	try {
+		const sender = Address.parseRaw(walletAddress).toString();
+		const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
+
+		const totalSlippage = typeof slippage === 'boolean'
+			? slippage
+			: slippage / 100
+
+		let res =  await dexService.getRouteTransactions(
+			paths,
+			sender,
+			totalSlippage,
+			referralName,
+			mevProtection
+		)
+		return res?.data
+	} catch(err) {
+		throw err
+	}
+}
+
 async function checkTransactionStatus(trInfo) {
 	try {
 		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;

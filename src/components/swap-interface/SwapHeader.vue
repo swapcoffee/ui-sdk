@@ -1,11 +1,7 @@
 <template>
     <div class="swap-header">
-        <TradeNav v-if="limitDcaVisibility" />
-      <button class="title__back-btn" @click="redirectToSwapCoffee" v-else>
-        <span class="by-text slippage-text">powered by</span>
-        <img :src="logoSrc" alt="swap-logo" class="swap-logo">
-      </button>
-      <div :class="['swap-header__group', { 'right': !limitDcaVisibility }]">
+      <TradeNav />
+      <div :class="['swap-header__group']">
         <button class="swap-header__button logout__btn" @click="disconnect" v-if="dexStore.GET_DEX_WALLET">
           <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -24,7 +20,7 @@
           </svg>
         </button>
       <button class="swap-header__button refresh-btn"
-                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
+                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex || dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi"
                     @click="refreshCompare"
             >
                 <RefreshIcon
@@ -114,31 +110,24 @@ export default {
                 }
             }
         },
-        shouldAnimate() {
-            return (
-                (this.tokenValues?.first > 0 || this.tokenValues?.second > 0)
-                && this.getTokens?.first !== null && this.getTokens?.second !== null
-                && !this.refreshInfo && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex
-                && this.processing?.dex !== true
-            );
-        },
+      canRefresh() {
+        return ((this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.processing?.dex !== true) && (this.tokenValues?.first > 0 || this.tokenValues?.second > 0))
+            || ((this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi && this.processing?.multi !== true) && this.multiSwapAmountsReady)
+      },
+      shouldAnimate() {
+        return this.canRefresh && !this.refreshInfo
+      },
     },
     methods: {
-      redirectToSwapCoffee() {
-        window.open("https://swap.coffee/dex", "_blank");
-      },
       async disconnect() {
         await this.disconnectWallet(null);
       },
-        refreshCompare() {
-            if (
-                this.getTokens?.first !== null &&
-                this.getTokens?.second !== null &&
-                this.tokenValues?.first > 0
-            ) {
-                this.$emit('refresh', 'compareTokens');
-            }
-        },
+      refreshCompare() {
+        if (this.canRefresh) {
+          this.$emit('updateRoute')
+        }
+        this.$emit('updateBalances')
+      },
     }
 }
 </script>

@@ -94,19 +94,19 @@ export async function compareTokens(data) {
     const requestData = setAssetForCompare(data);
     if (stakingConditionByToken(tokens.first)) {
       const response = await tokenService.getStakingPool(tokens.first.stacking_pool_id);
-      dexStore?.DEX_STAKING_POOL(response?.data);
+      dexStore?.DEX_STAKING_POOL(response);
     }
     if (stakingConditionByToken(tokens.second)) {
       const response = await tokenService.getStakingPool(tokens.second.stacking_pool_id);
-      dexStore?.DEX_STAKING_POOL(response?.data);
+      dexStore?.DEX_STAKING_POOL(response);
     }
 
     let requestKey = ++routeRequestCounter;
     if (routeConditionByAmounts(tokenAmounts)) {
       routeInfoResponse = await dexService.getRoute(requestData);
       if (routeRequestCounter === requestKey) {
-        if (Array.isArray(routeInfoResponse.data?.paths) && routeInfoResponse.data.paths.length > 0) {
-          dexStore?.DEX_DEAL_CONDITIONS(routeInfoResponse.data);
+        if (Array.isArray(routeInfoResponse.paths) && routeInfoResponse.paths.length > 0) {
+          dexStore?.DEX_DEAL_CONDITIONS(routeInfoResponse);
         } else {
           changePoolNotFound(true);
         }

@@ -1,0 +1,205 @@
+---
+description:
+globs: **/*.ts,**/*.tsx
+alwaysApply: false
+---
+<rule name="comments" filter="*.{ts,tsx,js,jsx}">
+
+  **Related Guidelines:**
+  - [Code Style](mdc:.cursor/rules/code-style.mdc) - TypeScript conventions and naming that reduce need for comments
+  - [Application Architecture](mdc:.cursor/rules/apps/instructions.mdc) - Documentation requirements for APIs and modules
+
+  ### Core Principles
+
+  **Comment Purpose**
+  - Write comments to provide **extra context** that isn't obvious from the code
+  - Never duplicate what the implementation already shows
+  - Focus on **why**, not **what** or **how**
+  - STAY BRIEF! Keep comments extremely short and to the point
+
+  ### Public API Documentation
+
+  **JSDoc Requirements**
+  - Document all public functions, types, and exports
+  - Provide brief overview + essential extra information only
+  - Include concise examples when they add significant value
+  - Omit parameter/return documentation when types are self-explanatory
+
+  **Documentation Content**
+  - Start with one-line summary of purpose/behavior
+  - Add only non-obvious information (edge cases, performance notes, usage constraints)
+  - Use `@example` sparingly and keep examples minimal
+  - Avoid restating function signatures or obvious parameter meanings
+  - Always use one-line `/** DESCRIPTION */` comments for simple descriptions on exported APIs
+  - don't comment simple params
+
+  ### Internal Code Comments
+
+  **When to Comment**
+  - Complex business logic that isn't immediately clear
+  - Performance optimizations and their rationale
+  - Workarounds for external library limitations
+  - TODO/FIXME items with clear action needed
+
+  **When NOT to Comment**
+  - Obvious utility functions (`includesIn(['foo', 'bar'])`, `prop('name')`, etc.)
+  - Self-documenting code with clear naming
+  - Implementation details that mirror the code logic
+  - Restating what parameters do when types are clear
+
+  ### Examples
+
+  #### Good Public API Documentation
+
+  **✅ DO:**
+  ```typescript
+  /**
+   * Maps input data to HTTP request components.
+   * Distributes data across request parts based on mapping rules.
+   */
+  export const mapSpecInput = (input: any, registry: InputMappingRegistry) => {
+    // implementation
+  };
+
+  /**
+   * Creates O(1) lookup map of outputs by status code.
+   */
+  export const prepareOutputsByCode = (outputs: readonly AnyOutputMapping[]) =>
+    mapToObject(outputs, (it) => [getCode(it), it] as const);
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  /**
+   * Maps input data to HTTP request components according to input mapping configuration.
+   *
+   * This function distributes the input data across different parts of the HTTP request
+   * (URL parameters, query string, headers, request body) based on the mapping rules
+   * defined in the route configuration.
+   *
+   * @example
+   * ```ts
+   * // Input: { userId: '123', userData: { name: 'John' }, apiKey: 'secret', active: true }
+   * const mapped = mapSpecInput(input, inputRegistry, 'json');
+   * // Result: {
+   * //   body: '{"name":"John"}',           // userData serialized as JSON
+   * //   params: { userId: '123' },         // userId for URL parameter substitution
+   * //   headers: { 'X-API-Key': 'secret', 'Content-Type': 'application/json' },
+   * //   searchParams: { active: 'true' }   // converted to query string
+   * // }
+   * ```
+   *
+   * @param input - The input data to be mapped
+   * @param registry - Input mapping registry defining how to distribute the data
+   * @param bodyType - How the request body should be serialized ('json', 'formData', 'text')
+   * @param excludeBody - Whether to exclude body from the output (for bodyless methods)
+   * @returns Object with mapped request components ready for HTTP request
+   */
+  export const mapSpecInput = (input: any, registry: InputMappingRegistry) => {
+    // implementation
+  };
+  ```
+
+  #### Good Internal Comments
+
+  **✅ DO:**
+  ```typescript
+  // TODO: Remove headers mapping - too rare, access response.headers directly
+  const mappedFromHeaders = applyMappingRules(registry.get('headers'), getValue);
+
+  // Optimization: shared instance to avoid duplicate empty mappings
+  export const emptyInputMapping = createInputMapping(c.void(), 'text', registry);
+
+  // path-to-regex requires string params
+  params: mapValues(params, String),
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  /**
+   * Utility function to extract 'code' property from output mappings.
+   * @internal
+   */
+  const getCode = prop('code');
+
+  /**
+   * Sets the response status code to the output code.
+   */
+  context.status(output.code);
+
+  /**
+   * Loops through all the header mapping rules and sets each header.
+   */
+  for (const { from, to } of output.registry.get('headers')) {
+    context.header(to, String(getByPath(parsedValue, from)));
+  }
+  ```
+
+  #### Examples in Documentation
+
+  **✅ DO:**
+  ```typescript
+  /**
+   * Safe result type that doesn't throw exceptions.
+   *
+   * @example
+   * ```ts
+   * const result = await api.getById.safe('123');
+   * if (result.success) {
+   *   console.log(result.data);
+   * }
+   * ```
+   */
+  export type RouteSafeOutput<Route> = // ...
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  /**
+   * Safe result type that doesn't throw exceptions.
+   *
+   * This type represents the return value of `.safe()` methods on route functions.
+   * It provides a discriminated union that allows checking for success/failure
+   * without exception handling.
+   *
+   * @example
+   * ```ts
+   * // Complete example showing all features
+   * const usersSpec = defineHttpSpec('users')
+   *   .route('getById', (route) =>
+   *     route
+   *       .http('GET', '/users/:id')
+   *       .input(c.string(), (it) => it.params('id'))
+   *       .success('ok', 200, UserSchema)
+   *       .failure('not_found', 404, ErrorSchema)
+   *   );
+   *
+   * const api = createHttpSpecFetch(usersSpec, { baseUrl: 'https://api.example.com' });
+   * const result: RouteSafeOutput<typeof getUserRoute> = await api.getById.safe('123');
+   *
+   * if (result.success) {
+   *   console.log(result.data.name); // User data with full type safety
+   *   console.log(result.data.email); // All properties are typed
+   * } else {
+   *   console.log(result.error.type); // Failure type discrimination
+   *   console.log(result.error.error); // Error details
+   * }
+   * ```
+   */
+  export type RouteSafeOutput<Route> = // ...
+  ```
+
+  ### Comment Maintenance
+
+  **Keep Comments Fresh**
+  - Remove comments when code becomes self-documenting
+  - Update comments when implementation changes
+  - Delete obvious comments during code reviews
+  - Prefer improving code clarity over adding comments
+
+  **Quality Checks**
+  - Can this comment be eliminated by better naming?
+  - Does this comment add information not in the code?
+  - Is this comment shorter than the code it explains?
+  - Would a junior developer find this comment helpful?
+</rule>

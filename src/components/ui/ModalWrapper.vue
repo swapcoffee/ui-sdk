@@ -1,13 +1,15 @@
 <template>
     <div
-         :class="[{free_height: freeHeight}, 'modal']"
-         @click.self="$emit('closeModal')"
+        :class="[{free_height: freeHeight}, 'modal']"
+        @mousedown.self="handleClickOutside"
     >
-        <div :class="[{padding_zero: paddingZero}, 'modal__content']">
-            <div class="modal__group">
+        <div :class="[{padding_zero: paddingZero}, 'modal__content', modalClass]">
+            <div v-if="showGroup" class="modal__group">
                 <h2 class="modal__title">{{ title }}</h2>
-                <button class="modal__close-btn"
-                        @click="$emit('closeModal')"
+                <button
+                    class="modal__close-btn"
+                    @click="handleClose"
+                    :disabled="disabled"
                 >
                     <CloseIcon />
                 </button>
@@ -18,7 +20,8 @@
 </template>
 
 <script lang="ts">
-import CloseIcon from "@/assets/earn/all-pools/CloseIcon.vue";
+import CloseIcon from "@/assets/dex/icons/CloseIcon.vue";
+import {useDexStore} from "@/stores/dex";
 
 export default {
     name: "ModalWrapper",
@@ -41,16 +44,53 @@ export default {
             default() {
                 return false
             }
+        },
+        disabled: {
+            type: Boolean,
+            default: false
+        },
+        showGroup: {
+            type: Boolean,
+            default: true
+        },
+        modalClass: {
+            type: [String, Object, Array],
+            default: null
         }
     },
-    data() {
-        return {}
+    computed: {
+      dexStore() {
+        return useDexStore()
+      }
+    },
+    methods: {
+        handleClickOutside() {
+            this.handleClose()
+        },
+        handleClose() {
+            if (!this.disabled) {
+                this.$emit('closeModal');
+            }
+        },
+        keyEvent(e) {
+            if (e.key === 'Escape') {
+                this.handleClose()
+            }
+        }
     },
     mounted() {
+
+        document.addEventListener('keydown', this.keyEvent)
         document.documentElement.style.overflow = 'hidden'
+        
+        this.dexStore.DEX_OPEN_MODAL(true)
     },
     unmounted() {
+        document.removeEventListener('keydown', this.keyEvent)
         document.documentElement.style.overflow = 'auto'
+        
+        this.dexStore.DEX_OPEN_MODAL(false)
+        
     }
 }
 </script>
@@ -73,9 +113,8 @@ export default {
     width: 450px;
     z-index: 999;
     background: var(--modal-bg);
-    backdrop-filter: blur(10px);
     border-radius: 12px;
-    padding: 18px;
+    padding: 16px;
 }
 
 .padding_zero {
@@ -105,12 +144,19 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
+    min-width: 30px;
     width: 30px;
     height: 30px;
     border: none;
     border-radius: 8px;
     outline: none;
     background: var(--iface-white10);
+}
+
+@media screen and (max-height: 600px) {
+  .modal__content {
+    height: 100dvh;
+  }
 }
 
 @media screen and (max-width: 768px) {

@@ -5,7 +5,7 @@
     </button>
 </template>
 
-<script>
+<script lang="ts">
 import ChevronRightIcon from "@/assets/earn/pool-page/ChevronRightIcon.vue";
 
 export default {

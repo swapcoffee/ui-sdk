@@ -45,7 +45,7 @@ import {strategiesService, tokenService} from "@/api/coffeeApi/services";
 
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
-import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
+import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 
 import {
@@ -82,7 +82,7 @@ export default {
         TransactionStatusModal,
         LimitSettingsModal,
         SwapHeader,
-        SwapInterfaceTest,
+        SwapInterfaceTest: SwapInterface,
         TokensPopup: defineAsyncComponent(() => {
             return import("@/components/dex/tokens-popup/TokensPopup.vue")
         }),

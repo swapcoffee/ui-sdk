@@ -20,13 +20,18 @@
             v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit"
             :ton-connect-ui="tonConnect"
         />
+        <MultiSwapPage
+            :screen-size="600"
+            v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi"
+            :ton-connect-ui="tonConnect"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { throttle } from "@/helpers/perfomance/perfomance";
+import {throttle} from "@/helpers/perfomance/perfomance";
 
 import {useDexStore} from "@/stores/dex";
 
@@ -35,10 +40,11 @@ import {SwapActiveTab} from "@/utils/types.ts";
 import DexPageTest from "@/ui/dex/DexPageTest.vue";
 import DcaPage from "@/ui/dca/DcaPage.vue";
 import LimitPage from "@/ui/limit/LimitPage.vue";
+import MultiSwapPage from "@/ui/multi/MultiSwapPage.vue";
 
 export default {
   name: "DexContainer",
-  components: {LimitPage, DcaPage, DexPageTest },
+  components: {MultiSwapPage, LimitPage, DcaPage, DexPageTest},
   data() {
     return {
       screenSize: window.innerWidth,

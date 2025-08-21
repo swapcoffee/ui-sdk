@@ -79,6 +79,7 @@ export enum SwapActiveTab {
     Dex = 'Dex',
     Limit = 'Limit',
     DCA = 'Dca',
+    Multi = 'MultiSwap'
 }
 
 export interface DexState {

@@ -1,0 +1,293 @@
+---
+description: Unified and optimized rules for Test-Driven Development and Testing Guidelines. All code must be driven by clear, well-structured, and behavior-focused tests that serve as both documentation and validation of expected behavior.
+globs: **/*.ts,**/*.tsx,**/*.md
+alwaysApply: false
+---
+
+<rule name="shared_testing_principles">
+
+  **Related Development Guidelines:**
+  - [Development Workflow](mdc:.cursor/rules/apps/instructions.mdc) - Complete TDD integration with API/Frontend development
+  - [Code Style](mdc:.cursor/rules/code-style.mdc) - TypeScript best practices for test code
+  - [Careful Changes](mdc:.cursor/rules/global-rules.mdc) - Risk mitigation through testing
+
+  ### Core Principles
+
+  **Tests are Specifications**
+  - Tests define expected behavior, not implementation details
+  - Always write or update specs **before** implementation. Never write or change code without a corresponding, failing test
+  - Treat specs as living documentation: keep them clear, up-to-date, and descriptive
+  - Specs must cover all relevant behaviors, edge cases, and error conditions for every new feature or bugfix
+  - Tests change only with explicit requirements changes
+  - When tests fail, fix the code—never the tests
+  - Never ignore failing tests; always run the full test suite before and after changes
+  - If unsure about requirements, clarify with the team or user before writing tests or code
+
+  ### Running Tests
+
+  **Test Execution Commands**
+  - Always run tests from the workspace root directory
+  - Check [Vitest documentation](mdc:https:/vitest.dev/guide/features.html) for specific features
+
+  **Common Commands:**
+  ```bash
+  # Run all tests
+  node --run vitest -- run --run --no-color
+
+  # Run tests in specific project
+  node --run vitest -- run --run --no-color --project @nubis/spec
+
+  # Run tests in specific file
+  node --run vitest -- run --run --no-color libs/spec/tests/http.test.ts
+
+  # Run specific test or test group
+  node --run vitest -- run --run --no-color libs/spec/tests/http.test.ts -t "should handle route execution"
+  ```
+</rule>
+
+<rule name="test_driven_development" extends="shared_testing_principles" filter="**/*.{test,spec}.{ts,tsx}">
+  ### TDD Process
+
+  **Development Workflow**
+  1. Review or create specs for the required behavior
+  2. Run specs (they should fail initially)
+  3. Implement or update code to satisfy the specs
+  4. Run specs again (they should now pass)
+  5. Refactor code and tests for clarity and maintainability
+
+  ### Test Structure
+
+  **Basic Spec Structure:**
+  ```typescript
+  describe('spec name', () => {
+    // optional setup
+    beforeEach(() => { /* setup code */ });
+
+    // test cases
+    test('test case name', () => { /* test code */ });
+
+    // optional teardown
+    afterEach(() => { /* teardown code */ });
+  });
+  ```
+
+  ### Validation Checklist
+
+  **Before Implementation**
+  - Check spec location and naming conventions
+  - Review existing specs to avoid duplication
+  - Create missing specs for uncovered behaviors
+  - Follow all spec requirements and standards
+
+  ### Best Practices
+
+  - Use descriptive test names and comments to clarify intent
+  - Focus tests on observable behavior, not implementation details
+  - Break down ambiguous tasks into smaller, confirmable steps
+  - Regularly review and clean up outdated or redundant specs
+
+  ### Anti-Patterns
+
+  **Avoid These Practices**
+  - No implementation without specs
+  - No skipping edge cases or error paths
+  - No manual testing only—automate all checks
+  - No modifying tests to match incorrect code; fix the code instead
+</rule>
+
+<rule name="testing_guidelines" extends="shared_testing_principles">
+  ### Test-Behavior Alignment
+
+  **Naming and Expectations**
+  - Ensure test names accurately describe expectations
+  - Each test should verify one specific behavior
+  - Tests should not depend on other tests' execution
+
+  #### Test Independence
+
+  **✅ DO:**
+  ```typescript
+  beforeEach(() => {
+    // Create clean environment if needed
+  });
+
+  test('rejects duplicate IDs', () => {
+    const result = createItem({ id: existingId });
+    expect(result.isError).toBe(true);
+  });
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  test('rejects duplicate IDs', () => {
+    const result = createItem({ id: existingId });
+    expect(result.isError).toBe(false); // Wrong expectation!
+  });
+  ```
+
+  ### Error Testing
+
+  **Comprehensive Error Handling**
+  - Test both success paths AND error paths
+  - Verify error messages/codes/structure when appropriate
+  - Test boundary conditions explicitly
+
+  **✅ DO:**
+  ```typescript
+  test('handles empty input', () => {
+    const result = processData('');
+    expect(result.isError).toBe(true);
+    expect(result.errorMessage).toContain('empty input');
+  });
+  ```
+
+  ### Implementation vs Behavior Changes
+
+  **When Implementation Changes:**
+  1. Tests should still pass
+  2. If tests fail, implementation is incorrect
+  3. Update tests only when requirements change
+
+  **Fix Implementation, Not Tests**
+
+  **❌ DON'T:**
+  ```typescript
+  // WRONG APPROACH:
+  // 1. Code changed
+  // 2. Tests failing
+  // 3. Tests modified to match new (incorrect) behavior
+  ```
+
+  **✅ DO:**
+  ```typescript
+  function operationWithValidation(data) {
+    if (!isValid(data)) {
+      return { isError: true, errorMessage: 'Invalid data' };
+    }
+    const result = processData(data);
+    return { isError: false, data: result };
+  }
+  ```
+
+  ### Maintenance Discipline
+
+  **Regular Practices**
+  - Conduct regular test audits
+  - Review tests alongside code reviews
+  - Verify all error paths have tests
+
+  ### Warning Signs
+
+  **Red Flags to Watch For**
+  - Tests frequently changing with implementation
+  - Missing error condition tests
+  - Tests that verify implementation details rather than behavior
+
+  ### Remember
+
+  > Tests are the ultimate documentation of how your system should behave. When behavior and tests diverge, the tests are right—the code is wrong.
+</rule>
+
+<rule name="repeatable_tests" extends="shared_testing_principles">
+  ### Use test.each for Repetitive Tests
+
+  **Guidelines**
+  - Use `test.each` for repeatable tests
+  - Add clear, descriptive names for each test case
+  - Organize cases in meaningful groups with comments
+  - Always prefer `test.each` over loops inside tests
+
+  ### Examples
+
+  #### Basic test.each Pattern
+
+  **✅ DO:**
+  ```typescript
+  test.each([
+    // valid cases
+    ['regular email', 'user@domain.com', true],
+    ['email with subdomain', 'user@subdomain.domain.com', true],
+    ['email with port', 'user@domain.com:8080', true],
+
+    // invalid cases
+    ['invalid email', 'invalid', false],
+    ['bad format', '@email.com', false],
+    ['missing local part', 'domain.com', false],
+  ])('[%s] isValidEmail(%j) should return %s', (_name, value, expected) => {
+    expect(isValidEmail(value)).toBe(expected);
+  });
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  test('should return false for invalid input', () => {
+    expect(isValidEmail('invalid')).toBe(false);
+  });
+  test('should return true for valid input', () => {
+    expect(isValidEmail('valid@email.com')).toBe(true);
+  });
+  test('should return false for bad format', () => {
+    expect(isValidEmail('@email.com')).toBe(false);
+  });
+  // 10 more individual tests...
+  ```
+
+  ### Avoid Loops in Tests
+
+  **Anti-Patterns to Avoid**
+
+  **❌ DON'T - Loop inside tests:**
+  ```typescript
+  test('should check email', () => {
+    [
+      ['valid email', 'user@domain.com', true],
+      ['invalid email', 'invalid', false],
+    ].forEach(([name, value, expected]) => {
+      expect(isValidEmail(value)).toBe(expected);
+    });
+  });
+  ```
+
+  **❌ DON'T - test.each with nested loops:**
+  ```typescript
+  test.each([
+    ['valid', ['user@domain.com', 'user@domain.com:8080']],
+    ['invalid', ['invalid', '@email.com']],
+  ])('%s', (name, values) => {
+    values.forEach((value) => {
+      expect(isValidEmail(value)).toBe(false);
+    });
+  });
+  ```
+
+  ### Grouped test.each Sections
+
+  **When Different Logic is Needed**
+
+  **✅ DO:**
+  ```typescript
+  // valid cases
+  test.each([
+    ['regular email', 'user@domain.com'],
+    ['email with port', 'user@domain.com:8080'],
+  ])('Valid email: %s (%j)', (_name, value) => {
+    expect(isValidEmail(value)).toBe(true);
+  });
+
+  // invalid cases
+  test.each([
+    ['invalid email', 'invalid'],
+    ['bad format', '@email.com'],
+    ['missing local part', 'domain.com'],
+  ])('Invalid email: %s (%j)', (_name, value) => {
+    expect(isValidEmail(value)).toBe(false);
+  });
+  ```
+
+  ### Best Practices
+
+  - Split tests into different `test.each` sections when they have different logic
+  - Scenarios inside `test.each` should not contain implementation parts unless absolutely necessary
+  - Initialization should occur within `test.each` sections unless global initialization is justifiable
+     - Use descriptive comments to group test cases by purpose
+</rule>

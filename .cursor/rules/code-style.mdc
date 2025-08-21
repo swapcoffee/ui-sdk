@@ -1,0 +1,125 @@
+---
+alwaysApply: true
+---
+<rule name="code_style" filter="*.{ts,tsx,js,jsx}">
+
+  **Related Guidelines:**
+  - [Comments and Documentation](mdc:.cursor/rules/comments.mdc) - JSDoc and inline commenting standards
+  - [Testing Guidelines](mdc:.cursor/rules/testing.mdc) - Code style for test files
+  - [Application Architecture](mdc:.cursor/rules/apps/instructions.mdc) - Architectural patterns and naming
+
+  ### Types Consistency
+
+  **Core Principles**
+  - Use `type` instead of `interface` unless you need specific interface features like `this` reference
+  - Inline object types for simple object parameter like `const Status = ({ type }: { type: StatusType }) => ...`
+  - Never use prefixes like `I` or `T` for types
+  - Define explicit generic names for generic types for better code readability
+  - Avoid using `any` type unless absolutely necessary
+  - Avoid using `enum` types unless absolutely necessary, use `as const` or `satisfies` on objects/arrays for simple cases
+  - Never use explicit type declarations for inferrable parts: variables, function return types, HOF, etc. Always use type inference unless you need to explicitly specify the type
+
+  ### Import Syntax
+
+  **Requirements**
+  - Never use `import('path-to-source').MyType` syntax unless absolutely crucial for dynamic imports or conditional type loading
+  - Always prefer regular import statements: `import type { MyType } from 'path-to-source'` or `import { MyType } from 'path-to-source'`
+  - Use `import type` for type-only imports to clearly separate types from runtime values
+
+  ### Naming
+
+  **Avoid `isXXX` / `hasXXX` naming for boolean flags**
+  Use HTML-like naming instead, for example,
+    - `isLoading` -> `loading`
+    - `$isError` -> `$failed`
+    - `hasResponse` -> `responded`
+    - `$canSubmit` -> `$submittable`
+  `isXXX` / `hasXXX` and so on should be used for **Check Functions** only, not for values.
+
+  ### Code Quality
+
+  **Best Practices**
+  - Always prefer clear and concise code over verbose implementations
+  - Use arrow functions (`const fn = () => ...`) by default, omit braces if the function body is a single expression
+  - Use named functions (`function fn() { ... }`) only when:
+    1. You need to use `this` reference inside the function
+    2. You need to emphasize the function (e.g., main entry point or major public API)
+  - Always use the most modern and readable syntax
+  - Always add `await` to the `return await ...` statement and gain better async stack traces
+  - Always use and update global abstractions from the standard library (`@nubis/std` package, source is `libs/std/src`) instead of creating boilerplate
+  - When calling HOF with value-based logic without requirements to clarify variable name, use "it" variable name: `<method>(it => <logic>)` (e.g., `groupBy(users, it => it.type)`)
+
+  ### Examples
+
+  #### Type and Function Declarations
+
+  **✅ DO:**
+  ```typescript
+  const userTypes = ['user', 'admin'] as const;
+  type UserType = typeof userTypes[number];
+  type User = { id: number; name: string; type: UserType };
+  const findUserById = (id: number, users: User[]) => users.find(it => it.id === id);
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  enum EUserType { USER = 'user', ADMIN = 'admin' }
+  interface IUser { id: number; name: string; type: EUserType }
+  function findUserById(id: number, users: IUser[]): IUser | undefined {
+    return users.find(user => user.id === id);
+  }
+  ```
+
+  #### Import Syntax for Types
+
+  **✅ DO:**
+  ```typescript
+  // Use regular import statements
+  import type { HttpMethod } from '@nubis/api/spec/core/http-specification.ts';
+  import type { SomeType } from './some-module';
+  import type { User } from './types';
+
+  expectTypeOf<User>().toEqualTypeOf<{ id: string }>();
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  // Avoid dynamic import syntax for types
+  type MyType = import('@nubis/api/spec/core/http-specification.ts').HttpMethod;
+  type AnotherType = import('./some-module').SomeType;
+
+  expectTypeOf<import('./types').User>().toEqualTypeOf<{ id: string }>();
+  ```
+
+  #### Avoid Boilerplate and Duplication
+
+  **✅ DO:**
+  ```typescript
+  import { groupBy } from '@nubis/std/array.ts';
+
+  export const usersByType = groupBy(users, it => it.type);
+  ```
+
+  **❌ DON'T:**
+  ```typescript
+  // Issues:
+  // 1. `groupBy` logic is common - use `@nubis/std`
+  // 2. Explicit type annotations are unnecessary
+  // 3. Verbose function syntax
+  function groupUsersBy<Key extends string>(users: User[], groupBy: (user: User) => Key): { [key in Key]: User[] } {
+    const groups = new Map<string, User[]>();
+    for (const user of users) {
+      const group = groupBy(user);
+      if (!groups.has(group)) {
+        groups.set(group, []);
+      }
+      groups.get(group)!.push(user);
+    }
+    return Object.fromEntries(groups);
+  }
+
+  export const usersByType = groupUsersBy(users, (user: User): UserType => {
+    return user.type;
+  });
+  ```
+</rule>

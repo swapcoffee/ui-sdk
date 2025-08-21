@@ -20,7 +20,7 @@
 import {disablePageScroll, enablePageScroll} from "scroll-lock";
 import computedMixins from "@/mixins/computedMixins.ts"
 import {throttle} from "@/helpers/perfomance/perfomance.ts";
-import { createTabVisibilityWatcher } from '@/helpers/swap-interface/watchers.ts';
+import { createTabVisibilityWatcher } from '@/helpers/swap-routing/watchers.ts';
 
 export default {
     name: "DexContainer",

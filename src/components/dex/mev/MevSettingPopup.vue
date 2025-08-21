@@ -1,7 +1,7 @@
 <template>
   <modal-wrapper
-      id="popup"
-      :title="$t('dexSettings.caption')"
+    id="popup"
+    :title="$t('dexSettings.caption')"
   >
     <MevSettings />
   </modal-wrapper>

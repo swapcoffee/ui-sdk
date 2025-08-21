@@ -1,5 +1,5 @@
-import { compareTokens } from "@/helpers/swap-interface/compare";
-import { readyCompareCondition } from '@/helpers/swap-interface/swap';
+import { compareTokens } from "@/helpers/swap-interface/compare.ts";
+import { readyCompareCondition } from '@/helpers/swap-interface/swap.ts';
 import { useDexStore } from "@/stores/dex";
 import {getActivePinia} from "pinia";
 
@@ -25,7 +25,7 @@ let intervalId = setInterval(() => {
 }, 500);
 
 function abortRequest(controller) {
-  if (controller !== null) {
+  if (controller && typeof controller.abort === 'function') {
     controller.abort();
   }
 }

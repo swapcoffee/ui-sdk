@@ -41,7 +41,16 @@ export const useDexStore = defineStore('dex', {
 		},
 		calculatedPriceImpact: null,
 		usersTokensBalances: [],
-		swapActiveTab: SwapActiveTab.Dex
+		swapActiveTab: SwapActiveTab.Dex,
+		isModalOpen: false,
+		assetKeys: [
+			'first','second','third','fourth','fifth','sixth','seventh','eighth','ninth','tenth',
+			'eleventh','twelfth','thirteenth','fourteenth','fifteenth','sixteenth','seventeenth','eighteenth','nineteenth','twentieth'
+		],
+		sendMultiTokens: null,
+		receiveMultiToken: null,
+		sendMultiValues: null,
+		receiveMultiValue: null
 	}),
 
 	actions: {
@@ -103,6 +112,10 @@ export const useDexStore = defineStore('dex', {
 			this.swapMode = 'default';
 			this.stakingPool = null;
 			this.areTokensLoaded = false;
+			this.sendMultiTokens = null;
+			this.receiveMultiToken = null;
+			this.sendMultiValues = null;
+			this.receiveMultiValue = null;
 		},
 		DEX_WALLET_VERSION(item: any) {
 			this.dexWalletVersion = item;
@@ -124,6 +137,27 @@ export const useDexStore = defineStore('dex', {
 		},
 		SET_USER_TOKENS_BALANCES(item: any[]) {
 			this.usersTokensBalances = item;
+		},
+		DEX_OPEN_MODAL(item: boolean) {
+			this.isModalOpen = item;
+		},
+		SAVE_SEND_MULTI_TOKENS(item: any) {
+			this.sendMultiTokens = item;
+		},
+		SAVE_RECEIVE_MULTI_TOKEN(item: any) {
+			this.receiveMultiToken = item;
+		},
+		SAVE_SEND_MULTI_VALUES(item: any) {
+			this.sendMultiValues = item;
+		},
+		SAVE_RECEIVE_MULTI_VALUE(item: any) {
+			this.receiveMultiValue = item;
+		},
+		CLEAR_MULTI_STORE() {
+			this.sendMultiTokens = null;
+			this.receiveMultiToken = null;
+			this.sendMultiValues = null;
+			this.receiveMultiValue = null;
 		}
 	},
 	getters: {
@@ -148,5 +182,11 @@ export const useDexStore = defineStore('dex', {
 		GET_CALCULATED_PI: (state) => state.calculatedPriceImpact,
 		GET_SWAP_ACTIVE_TAB: (state) => state.swapActiveTab,
 		GET_USER_TOKENS_BALANCES: (state) => state.usersTokensBalances,
+		GET_OPEN_MODAL: (state) => state.isModalOpen,
+		GET_SEND_ASSET_KEYS: (state) => state.assetKeys,
+		GET_SEND_MULTI_TOKENS: (state) => state.sendMultiTokens,
+		GET_RECEIVE_MULTI_TOKEN: (state) => state.receiveMultiToken,
+		GET_SEND_MULTI_VALUES: (state) => state.sendMultiValues,
+		GET_RECEIVE_MULTI_VALUE: (state) => state.receiveMultiValue,
 	},
 });

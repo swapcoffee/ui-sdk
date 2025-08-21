@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 
 import type { DexSettingsState } from "@/utils/types";
+import {DEXES_IDS} from "@/utils/dexes.ts";
 
 export const useDexSettingsStore = defineStore('dex-settings', {
     state: (): DexSettingsState => ({
@@ -10,9 +11,10 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         maxIntermediateTokens: 1,
         isExpertMode: false,
         maxSplitsValue: 4,
-        liquiditySources: ['dedust', 'stonfi', 'stonfi_v2', 'coffee', 'tonco', 'tonstakers', 'colossus', 'torch_finance'],
+        liquiditySources: DEXES_IDS,
         isMevProtectionEnabled: false,
-        useMevVolumeUsd: 10
+        useMevVolumeUsd: 10,
+        isSmartModeActive: true,
     }),
     actions: {
         DEX_SLIPPAGE(value: number) {
@@ -34,7 +36,7 @@ export const useDexSettingsStore = defineStore('dex-settings', {
             this.maxIntermediateTokens = 1;
             this.maxSplitsValue = 4;
             this.isExpertMode = false;
-            this.liquiditySources = ['dedust', 'stonfi', 'stonfi_v2', 'coffee', 'tonco', 'tonstakers', 'colossus', 'torch_finance'];
+            this.liquiditySources = DEXES_IDS;
         },
         CLEAR_DEX_EXPERTS_SETTINGS() {
             this.priceImpact = 10;
@@ -55,7 +57,10 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         },
         DEX_MEV_MIN_USD(value: number) {
             this.useMevVolumeUsd = value;
-        }
+        },
+        DEX_SMART_MODE(value: boolean) {
+            this.isSmartModeActive = value;
+        },
     },
     getters: {
         GET_SLIPPAGE: (state): number => state.slippage,
@@ -67,5 +72,6 @@ export const useDexSettingsStore = defineStore('dex-settings', {
         GET_LIQUIDITY_SOURCES: (state): string[] => state.liquiditySources,
         GET_MEV_PROTECTION_VALUE: (state): boolean => state.isMevProtectionEnabled,
         GET_MEV_MIN_USD: (state): number => state.useMevVolumeUsd,
-    },
+        GET_SMART_MODE_VALUE: (state): boolean => state.isSmartModeActive
+    }
 });

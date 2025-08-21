@@ -1,0 +1,81 @@
+---
+description: Global instructions for making changes to the codebase
+globs: **/*
+alwaysApply: true
+---
+<rule name="careful_changes">
+  ### Core Principle
+
+  Always ensure you fully understand the requested change before making any code modifications. If unsure, ask clarifying questions until you are at least 95% confident in the requirements and context.
+
+  **Related Development Processes:**
+  - [Development Workflow](mdc:.cursor/rules/apps/instructions.mdc) - Complete development process with TDD
+  - [Testing Guidelines](mdc:.cursor/rules/testing.mdc) - Test-first approach to validate understanding
+
+  ### Change Process
+
+  **Before Making Changes**
+  - If you are less than 95% confident, always ask the user clarifying questions before proceeding
+  - Explicitly list your assumptions before making any changes
+  - Summarize your understanding of the task in your own words and confirm with the user
+  - If the task is ambiguous, break it down into smaller, confirmable steps
+  - Prefer caution: when in doubt, pause and seek clarification rather than risk incorrect or incomplete changes
+  - Document any uncertainties, edge cases, or open questions you identify
+  - Double-check requirements and context before applying any code changes
+
+  **Risk Mitigation**
+  - Never proceed with incomplete understanding
+  - Always validate assumptions before implementation
+  - Break complex changes into smaller, verifiable steps
+  - Document reasoning behind design decisions
+</rule>
+
+<rule name="naming_conventions">
+  ### File and Directory Naming
+
+  **Standard Conventions**
+  - Use `kebab-case` for file names and directories unless otherwise specified or required by the project
+  - Use `camelCase` for functions, constants, variables and properties
+  - Use `PascalCase` for components, classes, interfaces, enums, and types including generics
+
+  ### Examples
+
+  #### Project Structure
+
+  **✅ DO:**
+  ```text
+  .
+  ├── modules
+  │   ├── merge-request
+  │   │   ├── merge-request.tsx
+  │   │   └── ui
+  │   │       ├── split-view.tsx
+  │   │       └── comments.tsx
+  │   └── issues
+  │       ├── issues.tsx
+  │       ├── lib.ts
+  │       └── ui.tsx
+  ```
+
+  **❌ DON'T:**
+  ```text
+  .
+  ├── modules
+  │   ├── mergeRequest
+  │   │   ├── mergeRequest.tsx
+  │   │   └── ui
+  │   │       ├── SplitView.tsx
+  │   │       └── Comments.tsx
+  │   └── issues
+  │       ├── issues.tsx
+  │       ├── lib.ts
+  │       └── UI.tsx
+  ```
+
+  ### Consistency Requirements
+
+  - Follow project-specific naming patterns when established
+  - Maintain consistency within similar file types
+  - Use descriptive names that clearly indicate purpose
+  - Avoid abbreviations unless they are widely understood
+</rule>

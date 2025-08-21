@@ -39,7 +39,7 @@
 import {Address} from "@ton/core";
 
 import DexSuccess from "@/components/dex/DexSuccess.vue";
-import SwapInterfaceTest from "@/components/swap-interface/SwapInterfaceTest.vue";
+import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
 import LimitSettingsModal from "@/components/modals/LimitSettingsModal.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
@@ -68,7 +68,7 @@ export default {
     name: "DcaPage",
     components: {
         TransactionStatusModal,
-        LimitOrdersHistory, TokensPopup, LimitSettingsModal, SwapHeader, SwapInterfaceTest, DexSuccess},
+        LimitOrdersHistory, TokensPopup, LimitSettingsModal, SwapHeader, SwapInterfaceTest: SwapInterface, DexSuccess},
     props: {
         tonConnectUi: {
             type: Object,
