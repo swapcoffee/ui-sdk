@@ -115,6 +115,12 @@
               </p>
               <p class="dex__value">{{ getMevFeeDisplay }} TON</p>
             </div>
+            <div class="dex__row" v-if="getSmartFeeDisplay">
+                <p class="dex__name">
+                    {{ $t('dexDetails.smart') }}
+                </p>
+                <p class="dex__value">{{ getSmartFeeDisplay }}</p>
+            </div>
             <div class="dex__row">
                 <p class="dex__name">
                     {{ $t('dexDetails.economy') }}
@@ -144,12 +150,19 @@ import DetailsIcon from "@/assets/earn/swap-interface/DetailsIcon.vue";
 
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import { SwapActiveTab } from '@/utils/types';
 
 export default {
     name: 'DexDetails',
     components: {DetailsIcon, TooltipWrapper},
     mixins: [transactionRoutesMixin, methodsMixins],
     inject: ["customFeeSettings"],
+    props: {
+        isListedPair: {
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             showMore: false,
@@ -184,6 +197,12 @@ export default {
             }
           }
           return false
+        },
+        getSmartFeeDisplay() {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair) {
+                return `0.1%`
+            }
+            return false
         },
         getOutputUsd() {
             if (this.isReverse) {

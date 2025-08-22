@@ -22,7 +22,7 @@
 <script lang="ts">
 import SwitchToggle from "@/components/ui/SwitchToggle.vue"
 import ProtectIcon from "@/assets/dex/icons/ProtectIcon.vue";
-import ExpertModeIcon from "@/assets/dex/expert-mode.svg";
+import ExpertModeIcon from "@/assets/dex/icons/ExpertModeIcon.vue";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 
 export default {

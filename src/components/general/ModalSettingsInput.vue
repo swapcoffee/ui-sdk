@@ -2,7 +2,7 @@
     <input
         type="text"
         class="settings__input"
-        :placeholder="this.getCurrentValue"
+        :placeholder="getPlaceholder"
         inputmode="decimal"
         autocomplete="off"
         :value="modelValue"
@@ -20,49 +20,55 @@ export default {
             type: String,
             required: true,
         },
-        getCurrentValue: {
+        minValue: {
+            type: Number,
+            default: 1
+        },
+        maxValue: {
+            type: Number,
+            default: 100
+        },
+        symbol: {
             type: String,
-            required: true
-        }
+            default: ''
+        },
     },
     data() {
         return {
-            minValue: 1,
-            maxValue: 5,
             rawValue: '',
         }
     },
     computed: {
-        activeConditions() {
-
-        }
+       getPlaceholder() {
+           return this.symbol === '%'
+               ? `${this.$t("myPoolAction.custom")} ${this.symbol}`
+               : `${this.$t("myPoolAction.custom")}`
+       }
     },
     methods: {
         onFocus() {
-            this.inputFocused = true;
             if (this.modelValue === "0") {
                 this.emitUpdateValue('');
             }
         },
-        onBlur() {
-            this.inputFocused = false;
-            if (this.modelValue === "0" || this.modelValue.length === 0 && this.minValue > 0) {
+        onBlur(event) {
+            const actualValue = event.target.value;
+
+            if (actualValue === '' || actualValue === '0' || Number(actualValue) < this.minValue) {
                 this.emitUpdateValue(this.minValue.toString());
+                event.target.value = this.minValue.toString();
             }
         },
         changeInput(event) {
-            this.rawValue = event.target.value
-                .replace(/[^0-9.]/g, '')
+            this.rawValue = event.target.value.replace(',', '.').replace(/[^0-9.]/g, '')
 
             if (Number(this.rawValue) > this.maxValue) {
                 this.rawValue = this.maxValue.toString()
             }
 
-            if (Number(this.rawValue) < this.minValue) {
-                this.rawValue = ''
+            if (this.rawValue !== '' && Number(this.rawValue) >= this.minValue) {
+                this.emitUpdateValue(this.rawValue);
             }
-
-            this.emitUpdateValue(this.rawValue);
 
             if (this.rawValue.length > 0) event.target.value = this.rawValue
         },
@@ -75,32 +81,33 @@ export default {
 
 <style scoped>
 .settings__input {
-    transition: 0.15s;
-    padding: 10px 12px 10px 12px;
+    background: var(--iface-white6);
     width: 100%;
     height: 40px;
-    border-radius: 12px;
-    outline: none;
-    border: 1px solid var(--iface-white14);
-    background: transparent;
-    text-align: center;
     font-size: 14px;
-    font-family: Harmony-Medium, sans-serif;
+    font-weight: 500;
+    padding: 10px 12px;
+    text-align: center;
+    border-radius: 12px;
+    transition: 0.15s;
+    outline: none;
+    border: 0px solid var(--iface-white6);
 }
 
 .settings__input:hover {
-    border: 1px solid var(--iface-white24);
     background: var(--iface-white4);
 }
 
 .settings__input:active {
-    border: 2px solid var(--iface-accent-color);
-    background: var(--main-bg-color);
+    background: var(--iface-white6);
 }
 
 .settings__input:focus {
-    border: 2px solid var(--iface-accent-color);
-    background: var(--main-bg-color);
+    background: var(--iface-white6);
+}
+
+.settings__input:disabled {
+    cursor: not-allowed;
 }
 
 .active_input {
@@ -112,5 +119,14 @@ export default {
     border: 1px solid var(--iface-accent-color);
     color: var(--iface-accent-color);
     background: var(--iface-white4);
+}
+
+.settings__input::placeholder {
+    color: var(--main-text-color);
+    opacity: 0.4;
+}
+
+.settings__input:focus::placeholder {
+    color: transparent;
 }
 </style>

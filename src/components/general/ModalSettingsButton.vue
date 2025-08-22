@@ -9,7 +9,7 @@ export default {
     name: "ModalSettingsButton",
     props: {
         value: {
-            type: Number,
+            type: [Number, String],
             required: true,
         },
     },
@@ -38,15 +38,21 @@ export default {
         border: 1px solid var(--iface-white20);
         color: rgba(255, 255, 255, 0.8);
     }
-
+    
     .theme-light .setting__button:hover {
-      color: var(--main-text-color);
+        color: rgba(13, 13, 13, 0.8);
     }
 
     .active_btn,
     .active_btn:hover {
         border: 1px solid var(--iface-accent-color);
-        color: var(--iface-accent-color);
+        color: var(--iface-accent-color) !important;
+    }
+    
+    .active_btn.red_btn,
+    .active_btn.red_btn:hover {
+        color: var(--main-red) !important;
+        border: 1px solid var(--main-red);
     }
 
 </style>

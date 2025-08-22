@@ -8,9 +8,20 @@ import {getActivePinia} from "pinia";
 import { dispatchSdkEvent } from "@/helpers/events";
 import { ReadonlySdkEvent } from "@/utils/consts.ts";
 
-let requestInterval = null
+// Types for function parameters
+type UpdateProcessingFunction = (value: boolean, mode: string) => void;
+type Wallet = { address: string; version?: number };
+type Tokens = { first?: any; second?: any };
+type Amounts = { first: string | number; second: string | number };
+type TonConnectUi = { sendTransaction: (params: any) => Promise<void>; closeModal: (reason: string) => void };
+type DealConditions = any;
+type CompareAsset = any;
+type TrackingData = any;
+type CustomFeeSettings = any;
 
-function getStore(storeHook) {
+let requestInterval: NodeJS.Timeout | null = null
+
+function getStore<T>(storeHook: () => T): T | null {
 	const pinia = getActivePinia();
 	if (!pinia) {
 		console.error('Pinia is not initialized.');
@@ -19,8 +30,8 @@ function getStore(storeHook) {
 	return storeHook();
 }
 
-let dexStore,
-	transactionStore
+let dexStore: ReturnType<typeof useDexStore> | null = null,
+	transactionStore: ReturnType<typeof useTransactionStore> | null = null
 
 let intervalId = setInterval(() => {
 	dexStore = getStore(useDexStore);
@@ -31,16 +42,16 @@ let intervalId = setInterval(() => {
 }, 500);
 
 export function clearRequestInterval() {
-	clearInterval(requestInterval)
+	clearInterval(requestInterval as NodeJS.Timeout)
 }
 
-function setRequestInterval(trInfo) {
+function setRequestInterval(trInfo: any) {
 	requestInterval = setInterval( () => {
 		checkTransactionStatus(trInfo)
 	}, 5_000)
 }
 
-function setTransactionParams(dealCondition, trInfo) {
+function setTransactionParams(dealCondition: DealConditions, trInfo: any) {
 	let cashback = false
 	let messages = setTransactionMessage(dealCondition, cashback, trInfo.transactions)
 
@@ -50,7 +61,7 @@ function setTransactionParams(dealCondition, trInfo) {
 	}
 }
 
-async function sendTransaction(tonConnectUi, transaction) {
+async function sendTransaction(tonConnectUi: TonConnectUi, transaction: any) {
 	try {
 		await tonConnectUi.sendTransaction({
             validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
@@ -73,17 +84,23 @@ export async function stakeTransaction({
 	tokens,
 	amounts,
 	tonConnectUi,
+}: {
+	updateProcessing: UpdateProcessingFunction;
+	wallet: Wallet;
+	tokens: Tokens;
+	amounts: Amounts;
+	tonConnectUi: TonConnectUi;
 }) {
 	try {
 		updateProcessing(true, 'stake')
 		let sender = Address.parseRaw(wallet?.address).toString()
-		let referralName = JSON.parse(sessionStorage.getItem('referral_name'))
+		let referralName = JSON.parse(sessionStorage.getItem('referral_name') || 'null')
 		let transaction = await dexService.getStakeTransaction(sender, tokens.second?.address, Number(amounts.first), referralName)
 
         try {
-            await sendTransaction(tonConnectUi, transaction?.data)
+            await sendTransaction(tonConnectUi, transaction)
         } catch (e) {
-            this.tonConnectUi.closeModal('action-cancelled');
+            tonConnectUi.closeModal('action-cancelled');
         }
 
 		dexStore?.DEX_SEND_AMOUNT(0)
@@ -100,6 +117,12 @@ export async function unstakeTransaction({
 	tokens,
 	amounts,
 	tonConnectUi
+}: {
+	updateProcessing: UpdateProcessingFunction;
+	wallet: Wallet;
+	tokens: Tokens;
+	amounts: Amounts;
+	tonConnectUi: TonConnectUi;
 }) {
 	try {
 		updateProcessing(true, 'unstake')
@@ -107,9 +130,9 @@ export async function unstakeTransaction({
 		let transaction = await dexService.getUnstakeTransaction(sender, tokens.first?.address, Number(amounts.first))
 
         try {
-            await sendTransaction(tonConnectUi, transaction?.data)
+            await sendTransaction(tonConnectUi, transaction)
         } catch (e) {
-            this.tonConnectUi.closeModal('action-cancelled');
+            tonConnectUi.closeModal('action-cancelled');
         }
 
 	} catch (err) {
@@ -129,7 +152,17 @@ export async function dexTransaction({
 										 customFeeSettings,
                                          tonConnectUi,
 	                                     mevProtection = false
-                                     }) {
+                                     }: {
+	updateProcessing: UpdateProcessingFunction;
+	compareAsset: CompareAsset;
+	wallet: Wallet;
+	dealConditions: DealConditions;
+	slippage: number;
+	widgetReferral: any;
+	customFeeSettings: CustomFeeSettings;
+	tonConnectUi: TonConnectUi;
+	mevProtection?: boolean;
+}) {
     try {
         updateProcessing(true, 'dex');
 
@@ -138,25 +171,26 @@ export async function dexTransaction({
         const sender = Address.parseRaw(wallet?.address).toString();
 
         const trInfo = (await dexService.getRouteTransactions(
-            dealConditions,
+            Array.from(dealConditions?.paths),
             sender,
-            slippage / 100,
-						mevProtection,
-			widgetReferral,
-			customFeeSettings,
-        ))?.data;
+            typeof slippage === 'boolean' ? false : slippage / 100,
+            widgetReferral,
+            mevProtection,
+            customFeeSettings,
+        ));
+
 
         transactionStore?.SAVE_SWAP_TRANSACTION_INFO(trInfo);
 
 		dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
 
         try {
-            await tonConnectUi.sendTransaction(setTransactionParams(dealConditions, trInfo));
+       //      await tonConnectUi.sendTransaction(setTransactionParams(dealConditions, trInfo));
         } catch (e) {
-            this.tonConnectUi.closeModal('action-cancelled');
+            tonConnectUi.closeModal('action-cancelled');
         }
 
-        const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
+        const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
 
 		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
 
@@ -178,13 +212,22 @@ export async function multiTransaction({
 										   tonConnectUi,
 										   trackingData,
 										   mevProtection = false
-									   }) {
+									   }: {
+	updateProcessing: UpdateProcessingFunction;
+	compareAsset: CompareAsset;
+	wallet: Wallet;
+	dealConditions: DealConditions;
+	slippage: number;
+	tonConnectUi: TonConnectUi;
+	trackingData: TrackingData;
+	mevProtection?: boolean;
+}) {
 	try {
 		updateProcessing(true, 'multi');
 		// await multiCompare(compareAsset);
 
-		let paths = []
-		dealConditions.routes.forEach((item) => {
+		let paths: any[] = []
+		dealConditions.routes.forEach((item: any) => {
 			paths.push(...item.paths)
 		})
 
@@ -206,10 +249,10 @@ export async function multiTransaction({
 		try {
 			await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
 		} catch (e) {
-			this.tonConnectUi.closeModal('action-cancelled');
+			tonConnectUi.closeModal('action-cancelled');
 		}
 
-		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
+		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
 		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
 
 		// trackingTransaction(transactionStatus, trackingData);
@@ -220,10 +263,10 @@ export async function multiTransaction({
 	}
 }
 
-async function prebuildTransaction(paths, walletAddress, slippage, mevProtection) {
+async function prebuildTransaction(paths: any[], walletAddress: string, slippage: number, mevProtection: boolean) {
 	try {
 		const sender = Address.parseRaw(walletAddress).toString();
-		const referralName = JSON.parse(sessionStorage.getItem('referral_name'));
+		const referralName = JSON.parse(sessionStorage.getItem('referral_name') || 'null');
 
 		const totalSlippage = typeof slippage === 'boolean'
 			? slippage
@@ -236,15 +279,15 @@ async function prebuildTransaction(paths, walletAddress, slippage, mevProtection
 			referralName,
 			mevProtection
 		)
-		return res?.data
+		return res
 	} catch(err) {
 		throw err
 	}
 }
 
-async function checkTransactionStatus(trInfo) {
+async function checkTransactionStatus(trInfo: any) {
 	try {
-		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id))?.data;
+		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
 		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus)
 	} catch (err) {
 		console.error(err);

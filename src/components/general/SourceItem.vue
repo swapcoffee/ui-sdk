@@ -6,7 +6,7 @@
             </div>
             <p class="item__name">{{ item?.name }}</p>
         </div>
-        <switch-toggle
+        <SwitchToggle
             :class="['item__toggle', { active_switch: item?.enabled }]"
             @click="$emit('toggle', item.id)"
         />
@@ -14,9 +14,11 @@
 </template>
 
 <script lang="ts">
+import SwitchToggle from "@/components/ui/SwitchToggle.vue";
 
 export default {
     name: "SourceItem",
+    components: {SwitchToggle},
     props: {
         item: {
             type: Object,

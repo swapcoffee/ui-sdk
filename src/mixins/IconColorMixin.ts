@@ -7,5 +7,8 @@ export default {
     fillColorForTheme(): string {
       return this.GET_THEME === "dark" || this.GET_THEME === "coffee" ? "white" : "#0D0D0D";
     },
+    reverseFillColorForTheme(): string {
+      return this.GET_THEME === "dark" || this.GET_THEME === "coffee" ? "#0D0D0D" : "white";
+    },
   },
 };

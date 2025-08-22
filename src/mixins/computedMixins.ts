@@ -6,13 +6,20 @@ export default {
             return useDexStore();
         },
         getRouteName(): string {
-            const path: string = window.location.pathname;
+            const activeTab = this.dexStore.GET_SWAP_ACTIVE_TAB;
 
-            if (path.startsWith("/dex")) return "Dex";
-            if (path.startsWith("/limit")) return "Limit";
-            if (path.startsWith("/dca")) return "Dca";
-
-            return "e";
+            switch (activeTab) {
+                case 'Dex':
+                    return 'Dex';
+                case 'Limit':
+                    return 'Limit';
+                case 'Dca':
+                    return 'Dca';
+                case 'MultiSwap':
+                    return 'MultiSwap';
+                default:
+                    return 'Dex'; 
+            }
         },
         getTrimAddress(): string {
             const address: string | undefined = this.dexStore.GET_DEX_WALLET?.userFriendlyAddress;

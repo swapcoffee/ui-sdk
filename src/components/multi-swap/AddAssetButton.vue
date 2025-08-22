@@ -9,6 +9,7 @@
 
 <script lang="ts">
 import AddAssetIcon from "@/assets/multi-swap/AddAssetIcon.vue";
+import { useDexStore } from "@/stores/dex";
 
 export default {
     name: "AddAssetButton",

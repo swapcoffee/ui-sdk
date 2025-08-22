@@ -5,7 +5,7 @@
     </svg>
 </template>
 
-<script>
+<script lang="ts">
 export default {
     name: "SwapLogo",
     props: {
@@ -22,12 +22,3 @@ export default {
 }
 </script>
 
-<style scoped>
-/* .theme-light svg {
-    filter: brightness(.2) contrast(1.5);
-}
-
-.theme-light svg path {
-    fill: #0D0D0D !important;
-} */
-</style>

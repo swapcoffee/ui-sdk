@@ -1,12 +1,14 @@
-import { compareTokens } from "@/helpers/swap-interface/compare.ts";
-import { readyCompareCondition } from '@/helpers/swap-interface/swap.ts';
+import { toSafeAddress } from "@/utils/addressUtils.ts";
 import { useDexStore } from "@/stores/dex";
-import {getActivePinia} from "pinia";
+import { getActivePinia } from "pinia";
+import { refreshAll as refreshAllHandler, removeRefreshInterval as removeRefreshIntervalHandler } from "@/helpers/swap-routing/refresh-handlers.ts";
+import { readyCompareCondition, readyMultiCompareCondition } from "@/helpers/swap-routing/conditions.ts";
+import { compareTokens } from "@/helpers/swap-routing/routing.ts";
 
-let interval = null;
-let debounce = null;
+let interval: any = null;
+let debounce: any = null;
 
-function getStore(storeHook) {
+function getStore(storeHook: any) {
   const pinia = getActivePinia();
   if (!pinia) {
     console.error('Pinia is not initialized.');
@@ -15,49 +17,40 @@ function getStore(storeHook) {
   return storeHook();
 }
 
-let dexStore
+let dexStore: any;
 
 let intervalId = setInterval(() => {
-  dexStore = getStore(useDexStore)
+  dexStore = getStore(useDexStore);
   if(dexStore !== null) {
     clearInterval(intervalId);
   }
 }, 500);
 
-function abortRequest(controller) {
+function abortRequest(controller: any) {
   if (controller && typeof controller.abort === 'function') {
     controller.abort();
   }
 }
 
-function clearConditions(conditions) {
+function clearConditions(conditions: any) {
   if (conditions !== null) {
     dexStore.DEX_DEAL_CONDITIONS(null);
   }
 }
 
-export function removeTimeout() {
+export function removeRefreshTimeout() {
   clearTimeout(debounce);
 }
 
-export function removeInterval() {
+export function removeRefreshInterval() {
   clearInterval(interval);
 }
 
-export function refreshAll({
-  compareAsset,
-  showSuccess,
-  amounts,
-  swapMode,
-  abortController,
-  tabVisibility,
-}) {
-  setDebounceForRequest(compareAsset, abortController, amounts, swapMode, showSuccess);
-  clearInterval(interval);
-  refreshDex(compareAsset, showSuccess, tabVisibility);
+export function refreshAll(refreshData: any) {
+  refreshAllHandler(refreshData);
 }
 
-export function refreshDex(compareAsset, showSuccess, tabVisibility) {
+export function refreshDex(compareAsset: any, showSuccess: any, tabVisibility: any) {
   interval = setInterval(() => {
     if (!showSuccess && tabVisibility) {
       compareTokens(compareAsset);
@@ -66,102 +59,171 @@ export function refreshDex(compareAsset, showSuccess, tabVisibility) {
 }
 
 export function setDebounceForRequest(
-  compareAsset,
-  abortController,
-  amounts,
-  swapMode,
-  showSuccess,
+  compareAsset: any,
+  abortController: any,
+  amounts: any,
+  swapMode: any,
+  showSuccess: any,
 ) {
   clearTimeout(debounce);
   debounce = setTimeout(() => {
     abortRequest(abortController);
     if (
-      (amounts.first > 0 && swapMode === 'default') ||
-      (amounts.second > 0 && swapMode === 'reverse' && !showSuccess)
+      amounts && ((amounts.first > 0 && swapMode === 'default') ||
+      (amounts.second > 0 && swapMode === 'reverse' && !showSuccess))
     ) {
       compareTokens(compareAsset);
     }
   }, 200);
 }
 
-export function sendAmountWatcher({
-                                    tokens,
-                                    amounts,
-                                    abortController,
-                                    refreshData,
-                                  }) {
-  const hasInputToken = tokens.first !== null;
-  const hasAmount = amounts.first > 0;
+export function amountLimitWatcher({ tokens, amounts, routeName, type, min, max, et, ls }: {
+  tokens: any;
+  amounts: any;
+  routeName: any;
+  type: any;
+  min: any;
+  max: any;
+  et: any;
+  ls: any;
+}) {
+  const isSend = type === "send";
+  const amount = isSend ? amounts?.first : amounts?.second;
 
-  if (hasInputToken && hasAmount) {
-    refreshAll(refreshData);
+  if (!amounts || amount <= 0) return;
+
+  // Note: Query logic removed as requested
+  // Originally would update router query here
+}
+
+export function sendAmountWatcher({
+  tokens,
+  amounts,
+  refreshData,
+}: {
+  tokens: any;
+  amounts: any;
+  refreshData: any;
+}) {
+  if (!amounts) {
+    removeRefreshIntervalHandler();
+    return;
+  }
+
+  if (tokens?.first !== null && tokens?.second !== null && amounts.first > 0) {
+    refreshAllHandler(refreshData);
+    // Note: Router query logic removed as requested
+  } else if (tokens?.first !== null && amounts.first > 0) {
+    // Note: Router query logic removed as requested
   } else {
-    abortRequest(abortController);
-    clearInterval(interval);
+    if (amounts.first === 0) {
+      // Note: Router query logic removed as requested
+    }
+
+    if (tokens?.second === null) {
+      // Note: Router query logic removed as requested
+    }
+
+    removeRefreshIntervalHandler();
   }
 }
 
 
 export function receiveAmountWatcher({
-                                       tokens,
-                                       amounts,
-                                       abortController,
-                                       refreshData,
-                                     }) {
-  if (tokens.first !== null && tokens.second !== null && amounts.second > 0) {
-    refreshAll(refreshData);
+  tokens,
+  amounts,
+  refreshData,
+}: {
+  tokens: any;
+  amounts: any;
+  refreshData: any;
+}) {
+  if (!amounts) {
+    removeRefreshIntervalHandler();
+    return;
+  }
+
+  if (tokens?.first !== null && tokens?.second !== null && amounts.second > 0) {
+    refreshAllHandler(refreshData);
+    // Note: Router query logic removed as requested
   } else {
-    abortRequest(abortController);
-    clearInterval(interval);
+    if (amounts.second === 0) {
+      // Note: Router query logic removed as requested
+    }
+    if (tokens?.second === null) {
+      // Note: Router query logic removed as requested
+    }
+    removeRefreshIntervalHandler();
   }
 }
 
-
-export function sendTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }) {
+export function sendTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }: {
+  tokens: any;
+  amounts: any;
+  dealConditions: any;
+  stakingPool: any;
+  refreshData: any;
+}) {
   if (readyCompareCondition(tokens, amounts)) {
-    refreshAll(refreshData);
+    refreshAllHandler(refreshData);
     clearConditions(dealConditions);
 
     if (
-      tokens.second?.stacking_pool_id == null ||
-      tokens.first?.stacking_pool_id == null ||
-      stakingPool?.id !== tokens.first?.stacking_pool_id
+      tokens?.second?.stacking_pool_id == null ||
+      tokens?.first?.stacking_pool_id == null ||
+      stakingPool?.id !== tokens?.first?.stacking_pool_id
     ) {
       dexStore?.DEX_STAKING_POOL(null);
     }
   }
 }
 
-export function receiveTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }) {
+export function receiveTokenWatcher({ tokens, amounts, dealConditions, stakingPool, refreshData }: {
+  tokens: any;
+  amounts: any;
+  dealConditions: any;
+  stakingPool: any;
+  refreshData: any;
+}) {
   if (readyCompareCondition(tokens, amounts)) {
-    refreshAll(refreshData);
+    refreshAllHandler(refreshData);
     clearConditions(dealConditions);
 
     if (
-      tokens.second?.stacking_pool_id == null ||
-      tokens.first?.stacking_pool_id == null ||
-      stakingPool?.id !== tokens.second?.stacking_pool_id
+      tokens?.second?.stacking_pool_id == null ||
+      tokens?.first?.stacking_pool_id == null ||
+      stakingPool?.id !== tokens?.second?.stacking_pool_id
     ) {
       dexStore?.DEX_STAKING_POOL(null);
     }
   }
 }
 
-export function changeSettingsWatcher({ tokens, amounts, dealConditions, refreshData }) {
+export function changeSettingsWatcher({ tokens, amounts, dealConditions, refreshData }: {
+  tokens: any;
+  amounts: any;
+  dealConditions: any;
+  refreshData: any;
+}) {
   if (readyCompareCondition(tokens, amounts)) {
-    refreshAll(refreshData);
+    refreshAllHandler(refreshData);
     clearConditions(dealConditions);
   }
 }
 
-export function expertModeWatcher({ tokens, amounts, _, refreshData }) {
+export function expertModeWatcher({ tokens, amounts, _, refreshData }: {
+  tokens: any;
+  amounts: any;
+  _: any;
+  refreshData: any;
+}) {
   if (readyCompareCondition(tokens, amounts)) {
-    refreshAll(refreshData);
+    refreshAllHandler(refreshData);
   }
 }
 
-export function createTabVisibilityWatcher(callback, timeoutDuration) {
-  let timeout;
+export function createTabVisibilityWatcher(callback: any, timeoutDuration: any) {
+  let timeout: any;
 
   const visibilityChangeHandler = () => {
     clearTimeout(timeout);
@@ -181,4 +243,37 @@ export function createTabVisibilityWatcher(callback, timeoutDuration) {
       clearTimeout(timeout);
     },
   };
+}
+
+export function multiTokensWatcher({ tokens, amounts, refreshData, dealConditions }: {
+  tokens: any;
+  amounts: any;
+  refreshData: any;
+  dealConditions: any;
+}) {
+  if (readyMultiCompareCondition(tokens, amounts)) {
+    refreshAllHandler(refreshData);
+    clearConditions(dealConditions);
+  } else {
+    removeRefreshIntervalHandler();
+  }
+}
+
+export function multiAmountsWatcher({
+  tokens,
+  amounts,
+  refreshData,
+  dealConditions,
+}: {
+  tokens: any;
+  amounts: any;
+  refreshData: any;
+  dealConditions: any;
+}) {
+  if (readyMultiCompareCondition(tokens, amounts)) {
+    refreshAllHandler(refreshData);
+    clearConditions(dealConditions);
+  } else {
+    removeRefreshIntervalHandler();
+  }
 }

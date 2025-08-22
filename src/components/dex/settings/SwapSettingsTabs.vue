@@ -18,10 +18,11 @@
 
 <script lang="ts">
 import SmartModeIcon from "@/assets/dex/icons/SmartModeIcon.vue"
+import TabItem from "@/components/ui/TabItem.vue"
 
 export default {
     name: "SwapSettingsTabs",
-    components: { SmartModeIcon },
+    components: { SmartModeIcon, TabItem },
     props: {
         smartMode: {
             type: Boolean,

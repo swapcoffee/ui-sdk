@@ -286,6 +286,9 @@ export default {
             return `${date.toLocaleDateString()}, ${date.toLocaleTimeString()}`;
         }
     },
+    beforeUnmount() {
+        clearRequestInterval()
+    },
     watch: {
         getSwapStatus: {
             handler() {

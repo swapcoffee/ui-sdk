@@ -1,105 +1,111 @@
-import dedustIcon from '@/assets/contributors/dedust-icon.png';
-import stonfiIcon from '@/assets/contributors/stonfi-icon.png';
-import stonfiV2Icon from '@/assets/contributors/stonfi-v2-icon.png';
-import toncoIcon from '@/assets/contributors/tonco.png';
-import tonstakersIcon from '@/assets/contributors/tonstakers.svg';
-import colossusIcon from '@/assets/contributors/colossus_icon.png';
-import torchFinanceIcon from '@/assets/contributors/torch_icon.svg';
-import coffeeIcon from '@/assets/contributors/coffee_icon.webp';
+import computedMixins from "@/mixins/computedMixins";
+import { Address } from "@ton/core";
+import { DEXES_BY_ID } from '@/utils/dexes.js';
 import { useDexStore } from "@/stores/dex";
 
 export default {
-  computed: {
-    dexStore() {
-      return useDexStore();
-    },
-    getRoutes() {
-      const paths = this.dexStore.GET_DEAL_CONDITIONS?.paths;
-      const routes = [];
-      const totalInputAmount = paths.reduce((sum, current) => sum + current.swap.input_amount, 0);
+    mixins: [computedMixins],
+    computed: {
+        dexStore() {
+            return useDexStore()
+        },
+        getRoutes() {
+            let paths: any[] = []
 
-      for (const routeStart of paths) {
-        const dexSources = [];
-        const tokens = [];
-        const dex = routeStart.dex;
-        tokens.push(routeStart.input_token.metadata.symbol);
-
-        const traverse = (current) => {
-          tokens.push(current.output_token.metadata.symbol);
-
-          const dexData = this.getDexSourceDataByName(current.dex);
-          dexSources.push(dexData);
-
-          if (current.next?.length > 0) {
-            for (const next of current.next) {
-              if (current.dex !== next.dex) {
-                tokens.push(next.input_token.metadata.symbol);
-              }
-              traverse(next);
+            if ((this as any).getRouteName === 'Dex') {
+                paths = (this as any).dexStore.dealConditions?.paths || [];
+            } else if ((this as any).getRouteName === 'MultiSwap') {
+                const routes = (this as any).dexStore.dealConditions?.routes || [];
+                routes.forEach((item: any) => {
+                    if (item?.paths) {
+                        paths.push(...item.paths)
+                    }
+                })
             }
-          }
-        };
 
-        traverse(routeStart);
+            const routes: any[] = [];
+            let totalInputAmount = 0
 
-        const uniqueDexSources = dexSources.filter(
-            (dex, index, arr) => index === 0 || dex.name !== arr[index - 1].name,
-        );
+            paths.forEach((current: any) => {
+                let findToken = (this as any).findTonTokenByAddress(current?.input_token?.address?.address)
+                totalInputAmount += (current?.swap?.input_amount * findToken?.price_usd) || 0
+            });
 
-        routes.push({
-          dex: uniqueDexSources,
-          path: tokens.join(' > '),
-          inputPercentage: ((routeStart.swap.input_amount / totalInputAmount) * 100).toFixed(2),
-        });
-      }
-      return routes;
+            for (const routeStart of paths) {
+                const dexSources: any[] = [];
+                const tokens: string[] = [];
+                const dex = routeStart?.dex;
+                if (routeStart?.input_token?.metadata?.symbol) {
+                    tokens.push(routeStart.input_token.metadata.symbol);
+                }
+
+                const traverse = (current: any) => {
+                    if (current?.output_token?.metadata?.symbol) {
+                        tokens.push(current.output_token.metadata.symbol);
+                    }
+
+                    const dexData = (this as any).getDexSourceDataByName(current?.dex);
+                    if (dexData) {
+                        dexSources.push(dexData);
+                    }
+
+                    if (current?.next?.length > 0) {
+                        for (const next of current.next) {
+                            if (current?.dex !== next?.dex) {
+                                if (next?.input_token?.metadata?.symbol) {
+                                    tokens.push(next.input_token.metadata.symbol);
+                                }
+                            }
+                            traverse(next);
+                        }
+                    }
+                };
+
+                traverse(routeStart);
+
+                const uniqueDexSources = dexSources.filter(
+                    (dex: any, index: number, arr: any[]) => index === 0 || dex.name !== arr[index - 1].name,
+                );
+
+                let findToken = (this as any).findTonTokenByAddress(routeStart?.input_token?.address?.address)
+                let calculatePercent = totalInputAmount > 0 
+                    ? ((routeStart?.swap?.input_amount * findToken?.price_usd / totalInputAmount) * 100).toFixed(2)
+                    : '0.00'
+
+                routes.push({
+                    dex: uniqueDexSources,
+                    path: tokens.join(' > '),
+                    inputPercentage: calculatePercent,
+                });
+            }
+            return routes;
+        },
     },
-  },
-  methods: {
-    getDexSourceDataByName(name) {
-      switch (name) {
-        case 'dedust':
-          return {
-            name: 'DeDust',
-            imageUrl: dedustIcon,
-          };
-        case 'stonfi':
-          return {
-            name: 'STONfi',
-            imageUrl: stonfiIcon,
-          };
-        case 'stonfi_v2':
-          return {
-            name: 'STONfi V2',
-            imageUrl: stonfiV2Icon,
-          };
-        case 'coffee':
-          return {
-            name: 'Coffee',
-            imageUrl: coffeeIcon,
-          };
-        case 'tonco':
-          return {
-            name: 'TONCO',
-            imageUrl: toncoIcon,
-          };
-        case 'tonstakers':
-          return {
-            name: 'Tonstakers',
-            imageUrl: tonstakersIcon,
-          };
-        case 'colossus':
-          return {
-            name: 'Colossus',
-            imageUrl: colossusIcon,
-          };
-        case 'torch_finance':
-          return {
-            name: 'Torch Finance',
-            imageUrl: torchFinanceIcon,
-          };
-      }
-      throw new Error('Unknown DEX source name');
+    methods: {
+        findTonTokenByAddress(address: string) {
+            let find = null
+
+            if (address !== 'native') {
+                find = (this as any).dexStore.tonTokens.find((item: any) => item.address === Address.parse(address).toRawString())
+            } else {
+                find = (this as any).dexStore.tonTokens.find((item: any) => item.address === 'native')
+            }
+
+            if (find) {
+                return find
+            } else {
+                return { price_usd: 1 }
+            }
+        },
+        getDexSourceDataByName(name: string) {
+            const dex = DEXES_BY_ID.get(name)
+            if (dex) {
+                return {
+                    name: dex.name,
+                    imageUrl: dex.icon
+                }
+            }
+            throw new Error('Unknown DEX source name: ' + name);
+        },
     },
-  },
 };

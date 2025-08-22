@@ -26,6 +26,11 @@
         :isListedPair="isListedPair"
         @closeModal="modals.settings = false"
     />
+    <TransactionStatusModal
+        v-if="successModalState.show === true"
+        :status="getTransactionStatus"
+        @closeModal="closeSuccess"
+    />
   </div>
 </template>
 
@@ -35,6 +40,7 @@ import {defineAsyncComponent, defineComponent} from "vue";
 
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import SwapHeader from "@/components/swap-interface/SwapHeader.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 import swapSettings from "@/mixins/swapSettings.ts";
 import methodsMixins from '@/mixins/methodsMixins.ts';
 import {useDexStore} from "@/stores/dex/index.ts";
@@ -58,6 +64,7 @@ export default defineComponent({
   components: {
     SwapHeader,
     SwapInterface,
+    TransactionStatusModal,
     TokensPopup: defineAsyncComponent(() => {
       return import("@/components/dex/tokens-popup/TokensPopup.vue")
     }),
@@ -93,10 +100,11 @@ export default defineComponent({
       isUpdatingBalances: () => this.isUpdatingBalances,
       tokenValues: this.tokenValues,
       processing: this.processing,
-      modalState: this.successModalState
+      modalState: this.successModalState,
+      addNewAsset: () => {} 
     }
   },
-  inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount', 'customFeeSettings', 'widgetReferral', 'openTransactionModal'],
+  inject: ['updateWalletInfo', 'sendReceiveTokenAddresses', 'firstTokenAmount', 'customFeeSettings', 'widgetReferral'],
   data() {
     return {
       modals: {
@@ -250,6 +258,7 @@ export default defineComponent({
       return {
         changePoolNotFound: this.changePoolNotFound,
         changeRefreshInfo: this.changeRefreshInfo,
+        createAbortController: this.createAbortController,
       }
     },
     assetForCompare() {
@@ -345,10 +354,17 @@ export default defineComponent({
         tonConnectUi: this.tonConnectUi,
         trackingData: this.trackingData,
         mevProtection: this.mevCondition,
-        slippage: this.smartModeReady ? true : this.dexSettingsStore.GET_SLIPPAGE,
+        slippage: this.smartModeReady ? false : this.dexSettingsStore.GET_SLIPPAGE,
         widgetReferral: this.widgetReferral,
         customFeeSettings: this.customFeeSettings,
       }
+    },
+    getTransactionStatus() {
+      const trResult = this.transactionStore.GET_SWAP_TRANSACTION_STATUS
+      if (trResult !== null) {
+        return trResult.status
+      }
+      return 'pending'
     }
   },
   methods: {
@@ -357,7 +373,8 @@ export default defineComponent({
     closeSuccess() {
       this.successModalState.show = false
       this.transactionStore.SAVE_SWAP_TRANSACTION_STATUS(null)
-      this.updateWalletInfo()
+      SwapRouting.removeRefreshInterval()
+      this.updateRoute()
       this.tokenValues.first = '0'
       this.tokenValues.second = '0'
     },
@@ -464,12 +481,8 @@ export default defineComponent({
           SwapRouting.removeRefreshInterval();
           await dexTransaction(this.dexTransactionData);
 
-          this.openTransactionModal('pending', this.dexStore.GET_DEAL_CONDITIONS, 'swap', () => {
-            this.transactionStore.SAVE_SWAP_TRANSACTION_STATUS(null);
-            this.updateWalletInfo();
-            this.tokenValues.first = '0';
-            this.tokenValues.second = '0';
-          });
+          this.successModalState.mode = 'swap';
+          this.successModalState.show = true;
         }
       } catch (err) {
         // юзер отказался от транзакции, ничего не делаем
@@ -577,6 +590,13 @@ export default defineComponent({
     this.dexStore.DEX_DEAL_CONDITIONS(null)
   },
   watch: {
+    'transactionStore.GET_SWAP_TRANSACTION_STATUS': {
+      handler(newStatus) {
+        if (newStatus === null) {
+          SwapRouting.removeRefreshInterval()
+        }
+      },
+    },
     'dexStore.GET_DEX_WALLET': {
       handler() {
         if (!this.dexStore.GET_DEX_WALLET && this.dexSettingsStore.GET_MAX_SPLITS > 4) {

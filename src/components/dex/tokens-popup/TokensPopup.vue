@@ -926,6 +926,8 @@ export default {
         return this.$t('interfaceTag.cashback')
       } else if (label.name === 'contest') {
         return this.$t('interfaceTag.contest')
+      } else {
+        return label.name || 'Unknown'
       }
     },
     savePopupState() {

@@ -1,14 +1,24 @@
 <template>
     <label
         for=""
-        :class="[{focused: inputFocused}, 'settings__label']"
+        :class="[
+            {default_value: isDefaultValue},
+            {focused: inputFocused},
+            'settings__label'
+        ]"
     >
+        <img
+            v-if="startIcon"
+            :src="startIcon"
+            alt="ratio-icon"
+            class="input__icon"
+        >
         <input
             type="text"
             class="settings__input"
             :placeholder="getPlaceholder"
             :value="formattedValue"
-            inputmode="numeric"
+            :inputmode="inputMode"
             autocomplete="off"
             @input="changeInput"
             @focus="onFocus"
@@ -80,6 +90,36 @@ export default {
             default() {
                 return ''
             }
+        },
+        onlyInteger: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
+        startIcon: {
+            type: String,
+            default() {
+                return null
+            }
+        },
+        supportCommaValue: {
+            type: Boolean,
+            default() {
+                return false;
+            }
+        },
+        isTimeInput: {
+            type: Boolean,
+            default() {
+                return false
+            }
+        },
+        isDefaultValue: {
+            type: Boolean,
+            default() {
+                return false
+            }
         }
     },
     data() {
@@ -93,6 +133,9 @@ export default {
                 ? this.placeholder
                 : this.formattedValue
         },
+        inputMode() {
+            return this.supportCommaValue ? 'decimal' : 'numeric';
+        },
         formattedValue() {
             const value = String(this.modelValue ?? '');
             const rawValue = value.replace(/[^0-9.]/g, '');
@@ -102,28 +145,57 @@ export default {
     methods: {
         onFocus() {
             this.inputFocused = true;
-            this.emitUpdateValue('');
+            if (this.isDefaultValue) {
+                this.emitUpdateValue('')
+            }
         },
         onBlur() {
             this.inputFocused = false;
-            if (this.modelValue === "0" || this.modelValue.length === 0 && this.minValue > 0) {
-                this.emitUpdateValue(this.minValue.toString());
+            
+            if (this.isTimeInput && (Number(this.modelValue) < this.minValue || this.modelValue.length === 0)) {
+                this.emitUpdateValue("00")
+                return
+            }
+            if (this.modelValue === "0" || this.modelValue.length === 0 && this.minValue > 0 || this.modelValue < this.minValue) {
+                Number.isInteger(this.maxValue)
+                    ? this.emitUpdateValue(this.minValue.toString())
+                    : this.emitUpdateValue(Number(this.maxValue).toFixed(6))
+            }
+
+            if (this.supportCommaValue && (this.modelValue === "0" || this.modelValue === "" || this.modelValue === "0.")) {
+                this.emitUpdateValue("1");
             }
         },
         changeInput(event) {
-            let rawValue = event.target.value.replace(",", ".")
-                .replace(/[^0-9.]/g, '')
-
+            let rawValue = event.target.value;
+            
+            if (this.supportCommaValue) {
+                rawValue = rawValue.replace(/,/g, '.');
+            }
+            
+            if (this.onlyInteger && !this.supportCommaValue) {
+                rawValue = rawValue.replace(/[^0-9]/g, '');
+            } else {
+                rawValue = rawValue.replace(/[^0-9.]/g, '');
+                
+                const parts = rawValue.split('.');
+                if (parts.length > 2) {
+                    rawValue = parts.shift() + '.' + parts.join('');
+                }
+            }
+            
+            if (rawValue === '.' || rawValue === ',') {
+                rawValue = '0.';
+            }
+            
             if (Number(rawValue) > this.maxValue) {
-                rawValue = this.formattedInput(this.maxValue.toString());
+                Number.isInteger(this.maxValue)
+                    ? rawValue = this.maxValue.toString()
+                    : rawValue =  Number(this.maxValue).toFixed(6)
             }
-            if (Number(rawValue) < this.minValue) {
-                rawValue = ''
-            }
-
+            
             this.emitUpdateValue(rawValue);
-
-            if (rawValue.length > 0) event.target.value = rawValue
+            event.target.value = rawValue
         },
         emitUpdateValue(value) {
             this.$emit('update:modelValue', value);
@@ -171,6 +243,7 @@ export default {
 .settings__input::placeholder {
     color: #fff;
     opacity: 0.4;
+    font-size: 14px;
 }
 
 .theme-light .settings__input::placeholder {
@@ -200,6 +273,13 @@ export default {
     line-height: normal;
     font-family: Harmony-Regular, sans-serif;
     white-space: nowrap;
+}
+
+.input__icon {
+    width: 24px;
+    height: 24px;
+    border-radius: 100%;
+    margin-right: 8px;
 }
 
 .chevron-icon {

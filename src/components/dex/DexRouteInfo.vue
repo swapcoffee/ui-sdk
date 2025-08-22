@@ -42,8 +42,10 @@
 </template>
 
 <script lang="ts">
-import {defineAsyncComponent} from "vue";
-import {useDexStore} from "@/stores/dex";
+import { defineAsyncComponent } from "vue";
+import computedMixins from "@/mixins/computedMixins.js";
+import { DEXES_BY_ID } from '@/utils/dexes.js';
+import { useDexStore } from "@/stores/dex";
 
 export default {
 	name: "DexRouteInfo",
@@ -52,17 +54,38 @@ export default {
 			return import("@/components/modals/DistributionModal.vue")
 		})
 	},
+    mixins: [computedMixins],
 	data() {
 		return {
 			showDistribution: false,
 		}
 	},
 	computed: {
-    dexStore() {
-      return useDexStore()
-    },
+		dexStore() {
+			return useDexStore()
+		},
+        getPaths() {
+            let paths: any[] = []
+            if (this.getRouteName === 'Dex') {
+                paths = this.dexStore.dealConditions?.paths || []
+            } else if (this.getRouteName === 'MultiSwap') {
+                const routes = this.dexStore.dealConditions?.routes || []
+                routes.forEach((item: any) => {
+                    if (item?.paths) {
+                        paths.push(...item.paths)
+                    }
+                })
+            }
+            return paths
+        },
 		getEstimatedCashback() {
-			let cashback = this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd
+			let cashback = 0
+            if (this.getRouteName === 'Dex') {
+                cashback = this.dexStore.dealConditions?.estimated_cashback_usd || 0
+            } else if (this.getRouteName === 'MultiSwap') {
+                cashback = this.dexStore.dealConditions?.total_estimated_cashback_usd || 0
+            }
+
 			let count = 2
 			if (cashback && cashback > 0) {
 				while (Number(cashback.toFixed(count)) <= 0) {
@@ -77,15 +100,16 @@ export default {
 			return `${this.getSplitCount} Split + ${this.getHopCount} Hop`
 		},
 		getSplitCount() {
-			return this.dexStore.GET_DEAL_CONDITIONS?.paths.length
+			return this.getPaths?.length || 0
 		},
 		getHopCount() {
 			let count = 0
-			const paths = this.dexStore.GET_DEAL_CONDITIONS?.paths
+			const paths = this.getPaths || []
+
 			for (const routeStart of paths) {
-				function traverse(current) {
+				function traverse(current: any) {
 					count++
-					if (current.next?.length > 0) {
+					if (current?.next?.length > 0) {
 						for (const next of current.next) {
 							traverse(next)
 						}
@@ -94,56 +118,30 @@ export default {
 
 				traverse(routeStart)
 			}
-			// this.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
-			// 	count++
-			// 	if (item?.next) {
-			// 		count += item.next.length
-			// 	}
-			// })
+
 			return count
 		},
-		getDexNames() {
-			let array = []
-			this.dexStore.GET_DEAL_CONDITIONS?.paths.forEach((item) => {
-				if (array.includes(item?.dex)) {
-					return
-				}
-				if (item?.dex === 'dedust') {
-					if (!array.includes('DeDust')) {
-						array.push('DeDust')
-					}
-				} else if (item?.dex === 'stonfi' || item?.dex === 'stonfi_v2') {
-					if (!array.includes('STONfi')) {
-						array.push('STONfi')
-					}
-				} else if (item?.dex === 'tonco') {
-          if (!array.includes('Tonco')) {
-            array.push('Tonco')
-          }
-        } else if (item?.dex === 'coffee') {
-          if (!array.includes('Coffee')) {
-            array.push('Coffee')
-          }
-        } else if (item?.dex === 'tonstakers') {
-          if (!array.includes('Tonstakers')) {
-            array.push('Tonstakers')
-          }
-        } else if (item?.dex === 'colossus') {
-          if (!array.includes('Colossus')) {
-            array.push('Colossus')
-          }
-        } else if (item?.dex === 'torch_finance') {
-          if (!array.includes('Torch Finance')) {
-            array.push('Torch Finance')
-          }
+        getDexNames() {
+            let array: string[] = []
+            const paths = this.getPaths || []
+            
+            paths.forEach((item: any) => {
+                if (array.includes(item?.dex)) {
+                    return
+                }
+                const dex = DEXES_BY_ID.get(item?.dex)
+                if (dex && !array.includes(dex.name)) {
+                    array.push(dex.name)
+                }
+            })
+            
+            if (array.length === 2) {
+                return `${array[0]}, ${array[1]}`
+            } else if (array.length === 1) {
+                return `${array[0]}`
+            }
+            return ''
         }
-      })
-			if (array.length === 2) {
-				return `${array[0]}, ${array[1]}`
-			} else if (array.length === 1) {
-				return `${array[0]}`
-			}
-		}
 	},
 	methods: {
 		showMore() {
@@ -229,7 +227,7 @@ export default {
 	}
 
 	.theme-light .distribution__wrapper {
-		background: rgba(1, 166, 67, 0.10);
+		background: rgba(16, 163, 127, 0.10);
 	}
 
 	.theme-light .distribution__wrapper:hover {

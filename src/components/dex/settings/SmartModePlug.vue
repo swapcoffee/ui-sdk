@@ -1,6 +1,6 @@
 <template>
     <div class="smart-mode">
-        <div class="smart-mode__left" @click="updateSettingsModalVisible(true)">
+        <div class="smart-mode__left" @click.stop="updateSettingsModalVisible(true)">
             <div class="smart-mode__info">
                 <SmartModeIcon :custom-color="widgetTheme === 'light' ? '#35343B' : ''" />
                 <p class="smart-mode__left-title">Smart mode</p>

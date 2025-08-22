@@ -7,34 +7,49 @@
         <div class="settings__button-wrapper">
             <ModalSettingButton
                 v-for="value in defaultValues"
-                :class="{active_btn: value === this.getCurrentValue}"
+                :class="{
+                    active_btn: activeCondition(value),
+                    red_btn: value === -1,
+                }"
                 :key="value"
-                :value="value"
-                @click="$emit('changeValue', value.toString())"
+                :value="getButtonText(value)"
+                @click="updateValue(value, 'value')"
             />
         </div>
-        <label for="" class="settings__label">
-            <ModalSettingsInput
-                :class="{active_input: this.isInputActive}"
-                :model-value="getModelValue"
-                :getCurrentValue="this.getCurrentValue.toString()"
-                @update:model-value="updateValue"
-                @changeFocus="changeFocus"
-            />
-        </label>
+        <ModalSettingsInput
+            v-if="!withoutInput"
+            :class="{ active_input: isInputActive }"
+            :model-value="getCurrentInput.toString()"
+            :minValue="inputRanges[0]"
+            :maxValue="inputRanges[1]"
+            :getCurrentValue="getCurrentInput.toString()"
+            :symbol="symbol"
+            @update:model-value="(value) => updateValue(value, 'custom')"
+            @changeFocus="changeFocus"
+        />
     </div>
 </template>
 
 <script lang="ts">
 import ModalSettingButton from "@/components/general/ModalSettingsButton.vue";
 import ModalSettingsInput from "@/components/general/ModalSettingsInput.vue";
-import DexInput from "@/components/dex/DexInput.vue";
 
 import {useLimitSettingsStore} from "@/stores/limit/settings.ts";
+import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 
 export default {
     name: "ModalSettingsItem",
-    components: {DexInput, ModalSettingsInput, ModalSettingButton},
+    components: {ModalSettingsInput, ModalSettingButton},
+    inject: {
+        settingsUpdaters: {
+            type: Object,
+            required: true
+        },
+        settingsValue: {
+            type: Object,
+            required: true
+        }
+    },
     props: {
         title: {
             type: String,
@@ -45,15 +60,26 @@ export default {
             required: true,
         },
         defaultValues: {
-            type: Array,
+            type: Array as () => (number | string)[],
             required: true,
         },
         type: {
             type: String,
             required: true,
+        },
+        inputRanges: {
+            type: Array as () => number[],
+            default: () => [1, 100]
+        },
+        symbol: {
+            type: String,
+            default: ''
+        },
+        withoutInput: {
+            type: Boolean,
+            default: false
         }
     },
-    inject: ['settingsValue', 'updateMaxSuborders', 'updateMaxInvocations'],
     data() {
         return {
             inputFocused: false,
@@ -63,51 +89,61 @@ export default {
         limitSettingStore() {
             return useLimitSettingsStore()
         },
-        getModelValue() {
-            switch (this.type) {
-                case "orders":
-                    return this.settingsValue.maxSuborders
-                case "invocations":
-                    return this.settingsValue.maxInvocations
-            }
+        dexSettingsStore() {
+            return useDexSettingsStore()
         },
-        getCurrentValue() {
-            switch (this.type) {
-                case "orders":
-                    return this.limitSettingStore.GET_LIMIT_SUBORDERS
-                case "invocations":
-                    return this.limitSettingStore.GET_LIMIT_INVOCATIONS
-            }
+        getCurrentButton() {
+            return this.settingsValue[this.type]?.value || 0
+        },
+        getCurrentInput() {
+            return this.settingsValue[this.type]?.custom || this.settingsValue[this.type]?.value || 0
         },
         isInputActive() {
             return this.inputFocused
         }
     },
     methods: {
-        changeFocus(value) {
+        activeCondition(value: number | string) {
+            let current = this.getCurrentButton
+            if (typeof current !== 'number') {
+                current = Number(current)
+            }
+            
+            return value === current
+        },
+        getButtonText(value: number | string) {
+            if (this.type === "max_volatility" && value === -1) {
+                return "Ignore"
+            }
+
+            if (this.symbol === '$') {
+                return `${this.symbol}${value}`
+            } else if (this.symbol === '%') {
+                return `${value}${this.symbol}`
+            }
+
+            return value.toString()
+        },
+        changeFocus(value: boolean) {
             this.inputFocused = value
         },
-        focusInput() {
-            let input = document.getElementById(`${this.position}_input`)
-            input.focus()
-        },
-        updateValue(value) {
-            if (this.type === 'orders') {
-                this.updateMaxSuborders(value)
-            } else {
-                this.updateMaxInvocations(value)
+        updateValue(value: number | string, mode: 'value' | 'custom') {
+            if (this.settingsUpdaters && this.settingsUpdaters[this.type]) {
+                this.settingsUpdaters[this.type](value, mode)
             }
         },
     },
+    mounted() {
+
+    }
 }
 </script>
 
 <style scoped>
-
 .settings__text {
-    margin-bottom: 5px;
-    font-size: 14px;
-    line-height: 16px;
+    margin-bottom: 4px;
+    font-size: 15px;
+    line-height: 18px;
     font-family: Harmony-Medium, sans-serif;
 }
 
@@ -116,7 +152,7 @@ export default {
     font-size: 14px;
     line-height: 16px;
     font-weight: 400;
-    color: #8c8c8d;
+    opacity: 0.4;
 }
 
 .settings__button-wrapper {

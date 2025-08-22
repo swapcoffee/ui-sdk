@@ -24,6 +24,7 @@
 <script lang="ts">
 import SwitchToggle from "@/components/ui/SwitchToggle.vue"
 import ModalSettingsItem from "@/components/general/ModalSettingsItem.vue"
+import ModalWrapper from "@/components/ui/ModalWrapper.vue"
 import computedMixins from "@/mixins/computedMixins.js"
 import {DEXES} from "@/utils/dexes.ts";
 import SmartModeIcon from "@/assets/dex/icons/SmartModeIcon.vue"
@@ -62,8 +63,10 @@ export default {
     SmartModeIcon,
     ModalSettingsItem,
     SwitchToggle,
+    ModalWrapper,
   },
   mixins: [computedMixins],
+  inject: ['liquiditySourcesList'],
   provide() {
     return {
       settingsValue: this.settingsValue,
@@ -132,6 +135,9 @@ export default {
     },
     dexSettingsStore() {
       return useDexSettingsStore()
+    },
+    getRouteName() {
+      return this.dexStore.GET_SWAP_ACTIVE_TAB
     },
     smartSettings() {
       return [
@@ -262,7 +268,7 @@ export default {
             withoutInput: !this.isV5,
             inputRanges: [1, 20],
           },
-          visible: this.dexSettingsStore.GET_EXPERT_MODE_VALUE && this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex,
+          visible: this.dexSettingsStore.GET_EXPERT_MODE_VALUE && this.getRouteName === "Dex",
           component: ModalSettingsItem,
         },
         {
@@ -272,20 +278,20 @@ export default {
             title: this.$t("dexSettings.sources.title"),
             text: this.$t("dexSettings.sources.text"),
           },
-          visible: this.dexSettingsStore.GET_EXPERT_MODE_VALUE,
+          visible: this.dexSettingsStore.GET_EXPERT_MODE_VALUE && !this.isLiquiditySourcesLimited,
           component: ModalSettingsSources,
         },
       ]
-
+      
       return array
     },
     smartModeCondition() {
-      return this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair
+      return this.getRouteName === "Dex" && this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair
     },
     mevProtectCondition() {
       return (
-          (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && !this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair) ||
-          (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi && this.isListedPair)
+          (this.getRouteName === "Dex" && !this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair) ||
+          (this.getRouteName === "Multi" && this.isListedPair)
       )
     },
     currentSettings() {
@@ -297,6 +303,11 @@ export default {
     },
     isV5() {
       return this.dexStore.GET_DEX_WALLET_VERSION >= 5
+    },
+    isLiquiditySourcesLimited() {
+      return this.liquiditySourcesList && 
+             Array.isArray(this.liquiditySourcesList) && 
+             this.liquiditySourcesList.length > 0
     },
   },
   methods: {

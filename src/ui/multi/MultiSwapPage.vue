@@ -12,7 +12,7 @@
         </teleport>
         <SwapInterface
             class="multi-swap__interface"
-            :routeInfo="GET_DEAL_CONDITIONS"
+            :routeInfo="dexStore.dealConditions"
             :interfaceStatus="interfaceStatus"
             :isListedPair="isListedPair"
         />
@@ -46,6 +46,8 @@ import numberFormatting from "@/mixins/numberFormatting.ts";
 import SwapSettingsModal from "@/components/modals/SwapSettingsModal.vue";
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
+import {useTransactionStore} from "@/stores/transaction";
+import type { DefineComponent } from 'vue';
 
 export default {
     name: "MultiSwapPage",
@@ -77,9 +79,10 @@ export default {
 			tokenValues: this.tokenValues,
             processing: this.processing,
             isUpdatingBalances: () => this.isUpdatingBalances,
+            multiSwapAmountsReady: () => this.allAmountsReady,
 		}
 	},
-	inject: ['updateWalletInfo', 'openTransactionModal'],
+	inject: ['updateWalletInfo'],
     data() {
         return {
             modals: {
@@ -120,9 +123,12 @@ export default {
       dexSettingsStore() {
         return useDexSettingsStore()
       },
+      transactionStore() {
+        return useTransactionStore()
+      },
         isListedPair() {
-            const tokens = Array.from(this.GET_SEND_MULTI_TOKENS?.values() || []);
-            return !this.exceptionCondition && tokens.every(token => token?.listed);
+            const tokens = Array.from(this.dexStore.sendMultiTokens?.values() || []);
+            return !this.exceptionCondition && tokens.every((token: any) => token?.listed);
         },
         exceptionCondition() {
             const mevDisabled = [
@@ -131,9 +137,9 @@ export default {
                 "EQBE_gBrU3mPI9hHjlJoR_kYyrhQgyCFD6EUWfa42W8T7EBP"
             ]
             
-            let found = false
-            if (this.GET_SEND_MULTI_TOKENS) {
-                found = Array.from(this.GET_SEND_MULTI_TOKENS.entries()).find(([key, value]) => {
+            let found: any = false
+            if (this.dexStore.sendMultiTokens) {
+                found = Array.from(this.dexStore.sendMultiTokens.entries()).find(([key, value]: [any, any]) => {
                     if (value.address !== 'native') {
                         const friendly =  Address.parse(value?.address).toString()
                         return mevDisabled.includes(friendly)
@@ -141,21 +147,21 @@ export default {
                 });
             }
             
-            return found
+            return !!found
         },
         interfaceStatus() {
             let priceImpact = 0
-            if (this.GET_CALCULATED_PI) {
-                priceImpact = this.GET_CALCULATED_PI
+            if (this.dexStore.calculatedPriceImpact) {
+                priceImpact = this.dexStore.calculatedPriceImpact
             }
 
-            if (this.poolNotFound || this.GET_DEAL_CONDITIONS?.output_usd === 0) {
+            if (this.poolNotFound || this.dexStore.dealConditions?.output_usd === 0) {
                 return 'POOL_NOT_FOUND'
             } else if (this.loadingConditions || this.processing.multi === true || this.firstLoading) {
                 return 'LOADING'
-            } else if (this.GET_DEX_WALLET === null) {
+            } else if (this.dexStore.dexWallet === null) {
                 return 'NOT_CONNECTED'
-            } else if ((priceImpact < -this.GET_PRICE_IMPACT) && this.GET_DEAL_CONDITIONS !== null) {
+            } else if ((priceImpact < -this.dexSettingsStore.GET_PRICE_IMPACT) && this.dexStore.dealConditions !== null) {
                 return 'HIGH_PRICE_IMPACT'
             } else if (!this.allAmountsReady) {
                 return 'NOT_AMOUNT'
@@ -168,13 +174,11 @@ export default {
             }
         },
         loadingConditions() {
-            return this.GET_SEND_MULTI_TOKENS !== null && this.GET_RECEIVE_MULTI_TOKEN !== null && this.allAmountsReady && this.GET_DEAL_CONDITIONS === null;
+            return this.dexStore.sendMultiTokens !== null && this.dexStore.receiveMultiToken !== null && this.allAmountsReady && this.dexStore.dealConditions === null;
         },
         firstLoading() {
-            let route = this.$route
-            if (route.query?.ft && route.query?.st) {
-                return this.GET_DEAL_CONDITIONS === null && this.GET_TON_TOKENS.length === 0
-            }
+            // Перевіряємо активний таб через store замість router
+            return this.dexStore.dealConditions === null && this.dexStore.tonTokens.length === 0
         },
         allAmountsReady() {
             const keysToCheck = Object.keys(this.tokenValues).filter(key => key !== 'receive');
@@ -183,16 +187,16 @@ export default {
         getTonGas() {
 	        const {
 		        total_mev_protection_fee = 0,
-	        } = this.GET_DEAL_CONDITIONS || {};
+	        } = this.dexStore.dealConditions || {};
 
-            let recommended_gas = this.GET_DEAL_CONDITIONS.routes.reduce((sum, route) => sum + (route.recommended_gas ?? 0), 0);
+            let recommended_gas = this.dexStore.dealConditions.routes.reduce((sum, route) => sum + (route.recommended_gas ?? 0), 0);
 
 	        return recommended_gas + total_mev_protection_fee + 0.00001;
         },
         allBalancesReady() {
 			let result = true
 
-	        this.GET_SEND_MULTI_TOKENS.forEach((token, key) => {
+	        this.dexStore.sendMultiTokens.forEach((token, key) => {
 				if (token?.balance < Number(this.tokenValues[key])) {
 					result = false
                 } else if (token?.address === 'native' && token?.balance < Number(this.tokenValues[key]) + this.getTonGas) {
@@ -203,7 +207,7 @@ export default {
             return result
         },
         notEnoughConditions() {
-            const userTonBalance = this.GET_USER_TOKENS.find(
+            const userTonBalance = this.dexStore.userTokens.find(
                 (item) => item.address === 'native'
             );
 
@@ -219,26 +223,26 @@ export default {
         },
         assetForCompare() {
             let asset = {
-                wallet: this.GET_DEX_WALLET,
+                wallet: this.dexStore.dexWallet,
                 inputAssets: this.getInputAssets,
                 outputAsset: this.getOutputAsset,
-                maxIntermediate: this.GET_MAX_INTERMEDIATE_TOKENS,
-                maxVolatility: this.GET_MAX_POOL_VOLATILITY,
-                maxSplits: this.GET_DEX_WALLET_VERSION >= 5 ? 20 : 4,
+                maxIntermediate: this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS,
+                maxVolatility: this.dexSettingsStore.GET_MAX_POOL_VOLATILITY,
+                maxSplits: this.dexStore.dexWalletVersion >= 5 ? 20 : 4,
                 changePoolNotFound: this.changePoolNotFound,
                 changeRefreshInfo: this.changeRefreshInfo,
-                liquiditySources: this.GET_LIQUIDITY_SOURCES,
+                liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES,
                 mevProtection: false,
                 amounts: this.tokenValues,
                 swapMode: 'default',
             }
 
             let total_usd = 0
-            this.GET_SEND_MULTI_TOKENS.forEach((token, key) => {
+            this.dexStore.sendMultiTokens.forEach((token, key) => {
                 total_usd += Number(this.tokenValues[key]) * token.price_usd
             })
 
-            if (this.GET_MEV_PROTECTION_VALUE && this.isListedPair && (total_usd >= Number(this.GET_MEV_MIN_USD))) {
+            if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE && this.isListedPair && (total_usd >= Number(this.dexSettingsStore.GET_MEV_MIN_USD))) {
                 asset = {
                     ...asset,
                     mevProtection: true
@@ -250,7 +254,7 @@ export default {
         getInputAssets() {
 			let array = []
 
-			this.GET_SEND_MULTI_TOKENS.forEach((token, key) => {
+			this.dexStore.sendMultiTokens.forEach((token, key) => {
                 let asset = {
 					token: {
 						blockchain: "ton",
@@ -269,9 +273,9 @@ export default {
         getOutputAsset() {
 			let asset = {
                 blockchain: "ton",
-                address: this.GET_RECEIVE_MULTI_TOKEN.address !== 'native'
-                    ? Address.parse(this.GET_RECEIVE_MULTI_TOKEN.address).toString()
-                    : this.GET_RECEIVE_MULTI_TOKEN.address
+                address: this.dexStore.receiveMultiToken.address !== 'native'
+                    ? Address.parse(this.dexStore.receiveMultiToken.address).toString()
+                    : this.dexStore.receiveMultiToken.address
             }
 
 			return asset
@@ -286,39 +290,37 @@ export default {
 	    },
         tokensWatcherData() {
 			return {
-				tokens: this.GET_SEND_MULTI_TOKENS,
-                amounts: this.GET_SEND_MULTI_VALUES,
-                dealConditions: this.GET_DEAL_CONDITIONS,
+				tokens: this.dexStore.sendMultiTokens,
+                amounts: this.dexStore.sendMultiValues,
+                dealConditions: this.dexStore.dealConditions,
                 refreshData: this.refreshData
             }
         },
         amountsWatcherData() {
 			return {
-				...this.tokensWatcherData,
-                route: this.$route,
-                router: this.$router
+				...this.tokensWatcherData
             }
         },
 	    changeSettingsWatcherData() {
 		    return {
 			    ...this.tokensWatcherData,
-			    liquiditySources: this.GET_LIQUIDITY_SOURCES
+			    liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
 		    }
 	    },
 	    trackingData() {
 		    return {
 			    ...this.tokensWatcherData,
-			    wallet: this.GET_DEX_WALLET,
-			    liquiditySources: this.GET_LIQUIDITY_SOURCES
+			    wallet: this.dexStore.dexWallet,
+			    liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
 		    }
 	    },
 	    multiTransactionData() {
 		    let data = {
 			    updateProcessing: this.updateProcessing,
 			    compareAsset: this.assetForCompare,
-			    wallet: this.GET_DEX_WALLET,
-			    dealConditions: this.GET_DEAL_CONDITIONS,
-			    slippage: this.GET_SLIPPAGE,
+			    wallet: this.dexStore.dexWallet,
+			    dealConditions: this.dexStore.dealConditions,
+			    slippage: this.dexSettingsStore.GET_SLIPPAGE,
 			    tonConnectUi: this.tonConnectUi,
 			    trackingData: this.trackingData,
 			    mevProtection: false
@@ -326,11 +328,11 @@ export default {
 
 			let total_usd = 0
 
-			this.GET_SEND_MULTI_TOKENS?.forEach((token, key) => {
+			this.dexStore.sendMultiTokens?.forEach((token, key) => {
 				total_usd += token?.price_usd * this.tokenValues[key]
             })
 
-		    if (this.GET_MEV_PROTECTION_VALUE && this.isListedPair && (total_usd >= Number(this.GET_MEV_MIN_USD))) {
+		    if (this.dexSettingsStore.GET_MEV_PROTECTION_VALUE && this.isListedPair && (total_usd >= Number(this.dexSettingsStore.GET_MEV_MIN_USD))) {
 			    data = {
 				    ...data,
 				    mevProtection: true
@@ -352,56 +354,56 @@ export default {
             this.modals.mevSettings = true
         },
         setDefaultAsset() {
-			this.CLEAR_MULTI_STORE()
+			this.dexStore.CLEAR_MULTI_STORE()
 
             let map = new Map()
 
-            let findTon = this.GET_TON_TOKENS.find((item) => item.address === 'native')
-            let findUsdt = this.GET_TON_TOKENS.find((item) => item.address === this.usdtAddress)
+            let findTon = this.dexStore.tonTokens.find((item) => item.address === 'native')
+            let findUsdt = this.dexStore.tonTokens.find((item) => item.address === this.usdtAddress)
 
             map.set('first', findTon)
-            this.SAVE_SEND_MULTI_TOKENS(map)
-            this.SAVE_RECEIVE_MULTI_TOKEN(findUsdt)
+            this.dexStore.SAVE_SEND_MULTI_TOKENS(map)
+            this.dexStore.SAVE_RECEIVE_MULTI_TOKEN(findUsdt)
         },
         addNewAsset() {
             let map = this.setNewMap();
 
             let availableIndex = 0;
-            while (availableIndex < this.GET_SEND_ASSET_KEYS.length && map.has(this.GET_SEND_ASSET_KEYS[availableIndex])) {
+            while (availableIndex < this.dexStore.assetKeys.length && map.has(this.dexStore.assetKeys[availableIndex])) {
                 availableIndex++;
             }
 
-            if (availableIndex >= this.GET_SEND_ASSET_KEYS.length) {
+            if (availableIndex >= this.dexStore.assetKeys.length) {
                 console.error('Достигнуто максимальное количество ассетов');
                 return;
             }
 
-            let newKey = this.GET_SEND_ASSET_KEYS[availableIndex];
+            let newKey = this.dexStore.assetKeys[availableIndex];
             let findToken = this.getAvailableToken(newKey)
 
             this.tokenValues[newKey] = '0';
             map.set(newKey, findToken);
 
 	        const {receive, ...otherValues} = this.tokenValues
-			this.SAVE_SEND_MULTI_VALUES(otherValues)
-            this.SAVE_SEND_MULTI_TOKENS(map);
+			this.dexStore.SAVE_SEND_MULTI_VALUES(otherValues)
+            this.dexStore.SAVE_SEND_MULTI_TOKENS(map);
         },
         getAvailableToken(key) {
             let selectedTokens = [
-				...Array.from(this.GET_SEND_MULTI_TOKENS.values()),
-                this.GET_RECEIVE_MULTI_TOKEN
+				...Array.from(this.dexStore.sendMultiTokens.values()),
+                this.dexStore.receiveMultiToken
             ]
 
-            const allUserTokensSelected = this.GET_USER_TOKENS.length > 0 &&
-                this.GET_USER_TOKENS.every(userToken =>
+            const allUserTokensSelected = this.dexStore.userTokens.length > 0 &&
+                this.dexStore.userTokens.every(userToken =>
                     selectedTokens.some(selected => selected.address === userToken.address)
                 );
 
             let array;
-            if (this.GET_DEX_WALLET && this.GET_USER_TOKENS.length > 0 && !allUserTokensSelected) {
-                array = this.GET_USER_TOKENS
+            if (this.dexStore.dexWallet && this.dexStore.userTokens.length > 0 && !allUserTokensSelected) {
+                array = this.dexStore.userTokens
             } else {
-                array = this.GET_TON_TOKENS
+                array = this.dexStore.tonTokens
             }
 
 			array = array
@@ -420,7 +422,7 @@ export default {
         },
         setNewMap() {
             let map = new Map()
-            this.GET_SEND_MULTI_TOKENS.forEach((token, key) => map.set(key, token))
+            this.dexStore.sendMultiTokens.forEach((token, key) => map.set(key, token))
             return map
         },
         changeTokenValue(data) {
@@ -429,38 +431,38 @@ export default {
 	        const {receive, ...otherValues} = this.tokenValues
 
 	        data.key !== 'receive'
-                ? this.SAVE_SEND_MULTI_VALUES(otherValues)
-                : this.SAVE_RECEIVE_MULTI_VALUE(receive)
+                ? this.dexStore.SAVE_SEND_MULTI_VALUES(otherValues)
+                : this.dexStore.SAVE_RECEIVE_MULTI_VALUE(receive)
         },
         changeToken(key, value) {
             if (key === 'receive') {
-                this.SAVE_RECEIVE_MULTI_TOKEN(value)
+                this.dexStore.SAVE_RECEIVE_MULTI_TOKEN(value)
                 return
             }
 
-            if (this.GET_SEND_ASSET_KEYS.includes(key)) {
+            if (this.dexStore.assetKeys.includes(key)) {
                 let map = this.setNewMap()
                 map.set(key, value)
-                this.SAVE_SEND_MULTI_TOKENS(map)
+                this.dexStore.SAVE_SEND_MULTI_TOKENS(map)
             }
         },
         removeTokenAsset(key) {
             let map = this.setNewMap();
             map.delete(key);
             delete this.tokenValues[key]; // Очищаем значение
-            this.SAVE_SEND_MULTI_TOKENS(map);
+            this.dexStore.SAVE_SEND_MULTI_TOKENS(map);
         },
         swapTokenPositions(key) {
 	        clearTimeout(this.debounce)
 	        this.debounce = setTimeout(() => {
 		        let map = this.setNewMap();
-		        let receive = this.GET_RECEIVE_MULTI_TOKEN
-		        let send = this.GET_SEND_MULTI_TOKENS.get(key)
+		        let receive = this.dexStore.receiveMultiToken
+		        let send = this.dexStore.sendMultiTokens.get(key)
 
                 map.set(key, receive)
 
-                this.SAVE_SEND_MULTI_TOKENS(map)
-                this.SAVE_RECEIVE_MULTI_TOKEN(send)
+                this.dexStore.SAVE_SEND_MULTI_TOKENS(map)
+                this.dexStore.SAVE_RECEIVE_MULTI_TOKEN(send)
 
 		        let firstAmount = this.tokenValues.receive
 
@@ -471,7 +473,7 @@ export default {
 		    try {
 			    if (this.interfaceStatus === 'NOT_CONNECTED') {
 				    if (this.tonConnectUi?.wallet !== null) {
-					    this.DEX_WALLET(this.tonConnectUi?.wallet?.account);
+					    this.dexStore.DEX_WALLET(this.tonConnectUi?.wallet?.account);
 				    } else {
 					    await this.showTonconnect();
 				    }
@@ -479,7 +481,7 @@ export default {
                     SwapRouting.removeRefreshInterval()
 					await multiTransaction(this.multiTransactionData)
 
-				    this.openTransactionModal('pending', this.GET_DEAL_CONDITIONS, 'multi', this.clearValues)
+				    // this.openTransactionModal('pending', this.dexStore.dealConditions, 'multi', this.clearValues)
 			    }
 		    } catch(err) {
 			    // юзер отказался от транзакции, ничего не делаем
@@ -493,9 +495,10 @@ export default {
             }
         },
         clearValues() {
-            this.SAVE_TRANSACTION_STATUS(null);
+            this.transactionStore.SAVE_SWAP_TRANSACTION_STATUS(null);
+            SwapRouting.removeRefreshInterval();
             this.updateWalletInfo();
-            this.GET_SEND_MULTI_TOKENS.forEach((token, key) => {
+            this.dexStore.sendMultiTokens.forEach((token, key) => {
                 this.tokenValues[key] = '0'
             })
         },
@@ -511,12 +514,12 @@ export default {
         async updateRoute() {
             SwapRouting.refreshAll(this.refreshData)
 
-            if (this.GET_DEX_WALLET && !this.balanceUpdateCooldown) {
+            if (this.dexStore.dexWallet && !this.balanceUpdateCooldown) {
                 await this.updateBalances()
             }
         },
         async updateBalances() {
-            if (!this.GET_DEX_WALLET || this.balanceUpdateCooldown) {
+            if (!this.dexStore.dexWallet || this.balanceUpdateCooldown) {
                 return
             }
 
@@ -541,14 +544,14 @@ export default {
 			    this.isVisible && Number(this.tokenValues.first) > 0
 			    || this.isVisible && Number(this.tokenValues.second) > 0
 		    ) {
-			    SwapRouting.setRefreshInterval(this.assetForCompare, this.successModalState.show, this.isVisible)
+			    SwapRouting.setRefreshInterval(this.assetForCompare, this.successModalState.show, this.isVisible, SwapRouting.multiCompare)
 		    } else {
                 SwapRouting.removeRefreshInterval()
 		    }
 	    },
     },
     mounted() {
-        if (this.GET_TON_TOKENS.length > 0 && (!this.GET_SEND_MULTI_TOKENS || this.GET_SEND_MULTI_TOKENS?.size === 0)) {
+        if (this.dexStore.tonTokens.length > 0 && (!this.dexStore.sendMultiTokens || this.dexStore.sendMultiTokens?.size === 0)) {
             this.setDefaultAsset()
         }
 
@@ -559,29 +562,35 @@ export default {
 	    SwapRouting.removeRefreshDebounce()
         SwapRouting.removeRefreshInterval()
 	    this.setDefaultAsset()
-        this.setSwapTokens()
     },
     watch: {
-        GET_TON_TOKENS: {
+        'transactionStore.GET_SWAP_TRANSACTION_STATUS': {
+            handler(newStatus) {
+                if (newStatus === null) {
+                    SwapRouting.removeRefreshInterval()
+                }
+            },
+        },
+        'dexStore.tonTokens': {
             handler() {
-                if (this.GET_TON_TOKENS.length > 0 && (!this.GET_SEND_MULTI_TOKENS || this.GET_SEND_MULTI_TOKENS?.size === 0)) {
+                if (this.dexStore.tonTokens.length > 0 && (!this.dexStore.sendMultiTokens || this.dexStore.sendMultiTokens?.size === 0)) {
                     this.setDefaultAsset()
                 }
             }
         },
-        GET_DEAL_CONDITIONS: {
+        'dexStore.dealConditions': {
             handler() {
-                if (this.GET_DEAL_CONDITIONS !== null) {
-                    this.tokenValues.receive = this.formattedAmountNumber(this.GET_DEAL_CONDITIONS?.total_output_amount)
-                    // this.GET_DEAL_CONDITIONS?.total_output_amount > 0
-                    //     ? this.tokenValues.receive = this.GET_DEAL_CONDITIONS.total_output_amount.toFixed(4)
+                if (this.dexStore.dealConditions !== null) {
+                    this.tokenValues.receive = this.formattedAmountNumber(this.dexStore.dealConditions?.total_output_amount)
+                    // this.dexStore.dealConditions?.total_output_amount > 0
+                    //     ? this.tokenValues.receive = this.dexStore.dealConditions.total_output_amount.toFixed(4)
                     //     : this.tokenValues.receive = '0'
                 } else {
                     this.tokenValues.receive = '0'
                 }
             }
         },
-        GET_SEND_MULTI_TOKENS: {
+        'dexStore.sendMultiTokens': {
             handler(newToken, oldToken) {
                 if (newToken?.address === oldToken?.address) {
                     return
@@ -589,12 +598,12 @@ export default {
 
                 SwapRouting.multiTokensWatcher(this.tokensWatcherData)
 
-	            if (this.GET_DEAL_CONDITIONS !== null) {
-		            this.DEX_DEAL_CONDITIONS(null);
+	            if (this.dexStore.dealConditions !== null) {
+		            this.dexStore.DEX_DEAL_CONDITIONS(null);
 	            }
             }
         },
-        GET_RECEIVE_MULTI_TOKEN: {
+        'dexStore.receiveMultiToken': {
             handler(newToken, oldToken) {
                 if (newToken?.address === oldToken?.address) {
                     return
@@ -602,64 +611,64 @@ export default {
 
                 SwapRouting.multiTokensWatcher(this.tokensWatcherData)
 
-	            if (this.GET_DEAL_CONDITIONS !== null) {
-		            this.DEX_DEAL_CONDITIONS(null);
+	            if (this.dexStore.dealConditions !== null) {
+		            this.dexStore.DEX_DEAL_CONDITIONS(null);
 	            }
             }
         },
-        GET_SEND_MULTI_VALUES: {
+        'dexStore.sendMultiValues': {
             handler() {
                 SwapRouting.multiAmountsWatcher(this.amountsWatcherData)
 
-                if (this.GET_DEAL_CONDITIONS !== null) {
-                    this.DEX_DEAL_CONDITIONS(null);
+                if (this.dexStore.dealConditions !== null) {
+                    this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },
             deep: true
         },
-	    GET_SLIPPAGE: {
+	    'dexSettingsStore.GET_SLIPPAGE': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    },
 	    },
-	    GET_MAX_POOL_VOLATILITY: {
+	    'dexSettingsStore.GET_MAX_POOL_VOLATILITY': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    },
 	    },
-	    GET_MAX_INTERMEDIATE_TOKENS: {
+	    'dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    },
 	    },
-	    GET_EXPERT_MODE_VALUE: {
+	    'dexSettingsStore.GET_EXPERT_MODE_VALUE': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.expertModeWatcher(this.changeSettingsWatcherData)
                 }
 		    },
 	    },
-	    GET_LIQUIDITY_SOURCES: {
+	    'dexSettingsStore.GET_LIQUIDITY_SOURCES': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    }
 	    },
-	    GET_MEV_PROTECTION_VALUE: {
+	    'dexSettingsStore.GET_MEV_PROTECTION_VALUE': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    }
 	    },
-	    GET_MEV_MIN_USD: {
+	    'dexSettingsStore.GET_MEV_MIN_USD': {
 		    handler() {
                 if (this.allAmountsReady) {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)

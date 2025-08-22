@@ -430,8 +430,17 @@ export default {
     async mergeTonTokens(walletInfo, preparedTokens?: any) {
       try {
         const tokens = preparedTokens ?? this.dexStore.GET_TON_TOKENS;
+        
+        if (!Array.isArray(tokens)) {
+          return [];
+        }
 
         let jettons = await this.getTonJettons(walletInfo, preparedTokens)
+        
+        if (!Array.isArray(jettons)) {
+          jettons = [];
+        }
+        
         let toncoin = tokens.find((item) => item.address === 'native')
         if (walletInfo?.balance && toncoin) {
           toncoin.balance = walletInfo?.balance / Math.pow(10, toncoin?.decimals)
@@ -444,6 +453,7 @@ export default {
         return jettons
       } catch(err) {
         console.error(err);
+        return [];
       }
     },
     async getTonJettons(wallet, preparedTokens?: any) {
@@ -453,7 +463,7 @@ export default {
 
         let jettons = await tonApiService.getTonJettons(toUserFriendlyAddress(wallet.address))
 
-        jettons?.balances.forEach((item) => {
+        jettons?.balances?.forEach((item) => {
           let findItem = preparedTokens.find((find) => item.jetton.address === find.address)
           if (findItem) {
             findItem.balance = item?.balance / Math.pow(10, findItem?.decimals)
@@ -461,7 +471,7 @@ export default {
           }
         })
 
-        tokensWithBalance.forEach((token) => {
+        tokensWithBalance?.forEach((token) => {
           let findItem = array.find((find) => find.name === token.name)
           if (findItem) {
             token = findItem
@@ -477,8 +487,8 @@ export default {
         return array
       } catch (err) {
         // sleep 1 seconds and retry
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-        return await this.getTonJettons(wallet)
+        // await new Promise((resolve) => setTimeout(resolve, 1000))
+        // return await this.getTonJettons(wallet)
       }
     },
     checkEligibleFromStorage() {
@@ -542,7 +552,7 @@ export default {
       if (this.dexStore.GET_DEX_WALLET === null) {
         this.getTonTokens()
       }
-    }, 1000)
+    }, 200)
 
   },
   unmounted() {

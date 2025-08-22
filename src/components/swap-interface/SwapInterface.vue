@@ -53,8 +53,12 @@
         />
       </div>
     </div>
+    <MultiSwapDetails
+        v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi && routeInfo && tokenValues?.second > 0 && tokenValues?.first !== ''"
+    />
     <DexDetails
-        v-if="routeInfo && tokenValues?.second > 0 && tokenValues?.first !== ''"
+        v-if="routeInfo && tokenValues?.second > 0 && tokenValues?.first !== '' && dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
+        :isListedPair="isListedPair"
     />
     <LimitDetails
         v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit && Number(tokenValues?.rate) > 0 && tokenValues?.first !== ''"
@@ -95,10 +99,12 @@ import AddAssetButton from "@/components/multi-swap/AddAssetButton.vue";
 import MultiSwapController from "@/components/multi-swap/MultiSwapController.vue";
 import SwapInfo from "@/components/swap-interface/SwapInfo.vue";
 import MultiSwapButtonWrapper from "@/components/multi-swap/MultiSwapButtonWrapper.vue";
+import MultiSwapDetails from "@/components/multi-swap/MultiSwapDetails.vue";
 
 export default {
   name: "SwapInterface",
   components: {
+    MultiSwapDetails,
     MultiSwapButtonWrapper,
     SwapInfo,
     MultiSwapController,
@@ -121,7 +127,7 @@ export default {
     MevPlug
   },
   mixins: [computedMixins],
-  inject: ['tokenValues'],
+  inject: ['tokenValues', 'addNewAsset'],
   props: {
     tonConnectUi: {
       type: Object,

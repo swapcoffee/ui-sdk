@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { LimitSettingsState } from "@/utils/types";
+import type { LimitSettingsState } from "@/utils/types";
 
 export const useLimitSettingsStore = defineStore('limit-settings', {
     state: (): LimitSettingsState => ({

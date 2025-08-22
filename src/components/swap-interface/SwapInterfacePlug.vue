@@ -1,7 +1,7 @@
 <template>
     <div class="plug">
         <div class="plug__icon-wrapper">
-            <SwapCoffeeDarkIcon :custom-class="'plug__swap-logo'"/>
+            <SwapLogo class="plug__swap-logo"/>
         </div>
         <div class="plug__info">
             <h4 class="plug__title">{{ title }}</h4>
@@ -11,12 +11,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import SwapCoffeeDarkIcon from "@/assets/limit/SwapCoffeeDarkIcon.vue";
+import SwapLogo from "@/assets/earn/sidebar/SwapLogo.vue";
 
 export default {
     name: "SwapInterfacePlug",
-    components: {SwapCoffeeDarkIcon},
+    components: {SwapLogo, SwapCoffeeDarkIcon},
     props: {
         title: {
             type: String,
@@ -56,6 +57,7 @@ export default {
     border-radius: 12px;
     background: rgba(21, 21, 21, 0.80);
     backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     padding: 14px;
 }
 

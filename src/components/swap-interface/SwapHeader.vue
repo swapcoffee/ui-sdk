@@ -20,7 +20,7 @@
           </svg>
         </button>
       <button class="swap-header__button refresh-btn"
-                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex || dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi"
+                    v-if="dexStore.GET_SWAP_ACTIVE_TAB === swapActiveTabEnum.Dex || dexStore.GET_SWAP_ACTIVE_TAB === swapActiveTabEnum.Multi"
                     @click="refreshCompare"
             >
                 <RefreshIcon
@@ -29,10 +29,10 @@
                 />
             </button>
             <button class="swap-header__button settings-btn"
-                    @click="updateSettingsModalVisible"
+                    @click="updateSettingsModalVisible(true)"
             >
                 <span class="btn-text"
-                      v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex"
+                      v-if="dexStore.GET_SWAP_ACTIVE_TAB === swapActiveTabEnum.Dex || dexStore.GET_SWAP_ACTIVE_TAB === swapActiveTabEnum.Multi"
                 >
                     {{ getSettingsText }}
                 </span>
@@ -66,6 +66,12 @@ export default {
                 return false
             }
         },
+        isListedPair: {
+            type: Boolean,
+            default() {
+                return false
+            },
+        },
     },
     components: {
         TradeNav,
@@ -77,7 +83,7 @@ export default {
         }
     },
     computed: {
-      SwapActiveTab() {
+      swapActiveTabEnum() {
         return SwapActiveTab
       },
         logoSrc() {
@@ -93,17 +99,25 @@ export default {
           return useDexSettingsStore()
         },
         getSettingsText() {
-            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
-                return `${this.dexSettingsStore.GET_SLIPPAGE}% slippage`
+            const activeTab = this.dexStore.GET_SWAP_ACTIVE_TAB;
+            const slippage = this.dexSettingsStore.GET_SLIPPAGE;
+            
+            if (this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair && activeTab === this.swapActiveTabEnum.Dex) {
+                return `Smart`
             }
+
+            if (activeTab === this.swapActiveTabEnum.Dex || activeTab === this.swapActiveTabEnum.Multi) {
+                 return `${slippage}% slippage`
+            }
+            return null
         },
         getTokens() {
-            if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex) {
+            if (this.dexStore.GET_SWAP_ACTIVE_TAB === this.swapActiveTabEnum.Dex) {
                 return {
                     first: this.dexStore.GET_SEND_TOKEN,
                     second: this.dexStore.GET_RECEIVE_TOKEN
                 }
-            } else if (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA) {
+            } else if (this.dexStore.GET_SWAP_ACTIVE_TAB === this.swapActiveTabEnum.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === this.swapActiveTabEnum.DCA) {
                 return {
                     first: this.limitStore.GET_LIMIT_FIRST_TOKEN,
                     second: this.limitStore.GET_LIMIT_SECOND_TOKEN
@@ -111,8 +125,8 @@ export default {
             }
         },
       canRefresh() {
-        return ((this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Dex && this.processing?.dex !== true) && (this.tokenValues?.first > 0 || this.tokenValues?.second > 0))
-            || ((this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Multi && this.processing?.multi !== true) && this.multiSwapAmountsReady)
+        return ((this.dexStore.GET_SWAP_ACTIVE_TAB === this.swapActiveTabEnum.Dex && this.processing?.dex !== true) && (this.tokenValues?.first > 0 || this.tokenValues?.second > 0))
+            || ((this.dexStore.GET_SWAP_ACTIVE_TAB === this.swapActiveTabEnum.Multi && this.processing?.multi !== true))
       },
       shouldAnimate() {
         return this.canRefresh && !this.refreshInfo

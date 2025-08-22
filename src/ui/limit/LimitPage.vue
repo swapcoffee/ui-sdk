@@ -110,7 +110,8 @@ export default {
             cancelAction: this.cancelAction,
             tokenValues: this.tokenValues,
             processing: this.processing,
-            modalState: this.successModalState
+            modalState: this.successModalState,
+            addNewAsset: () => {} // Пустий метод для LimitPage
         }
     },
     data() {

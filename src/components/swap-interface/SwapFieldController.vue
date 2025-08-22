@@ -1,9 +1,16 @@
 <template>
     <div class="fields">
+        <SwapInterfacePlug
+            v-if="plugCondition"
+            :title="getPlugTitle"
+            :first-text="getPlugFirstText"
+            :second-text="getPlugSecondText"
+        />
         <SwapField
             :title="getFirstTitle"
             :position="'up'"
             :token="firstToken"
+            :assetKey="'first'"
             :routeInfo="routeInfo"
         />
         <button class="fields__swap-btn"
@@ -23,6 +30,7 @@
             :position="getSecondPosition"
             :token="secondToken"
             :routeInfo="routeInfo"
+            :assetKey="'second'"
         />
         <LimitTokenRate
             v-if="dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit"
@@ -55,6 +63,7 @@ import SwapCoffeeDarkIcon from "@/assets/limit/SwapCoffeeDarkIcon.vue";
 import LimitSubordersField from "@/components/limit/LimitSubordersField.vue";
 import DcaSettingsField from "@/components/dca/DcaSettingsField.vue";
 import DcaRangeField from "@/components/dca/DcaRangeField.vue";
+import SwapInterfacePlug from "@/components/swap-interface/SwapInterfacePlug.vue";
 
 
 import {useDexStore} from "@/stores/dex";
@@ -64,6 +73,7 @@ export default {
     name: "SwapFieldController",
     mixins: [computedMixins],
     components: {
+        SwapInterfacePlug,
         DcaRangeField,
         DcaSettingsField,
         LimitSubordersField,
@@ -114,12 +124,35 @@ export default {
         return {}
     },
     computed: {
-      SwapActiveTab() {
-        return SwapActiveTab
-      },
-      dexStore() {
-        return useDexStore();
-      },
+        SwapActiveTab() {
+            return SwapActiveTab
+        },
+        dexStore() {
+            return useDexStore();
+        },
+        plugCondition() {
+            return (this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.Limit || this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA)
+                && (!this.dexStore.GET_DEX_WALLET || this.interfaceStatus === 'NOT_STRATEGIES_WALLET')
+        },
+        getPlugTitle() {
+            if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET' || !this.dexStore.GET_DEX_WALLET) {
+                return this.$t('swapPlug.titleReady')
+            } else if (this.interfaceStatus === "LOADING") {
+                return this.$t('swapPlug.titleLoading')
+            }
+        },
+        getPlugFirstText() {
+            if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET' || !this.dexStore.GET_DEX_WALLET) {
+                return this.$t('swapPlug.descriptionTextReady')
+            } else if (this.interfaceStatus === "LOADING") {
+                return this.$t('swapPlug.descriptionTextLoading')
+            }
+        },
+        getPlugSecondText() {
+            if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET' || !this.dexStore.GET_DEX_WALLET) {
+                return this.$t(`swapPlug.description2TextReady`)
+            }
+        },
         canSwapTokenPositions() {
             return (this.firstToken && this.secondToken)
         },
@@ -132,8 +165,8 @@ export default {
                     return  this.$t('swapPlug.firstTitleDex')
                 case SwapActiveTab.Limit:
                     return this.$t('swapPlug.firstTitleLimit')
-	            case SwapActiveTab.DCA:
-		            return this.$t('swapPlug.firstTitleDca')
+                case SwapActiveTab.DCA:
+                    return this.$t('swapPlug.firstTitleDca')
                 default:
                     return this.$t('swapPlug.assetOne')
             }
@@ -144,8 +177,8 @@ export default {
                     return this.$t("dexInterface.youReceive")
                 case SwapActiveTab.Limit:
                     return this.$t("swapPlug.secondTitleLimit")
-	            case SwapActiveTab.DCA:
-		            return this.$t('swapPlug.secondTitleDca')
+                case SwapActiveTab.DCA:
+                    return this.$t('swapPlug.secondTitleDca')
                 default:
                     return this.$t('swapPlug.assetTwo')
             }
@@ -184,6 +217,7 @@ export default {
         border-radius: 100%;
         background: var(--iface-white10);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
 
     .fields__swap-btn:hover {
@@ -224,6 +258,7 @@ export default {
         border-radius: 100%;
         background: var(--earn-bg);
         backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
 
 </style>

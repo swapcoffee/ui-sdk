@@ -96,7 +96,8 @@ export default {
             processing: this.processing,
             limitAction: this.dcaAction,
             cancelAction: this.cancelAction,
-            modalState: this.successModalState
+            modalState: this.successModalState,
+            addNewAsset: () => {} // Пустий метод для DcaPage
         }
     },
     data() {

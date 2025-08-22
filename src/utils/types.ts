@@ -105,6 +105,7 @@ export interface DexState {
     calculatedPriceImpact: any | null;
     swapActiveTab: SwapActiveTab;
     usersTokensBalances: any[];
+    liquidStakingPools: any[];
 }
 
 export interface TokensByLabelPayload {

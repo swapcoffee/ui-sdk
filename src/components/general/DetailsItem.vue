@@ -25,7 +25,7 @@ export default {
         },
         textColor: {
             type: String,
-            required: true
+            default: ''
         }
     },
     data() {

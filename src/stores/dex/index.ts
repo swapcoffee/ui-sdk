@@ -50,7 +50,8 @@ export const useDexStore = defineStore('dex', {
 		sendMultiTokens: null,
 		receiveMultiToken: null,
 		sendMultiValues: null,
-		receiveMultiValue: null
+		receiveMultiValue: null,
+		liquidStakingPools: [],
 	}),
 
 	actions: {
@@ -158,7 +159,10 @@ export const useDexStore = defineStore('dex', {
 			this.receiveMultiToken = null;
 			this.sendMultiValues = null;
 			this.receiveMultiValue = null;
-		}
+		},
+		DEX_LIQUID_STAKING_POOLS(item: any[]) {
+			this.liquidStakingPools = item;
+		},
 	},
 	getters: {
 		GET_TOKENS_POPUP_STATE: (state) => state.tokensPopupState,
@@ -188,5 +192,6 @@ export const useDexStore = defineStore('dex', {
 		GET_RECEIVE_MULTI_TOKEN: (state) => state.receiveMultiToken,
 		GET_SEND_MULTI_VALUES: (state) => state.sendMultiValues,
 		GET_RECEIVE_MULTI_VALUE: (state) => state.receiveMultiValue,
+		GET_LIQUID_STAKING_POOLS: (state) => state.liquidStakingPools,
 	},
 });
