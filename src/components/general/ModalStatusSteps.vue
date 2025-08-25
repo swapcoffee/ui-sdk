@@ -16,10 +16,10 @@
         </div>
         <h2 class="transaction__title">{{ getTitle }}</h2>
         <SwapDealInfo
-            v-if="modalState.mode === 'swap' && status !== 'success'"
+            v-if="(modalState.mode === 'swap' || modalState.mode === 'multi') && status !== 'success'"
         />
         <p class="transaction__text"
-            v-if="!(modalState.mode === 'swap' && status === 'pending')"
+            v-if="!((modalState.mode === 'swap' || modalState.mode === 'multi') && status === 'pending')"
         >
             {{ getDescription }}
         </p>
@@ -128,6 +128,8 @@ export default {
                     return "Create and deposit liquidity"
                 case "swap":
                     return "Swap"
+                case "multi":
+                    return "Multi Swap"
                 case "limit":
                     return "Limit"
                 default:
@@ -166,9 +168,11 @@ export default {
                 return "The pool has been created"
             } else if (this.modalState.mode === 'deploy-smart') {
                 return "The smart contract has been deployed"
+            } else if (this.modalState.mode === 'multi') {
+                return "The multi-swap transaction was completed successfully."
             } else if (this.modalState.mode === 'limit') {
                 return "The order was successfully created"
-            } else if (this.modalState.moe === 'cancel') {
+            } else if (this.modalState.mode === 'cancel') {
                 return "The order was successfully cancelled"
             } else {
                 return "The tokens are already in your wallet."
@@ -177,6 +181,8 @@ export default {
         getPendingDescription() {
             if (this.modalState.mode === 'deploy-smart') {
                return "Deploying smart contract"
+            } else if (this.modalState.mode === 'multi') {
+                return "Multi-swap transaction in processing..."
             } else if (this.modalState.mode === 'limit') {
                 return "Limit order in processing..."
             } else if (this.modalState.mode === 'cancel') {
@@ -186,7 +192,7 @@ export default {
             }
         },
         getFailedDescription() {
-            if (this.modalState.mode === 'swap') {
+            if (this.modalState.mode === 'swap' || this.modalState.mode === 'multi') {
                 return 'Try using higher than normal slippage to ensure your transaction is completed.'
             } else {
                 return "An unexpected error has occurred, please try again."
@@ -225,13 +231,30 @@ export default {
 
             const succeededSteps = this.transactionStore.GET_SWAP_TRANSACTION_STATUS;
 
-            succeededSteps.splits.forEach((split) => {
-                split.steps.forEach((step) => {
-                    if (step?.status === 'failed' || step?.status === 'timed_out') {
-                        failedArray.push(step);
+            if (!succeededSteps) return failedArray;
+
+            if (this.modalState.mode === 'multi') {
+                if (succeededSteps.routes) {
+                    succeededSteps.routes.forEach((route) => {
+                        if (route?.status === 'failed' || route?.status === 'timed_out') {
+                            failedArray.push(route);
+                        }
+                    });
+                }
+                return failedArray;
+            }
+
+            if (succeededSteps.splits) {
+                succeededSteps.splits.forEach((split) => {
+                    if (split.steps) {
+                        split.steps.forEach((step) => {
+                            if (step?.status === 'failed' || step?.status === 'timed_out') {
+                                failedArray.push(step);
+                            }
+                        });
                     }
                 });
-            });
+            }
 
             return failedArray;
         },
@@ -239,9 +262,18 @@ export default {
             let tokens = []
 
             this.checkIntermediateTokens.forEach((item, index) => {
-                let metadata = item?.input.token.metadata;
-                const convertedAmount = item?.input.amount / Math.pow(10, metadata.decimals);
-                tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                if (this.modalState.mode === 'multi') {
+                    let metadata = item?.input_token?.metadata || item?.output_token?.metadata;
+                    const amount = item?.input_amount || item?.output_amount;
+                    if (metadata && amount) {
+                        const convertedAmount = amount / Math.pow(10, metadata.decimals);
+                        tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                    }
+                } else {
+                    let metadata = item?.input.token.metadata;
+                    const convertedAmount = item?.input.amount / Math.pow(10, metadata.decimals);
+                    tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                }
             });
 
             return tokens.join(', ');
@@ -253,7 +285,7 @@ export default {
         },
         loadLottie() {
             lottie.loadAnimation({
-                container: document.getElementById(this.status), // the dom element that will contain the animation
+                container: document.getElementById(this.status),
                 renderer: 'svg',
                 loop: true,
                 autoplay: true,

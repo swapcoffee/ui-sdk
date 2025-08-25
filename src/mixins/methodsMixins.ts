@@ -23,6 +23,11 @@ export default {
     },
 
     prettyNumber(num: number, reduceCount: number): string {
+      // Handle non-number values
+      if (typeof num !== 'number' || isNaN(num)) {
+        return '0';
+      }
+
       const numToFixed = Number.isInteger(num) ? num.toString() : num.toFixed(reduceCount);
       const [integerPart, fractionalPart] = numToFixed.split('.');
       const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');

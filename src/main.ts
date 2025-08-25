@@ -98,12 +98,9 @@ createSwapWidget('#swap-widget-component', {
     liquiditySourcesList: [
         SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
         SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
-        // SWAP_WIDGET_LIQUIDITY_SOURCES.TONSTAKERS,
-        // SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI_V2,
-        // SWAP_WIDGET_LIQUIDITY_SOURCES.STONFI
     ],
     sendReceiveTokenAddresses: ["0:0000000000000000000000000000000000000000000000000000000000000000", "EQBsosmcZrD6FHijA7qWGLw5wo_aH8UN435hi935jJ_STORM"],
-    limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE","EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
+    limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE", "EQC-tdRjjoYMz3MXKW4pj95bNZgvRyWwZ23Jix3ph7guvHxJ", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
     // customFeeSettings: {
     //     percentage_fee: 3000,
     //     min_percentage_fee_fixed: '500000000',

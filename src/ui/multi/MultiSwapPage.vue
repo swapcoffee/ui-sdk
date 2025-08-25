@@ -26,6 +26,11 @@
             :isListedPair="isListedPair"
             @closeModal="modals.settings = false"
         />
+        <TransactionStatusModal
+            v-if="successModalState.show === true"
+            :status="getTransactionStatus"
+            @closeModal="closeSuccess"
+        />
     </div>
 </template>
 
@@ -35,6 +40,7 @@ import MevSettingPopup from "@/components/dex/mev/MevSettingPopup.vue";
 import SwapInterface from "@/components/swap-interface/SwapInterface.vue";
 import TokensPopup from "@/components/dex/tokens-popup/TokensPopup.vue";
 import DexSettings from "@/components/modals/DexSettingsModal.vue";
+import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 import * as SwapRouting from "@/helpers/swap-routing";
 import {Address} from "@ton/core";
 import {
@@ -44,6 +50,7 @@ import {
 import resetLimitTokens from "@/mixins/resetLimitTokens.js";
 import numberFormatting from "@/mixins/numberFormatting.ts";
 import SwapSettingsModal from "@/components/modals/SwapSettingsModal.vue";
+import {defineComponent} from "vue";
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction";
@@ -51,7 +58,7 @@ import type { DefineComponent } from 'vue';
 
 export default {
     name: "MultiSwapPage",
-    components: {SwapSettingsModal, DexSettings, TokensPopup, SwapInterface, MevSettingPopup, SwapHeader},
+    components: {SwapSettingsModal, DexSettings, TokensPopup, SwapInterface, MevSettingPopup, SwapHeader, TransactionStatusModal},
     mixins: [resetLimitTokens, numberFormatting],
 	props: {
 		tonConnectUi: {
@@ -80,6 +87,8 @@ export default {
             processing: this.processing,
             isUpdatingBalances: () => this.isUpdatingBalances,
             multiSwapAmountsReady: () => this.allAmountsReady,
+            modalState: this.successModalState,
+            updateShowModal: this.closeSuccess,
 		}
 	},
 	inject: ['updateWalletInfo'],
@@ -314,6 +323,13 @@ export default {
 			    liquiditySources: this.dexSettingsStore.GET_LIQUIDITY_SOURCES
 		    }
 	    },
+        getTransactionStatus() {
+            const trResult = this.transactionStore.GET_SWAP_TRANSACTION_STATUS
+            if (trResult !== null) {
+                return trResult.status
+            }
+            return 'pending'
+        },
 	    multiTransactionData() {
 		    let data = {
 			    updateProcessing: this.updateProcessing,
@@ -481,7 +497,8 @@ export default {
                     SwapRouting.removeRefreshInterval()
 					await multiTransaction(this.multiTransactionData)
 
-				    // this.openTransactionModal('pending', this.dexStore.dealConditions, 'multi', this.clearValues)
+					this.successModalState.mode = 'multi'
+					this.successModalState.show = true
 			    }
 		    } catch(err) {
 			    // юзер отказался от транзакции, ничего не делаем
@@ -537,6 +554,13 @@ export default {
                     this.changeRefreshInfo(false)
                 }, 1500)
             }
+        },
+        closeSuccess() {
+            this.successModalState.show = false
+            this.transactionStore.SAVE_SWAP_TRANSACTION_STATUS(null)
+            SwapRouting.removeRefreshInterval()
+            this.updateRoute()
+            this.clearValues()
         },
 	    observingTabVisibilityChange() {
 		    this.isVisible = !document.hidden;
@@ -674,7 +698,7 @@ export default {
                     SwapRouting.changeSettingsWatcher(this.changeSettingsWatcherData)
                 }
 		    }
-	    },
+	    }
     }
 }
 </script>

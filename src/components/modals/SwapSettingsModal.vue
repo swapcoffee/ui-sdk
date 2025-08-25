@@ -289,10 +289,8 @@ export default {
       return this.getRouteName === "Dex" && this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair
     },
     mevProtectCondition() {
-      return (
-          (this.getRouteName === "Dex" && !this.dexSettingsStore.GET_SMART_MODE_VALUE && this.isListedPair) ||
-          (this.getRouteName === "Multi" && this.isListedPair)
-      )
+      return (this.getRouteName === "Dex" && this.isListedPair) ||
+             (this.getRouteName === "Multi" && this.isListedPair)
     },
     currentSettings() {
       if (this.smartModeCondition) {

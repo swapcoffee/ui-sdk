@@ -565,6 +565,7 @@ export default {
     liquiditySourcesList: {
       handler() {
         if (this.liquiditySourcesList?.length > 0) {
+          console.log('liquiditySourcesList', this.liquiditySourcesList)
           this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(this.liquiditySourcesList)
         }
       },

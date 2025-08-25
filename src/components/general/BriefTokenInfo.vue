@@ -78,6 +78,17 @@ export default {
                     return '-'
                 }
             }
+
+            // Special logic for multi-swap mode
+            if (this.modalState.mode === 'multi') {
+                if (this.position === 'first') {
+                    return '-'  // Input tokens should have minus
+                } else if (this.position === 'second') {
+                    return '+'  // Output token should have plus
+                }
+            }
+
+            // Default logic for other modes
             if (this.position === 'first') {
                 return "+"
             } else if (this.position === 'second') {
@@ -134,6 +145,15 @@ export default {
 
     .second .token__text {
         opacity: 0.4;
+    }
+
+    /* Multi-swap specific styles */
+    .multi-swap .first .token__text {
+        opacity: 0.4;
+    }
+
+    .multi-swap .second .token__text {
+        opacity: 1;
     }
 
     .token__desc {

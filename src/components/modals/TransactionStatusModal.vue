@@ -56,7 +56,7 @@ export default {
             return this.transactionStore.GET_LIMIT_TRANSACTION_INFO
         },
         getStatus() {
-            if (this.modalState.mode === 'swap') {
+            if (this.modalState.mode === 'swap' || this.modalState.mode === 'multi') {
                 return this.getSwapStatus
             } else {
                 return this.status
@@ -65,54 +65,103 @@ export default {
         getSwapStatus() {
             const trResult = this.transactionStore.GET_SWAP_TRANSACTION_STATUS
 
-            if (trResult && Array.isArray(trResult.splits)) {
-                let findFailed = trResult.splits.find((item) => item?.status === 'failed');
-                let findTimedOut = trResult.splits.find((item) => item?.status === 'timed_out');
-                let findPending = trResult.splits.find((item) => item?.status === 'pending');
-                let findPartiallyComplete = trResult.splits.find((item) => item?.status === 'partially_complete');
-                let findSucceeded = trResult.splits.find((item) => item?.status === 'succeeded');
+            if (this.modalState?.mode === 'multi') {
+                // Handle multi-swap status
+                if (trResult && trResult.routes) {
+                    let findFailed = trResult.routes.find((route: any) => route?.status === 'failed');
+                    let findTimedOut = trResult.routes.find((route: any) => route?.status === 'timed_out');
+                    let findPending = trResult.routes.find((route: any) => route?.status === 'pending');
+                    let findPartiallyComplete = trResult.routes.find((route: any) => route?.status === 'partially_complete');
+                    let findSucceeded = trResult.routes.find((route: any) => route?.status === 'succeeded');
 
-                if (findSucceeded && !findPending && !findPartiallyComplete) {
-                    dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, trResult);
-                    return 'success';
-                } else if (findPending || findPartiallyComplete) {
+                    if (findSucceeded && !findPending && !findPartiallyComplete) {
+                        dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, trResult);
+                        return 'success';
+                    } else if (findPending || findPartiallyComplete) {
+                        return 'pending';
+                    } else if (findFailed || findTimedOut) {
+                        return 'failed';
+                    }
+                } else {
                     return 'pending';
-                } else if (findFailed || findTimedOut) {
-                    return 'failed';
                 }
             } else {
-                return 'pending';
+                // Handle regular swap status
+                if (trResult && Array.isArray(trResult.splits)) {
+                    let findFailed = trResult.splits.find((item: any) => item?.status === 'failed');
+                    let findTimedOut = trResult.splits.find((item: any) => item?.status === 'timed_out');
+                    let findPending = trResult.splits.find((item: any) => item?.status === 'pending');
+                    let findPartiallyComplete = trResult.splits.find((item: any) => item?.status === 'partially_complete');
+                    let findSucceeded = trResult.splits.find((item: any) => item?.status === 'succeeded');
+
+                    if (findSucceeded && !findPending && !findPartiallyComplete) {
+                        dispatchSdkEvent(ReadonlySdkEvent.SWAP_RESULT_RECEIVED, trResult);
+                        return 'success';
+                    } else if (findPending || findPartiallyComplete) {
+                        return 'pending';
+                    } else if (findFailed || findTimedOut) {
+                        return 'failed';
+                    }
+                } else {
+                    return 'pending';
+                }
             }
         },
         swapPending() {
-            return [
-                {
-                    name: this.$t('transactionStatusModal.swapStatus.swapPendingBlockchain'),
-                    value: this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas,
-                    symbol: ' TON'
-                }
-            ]
+            if (this.modalState.mode === 'multi') {
+                return [
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapPendingBlockchain'),
+                        value: this.dexStore.dealConditions?.total_mev_protection_fee || 0,
+                        symbol: ' TON'
+                    }
+                ]
+            } else {
+                return [
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapPendingBlockchain'),
+                        value: this.dexStore.GET_DEAL_CONDITIONS?.recommended_gas,
+                        symbol: ' TON'
+                    }
+                ]
+            }
         },
         swapSuccess() {
-            return [
-                {
-                    name: this.$t('transactionStatusModal.swapStatus.swapSuccessPriceImpact'),
-                    value: this.getPriceImpactDisplay,
-                    valueColor: this.getColorImpact,
-                    symbol: '%'
-                },
-                {
-                    name: this.$t('transactionStatusModal.swapStatus.swapSuccessEconomy'),
-                    value: this.getProfitDisplay,
-                    valueColor: '#5DFF54',
-                    symbol: '%'
-                },
-                {
-                    name: this.$t('transactionStatusModal.swapStatus.swapSuccessCashback'),
-                    value: this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd,
-                    symbol: '~ $'
-                },
-            ]
+            if (this.modalState.mode === 'multi') {
+                return [
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapSuccessPriceImpact'),
+                        value: this.getPriceImpactDisplay,
+                        valueColor: this.getColorImpact,
+                        symbol: '%'
+                    },
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapSuccessCashback'),
+                        value: this.getCashback,
+                        symbol: '~ $'
+                    },
+                ]
+            } else {
+                return [
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapSuccessPriceImpact'),
+                        value: this.getPriceImpactDisplay,
+                        valueColor: this.getColorImpact,
+                        symbol: '%'
+                    },
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapSuccessEconomy'),
+                        value: this.getProfitDisplay,
+                        valueColor: '#5DFF54',
+                        symbol: '%'
+                    },
+                    {
+                        name: this.$t('transactionStatusModal.swapStatus.swapSuccessCashback'),
+                        value: this.getCashback,
+                        symbol: '~ $'
+                    },
+                ]
+            }
         },
         swapDetails() {
             let successList = this.swapSuccess
@@ -190,6 +239,8 @@ export default {
             switch (this.modalState.mode) {
                 case "swap":
                     return this.swapDetails[this.getStatus]
+                case "multi":
+                    return this.swapDetails[this.getStatus]
                 case "limit":
                     return this.limitDetails
                 case "dca":
@@ -201,12 +252,26 @@ export default {
 
             const steps = this.transactionStore.GET_SWAP_TRANSACTION_STATUS;
 
-            if (steps && steps.length > 0) {
-                steps.forEach((step) => {
-                    if (step?.status === 'failed' || step?.status === 'timed_out') {
-                        failedArray.push(step);
-                    }
-                });
+            if (!steps) return failedArray;
+
+            if (this.modalState.mode === 'multi') {
+                // Handle multi-swap structure
+                if (steps.routes) {
+                    steps.routes.forEach((route) => {
+                        if (route?.status === 'failed' || route?.status === 'timed_out') {
+                            failedArray.push(route);
+                        }
+                    });
+                }
+            } else {
+                // Handle regular swap structure
+                if (steps && steps.length > 0) {
+                    steps.forEach((step) => {
+                        if (step?.status === 'failed' || step?.status === 'timed_out') {
+                            failedArray.push(step);
+                        }
+                    });
+                }
             }
 
             return failedArray;
@@ -215,16 +280,51 @@ export default {
             let tokens = []
 
             this.checkIntermediateTokens.forEach((item, index) => {
-                let metadata = item?.input.token.metadata;
-                const convertedAmount = item?.input.amount / Math.pow(10, metadata.decimals);
-                tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                if (this.modalState.mode === 'multi') {
+                    let metadata = item?.input_token?.metadata || item?.output_token?.metadata;
+                    const amount = item?.input_amount || item?.output_amount;
+                    if (metadata && amount) {
+                        const convertedAmount = amount / Math.pow(10, metadata.decimals);
+                        tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                    }
+                } else {
+                    let metadata = item?.input.token.metadata;
+                    const convertedAmount = item?.input.amount / Math.pow(10, metadata.decimals);
+                    tokens.push(convertedAmount.toFixed(2) + ' ' + metadata.symbol);
+                }
             });
 
             return tokens.join(', ');
         },
         getProfitDisplay() {
-            let profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100)
-            return profit > 100 ? '>100' : profit;
+            let profit = 0;
+
+            switch (this.modalState.mode) {
+                case "swap":
+                    profit = (this.dexStore.GET_DEAL_CONDITIONS?.savings * 100) || 0;
+                    break;
+                case "multi":
+                    profit = (this.dexStore.dealConditions?.total_savings * 100) || 0;
+                    break;
+            }
+
+            if (profit > 0) {
+                return profit > 100 ? '>100' : this.prettyNumber(profit, 2);
+            } else {
+                return 0;
+            }
+        },
+        getCashback() {
+            let cashback = 0;
+            switch (this.modalState.mode) {
+                case "swap":
+                    cashback = this.dexStore.GET_DEAL_CONDITIONS?.estimated_cashback_usd || 0;
+                    break;
+                case "multi":
+                    cashback = this.dexStore.dealConditions?.total_estimated_cashback_usd || 0;
+                    break;
+            }
+            return cashback;
         },
         getPriceImpactDisplay() {
             let pi = this.getPriceImpact;
@@ -244,8 +344,24 @@ export default {
             }
         },
         getPriceImpact() {
-            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
-                return this.dexStore.GET_DEAL_CONDITIONS?.price_impact * 100;
+            let priceImpact = 0;
+
+            if (this.dexStore.dealConditions !== null) {
+                switch (this.modalState.mode) {
+                    case "swap": {
+                        priceImpact = this.dexStore.GET_DEAL_CONDITIONS?.price_impact || 0;
+                        break;
+                    }
+                    case "multi": {
+                        if (this.dexStore.dealConditions.routes) {
+                            this.dexStore.dealConditions.routes.forEach((item) => {
+                                priceImpact += item.price_impact || 0;
+                            });
+                        }
+                        break;
+                    }
+                }
+                return priceImpact * 100;
             } else {
                 return 0;
             }

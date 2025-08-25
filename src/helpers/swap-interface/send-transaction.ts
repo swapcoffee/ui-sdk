@@ -4,11 +4,11 @@ import {compareTokens, TSTON_ADDRESS} from "@/helpers/swap-interface/compare";
 import { setTransactionMessage } from "@/helpers/dex/calculate";
 import { useDexStore } from "@/stores/dex";
 import { useTransactionStore } from "@/stores/transaction";
+import { multiCompare } from "@/helpers/swap-routing";
 import {getActivePinia} from "pinia";
 import { dispatchSdkEvent } from "@/helpers/events";
 import { ReadonlySdkEvent } from "@/utils/consts.ts";
 
-// Types for function parameters
 type UpdateProcessingFunction = (value: boolean, mode: string) => void;
 type Wallet = { address: string; version?: number };
 type Tokens = { first?: any; second?: any };
@@ -224,7 +224,7 @@ export async function multiTransaction({
 }) {
 	try {
 		updateProcessing(true, 'multi');
-		// await multiCompare(compareAsset);
+		await multiCompare(compareAsset);
 
 		let paths: any[] = []
 		dealConditions.routes.forEach((item: any) => {
@@ -247,13 +247,15 @@ export async function multiTransaction({
 		localStorage.setItem('transactionInfo', JSON.stringify(transactionDataToSave));
 
 		try {
-			await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
+			// await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
 		} catch (e) {
 			tonConnectUi.closeModal('action-cancelled');
 		}
 
 		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
 		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
+
+		setRequestInterval(trInfo);
 
 		// trackingTransaction(transactionStatus, trackingData);
 	} catch (err) {
