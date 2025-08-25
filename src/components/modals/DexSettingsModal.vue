@@ -336,7 +336,7 @@
         <div class="settings__block">
           <ul class="settings__block-list">
             <li
-                v-for="source in liquiditySourcesList"
+                v-for="source in liquiditySources"
                 :key="source"
                 class="settings__block-item block-item"
             >
@@ -388,7 +388,7 @@ export default {
     MevSettings,
   },
   mixins: [computedMixins, transactionRoutesMixin],
-  inject: ["updateSettingsModalVisible"],
+  inject: ["updateSettingsModalVisible", "liquiditySourcesList"],
   data() {
     return {
       cashback: false,
@@ -412,9 +412,6 @@ export default {
     settingsStore() {
       return useSettingsStore()
     },
-    liquiditySourcesList() {
-      return this.liquiditySources;
-    },
     activeSlippageConditions() {
       let value = Number(this.slippage)
       return value > 0 && value !== 1 && value !== 5 && value !== 10;
@@ -432,6 +429,9 @@ export default {
     activeMaxSplitsConditions() {
       let value = Number(this.priceImpact)
       return value === 0;
+    },
+    isLiquiditySourcesLocked() {
+      return this.liquiditySourcesList && this.liquiditySourcesList.length > 0;
     },
   },
   methods: {
@@ -550,6 +550,10 @@ export default {
       }
     },
     changeLiquiditySources(value, notSave) {
+      if (this.liquiditySourcesList && this.liquiditySourcesList.length > 0) {
+        return;
+      }
+
       this.liquiditySources = this.liquiditySources.map((el) =>
           el.id === value ? {...el, enabled: !el.enabled} : el,
       );
@@ -619,8 +623,18 @@ export default {
         console.error(err)
       }
     },
+    applyLiquiditySourcesList() {
+      if (this.liquiditySourcesList && this.liquiditySourcesList.length > 0) {
+
+        this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(this.liquiditySourcesList);
+
+        this.saveToStorage('liquiditySources', this.liquiditySourcesList);
+      }
+    },
     async checkStorageSettings() {
       try {
+        this.applyLiquiditySourcesList();
+
         let settings = this.settingsStore.GET_USER_SETTINGS?.dexSettings
         if (!settings) {
           let storage = JSON.parse(localStorage.getItem("dexSettings"))?.dexSettings
@@ -637,7 +651,6 @@ export default {
         settings.hasOwnProperty("slippage")
             ? this.changeSlippage(settings.slippage, true)
             : (this.slippage = this.GET_SLIPPAGE)
-        // settings.hasOwnProperty("cashback") ? this.switchCashback(settings.cashback, true) : this.cashback = this.GET_CASHBACK
         if (settings.hasOwnProperty("cashback")) {
           delete settings.cashback
         }
@@ -658,15 +671,18 @@ export default {
           settings.hasOwnProperty('maxSplits')
               ? this.changeMaxSplits(settings.maxSplits, true)
               : (this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS);
-          settings.hasOwnProperty('liquiditySources')
-              ? (this.liquiditySources = this.liquiditySources.map((n) => ({
-                ...n,
-                enabled: settings.liquiditySources.some((source) => source === n?.id),
-              })))
-              : (this.liquiditySources = this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map((id) => ({
-                ...DEXES_BY_ID.get(id),
-                enabled: this.liquiditySources.some((source) => source.id === id),
-              })));
+
+          if (!this.liquiditySourcesList || this.liquiditySourcesList.length === 0) {
+            settings.hasOwnProperty('liquiditySources')
+                ? (this.liquiditySources = this.liquiditySources.map((n) => ({
+                  ...n,
+                  enabled: settings.liquiditySources.some((source) => source === n?.id),
+                })))
+                : (this.liquiditySources = this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map((id) => ({
+                  ...DEXES_BY_ID.get(id),
+                  enabled: this.liquiditySources.some((source) => source.id === id),
+                })));
+          }
         }
       } catch (err) {
         console.error(err);
@@ -696,19 +712,21 @@ export default {
         settings.hasOwnProperty('maxSplits')
             ? this.changeMaxSplits(settings.maxSplits, true)
             : (this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS);
-        settings.hasOwnProperty('liquiditySources')
-            ? this.changeLiquiditySources(settings.liquiditySources, true)
-            : (this.liquiditySources = this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map((id) => ({
-              ...DEXES_BY_ID.get(id),
-              enabled: this.liquiditySources.some((source) => source.id === id),
-            })));
-      } else {
-        this.dexSettingsStore.CLEAR_DEX_EXPERTS_SETTINGS();
-        this.priceImpact = this.dexSettingsStore.GET_PRICE_IMPACT;
-        this.maxPoolVolatility = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY;
-        this.maxIntermediateTokens = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS;
-        this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS;
-      }
+          if (!this.liquiditySourcesList || this.liquiditySourcesList.length === 0) {
+            settings.hasOwnProperty('liquiditySources')
+                ? this.changeLiquiditySources(settings.liquiditySources, true)
+                : (this.liquiditySources = this.dexSettingsStore.GET_LIQUIDITY_SOURCES.map((id) => ({
+                  ...DEXES_BY_ID.get(id),
+                  enabled: this.liquiditySources.some((source) => source.id === id),
+                })));
+          }
+        } else {
+          this.dexSettingsStore.CLEAR_DEX_EXPERTS_SETTINGS();
+          this.priceImpact = this.dexSettingsStore.GET_PRICE_IMPACT;
+          this.maxPoolVolatility = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY;
+          this.maxIntermediateTokens = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS;
+          this.maxSplits = this.dexSettingsStore.GET_MAX_SPLITS;
+        }
     },
     blurMaxSplitsInput() {
       if (this.maxSplits.length === 0) {
@@ -762,12 +780,17 @@ export default {
         this.checkStorageSettings();
       },
     },
+    'liquiditySourcesList': {
+      handler(newList) {
+        if (newList && newList.length > 0) {
+          this.applyLiquiditySourcesList();
+        }
+      },
+      immediate: true
+    },
   },
   mounted() {
     this.checkStorageSettings();
-    // this.slippage = this.GET_SLIPPAGE
-    // this.priceImpact = this.GET_PRICE_IMPACT
-    // this.cashback = this.GET_CASHBACK
   },
 };
 </script>

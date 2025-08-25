@@ -127,7 +127,17 @@ export default {
     MevPlug
   },
   mixins: [computedMixins],
-  inject: ['tokenValues', 'addNewAsset'],
+  inject: ['tokenValues', 'addNewAsset', 'updateTokenValue', 'updateTokenModalVisible', 'updateTokenPositions', 'isUpdatingBalances'],
+  provide() {
+    return {
+      tokenValues: this.tokenValues,
+      addNewAsset: this.addNewAsset,
+      updateTokenValue: this.updateTokenValue,
+      updateTokenModalVisible: this.updateTokenModalVisible,
+      updateTokenPositions: this.updateTokenPositions,
+      isUpdatingBalances: this.isUpdatingBalances
+    }
+  },
   props: {
     tonConnectUi: {
       type: Object,

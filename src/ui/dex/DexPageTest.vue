@@ -790,14 +790,10 @@ export default defineComponent({
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: 400px;
-  max-width: 400px;
 }
 
 @media screen and (max-width: 1220px) {
   .dex-page {
-    width: 440px;
-    max-width: 440px;
     margin: 0 auto;
   }
 }

@@ -48,8 +48,11 @@ export default {
           if (settings.hasOwnProperty('maxSplits')) this.dexSettingsStore.DEX_MAX_SPLITS(settings.maxSplits);
 
           if (settings.hasOwnProperty('liquiditySources')) {
-            if (this.liquiditySourcesList?.length > 0) return;
-            this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(settings.liquiditySources);
+            if (this.liquiditySourcesList?.length > 0) {
+              this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(this.liquiditySourcesList);
+            } else {
+              this.dexSettingsStore.DEX_LIQUIDITY_SOURCES(settings.liquiditySources);
+            }
           }
         }
       } catch (err) {

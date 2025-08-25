@@ -370,6 +370,11 @@ export default {
       changeMaxSplits(value)
     },
     updateLiquiditySources(value) {
+      if (this.isLiquiditySourcesLimited) {
+        changeLiquiditySources(this.liquiditySourcesList)
+        return
+      }
+
       this.settingsValue.liquidity_sources.map((item) => {
         if (value === item.id) {
           item.enabled = !item.enabled
@@ -380,7 +385,14 @@ export default {
           .map((e) => e.id)
       changeLiquiditySources(enabledSources)
     },
+    applyLiquiditySourcesList() {
+      if (this.liquiditySourcesList && this.liquiditySourcesList.length > 0) {
+        changeLiquiditySources(this.liquiditySourcesList);
+      }
+    },
     localStateUpdate() {
+      this.applyLiquiditySourcesList();
+
       const array = [
         {mode: "slippage", data: this.dexSettingsStore.GET_SLIPPAGE},
         {mode: "price_impact", data: this.dexSettingsStore.GET_PRICE_IMPACT},
@@ -401,31 +413,46 @@ export default {
       this.settingsValue.intermediate_tokens.value = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS
       this.settingsValue.max_volatility.value = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY
       this.settingsValue.splits.value = this.dexSettingsStore.GET_MAX_SPLITS
-      this.settingsValue.liquidity_sources = DEXES.map((item) => ({
-        ...item,
-        enabled: this.dexSettingsStore.GET_LIQUIDITY_SOURCES.find((it) => it === item?.id),
-      }))
+
+      // Применяем пользовательские настройки только если нет liquiditySourcesList
+      if (!this.liquiditySourcesList || this.liquiditySourcesList.length === 0) {
+        this.settingsValue.liquidity_sources = DEXES.map((item) => ({
+          ...item,
+          enabled: this.dexSettingsStore.GET_LIQUIDITY_SOURCES.find((it) => it === item?.id),
+        }))
+      }
     },
     expertStateUpdate() {
       this.settingsValue.intermediate_tokens.value = this.dexSettingsStore.GET_MAX_INTERMEDIATE_TOKENS
       this.settingsValue.max_volatility.value = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY
       this.settingsValue.splits.value = this.dexSettingsStore.GET_MAX_SPLITS
 
-      this.settingsValue.liquidity_sources = DEXES.map((item) => ({
-        ...item,
-        enabled: this.dexSettingsStore.GET_LIQUIDITY_SOURCES.find((it) => it === item?.id),
-      }))
+      if (!this.liquiditySourcesList || this.liquiditySourcesList.length === 0) {
+        this.settingsValue.liquidity_sources = DEXES.map((item) => ({
+          ...item,
+          enabled: this.dexSettingsStore.GET_LIQUIDITY_SOURCES.find((it) => it === item?.id),
+        }))
+      }
     },
   },
   created() {
+    this.applyLiquiditySourcesList()
     checkStorageSettings(this)
     this.localStateUpdate()
   },
   watch: {
-    GET_USER_SETTINGS: {
+    'dexSettingsStore.GET_USER_SETTINGS': {
       handler() {
         checkStorageSettings(this)
       },
+    },
+    'liquiditySourcesList': {
+      handler(newList) {
+        if (newList && newList.length > 0) {
+          this.applyLiquiditySourcesList()
+        }
+      },
+      immediate: true
     },
   },
 }

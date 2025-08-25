@@ -111,7 +111,18 @@ export default {
             tokenValues: this.tokenValues,
             processing: this.processing,
             modalState: this.successModalState,
-            addNewAsset: () => {} // Пустий метод для LimitPage
+            addNewAsset: () => {},
+            updateTokenValue: (data) => {
+                if (data.key === 'first') {
+                    this.changeFirstValue(data.value);
+                } else if (data.key === 'second') {
+                    this.changeSecondValue(data.value);
+                }
+            },
+            isUpdatingBalances: () => false,
+            dexAction: () => {},
+            stakeTransaction: () => {},
+            unstakeTransaction: () => {}
         }
     },
     data() {

@@ -90,6 +90,18 @@ export default {
             multiSwapAmountsReady: () => this.allAmountsReady,
             modalState: this.successModalState,
             updateShowModal: this.closeSuccess,
+            updateTokenPositions: this.swapTokenPositions,
+            dexAction: () => {},
+            stakeTransaction: () => {},
+            unstakeTransaction: () => {},
+            updateFirstToken: () => {},
+            updateSecondToken: () => {},
+            updateFirstValue: () => {},
+            updateSecondValue: () => {},
+            updateRate: () => {},
+            setToMarket: () => {},
+            limitAction: () => {},
+            cancelAction: () => {}
 		}
 	},
 	inject: ['updateWalletInfo'],
@@ -146,7 +158,7 @@ export default {
                 "EQA2XBW7MAbSjq5n7tW2_SRlr0XqwJZU0L6u6mLFMKdC5S4Z",
                 "EQBE_gBrU3mPI9hHjlJoR_kYyrhQgyCFD6EUWfa42W8T7EBP"
             ]
-            
+
             let found: any = false
             if (this.dexStore.sendMultiTokens) {
                 found = Array.from(this.dexStore.sendMultiTokens.entries()).find(([key, value]: [any, any]) => {
@@ -156,7 +168,7 @@ export default {
                     }
                 });
             }
-            
+
             return !!found
         },
         interfaceStatus() {
@@ -427,7 +439,7 @@ export default {
                 .filter((item) => item?.listed)
 				.sort((a, b) => b.imported - a.imported)
                 .sort((a, b) => b?.balance * b?.price_usd - a?.balance * a?.price_usd)
-            
+
             if (key === 'first') {
                 return array.find(item => item.address === 'native') || null;
             } else {
@@ -709,14 +721,10 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 14px;
-    width: 400px;
-    max-width: 400px;
 }
 
 @media screen and (max-width: 1220px) {
     .multi-swap {
-        width: 440px;
-        max-width: 440px;
         margin: 0 auto;
     }
 }

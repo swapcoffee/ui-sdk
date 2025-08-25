@@ -97,7 +97,18 @@ export default {
             limitAction: this.dcaAction,
             cancelAction: this.cancelAction,
             modalState: this.successModalState,
-            addNewAsset: () => {} // Пустий метод для DcaPage
+            addNewAsset: () => {},
+            updateTokenValue: (data) => {
+                if (data.key === 'first') {
+                    this.changeFirstValue(data.value);
+                } else if (data.key === 'second') {
+                    this.changeSecondValue(data.value);
+                }
+            },
+            isUpdatingBalances: () => false,
+            dexAction: () => {},
+            stakeTransaction: () => {},
+            unstakeTransaction: () => {}
         }
     },
     data() {
