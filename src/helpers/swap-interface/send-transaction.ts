@@ -166,6 +166,13 @@ export async function dexTransaction({
     try {
         updateProcessing(true, 'dex');
 
+        dispatchSdkEvent(ReadonlySdkEvent.SWAP_STARTED, {
+            sendToken: compareAsset.tokens?.first,
+            receiveToken: compareAsset.tokens?.second,
+            sendAmount: compareAsset.amounts?.first,
+            receiveAmount: compareAsset.amounts?.second
+        });
+
         await compareTokens(compareAsset);
 
         const sender = Address.parseRaw(wallet?.address).toString();
@@ -224,6 +231,10 @@ export async function multiTransaction({
 }) {
 	try {
 		updateProcessing(true, 'multi');
+		dispatchSdkEvent(ReadonlySdkEvent.MULTI_SWAP_STARTED, {
+			tokens: Array.from(compareAsset.tokens.values()),
+			amounts: compareAsset.amounts
+		});
 		await multiCompare(compareAsset);
 
 		let paths: any[] = []
@@ -248,6 +259,8 @@ export async function multiTransaction({
 
 		try {
 			// await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
+
+			dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
 		} catch (e) {
 			tonConnectUi.closeModal('action-cancelled');
 		}

@@ -54,6 +54,7 @@ import {defineComponent} from "vue";
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction";
+import {dispatchSdkEvent, ReadonlySdkEvent} from "@/helpers/events";
 import type { DefineComponent } from 'vue';
 
 export default {

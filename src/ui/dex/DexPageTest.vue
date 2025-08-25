@@ -479,10 +479,26 @@ export default defineComponent({
           }
         } else if (this.interfaceStatus === 'READY_DEX') {
           SwapRouting.removeRefreshInterval();
+
+          dispatchSdkEvent(ReadonlySdkEvent.SWAP_STARTED, {
+            sendToken: this.dexStore.GET_SEND_TOKEN,
+            receiveToken: this.dexStore.GET_RECEIVE_TOKEN,
+            sendAmount: this.dexStore.GET_SEND_AMOUNT,
+            receiveAmount: this.dexStore.GET_RECEIVE_AMOUNT
+          });
+
           await dexTransaction(this.dexTransactionData);
 
           this.successModalState.mode = 'swap';
           this.successModalState.show = true;
+
+          dispatchSdkEvent(ReadonlySdkEvent.SWAP_COMPLETED, {
+            sendToken: this.dexStore.GET_SEND_TOKEN,
+            receiveToken: this.dexStore.GET_RECEIVE_TOKEN,
+            sendAmount: this.dexStore.GET_SEND_AMOUNT,
+            receiveAmount: this.dexStore.GET_RECEIVE_AMOUNT,
+            result: this.dexStore.GET_DEAL_CONDITIONS
+          });
         }
       } catch (err) {
         // юзер отказался от транзакции, ничего не делаем

@@ -109,7 +109,7 @@
                 </p>
                 <p class="dex__value">{{ getEstimatedCashbackAndFee.fee }}</p>
             </div>
-            <div class="dex__row" v-if="getMevFeeDisplay">
+            <div class="dex__row" v-if="getMevFeeDisplay && !getSmartFeeDisplay">
               <p class="dex__name">
                 {{ $t('dexDetails.mev.name') }}
               </p>

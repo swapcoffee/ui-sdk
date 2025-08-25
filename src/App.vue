@@ -71,6 +71,10 @@ export default {
         this.unsubscribeConnect = this.tonConnectUi.onStatusChange((wallet) => {
           if (wallet === null) {
             this.dexStore.DEX_WALLET(null);
+            dispatchSdkEvent(ReadonlySdkEvent.WALLET_DISCONNECTED, {
+                reason: 'user_disconnected',
+                previousWallet: this.dexStore.GET_DEX_WALLET
+            });
             this.dexStore.DEX_PROOF_VERIFICATION(null);
             localStorage.removeItem("tonProof_ver");
             this.tonproofSetConnect();
