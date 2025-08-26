@@ -11,30 +11,36 @@ class TokenService extends CoffeeSdkWrapper {
     };
   }
 
-  async getTokenListV2(params) {
+  async getTokenListV2(params, addCommunity = false, onlyCommunity = false) {
     const query = new URLSearchParams(params);
-    query.append('verification', 'WHITELISTED');
-    const url = query
-        ? `${this.baseUrl}/api/v3/jettons?${query.toString()}`
-        : `${this.baseUrl}/api/v3/jettons?verification=WHITELISTED`;
+
+    if (onlyCommunity) {
+      query.append('verification', 'COMMUNITY');
+    } else {
+      query.append('verification', 'WHITELISTED');
+      if (addCommunity) {
+        query.append('verification', 'COMMUNITY');
+      }
+    }
+
+    const url = `${this.baseUrl}/api/v3/jettons?${query.toString()}`;
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.defaultHeaders,
+        headers: this.defaultHeaders
       });
 
       const data = await response.json();
-      const items = data.map(tokenFromV3ToV2);
 
+      const items = data.map(tokenFromV3ToV2)
       const page = params.page || 1;
-      const size = params.size || 50;
-
+      const size = params.size || 40;
       return {
-        items,
+        items: items,
         total: items.length,
-        page,
-        size,
-      };
+        page: page,
+        size: size,
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -95,26 +101,40 @@ class TokenService extends CoffeeSdkWrapper {
     }
   }
 
-  async getTokensByLabel(labelId, page = 1, size = 50) {
+  async getTokensByLabel(labelId, addCommunity = false, onlyCommunity = false, page = 1, size = 100, search = null) {
     const params = new URLSearchParams({
       page: page.toString(),
       size: size.toString(),
-      label_id: labelId.toString(),
-    }).toString();
+      label_id: labelId.toString()
+    });
+
+    if (search && search.trim()) {
+      params.append('search', search.trim());
+    }
+
+    if (onlyCommunity) {
+      params.append('verification', 'COMMUNITY');
+    } else {
+      params.append('verification', 'WHITELISTED');
+      if (addCommunity) {
+        params.append('verification', 'COMMUNITY');
+      }
+    }
+
     const url = `${this.baseUrl}/api/v3/jettons?${params}`;
     try {
       const response = await fetch(url, {
         method: 'GET',
-        headers: this.defaultHeaders,
+        headers: this.defaultHeaders
       });
       const data = await response.json();
-      const items = data.map(tokenFromV3ToV2);
+      const items = data.map(tokenFromV3ToV2)
       return {
-        items,
+        items: items,
         total: items.length,
-        page,
-        size,
-      };
+        page: page,
+        size: size,
+      }
     } catch (error) {
       console.error(error);
       throw error;
@@ -161,6 +181,8 @@ class TokenService extends CoffeeSdkWrapper {
       throw error;
     }
   }
+
+
 
   async getStakingPool(pool_id) {
     const url = `${this.baseUrl}/api/v1/tokens/stacking/pool/${pool_id}`;

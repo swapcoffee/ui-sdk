@@ -50,36 +50,43 @@ export default {
       return useDexSettingsStore();
     },
     getDetails() {
-      return [
+      const details = [
         {
           title: this.$t('dexDetails.priceImpact.name'),
           text: this.displayPriceImpact,
           textColor: this.getPriceImpactColor,
+          display: true
         },
         {
           title: this.$t('dexDetails.minimumReceive.name'),
           text: this.displayMinimumReceive,
+          display: true
         },
         {
           title: this.$t('dexDetails.fee.name'),
           text: this.displayBlockchainFee,
+          display: true
         },
         {
           title: this.$t('dexDetails.mev.name'),
           text: this.getMevProtectionFee,
-          display: this.displayConditionMevProtection
+          display: this.displayConditionMevProtection && this.getMevProtectionFee !== '0 TON'
         },
         {
           title: this.$t('dexDetails.economy'),
           text: this.displayProfit,
-          textColor: 'green'
+          textColor: 'green',
+          display: true
         },
         {
           title: this.$t('dexNavigation.cashback'),
           text: this.getEstimatedCashbackAndFee.cashback,
-          textColor: 'green'
+          textColor: 'green',
+          display: true
         },
       ]
+
+      return details.filter(item => item && item?.display !== false && item?.display !== undefined)
     },
     getPriceImpact() {
       if (this.dexStore.GET_CALCULATED_PI) {
@@ -109,8 +116,8 @@ export default {
       let gasFee = 0;
 
       if (this.dexStore.GET_DEAL_CONDITIONS?.routes && Array.isArray(this.dexStore.GET_DEAL_CONDITIONS.routes)) {
-        this.dexStore.GET_DEAL_CONDITIONS.routes.forEach((item) => {
-          gasFee += item?.recommended_gas * 1.0 || 0;
+        this.dexStore.GET_DEAL_CONDITIONS.routes.forEach((route) => {
+          gasFee += route?.recommended_gas * 1.0 || 0;
         });
       }
 

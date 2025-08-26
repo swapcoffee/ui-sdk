@@ -57,7 +57,10 @@ export default {
         return {
             updateMaxSuborders: this.changeMaxSuborders,
             updateMaxInvocations: this.changeMaxInvocations,
-            settingsValue: this.settingsValue
+            settingsValue: this.settingsValue,
+            settingsUpdaters: {
+                invocations: this.handleInvocationsUpdate
+            }
         }
     },
     mixins: [computedMixins],
@@ -66,7 +69,12 @@ export default {
             settingsValue: {
                 maxSuborders: '1',
                 maxInvocations: '1',
+                invocations: {
+                    value: '1',
+                    custom: null
+                }
             },
+            settingsLoaded: false,
             settings: [
                 {
                     type: 'invocations',
@@ -112,10 +120,17 @@ export default {
         },
         changeMaxInvocations(value, withoutSave = false) {
             this.settingsValue.maxInvocations = value
+            this.settingsValue.invocations.value = value
             this.limitSettingsStore.LIMIT_MAX_INVOCATIONS(Number(value));
             if (!withoutSave) {
                 this.saveToStorage('maxInvocations', this.settingsValue.maxInvocations)
             }
+        },
+        handleInvocationsUpdate(value, mode) {
+            if (mode === 'custom') {
+                this.settingsValue.invocations.custom = value;
+            }
+            this.changeMaxInvocations(value, false);
         },
         async saveToStorage(key, value) {
             try {
@@ -171,6 +186,10 @@ export default {
                         ? this.changeMaxInvocations(settings.maxInvocations.toString(), true)
                         : (this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString());
                 }
+
+                if (this.settingsLoaded) {
+                    this.settingsValue.invocations.value = this.settingsValue.maxInvocations;
+                }
             } catch (err) {
                 console.error(err);
             }
@@ -190,19 +209,54 @@ export default {
                 settings.hasOwnProperty('maxInvocations')
                     ? this.changeMaxInvocations(settings.maxInvocations.toString(), true)
                     : this.changeMaxInvocations(this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString());
+                this.settingsValue.invocations.value = this.settingsValue.maxInvocations;
             } else {
                 this.limitSettingsStore.CLEAR_LIMIT_EXPERT_SETTINGS();
                 this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString();
+                this.settingsValue.invocations.value = this.settingsValue.maxInvocations;
             }
         },
     },
     mounted() {
+        // First check if we have saved settings in localStorage
+        const savedSettings = JSON.parse(localStorage.getItem('limitSettings'))?.limitSettings;
+
+        if (savedSettings?.maxSuborders) {
+            this.settingsValue.maxSuborders = savedSettings.maxSuborders.toString();
+        } else {
+            this.settingsValue.maxSuborders = this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString();
+        }
+
+        if (savedSettings?.maxInvocations) {
+            this.settingsValue.maxInvocations = savedSettings.maxInvocations.toString();
+        } else {
+            this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString();
+        }
+
+        this.settingsValue.invocations.value = this.settingsValue.maxInvocations;
+        this.settingsLoaded = true;
+
         this.checkStorageSettings();
     },
     watch: {
         'settingsStore.GET_USER_SETTINGS': {
             handler() {
                 this.checkStorageSettings();
+            },
+        },
+        'limitSettingsStore.GET_LIMIT_INVOCATIONS': {
+            handler() {
+                if (this.settingsLoaded) {
+                    this.settingsValue.maxInvocations = this.limitSettingsStore.GET_LIMIT_INVOCATIONS.toString();
+                    this.settingsValue.invocations.value = this.settingsValue.maxInvocations;
+                }
+            },
+        },
+        'limitSettingsStore.GET_LIMIT_SUBORDERS': {
+            handler() {
+                if (this.settingsLoaded) {
+                    this.settingsValue.maxSuborders = this.limitSettingsStore.GET_LIMIT_SUBORDERS.toString();
+                }
             },
         },
     }

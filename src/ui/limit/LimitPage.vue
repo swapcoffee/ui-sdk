@@ -626,7 +626,6 @@ export default {
                             this.tokenValues.second = this.equalizeSecond
                             this.tokenValues.rate = this.calculateRate
                         } else {
-                            console.log('calculateSecond', this.calculateSecond)
                             this.tokenValues.second = this.calculateSecond
                         }
                     } else {

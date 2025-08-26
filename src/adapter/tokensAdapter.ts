@@ -32,7 +32,7 @@ export function tokenFromV3ToV2(token) {
     price_change_24h: token.market_stats.price_change_24h,
     tvl: token.market_stats.tvl_usd,
     holders_count: token.market_stats.holders_count,
-    listed: token.verification === "WHITELISTED",
+    listed: true,
     imported: false,
     image: token.image_url,
     external_id: null,
@@ -40,6 +40,7 @@ export function tokenFromV3ToV2(token) {
     stacking_pool_id: stakingPoolId,
     labels: (token.labels || []).map(labelRelationV3ToV2), // TODO: labels
     blockchain_id: 1,
+    verification: token.verification,
   }
 }
 

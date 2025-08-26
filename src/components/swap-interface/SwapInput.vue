@@ -49,7 +49,7 @@ export default {
         },
         onBlur() {
             this.inputFocused = false;
-            if (this.modelValue === "0" || this.modelValue.length === 0) {
+            if (this.modelValue === "0") {
                 this.emitUpdateValue('0');
             }
         },

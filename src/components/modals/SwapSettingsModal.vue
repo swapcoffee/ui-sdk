@@ -387,6 +387,11 @@ export default {
     },
     applyLiquiditySourcesList() {
       if (this.liquiditySourcesList && this.liquiditySourcesList.length > 0) {
+        this.settingsValue.liquidity_sources = DEXES.map((item) => ({
+          ...item,
+          enabled: this.liquiditySourcesList.includes(item.id),
+        }));
+
         changeLiquiditySources(this.liquiditySourcesList);
       }
     },
@@ -414,7 +419,6 @@ export default {
       this.settingsValue.max_volatility.value = this.dexSettingsStore.GET_MAX_POOL_VOLATILITY
       this.settingsValue.splits.value = this.dexSettingsStore.GET_MAX_SPLITS
 
-      // Применяем пользовательские настройки только если нет liquiditySourcesList
       if (!this.liquiditySourcesList || this.liquiditySourcesList.length === 0) {
         this.settingsValue.liquidity_sources = DEXES.map((item) => ({
           ...item,

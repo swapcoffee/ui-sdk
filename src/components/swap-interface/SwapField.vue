@@ -412,12 +412,9 @@ export default {
                     }
                 }
 
-                // Для Limit и DCA показываем скелетон когда есть значения в полях
+                // Для Limit и DCA показываем скелетон только во время загрузки
                 if (this.getRouteName === 'Limit' || this.getRouteName === 'Dca') {
-                    return (
-                        this.tokenValues[this.assetKey] !== '' &&
-                        Number(this.tokenValues[this.assetKey]) > 0
-                    );
+                    return false; // Не показываем скелетон постоянно для этих страниц
                 }
             }
 

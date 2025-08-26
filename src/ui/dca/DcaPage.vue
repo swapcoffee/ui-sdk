@@ -128,6 +128,8 @@ export default {
             },
             tokenValues: {
                 first: '0',
+                second: '0',
+                rate: '0'
             },
             isSwapPositions: false,
             tokenModalMode: 'SEND',
@@ -308,6 +310,8 @@ export default {
         clearValues() {
             if (!this.isSwapPositions) {
                 this.tokenValues.first = '0'
+                this.tokenValues.second = '0'
+                this.tokenValues.rate = '0'
             }
         },
         changeFirstToken(value) {
@@ -456,10 +460,9 @@ export default {
         },
         'limitStore.GET_LIMIT_FIRST_AMOUNT': {
             handler() {
-                if (Number(this.tokenValues.first) !== Number(this.limitStore.GET_LIMIT_FIRST_AMOUNT) && this.pageLoaded === false) {
+                if (Number(this.tokenValues.first) !== Number(this.limitStore.GET_LIMIT_FIRST_AMOUNT)) {
                     this.tokenValues.first = this.limitStore.GET_LIMIT_FIRST_AMOUNT.toString()
                 }
-
             }
         },
         'limitStore.GET_STRATEGIES_ELIGIBLE': {
@@ -482,6 +485,20 @@ export default {
                 // this.clearValues()
                 if (this.limitStore.GET_LIMIT_SECOND_TOKEN) {
                     this.getSupportedSendTokens(this.limitStore.GET_LIMIT_SECOND_TOKEN?.address)
+                }
+            }
+        },
+        'limitStore.GET_LIMIT_SECOND_AMOUNT': {
+            handler() {
+                if (Number(this.tokenValues.second) !== Number(this.limitStore.GET_LIMIT_SECOND_AMOUNT)) {
+                    this.tokenValues.second = this.limitStore.GET_LIMIT_SECOND_AMOUNT.toString()
+                }
+            }
+        },
+        'limitStore.GET_LIMIT_TOKEN_RATE': {
+            handler() {
+                if (Number(this.tokenValues.rate) !== Number(this.limitStore.GET_LIMIT_TOKEN_RATE)) {
+                    this.tokenValues.rate = this.limitStore.GET_LIMIT_TOKEN_RATE.toString()
                 }
             }
         },
