@@ -9,8 +9,8 @@
     </div>
 </template>
 
-<script>
-import { useDexStore } from "@/stores/dex/index.ts"
+<script lang="ts">
+import { useDexStore } from "@/stores/dex"
 import HotIcon from "@/assets/dex/icons/HotIcon.vue"
 import StarIcon from "@/assets/dex/icons/StarIcon.vue"
 import NewIcon from "@/assets/dex/icons/NewIcon.vue"

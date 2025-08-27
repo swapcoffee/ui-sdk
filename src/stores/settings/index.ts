@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import type { UserSettings } from "@/utils/types";
 
-interface SettingsState {
+export interface SettingsState {
 	theme: string;
 	availableThemes: string[];
 	settings: UserSettings | null;

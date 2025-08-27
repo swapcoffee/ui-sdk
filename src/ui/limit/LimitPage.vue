@@ -77,6 +77,7 @@ export default {
             required: true,
         },
     },
+    inject: ["limitedJettonLists", "enableCommunityTokens"],
     mixins: [resetLimitTokens],
     components: {
         TransactionStatusModal,
@@ -96,6 +97,7 @@ export default {
     },
     provide() {
         return {
+            updateToken: this.changeToken,
             updateFirstToken: this.changeFirstToken,
             updateSecondToken: this.changeSecondToken,
             updateSettingsModalVisible: this.openSettingsModal,
@@ -386,6 +388,11 @@ export default {
                 this.tokenValues.rate = '0'
             }
         },
+        changeToken(key, value) {
+            key === 'first'
+                ? this.limitStore.LIMIT_FIRST_TOKEN(value)
+                : this.limitStore.LIMIT_SECOND_TOKEN(value)
+        },
         changeFirstToken(value) {
             this.limitStore.LIMIT_FIRST_TOKEN(value);
         },
@@ -508,29 +515,37 @@ export default {
                 console.error(err)
             }
         },
-        async getTokensByAddress(addresses) {
-            try {
-                const tokensFromStore = this.dexStore.GET_TON_TOKENS.filter((item) => {
-                    const friendly = item.address === 'native'
-                        ? item.address
-                        : Address.parse(item.address).toString()
-                    return addresses.includes(friendly)
-                })
+      async getTokensByAddress(addresses) {
+        try {
+          const tokensFromStore = this.dexStore.GET_TON_TOKENS.filter((item) => {
+            const friendly =
+                item.address === "native"
+                    ? item.address
+                    : Address.parse(item.address).toString();
+            return addresses.includes(friendly);
+          });
 
+          const filteredAddresses = addresses.filter((address) => {
+            if (address === "native") return false;
+            return tokensFromStore.every(
+                (token) =>
+                    token.address !== Address.parse(address).toRawString()
+            );
+          });
 
-                const filteredAddresses = addresses.filter((address) => {
-                    if (address !== 'native') {
-                        return tokensFromStore.every((token) => token.address !== Address.parse(address).toRawString())
-                    }
-                })
+          if (filteredAddresses.length === 0) {
+            return tokensFromStore;
+          }
 
-                const res = await tokenService.getTokensByAddress(filteredAddresses)
-                return this.mergeArrays(tokensFromStore, res)
-            } catch (err) {
-                throw err
-            }
-        },
-        mergeArrays(first, second) {
+          const res = await tokenService.getTokensByAddress(filteredAddresses);
+
+          return this.mergeArrays(tokensFromStore, res);
+        } catch (err) {
+          console.error("getTokensByAddress failed:", err);
+          throw err;
+        }
+      },
+      mergeArrays(first, second) {
             return first.concat(second)
                 .filter((obj, index, self) => {
                     return obj.id == null || index === self.findIndex((t) => t?.id === obj?.id);

@@ -2,21 +2,33 @@
   <div class="tokens-popup__import-flex">
     <ul class="tokens-popup__group">
       <TokenItem
-        :item="unlistedToken"
-        :userPinnedTokens="userPinnedTokens"
-        :userUnpinnedTokens="userUnpinnedTokens"
-        :status="'unlisted'"
-        :tonPrice="tonPrice"
+          :item="unlistedToken"
+          :userPinnedTokens="userPinnedTokens"
+          :userUnpinnedTokens="userUnpinnedTokens"
+          :status="'unlisted'"
+          :tonPrice="tonPrice"
       />
-      <li class="tokens-popup__import-info" v-if="!isTokenInList">
-        <InformationIcon class="tokens-popup__info-icon" />
-        <p class="tokens-popup__info-text">
-          {{ $t('dexTokens.importNotice') }}
+      <li
+          class="tokens-popup__import-info"
+          v-if="!isTokenInList"
+          :style="{ backgroundColor: getBackgroundColor }"
+      >
+        <div
+            class="tokens-popup__info-icon"
+            :style="{ color: getImportNoticeTextColor }"
+        >
+          <InformationIcon />
+        </div>
+        <p
+            class="tokens-popup__info-text"
+            :style="{ color: getImportNoticeTextColor }"
+        >
+          {{ getImportNoticeText }}
         </p>
       </li>
     </ul>
     <div class="tokens-popup__button-wrapper">
-      <button class="tokens-popup__import-btn" :disabled="isTokenInList" @click="importToken">
+      <button class="tokens-popup__import-btn" :disabled="isImportDisabled" @click="importTokenHandler">
         {{ $t('dexTokens.importBtn') }}
       </button>
     </div>
@@ -34,6 +46,7 @@ export default {
     TokenItem,
     InformationIcon
   },
+  inject: ['importTokenHandler'],
   props: {
     unlistedToken: Object,
     userPinnedTokens: Array,
@@ -41,32 +54,72 @@ export default {
     tonPrice: Number
   },
   computed: {
+    isImportDisabled() {
+      return this.isTokenInList || this.unlistedToken?.verification === 'BLACKLISTED';
+    },
     isTokenInList() {
-      const friendlyAddress = this.unlistedToken?.address;
-      const rawAddress = this.toRawAddress(friendlyAddress);
+      const friendlyAddress = this.unlistedToken?.address
+      const rawAddress = this.toRawAddress(friendlyAddress)
 
-      let find = this.userPinnedTokens.some((token) => token.address === rawAddress);
+      let find = this.userPinnedTokens.some((token) => token.address === rawAddress)
 
       if (!find) {
-        find = this.userPinnedTokens.some((token) => token.address === friendlyAddress);
+        find = this.userPinnedTokens.some((token) => token.address === friendlyAddress)
       }
 
-      return !!find;
+      return !!find
+    },
+    getImportNoticeText() {
+      const verification = this.unlistedToken?.verification
+
+      switch (verification) {
+        case 'COMMUNITY':
+          return this.$t('dexTokens.importNotice')
+        case 'UNKNOWN':
+          return this.$t('dexTokens.importUnknown')
+        case 'BLACKLISTED':
+          return this.$t('dexTokens.importBlacklist')
+        default:
+          return this.$t('dexTokens.importNotice')
+      }
+    },
+    getBackgroundColor() {
+      const verification = this.unlistedToken?.verification
+
+      switch (verification) {
+        case 'UNKNOWN':
+          return 'rgba(255, 207, 85, 0.08)'
+        case 'BLACKLISTED':
+          return 'rgba(234, 57, 67, 0.08)'
+        case 'COMMUNITY':
+        default:
+          return 'var(--iface-white6)'
+      }
+    },
+    getImportNoticeTextColor() {
+      const verification = this.unlistedToken?.verification
+
+      switch (verification) {
+        case 'UNKNOWN':
+          return 'rgba(255, 207, 85, 1)'
+        case 'BLACKLISTED':
+          return 'rgba(234, 57, 67, 1)'
+        case 'COMMUNITY':
+        default:
+          return ''
+      }
     }
   },
   methods: {
-    importToken() {
-      this.$emit('importToken');
-    },
     toRawAddress(address) {
       try {
         if (address === 'native') {
           return 'TON';
         }
-        const parsedAddress = Address.parseFriendly(address);
-        return parsedAddress.address.toRawString();
+        const parsedAddress = Address.parseFriendly(address)
+        return parsedAddress.address.toRawString()
       } catch (error) {
-        return address;
+        return address
       }
     }
   }
@@ -96,6 +149,17 @@ export default {
   min-width: 32px;
   min-height: 32px;
   border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tokens-popup__info-icon :deep(svg) {
+  color: inherit;
+}
+
+.tokens-popup__info-icon :deep(svg path) {
+  fill: currentColor;
 }
 
 .tokens-popup__info-text {
@@ -107,7 +171,7 @@ export default {
   transition: 0.2s;
   width: calc(100% - 40px);
   margin: 0 18px 20px 18px;
-  padding: 19px 18px 18px 18px;
+  padding: 12.5px 15px;
   outline: none;
   border: none;
   border-radius: 14px;

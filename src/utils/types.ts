@@ -86,12 +86,18 @@ export interface DexState {
     dealConditions: any | null;
     pinnedTokens: any[];
     tonTokens: any[];
+    communityTokens: any[];
     userTokens: any[];
     tokenLabels: any[];
     dexWallet: any | null;
     dexWalletVersion: any | null;
     sendToken: any | null;
     receiveToken: any | null;
+    firstCreatePoolToken: any | null;
+    secondCreatePoolToken: any | null;
+    firstPoolToken: any | null;
+    secondPoolToken: any | null;
+    boostToken: any | null;
     sendAmount: number;
     receiveAmount: number;
     swapMode: string;
@@ -106,6 +112,16 @@ export interface DexState {
     swapActiveTab: SwapActiveTab;
     usersTokensBalances: any[];
     liquidStakingPools: any[];
+    enableCommunityTokens: boolean;
+    isModalOpen: boolean;
+    assetKeys: string[];
+    sendMultiTokens: any | null;
+    receiveMultiToken: any | null;
+    sendMultiValues: any | null;
+    receiveMultiValue: any | null;
+    lastTokenPage: number;
+    lastCommunityPage: number;
+    labelPage: number;
 }
 
 export interface TokensByLabelPayload {

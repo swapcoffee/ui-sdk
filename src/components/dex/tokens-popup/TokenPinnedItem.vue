@@ -1,8 +1,8 @@
 <template>
   <li
-    class="pinned-list__item"
-    :class="{ active_pinned: isActive }"
-    @click="$emit('token-selected', item)"
+      class="pinned-list__item"
+      :class="{ active_pinned: isActive }"
+      @click="$emit('token-selected', item)"
   >
     <img :src="item?.image" alt="Pinned token logo" class="pinned-list__image" />
     <p class="pinned-list__name">
@@ -12,7 +12,6 @@
 </template>
 
 <script lang="ts">
-
 import {useDexStore} from "@/stores/dex";
 
 export default {
@@ -32,8 +31,8 @@ export default {
     },
     isActive() {
       return (
-        (this.mode === 'SEND' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol)) ||
-        (this.mode === 'RECEIVE' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol))
+          (this.mode === 'first' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol)) ||
+          (this.mode === 'second' && (this.dexStore.GET_SEND_TOKEN?.symbol === this.item.symbol || this.dexStore.GET_RECEIVE_TOKEN?.symbol === this.item.symbol))
       );
     }
   }
@@ -45,38 +44,23 @@ export default {
   transition: 0.2s;
   display: flex;
   align-items: center;
-  padding: 5px 12px 5px 6px;
-  border-radius: 20px;
-  border: 1px solid var(--iface-white20);
+  padding: 6px 10px 6px 6px;
+  border-radius: 12px;
+  outline: 1px solid var(--iface-white10);
   cursor: pointer;
+  height: 36px;
 }
 
 .pinned-list__item:hover {
-  background: var(--iface-white20);
-  border: 1px solid var(--iface-white24);
+  background: var(--iface-white10);
 }
 
 .active_pinned {
-  background: var(--iface-white20);
-  border: 1px solid var(--iface-white24);
-}
-
-.theme-light .pinned-list__item {
-  border: 1px solid var(--iface-white10);
-}
-
-.theme-light .pinned-list__item:hover {
   background: var(--iface-white10);
-  border: 1px solid var(--iface-white14);
-}
-
-.theme-light .active_pinned {
-  background: var(--iface-white10);
-  border: 1px solid var(--iface-white14);
 }
 
 .pinned-list__image {
-  margin-right: 8px;
+  margin-right: 6px;
   border-radius: 100px;
   width: 24px;
   height: 24px;

@@ -69,6 +69,7 @@ export interface DefaultSettingsInterface {
     limitDcaVisibility?: boolean
     limitedJettonLists?: Array<string> | null;
     liquiditySourcesList?: Array<SWAP_WIDGET_LIQUIDITY_SOURCES> | null;
+    enableCommunityTokens?: boolean;
     firstTokenAmount?: number
     sendReceiveTokenAddresses?: Array<string> | null;
     payload?: PayloadConnectionInterface
@@ -88,6 +89,7 @@ export const DEFAULTS: DefaultSettingsInterface = {
     limitDcaVisibility: import.meta.env.VITE_DEFAULT_HIDE_LIMIT_DCA,
     limitedJettonLists: null,
     liquiditySourcesList: null,
+    enableCommunityTokens: false,
     firstTokenAmount: 0,
     sendReceiveTokenAddresses: null,
 
@@ -112,4 +114,5 @@ export const PROVIDES = [
     'liquiditySourcesList',
     'firstTokenAmount',
     'sendReceiveTokenAddresses',
+    'enableCommunityTokens',
 ] as const;

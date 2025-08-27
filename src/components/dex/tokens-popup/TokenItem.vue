@@ -107,11 +107,14 @@
                     alt="Token logo in TON blockchain"
                     class="item__image"
                     v-if="item?.image !== 'null'"
+                    @error="imageError"
                 >
                 <img
                     src="../../../assets/dex/default.svg"
                     alt="token without logo"
-                    class="item__image" v-else
+                    class="item__image"
+                    @error="imageError"
+                    v-else
                 >
             </div>
             <div class="item__info">
@@ -173,11 +176,11 @@
     </li>
 </template>
 
-<script>
-import { useDexStore } from "@/stores/dex/index.ts"
+<script lang="ts">
+import { useDexStore } from "@/stores/dex"
 import methodsMixins from "@/mixins/methodsMixins.ts";
 import InterfaceTag from "@/components/ui/InterfaceTag.vue";
-import UpPriceArrowIcon from '@/assets/dex/icons/UpPriceArrowIcon.vue';
+import UpPriceArrowIcon from "@/assets/dex/icons/UpPriceArrowIcon.vue";
 import DownPriceArrowIcon from '@/assets/dex/icons/DownPriceArrowIcon.vue';
 import LiquidityIcon from '@/assets/dex/icons/LiquidityIcon.vue';
 import HoldersIcon from '@/assets/dex/icons/HoldersIcon.vue';
@@ -201,7 +204,8 @@ export default {
     inject: [
         'pinTokenHandler',
         'unpinTokenHandler',
-        'tokenRemovedHandler'
+        'tokenRemovedHandler',
+        'enableCommunityTokens'
     ],
     mixins: [methodsMixins, computedMixins],
     props: {
@@ -265,7 +269,6 @@ export default {
     },
 	data() {
 		return {
-			activeTags: [],
 		}
 	},
     computed: {
@@ -278,7 +281,7 @@ export default {
             }
         },
         showAsImported() {
-            const addCommunity = this.dexStore.GET_COMMUNITY_TOKENS_SETTING ?? false
+            const addCommunity = this.enableCommunityTokens ?? false
             const isCommunity = this.item?.verification === 'COMMUNITY'
             const isImported = this.item?.imported === true
 
@@ -333,21 +336,18 @@ export default {
         },
 		getTokenPrice() {
 			let value = this.item?.price_usd
-			if (value) {
-				if (value >= 1000) {
-					let filteredNum = this.prettyNumber(value, 2)
-					return `$${filteredNum}`
-				} else if (Number.isInteger(value)) {
-					return `$${value}`
-				} else if (Number(value.toFixed(2)) > 0.01) {
-					return `$${value.toFixed(2)}`
-				} else if (Number(value.toFixed(4)) > 0.0001) {
-					return `$${value.toFixed(4)}`
-				} else {
-					return `$${value.toFixed(4)}`
-				}
+			if (!value || value === 0) return `$0`
+
+			if (value >= 1000) {
+				let filteredNum = this.prettyNumber(value, 2)
+				return `$${filteredNum}`
+			} else if (Number(value.toFixed(3)) >= 0.001) {
+				const formatted = this.formatWithoutRounding(value, this.getPricePrecision(value))
+				return `$${formatted}`
+			} else if (value < 1) {
+				return this.getSmallAmount(value)
 			} else {
-				return `$0`
+				return `$${value ?? 0}`
 			}
 		},
 		getTotalPrice() {
@@ -491,11 +491,8 @@ export default {
             ]
             let findItem = staticTokens.find((find) => find === item?.address)
             return !!findItem
-        }
+        },
     },
-	mounted() {
-		this.findLabels()
-	}
 }
 </script>
 

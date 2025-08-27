@@ -219,9 +219,15 @@ export default {
         const usdtAddress = "EQCxE6mUtQJKFnGfaROTKOt1lZbDiiX1kCixRv7Nw2Id_sDs";
         const cesAddress = "EQCl0S4xvoeGeFGijTzicSA8j6GiiugmJW5zxQbZTUntre-1";
 
+        let limitedList = [];
         if (this.limitedJettonLists?.length > 0) {
-          if (!this.limitedJettonLists.includes(usdtAddress)) this.limitedJettonLists.push(usdtAddress);
-          if (!this.limitedJettonLists.includes(cesAddress)) this.limitedJettonLists.push(cesAddress);
+          // Create a copy to avoid mutating the injected prop
+          limitedList = [...this.limitedJettonLists];
+          // Ensure USDT and CES are included in the limited list
+          if (!limitedList.includes(usdtAddress)) limitedList.push(usdtAddress);
+          if (!limitedList.includes(cesAddress)) limitedList.push(cesAddress);
+          // Remove any duplicates that might exist
+          limitedList = [...new Set(limitedList)];
         }
 
         this.toncoinData = await tokenService.getTokenByAddress(toncoinAddress);
@@ -229,7 +235,7 @@ export default {
         let res;
         let tokens = [];
 
-        const hasLimitedList = !!this.limitedJettonLists?.length;
+        const hasLimitedList = limitedList.length > 0;
 
         if (!hasLimitedList) {
           res = await tokenService.getTokenListV2({ page: 1, size: 50 });
@@ -243,7 +249,7 @@ export default {
             }));
           }
         } else {
-          res = await tokenService.getTokensByAddress(this.limitedJettonLists);
+          res = await tokenService.getTokensByAddress(limitedList);
           if (res) {
             tokens = res.map(item => ({
               ...item,
@@ -281,7 +287,7 @@ export default {
         }
 
         const formattedLimitedJettons = [
-          ...new Set([...(this.sendReceiveTokenAddresses ?? []), ...(this.limitedJettonLists ?? [])])
+          ...new Set([...(this.sendReceiveTokenAddresses ?? []), ...limitedList])
         ].map(t => this.toRawAddress(t));
 
         const finalTokens = preparedTokens.map(t => ({
@@ -316,27 +322,33 @@ export default {
     checkImportTokens(tokens) {
       let importedToken = JSON.parse(localStorage.getItem('importTokens'));
       if (importedToken) {
+        // Get existing addresses to prevent duplicates
+        const existingAddresses = new Set(tokens.map(token => token.address));
+
         importedToken.forEach((item) => {
-          tokens.unshift({
-            address: item?.address,
-            name: item?.name,
-            symbol: item?.symbol,
-            decimals: item?.decimals,
-            image: item?.image,
-            trust_score: 0,
-            imported: item?.imported,
-            balance: item?.balance,
-            tvl: 0,
-            id: null,
-            price_usd: 0,
-            price_change_24h: 0,
-            holders_count: 0,
-            external_id: null,
-            stacking_pool_id: null,
-            stacking_pool: null,
-            last_updated_at: null,
-            labels: []
-          });
+          // Only add if the address doesn't already exist
+          if (item?.address && !existingAddresses.has(item.address)) {
+            tokens.unshift({
+              address: item?.address,
+              name: item?.name,
+              symbol: item?.symbol,
+              decimals: item?.decimals,
+              image: item?.image,
+              trust_score: 0,
+              imported: item?.imported,
+              balance: item?.balance,
+              tvl: 0,
+              id: null,
+              price_usd: 0,
+              price_change_24h: 0,
+              holders_count: 0,
+              external_id: null,
+              stacking_pool_id: null,
+              stacking_pool: null,
+              last_updated_at: null,
+              labels: []
+            });
+          }
         });
       }
       return tokens;
@@ -347,6 +359,11 @@ export default {
 
       return saveFirst.concat(saveSecond)
           .filter((obj, index, self) => {
+            // For tokens, use address as the primary unique identifier
+            // Also keep the existing id-based logic as fallback
+            if (obj?.address) {
+              return index === self.findIndex((t) => t?.address === obj.address);
+            }
             return obj?.id == null || index === self.findIndex((t) => t?.id === obj?.id);
           });
     },

@@ -4,15 +4,17 @@
       {{ title }}
     </li>
     <TokenItem
-      v-for="(item, index) in stakeItems"
-      :key="index"
-      :item="item"
-      :isStakingPage="isStakingPage"
-      :userPinnedTokens="userPinnedTokens"
-      :userUnpinnedTokens="userUnpinnedTokens"
-      :tonPrice="tonPrice"
-      :class="{ active_item: isActiveItem(item) }"
-      @click="$emit('chooseToken', item)"
+        v-for="(item, index) in stakeItems"
+        :key="index"
+        :item="item"
+        :isStakingPage="isStakingPage"
+        :userPinnedTokens="userPinnedTokens"
+        :userUnpinnedTokens="userUnpinnedTokens"
+        :tonPrice="tonPrice"
+        :isLastItem="index === stakeItems.length - 1"
+        :totalItems="stakeItems.length"
+        :class="{ active_item: isActiveItem(item) }"
+        @click="chooseTokenHandler(item)"
     />
   </ul>
 </template>
@@ -26,6 +28,7 @@ export default {
   components: {
     TokenItem,
   },
+  inject: ['chooseTokenHandler'],
   props: {
     stakeItems: {
       type: Array,
@@ -48,8 +51,8 @@ export default {
   },
   methods: {
     isActiveItem(item) {
-      return this.mode === 'SEND' && this.dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
-        this.mode === 'RECEIVE' && this.dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol;
+      return this.mode === 'first' && this.dexStore.GET_SEND_TOKEN?.symbol === item.symbol ||
+          this.mode === 'second' && this.dexStore.GET_RECEIVE_TOKEN?.symbol === item.symbol;
     }
   }
 };

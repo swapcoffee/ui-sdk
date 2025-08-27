@@ -104,7 +104,7 @@ export default {
             cancelAction: () => {}
 		}
 	},
-	inject: ['updateWalletInfo'],
+	inject: ['updateWalletInfo', 'limitedJettonLists', 'enableCommunityTokens'],
     data() {
         return {
             modals: {

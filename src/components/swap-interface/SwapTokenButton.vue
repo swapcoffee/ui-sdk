@@ -5,7 +5,14 @@
             :class="{padding_large: !canTokenChange}"
             @click.stop="handleTokenClick"
         >
-            <img :src="token?.image" alt="" class="token-img" @error="imageError">
+            <img :src="token?.image" alt="" class="token-img" @error="imageError" v-if="token?.image !== 'null'">
+            <img
+              src="@/assets/dex/default.svg"
+              alt="token without logo"
+              class="item__image"
+              @error="imageError"
+              v-else
+          >
             {{ token?.symbol }}
             <ChevronRightIcon
                 v-if="canTokenChange"
@@ -73,9 +80,6 @@ export default {
         }
     },
     methods: {
-        imageError() {
-            // Handle image loading error if needed
-        },
         handleTokenClick() {
             if (this.updateTokenModalVisible) {
                 this.updateTokenModalVisible(this.assetKey, 'tokens-list');

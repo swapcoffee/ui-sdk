@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia';
-import {DexState, SwapActiveTab, TokensByLabelPayload} from "@/utils/types";
+import type {DexState, TokensByLabelPayload} from "@/utils/types";
+import { SwapActiveTab } from "@/utils/types";
 
 export const useDexStore = defineStore('dex', {
 	state: (): DexState => ({
 		dealConditions: null,
 		pinnedTokens: [],
 		tonTokens: [],
+		communityTokens: [],
 		userTokens: [],
 		tokenLabels: [],
 		dexWallet: null,
@@ -52,6 +54,10 @@ export const useDexStore = defineStore('dex', {
 		sendMultiValues: null,
 		receiveMultiValue: null,
 		liquidStakingPools: [],
+		enableCommunityTokens: false,
+		lastTokenPage: 1,
+		lastCommunityPage: 1,
+		labelPage: 1,
 	}),
 
 	actions: {
@@ -163,6 +169,18 @@ export const useDexStore = defineStore('dex', {
 		DEX_LIQUID_STAKING_POOLS(item: any[]) {
 			this.liquidStakingPools = item;
 		},
+		DEX_COMMUNITY_TOKENS(item: any[]) {
+			this.communityTokens = item;
+		},
+		DEX_LAST_TOKEN_PAGE(page: number) {
+			this.lastTokenPage = page;
+		},
+		DEX_LAST_COMMUNITY_PAGE(page: number) {
+			this.lastCommunityPage = page;
+		},
+		DEX_LABEL_PAGE(page: number) {
+			this.labelPage = page;
+		},
 	},
 	getters: {
 		GET_TOKENS_POPUP_STATE: (state) => state.tokensPopupState,
@@ -193,5 +211,9 @@ export const useDexStore = defineStore('dex', {
 		GET_SEND_MULTI_VALUES: (state) => state.sendMultiValues,
 		GET_RECEIVE_MULTI_VALUE: (state) => state.receiveMultiValue,
 		GET_LIQUID_STAKING_POOLS: (state) => state.liquidStakingPools,
+		GET_COMMUNITY_TOKENS: (state) => state.communityTokens,
+		GET_LAST_TOKEN_PAGE: (state) => state.lastTokenPage,
+		GET_LAST_COMMUNITY_PAGE: (state) => state.lastCommunityPage,
+		GET_LABEL_PAGE: (state) => state.labelPage,
 	},
 });

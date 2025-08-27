@@ -44,6 +44,8 @@
     "@ton/crypto": "^3.2.0",
     "@ton/ton": "^13.5.1",
     "@tonconnect/ui": "^2.0.5",
+    "bignumber.js": "^9.3.1",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
     "lottie-web": "^5.12.2",
     "pinia": "^3.0.1",
     "scroll-lock": "^2.1.5",
