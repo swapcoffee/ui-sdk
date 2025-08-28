@@ -76,20 +76,13 @@ export function normalizeMultichainAddress(address: string, targetChain: string,
 }
 
 export function toAbsoluteValue(number: string | number, decimals: number): bigint {
-    // Convert to string to handle decimal places precisely
     const numberStr = number.toString()
-
-    // Split the number into integer and decimal parts
     const [integerPart, decimalPart = ""] = numberStr.split(".")
-
-    // Calculate how many zeros to add
     const zerosToAdd = Number(decimals) - decimalPart.length
 
     if (zerosToAdd >= 0) {
-        // If we need to add zeros (or exactly the right number of decimal places)
         return BigInt(integerPart + decimalPart + "0".repeat(zerosToAdd))
     } else {
-        // If we have more decimal places than needed, we need to truncate
         return BigInt(integerPart + decimalPart.slice(0, Number(decimals)))
     }
 }

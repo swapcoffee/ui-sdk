@@ -51,9 +51,9 @@ function setRequestInterval(trInfo: any) {
 	}, 5_000)
 }
 
-function setTransactionParams(dealCondition: DealConditions, trInfo: any) {
+function setTransactionParams(paths, trInfo) {
 	let cashback = false
-	let messages = setTransactionMessage(dealCondition, cashback, trInfo.transactions)
+	let messages = setTransactionMessage(paths, cashback, trInfo.transactions)
 
 	return {
 		validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
@@ -61,10 +61,10 @@ function setTransactionParams(dealCondition: DealConditions, trInfo: any) {
 	}
 }
 
-async function sendTransaction(tonConnectUi: TonConnectUi, transaction: any) {
+async function sendTransaction(tonConnectUi, transaction) {
 	try {
 		await tonConnectUi.sendTransaction({
-            validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
+			validUntil: Math.floor(Date.now() / 1000) + 60, // 60 sec
 			messages: [
 				{
 					address: transaction.address,
@@ -192,16 +192,17 @@ export async function dexTransaction({
 		dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
 
         try {
-       //      await tonConnectUi.sendTransaction(setTransactionParams(dealConditions, trInfo));
+            const transaction = await tonConnectUi.sendTransaction(setTransactionParams(dealConditions.paths, trInfo));
+
+			if (transaction) {
+				const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
+				transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
+				setRequestInterval(trInfo);
+			}
         } catch (e) {
             tonConnectUi.closeModal('action-cancelled');
+			throw e;
         }
-
-        const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
-
-		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
-
-        setRequestInterval(trInfo);
 
     } catch (err) {
         throw err;
@@ -218,7 +219,8 @@ export async function multiTransaction({
 										   slippage,
 										   tonConnectUi,
 										   trackingData,
-										   mevProtection = false
+										   mevProtection = false,
+										   customFeeSettings
 									   }: {
 	updateProcessing: UpdateProcessingFunction;
 	compareAsset: CompareAsset;
@@ -228,21 +230,17 @@ export async function multiTransaction({
 	tonConnectUi: TonConnectUi;
 	trackingData: TrackingData;
 	mevProtection?: boolean;
+	customFeeSettings?: CustomFeeSettings;
 }) {
 	try {
 		updateProcessing(true, 'multi');
-		dispatchSdkEvent(ReadonlySdkEvent.MULTI_SWAP_STARTED, {
-			tokens: Array.from(compareAsset.tokens.values()),
-			amounts: compareAsset.amounts
-		});
 		await multiCompare(compareAsset);
-
 		let paths: any[] = []
 		dealConditions.routes.forEach((item: any) => {
 			paths.push(...item.paths)
 		})
 
-		const trInfo = await prebuildTransaction(paths, wallet?.address, slippage, mevProtection)
+		const trInfo = await prebuildTransaction(paths, wallet?.address, slippage, mevProtection, customFeeSettings)
 
 		const transactionDataToSave = {
 			...dealConditions,
@@ -258,19 +256,19 @@ export async function multiTransaction({
 		localStorage.setItem('transactionInfo', JSON.stringify(transactionDataToSave));
 
 		try {
-			// await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
+			const transaction = await tonConnectUi.sendTransaction(setTransactionParams(paths, trInfo));
 
-			dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
+			if (transaction) {
+				const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
+				transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
+				setRequestInterval(trInfo);
+			}
 		} catch (e) {
 			tonConnectUi.closeModal('action-cancelled');
+			throw e;
 		}
 
-		const transactionStatus = (await dexService.getTransactions(trInfo?.route_id));
-		transactionStore?.SAVE_SWAP_TRANSACTION_STATUS(transactionStatus);
-
-		setRequestInterval(trInfo);
-
-		// trackingTransaction(transactionStatus, trackingData);
+		dispatchSdkEvent(ReadonlySdkEvent.TRANSACTIONS_BUILT, trInfo)
 	} catch (err) {
 		throw err;
 	} finally {
@@ -278,7 +276,7 @@ export async function multiTransaction({
 	}
 }
 
-async function prebuildTransaction(paths: any[], walletAddress: string, slippage: number, mevProtection: boolean) {
+async function prebuildTransaction(paths: any[], walletAddress: string, slippage: number, mevProtection: boolean, customFeeSettings?: CustomFeeSettings) {
 	try {
 		const sender = Address.parseRaw(walletAddress).toString();
 		const referralName = JSON.parse(sessionStorage.getItem('referral_name') || 'null');
@@ -292,7 +290,8 @@ async function prebuildTransaction(paths: any[], walletAddress: string, slippage
 			sender,
 			totalSlippage,
 			referralName,
-			mevProtection
+			mevProtection,
+			customFeeSettings
 		)
 		return res
 	} catch(err) {

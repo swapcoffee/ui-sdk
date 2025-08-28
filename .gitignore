@@ -134,3 +134,6 @@ dist
 /.idea/swap-sdk.iml
 /.idea/vcs.xml
 /.idea/
+/.cursor/
+/.cursor
+.cursor

@@ -41,7 +41,7 @@ export default {
       tooltipList: [],
     };
   },
-  inject: ['tokenValues'],
+  inject: ['tokenValues', 'customFeeSettings'],
   computed: {
     dexStore() {
       return useDexStore();
@@ -84,6 +84,11 @@ export default {
           textColor: 'green',
           display: true
         },
+        {
+          title: 'Integrator Fee',
+          text: '≈ ' + this.partnerFee + ' TON',
+          display: Number(this.partnerFee) !== 0
+        }
       ]
 
       return details.filter(item => item && item?.display !== false && item?.display !== undefined)
@@ -93,6 +98,34 @@ export default {
         return this.dexStore.GET_CALCULATED_PI;
       }
       return 0;
+    },
+    partnerFee() {
+      const feeSettings = this.customFeeSettings;
+      if (!feeSettings) return 0;
+
+      const dealConditions = this.dexStore.GET_DEAL_CONDITIONS;
+      if (!dealConditions) return 0;
+
+      let transactionAmount = 0;
+
+      if (dealConditions.input_amount) {
+        transactionAmount = dealConditions.input_amount;
+      } else if (dealConditions.routes?.length) {
+        transactionAmount = dealConditions.routes.reduce(
+            (sum, route) => sum + (route.input_amount || 0),
+            0
+        );
+      }
+
+      if (!transactionAmount) return 0;
+
+      const percentageFee = (transactionAmount * feeSettings.percentage_fee) / 1_000_000;
+      const minFee = Number(feeSettings.min_percentage_fee_fixed);
+      const maxFee = Number(feeSettings.max_percentage_fee_fixed);
+
+      const result = Math.min(Math.max(percentageFee, minFee), maxFee);
+
+      return this.formatTon(result);
     },
     displayPriceImpact() {
       let pi = this.getPriceImpact;
@@ -181,6 +214,11 @@ export default {
     toggleDetails() {
       this.showMore = !this.showMore;
       const walletAddress = this.dexStore.GET_DEX_WALLET?.address;
+    },
+    formatTon(nanotons, decimals = 9) {
+      const divisor = Math.pow(10, decimals);
+      const tons = parseFloat(nanotons) / divisor;
+      return tons.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     },
   },
 };

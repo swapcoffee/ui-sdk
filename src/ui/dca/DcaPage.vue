@@ -343,7 +343,6 @@ export default {
 
             if (native) {
                 this.limitStore.LIMIT_FIRST_TOKEN(native)
-                // this.getSupportedReceiveTokens(native)
             }
             if (usdt) this.limitStore.LIMIT_SECOND_TOKEN(usdt)
         },
@@ -408,7 +407,6 @@ export default {
                 if (!this.dexStore.GET_DEX_WALLET) {
                     this.tonConnectUi.openModal()
                 } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
-                    //TODO: SWAP-COFFEE LINK TO STAKING // this.$router.push({name: 'Stake', params: {name: 'CES'}})
                 } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                     await createStrategiesWallet(this.updateProcessing)
                     this.successModalState.mode = 'deploy-smart'
@@ -486,7 +484,6 @@ export default {
         },
         'limitStore.GET_LIMIT_FIRST_TOKEN': {
             handler() {
-                // this.clearValues()
                 if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
                     this.getSupportedReceiveTokens(this.limitStore.GET_LIMIT_FIRST_TOKEN?.address)
                 }
@@ -494,7 +491,6 @@ export default {
         },
         'limitStore.GET_LIMIT_SECOND_TOKEN': {
             handler() {
-                // this.clearValues()
                 if (this.limitStore.GET_LIMIT_SECOND_TOKEN) {
                     this.getSupportedSendTokens(this.limitStore.GET_LIMIT_SECOND_TOKEN?.address)
                 }

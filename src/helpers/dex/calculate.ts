@@ -1,7 +1,7 @@
 import { Address } from '@ton/core';
 
-export function setTransactionMessage(data, cashback, transactions) {
-    if (data.paths.length > 0) {
+export function setTransactionMessage(paths, cashback, transactions) {
+    if (paths.length > 0) {
         let array = [];
 
         for (let tx of transactions) {

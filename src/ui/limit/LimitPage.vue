@@ -460,7 +460,6 @@ export default {
                 if (!this.dexStore.GET_DEX_WALLET) {
                     this.tonConnectUi.openModal()
                 } else if (this.interfaceStatus === 'NOT_ELIGIBLE') {
-                    // this.$router.push({name: 'Stake', params: {name: 'CES'}})
                 } else if (this.interfaceStatus === 'NOT_STRATEGIES_WALLET') {
                     await createStrategiesWallet(this.updateProcessing)
                     this.successModalState.mode = 'deploy-smart'
@@ -601,7 +600,6 @@ export default {
         'limitStore.GET_LIMIT_FIRST_TOKEN': {
             handler() {
                 this.rateEdited = false
-                // this.clearValues()
                 if (this.limitStore.GET_LIMIT_FIRST_TOKEN) {
                     this.getSupportedReceiveTokens(this.limitStore.GET_LIMIT_FIRST_TOKEN?.address)
                 }

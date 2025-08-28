@@ -50,24 +50,15 @@ import {
 import resetLimitTokens from "@/mixins/resetLimitTokens.js";
 import numberFormatting from "@/mixins/numberFormatting.ts";
 import SwapSettingsModal from "@/components/modals/SwapSettingsModal.vue";
-import {defineComponent} from "vue";
 import {useDexStore} from "@/stores/dex";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import {useTransactionStore} from "@/stores/transaction";
-import {dispatchSdkEvent, ReadonlySdkEvent} from "@/helpers/events";
-import type { DefineComponent } from 'vue';
 
 export default {
     name: "MultiSwapPage",
     components: {SwapSettingsModal, DexSettings, TokensPopup, SwapInterface, MevSettingPopup, SwapHeader, TransactionStatusModal},
     mixins: [resetLimitTokens, numberFormatting],
 	props: {
-		tonConnectUi: {
-			type: Object,
-			default() {
-				return {};
-			},
-		},
 		screenSize: {
 			type: Number,
 			required: true
@@ -104,7 +95,7 @@ export default {
             cancelAction: () => {}
 		}
 	},
-	inject: ['updateWalletInfo', 'limitedJettonLists', 'enableCommunityTokens'],
+	inject: ['updateWalletInfo', 'limitedJettonLists', 'enableCommunityTokens', 'tonConnectUi', 'customFeeSettings'],
     data() {
         return {
             modals: {
@@ -199,7 +190,6 @@ export default {
             return this.dexStore.sendMultiTokens !== null && this.dexStore.receiveMultiToken !== null && this.allAmountsReady && this.dexStore.dealConditions === null;
         },
         firstLoading() {
-            // Перевіряємо активний таб через store замість router
             return this.dexStore.dealConditions === null && this.dexStore.tonTokens.length === 0
         },
         allAmountsReady() {
@@ -347,12 +337,13 @@ export default {
 		    let data = {
 			    updateProcessing: this.updateProcessing,
 			    compareAsset: this.assetForCompare,
-			    wallet: this.dexStore.dexWallet,
-			    dealConditions: this.dexStore.dealConditions,
+			    wallet: this.dexStore.GET_DEX_WALLET,
+			    dealConditions: this.dexStore.GET_DEAL_CONDITIONS,
 			    slippage: this.dexSettingsStore.GET_SLIPPAGE,
 			    tonConnectUi: this.tonConnectUi,
 			    trackingData: this.trackingData,
-			    mevProtection: false
+			    mevProtection: false,
+			    customFeeSettings: this.customFeeSettings
 		    }
 
 			let total_usd = 0
@@ -403,7 +394,6 @@ export default {
             }
 
             if (availableIndex >= this.dexStore.assetKeys.length) {
-                console.error('Достигнуто максимальное количество ассетов');
                 return;
             }
 
@@ -514,7 +504,7 @@ export default {
 					this.successModalState.show = true
 			    }
 		    } catch(err) {
-			    // юзер отказался от транзакции, ничего не делаем
+			        throw err
             }
         },
         async showTonconnect() {
@@ -544,12 +534,12 @@ export default {
         async updateRoute() {
             SwapRouting.refreshAll(this.refreshData)
 
-            if (this.dexStore.dexWallet && !this.balanceUpdateCooldown) {
+            if (this.dexStore.GET_DEX_WALLET && !this.balanceUpdateCooldown) {
                 await this.updateBalances()
             }
         },
         async updateBalances() {
-            if (!this.dexStore.dexWallet || this.balanceUpdateCooldown) {
+            if (!this.dexStore.GET_DEX_WALLET || this.balanceUpdateCooldown) {
                 return
             }
 
@@ -588,7 +578,7 @@ export default {
 	    },
     },
     mounted() {
-        if (this.dexStore.tonTokens.length > 0 && (!this.dexStore.sendMultiTokens || this.dexStore.sendMultiTokens?.size === 0)) {
+        if (this.dexStore.GET_TON_TOKENS.length > 0 && (!this.dexStore.GET_SEND_MULTI_TOKENS || this.dexStore.GET_SEND_MULTI_TOKENS?.size === 0)) {
             this.setDefaultAsset()
         }
 
@@ -610,18 +600,16 @@ export default {
         },
         'dexStore.tonTokens': {
             handler() {
-                if (this.dexStore.tonTokens.length > 0 && (!this.dexStore.sendMultiTokens || this.dexStore.sendMultiTokens?.size === 0)) {
+                if (this.dexStore.GET_TON_TOKENS.length > 0 && (!this.dexStore.GET_SEND_MULTI_TOKENS || this.dexStore.GET_SEND_MULTI_TOKENS?.size === 0)) {
                     this.setDefaultAsset()
                 }
             }
         },
         'dexStore.dealConditions': {
             handler() {
-                if (this.dexStore.dealConditions !== null) {
-                    this.tokenValues.receive = this.formattedAmountNumber(this.dexStore.dealConditions?.total_output_amount)
-                    // this.dexStore.dealConditions?.total_output_amount > 0
-                    //     ? this.tokenValues.receive = this.dexStore.dealConditions.total_output_amount.toFixed(4)
-                    //     : this.tokenValues.receive = '0'
+                if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
+                    this.tokenValues.receive = this.formattedAmountNumber(this.dexStore.GET_DEAL_CONDITIONS?.total_output_amount)
+
                 } else {
                     this.tokenValues.receive = '0'
                 }
@@ -635,7 +623,7 @@ export default {
 
                 SwapRouting.multiTokensWatcher(this.tokensWatcherData)
 
-	            if (this.dexStore.dealConditions !== null) {
+	            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
 		            this.dexStore.DEX_DEAL_CONDITIONS(null);
 	            }
             }
@@ -648,7 +636,7 @@ export default {
 
                 SwapRouting.multiTokensWatcher(this.tokensWatcherData)
 
-	            if (this.dexStore.dealConditions !== null) {
+	            if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
 		            this.dexStore.DEX_DEAL_CONDITIONS(null);
 	            }
             }
@@ -657,7 +645,7 @@ export default {
             handler() {
                 SwapRouting.multiAmountsWatcher(this.amountsWatcherData)
 
-                if (this.dexStore.dealConditions !== null) {
+                if (this.dexStore.GET_DEAL_CONDITIONS !== null) {
                     this.dexStore.DEX_DEAL_CONDITIONS(null);
                 }
             },

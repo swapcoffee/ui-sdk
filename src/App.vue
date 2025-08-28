@@ -23,7 +23,8 @@ import SwapWidget from "@/ui/SwapWidget.vue";
 
 import {tonApiService, tokenService} from "@/api/coffeeApi/services";
 
-import { DEFAULT_ADDRESSES } from "@/utils/consts.ts";
+import {DEFAULT_ADDRESSES, ReadonlySdkEvent} from "@/utils/consts.ts";
+import {dispatchSdkEvent} from "@/helpers/events";
 
 export default {
   name: "App",
@@ -100,7 +101,6 @@ export default {
           };
 
           this.dexStore.DEX_WALLET(account);
-          // this.getContractVersion(walletMeta.address);
           this.dexStore.DEX_PROOF_VERIFICATION(verify);
           this.getUserSettings();
         } else {
@@ -221,12 +221,9 @@ export default {
 
         let limitedList = [];
         if (this.limitedJettonLists?.length > 0) {
-          // Create a copy to avoid mutating the injected prop
           limitedList = [...this.limitedJettonLists];
-          // Ensure USDT and CES are included in the limited list
           if (!limitedList.includes(usdtAddress)) limitedList.push(usdtAddress);
           if (!limitedList.includes(cesAddress)) limitedList.push(cesAddress);
-          // Remove any duplicates that might exist
           limitedList = [...new Set(limitedList)];
         }
 
@@ -322,11 +319,9 @@ export default {
     checkImportTokens(tokens) {
       let importedToken = JSON.parse(localStorage.getItem('importTokens'));
       if (importedToken) {
-        // Get existing addresses to prevent duplicates
         const existingAddresses = new Set(tokens.map(token => token.address));
 
         importedToken.forEach((item) => {
-          // Only add if the address doesn't already exist
           if (item?.address && !existingAddresses.has(item.address)) {
             tokens.unshift({
               address: item?.address,
@@ -359,8 +354,6 @@ export default {
 
       return saveFirst.concat(saveSecond)
           .filter((obj, index, self) => {
-            // For tokens, use address as the primary unique identifier
-            // Also keep the existing id-based logic as fallback
             if (obj?.address) {
               return index === self.findIndex((t) => t?.address === obj.address);
             }
@@ -507,9 +500,6 @@ export default {
         this.dexStore.DEX_TON_TOKENS(tokensWithBalance)
         return array
       } catch (err) {
-        // sleep 1 seconds and retry
-        // await new Promise((resolve) => setTimeout(resolve, 1000))
-        // return await this.getTonJettons(wallet)
       }
     },
     checkEligibleFromStorage() {
@@ -596,9 +586,7 @@ export default {
       handler() {
         let tonConnectStorage = JSON.parse(localStorage.getItem('ton-connect-storage_bridge-connection'))
         if (this.dexStore.GET_DEX_WALLET !== null && this.dexStore.GET_PROOF_VERIFICATION) {
-          // if (this.loadInfoCount === 0) {
           this.getTonTokens()
-          // }
           if (tonConnectStorage) {
             this.loadInfoCount++
           }
@@ -806,8 +794,6 @@ input[type="number"]::-webkit-inner-spin-button) {
   width: 1280px;
   margin: 0 auto;
 }
-
-/* CUSTOM SCROLLBAR */
 
 :deep(custom-scroll::-webkit-scrollbar) {
   transition: .2s;

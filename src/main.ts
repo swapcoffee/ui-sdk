@@ -10,10 +10,7 @@ import {
     DEFAULTS,
     type DefaultSettingsInterface,
     PROVIDES,
-    REQUIRED_FOR_MODE, SWAP_WIDGET_LIQUIDITY_SOURCES, SWAP_WIDGET_LOCALE, SWAP_WIDGET_THEME,
-    // SWAP_WIDGET_LOCALE,
-    // SWAP_WIDGET_THEME,
-    // SWAP_WIDGET_LIQUIDITY_SOURCES
+    REQUIRED_FOR_MODE, SWAP_WIDGET_LIQUIDITY_SOURCES, SWAP_WIDGET_LOCALE, SWAP_WIDGET_THEME
 } from "@/settings-config.ts";
 
 import {clickOutside} from "@/directives/click-outside.ts";
@@ -92,7 +89,7 @@ createSwapWidget('#swap-widget-component', {
         "url": "https://swap.coffee/tonconnect-manifest.json",
     },
     tonConnectUi: tonConnectUiInstance,
-//    widgetReferral: "evaa",
+    widgetReferral: "evaa",
     firstTokenAmount: 50,
     limitDcaVisibility: true,
     liquiditySourcesList: [
@@ -102,9 +99,9 @@ createSwapWidget('#swap-widget-component', {
     enableCommunityTokens: true,
     sendReceiveTokenAddresses: ["0:0000000000000000000000000000000000000000000000000000000000000000", "EQBsosmcZrD6FHijA7qWGLw5wo_aH8UN435hi935jJ_STORM"],
     // limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE", "EQC-tdRjjoYMz3MXKW4pj95bNZgvRyWwZ23Jix3ph7guvHxJ", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
-    // customFeeSettings: {
-    //     percentage_fee: 3000,
-    //     min_percentage_fee_fixed: '500000000',
-    //     max_percentage_fee_fixed: '4000000000',
-    // },
+    customFeeSettings: {
+        percentage_fee: 3000,
+        min_percentage_fee_fixed: '500000000',
+        max_percentage_fee_fixed: '4000000000',
+    },
 });

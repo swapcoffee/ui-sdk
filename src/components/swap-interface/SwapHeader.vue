@@ -48,6 +48,7 @@ import SettingsIcon from "@/assets/earn/swap-interface/SettingsIcon.vue";
 import TradeNav from "@/components/navigation/TradeNav.vue";
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
+import {useDcaStore} from "@/stores/dca";
 import {useDexSettingsStore} from "@/stores/dex/settings.ts";
 import computedMixins from "@/mixins/computedMixins.ts";
 import {SwapActiveTab} from "@/utils/types.ts";
@@ -98,6 +99,9 @@ export default {
         dexSettingsStore() {
           return useDexSettingsStore()
         },
+        dcaStore() {
+          return useDcaStore()
+        },
         getSettingsText() {
             const activeTab = this.dexStore.GET_SWAP_ACTIVE_TAB;
             const slippage = this.dexSettingsStore.GET_SLIPPAGE;
@@ -142,6 +146,65 @@ export default {
         }
         this.$emit('updateBalances')
       },
+
+      switchToTab(tab: SwapActiveTab) {
+        this.clearCurrentTabValues();
+
+        this.dexStore.SET_SWAP_ACTIVE_TAB(tab);
+      },
+
+      clearCurrentTabValues() {
+        const currentTab = this.dexStore.GET_SWAP_ACTIVE_TAB;
+
+        switch (currentTab) {
+          case SwapActiveTab.Dex:
+            this.clearDexValues();
+            break;
+          case SwapActiveTab.Limit:
+            this.clearLimitValues();
+            break;
+          case SwapActiveTab.DCA:
+            this.clearDcaValues();
+            break;
+          case SwapActiveTab.Multi:
+            this.clearMultiValues();
+            break;
+        }
+      },
+
+      clearDexValues() {
+        const dexStore = useDexStore();
+        dexStore.DEX_SEND_AMOUNT(0);
+        dexStore.DEX_RECEIVE_AMOUNT(0);
+        dexStore.DEX_DEAL_CONDITIONS(null);
+        dexStore.DEX_CALCULATED_PI(null);
+      },
+
+      clearLimitValues() {
+        const limitStore = useLimitStore();
+        limitStore.LIMIT_FIRST_AMOUNT(0);
+        limitStore.LIMIT_SECOND_AMOUNT(0);
+        limitStore.LIMIT_TOKEN_RATE(0);
+      },
+
+      clearDcaValues() {
+        const dcaStore = useDcaStore();
+        const limitStore = useLimitStore();
+
+        dcaStore.DCA_MIN_RANGE(null);
+        dcaStore.DCA_MAX_RANGE(null);
+        dcaStore.DCA_ENABLE_RANGE(false);
+
+        limitStore.LIMIT_FIRST_AMOUNT(0);
+        limitStore.LIMIT_SECOND_AMOUNT(0);
+        limitStore.LIMIT_TOKEN_RATE(0);
+      },
+
+      clearMultiValues() {
+        const dexStore = useDexStore();
+        dexStore.SAVE_SEND_MULTI_VALUES(null);
+        dexStore.SAVE_RECEIVE_MULTI_VALUE(null);
+      }
     }
 }
 </script>
