@@ -89,7 +89,7 @@ export const DEFAULTS: DefaultSettingsInterface = {
     limitDcaVisibility: import.meta.env.VITE_DEFAULT_HIDE_LIMIT_DCA,
     limitedJettonLists: null,
     liquiditySourcesList: null,
-    enableCommunityTokens: false,
+    enableCommunityTokens: import.meta.env.VITE_DEFAULT_ENABLE_COMMUNITY_TOKENS,
     firstTokenAmount: 0,
     sendReceiveTokenAddresses: null,
 
