@@ -75,13 +75,13 @@ export default {
         {
           title: this.$t('dexDetails.economy'),
           text: this.displayProfit,
-          textColor: 'green',
+          textColor: 'green-impact',
           display: true
         },
         {
           title: this.$t('dexNavigation.cashback'),
           text: this.getEstimatedCashbackAndFee.cashback,
-          textColor: 'green',
+          textColor: 'green-impact',
           display: true
         },
         {
@@ -189,11 +189,11 @@ export default {
     getPriceImpactColor() {
       const pi = this.getPriceImpact;
       if (pi <= -5) {
-        return 'red';
+        return 'red-impact';
       } else if (pi <= -1) {
-        return 'yellow';
+        return 'yellow-impact';
       } else {
-        return 'green';
+        return 'green-impact';
       }
     }
   },

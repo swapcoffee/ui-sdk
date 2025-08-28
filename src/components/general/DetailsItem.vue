@@ -4,7 +4,7 @@
             {{ title }}
         </p>
         <p class="dex__value"
-            :style="{color: textColor}"
+            :class="computedTextColor"
         >
             {{ text }}
         </p>
@@ -30,7 +30,12 @@ export default {
     },
     data() {
         return {}
-    }
+    },
+    computed: {
+        computedTextColor() {
+            return this.textColor;
+        }
+    },
 }
 </script>
 
@@ -53,16 +58,16 @@ export default {
     fill: #141414;
 }
 
-.red-impact {
-    color: var(--main-red);
+:global(.red-impact) {
+    color: var(--main-red) !important;
 }
 
-.yellow-impact {
-    color: var(--main-yellow);
+:global(.yellow-impact) {
+    color: var(--main-yellow) !important;
 }
 
-.green-impact {
-    color: var(--main-green);
+:global(.green-impact) {
+    color: var(--main-green) !important;
 }
 
 .dex__value {

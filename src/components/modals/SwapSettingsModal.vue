@@ -392,7 +392,7 @@ export default {
           enabled: this.liquiditySourcesList.includes(item.id),
         }));
 
-        changeLiquiditySources(this.liquiditySourcesList);
+        changeLiquiditySources(this.liquiditySourcesList, true); // Prevent saving during initialization
       }
     },
     localStateUpdate() {

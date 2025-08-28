@@ -9,7 +9,7 @@
           @click="item.action"
       />
       <button class="navigation__select-btn"
-              v-if="navActions.length > filteredNavActions.length"
+              v-if="navActions.length > filteredNavActions.length && screenSize > 576"
               @click="showMore = !showMore"
       >
         <ChevronBottom
@@ -87,9 +87,25 @@ export default {
           : actions.filter((a) => !["limit", "dca"].includes(a.key));
     },
     filteredNavActions() {
-      return this.screenSize > 576
-          ? this.navActions.slice(0, 3)
-          : this.navActions.filter((item) => item.isActive);
+      if (this.screenSize <= 576) {
+        return this.navActions.filter((item) => item.isActive);
+      }
+
+      const firstThree = this.navActions.slice(0, 3);
+
+      const activeItem = this.navActions.find((item) => item.isActive);
+
+      if (firstThree.some(item => item.isActive)) {
+        return firstThree;
+      }
+
+      if (activeItem) {
+        const result = [...firstThree];
+        result[2] = activeItem;   
+        return result;
+      }
+
+      return firstThree;
     }
   },
   methods: {
