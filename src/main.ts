@@ -16,7 +16,7 @@ import {
 import {clickOutside} from "@/directives/click-outside.ts";
 
 import './main.css'
-import {THEME, TonConnectUI} from "@tonconnect/ui";
+// import {THEME, TonConnectUI} from "@tonconnect/ui";
 
 export async function createSwapWidget(selector, options: DefaultSettingsInterface) {
     const cfg = { ...DEFAULTS, ...options };
@@ -59,12 +59,12 @@ const applyTheme = (selector, theme) => {
     widgetElement.classList.add(`theme-${theme}`);
 }
 
-const tonConnectUiInstance = new TonConnectUI({
-    manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
-    uiPreferences: {
-        theme: THEME.DARK,
-    },
-});
+// const tonConnectUiInstance = new TonConnectUI({
+//     manifestUrl: "https://swap.coffee/tonconnect-manifest.json",
+//     uiPreferences: {
+//         theme: THEME.DARK,
+//     },
+// });
 //
 //  export const payload = {
 //      wallet_meta: {
@@ -81,27 +81,27 @@ const tonConnectUiInstance = new TonConnectUI({
 //     payload
 // });
 
-createSwapWidget('#swap-widget-component', {
-    theme:  SWAP_WIDGET_THEME.LIGHT,
-    locale: SWAP_WIDGET_LOCALE.RU,
-    injectionMode: "tonConnect",
-    tonConnectManifest: {
-        "url": "https://swap.coffee/tonconnect-manifest.json",
-    },
-    tonConnectUi: tonConnectUiInstance,
-    widgetReferral: "evaa",
-    firstTokenAmount: 50,
-    limitDcaVisibility: true,
-    liquiditySourcesList: [
-        SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
-        SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
-    ],
-    enableCommunityTokens: true,
-    sendReceiveTokenAddresses: ["0:0000000000000000000000000000000000000000000000000000000000000000", "EQBsosmcZrD6FHijA7qWGLw5wo_aH8UN435hi935jJ_STORM"],
-    // limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE", "EQC-tdRjjoYMz3MXKW4pj95bNZgvRyWwZ23Jix3ph7guvHxJ", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
-    customFeeSettings: {
-        percentage_fee: 3000,
-        min_percentage_fee_fixed: '500000000',
-        max_percentage_fee_fixed: '4000000000',
-    },
-});
+// createSwapWidget('#swap-widget-component', {
+//     theme:  SWAP_WIDGET_THEME.LIGHT,
+//     locale: SWAP_WIDGET_LOCALE.RU,
+//     injectionMode: "tonConnect",
+//     tonConnectManifest: {
+//         "url": "https://swap.coffee/tonconnect-manifest.json",
+//     },
+//     tonConnectUi: tonConnectUiInstance,
+//     widgetReferral: "evaa",
+//     firstTokenAmount: 50,
+//     limitDcaVisibility: true,
+//     liquiditySourcesList: [
+//         SWAP_WIDGET_LIQUIDITY_SOURCES.TONCO,
+//         SWAP_WIDGET_LIQUIDITY_SOURCES.DEDUST,
+//     ],
+//     enableCommunityTokens: true,
+//     sendReceiveTokenAddresses: ["0:0000000000000000000000000000000000000000000000000000000000000000", "EQBsosmcZrD6FHijA7qWGLw5wo_aH8UN435hi935jJ_STORM"],
+//     limitedJettonLists: ["EQBlqsm144Dq6SjbPI4jjZvA1hqTIP3CvHovbIfW_t-SCALE", "EQC-tdRjjoYMz3MXKW4pj95bNZgvRyWwZ23Jix3ph7guvHxJ", "EQAM2KWDp9lN0YvxvfSbI0ryjBXwM70rakpNIHbuETatRWA1", "EQAvlWFDxGF2lXm67y4yzC17wYKD9A0guwPkMs1gOsM__NOT", "EQD0KpcRMh-sKO2z5-vOjgvFjTT58tO-2Nmvxqg5ocFQFtWz"],
+//     customFeeSettings: {
+//         percentage_fee: 3000,
+//         min_percentage_fee_fixed: '500000000',
+//         max_percentage_fee_fixed: '4000000000',
+//     },
+// });
