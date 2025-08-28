@@ -9,7 +9,7 @@
           @click="item.action"
       />
       <button class="navigation__select-btn"
-              v-if="navActions.length > filteredNavActions.length && screenSize > 576"
+              v-if="navActions.length > filteredNavActions.length"
               @click="showMore = !showMore"
       >
         <ChevronBottom
