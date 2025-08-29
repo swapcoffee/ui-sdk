@@ -186,11 +186,11 @@ export default {
       try {
         let wallet = this.dexStore.GET_DEX_WALLET;
         if (!wallet.version) {
-          let res = await tonApiService.getWalletVersion(address);
-          if (res?.version > 0) {
-            wallet.version = res.version;
+          let { data } = await tonApiService.getWalletVersion(address);
+          if (data.version > 0) {
+            wallet.version = data.version;
             this.dexStore.DEX_WALLET(wallet);
-            this.dexStore.DEX_WALLET_VERSION(res.version);
+            this.dexStore.DEX_WALLET_VERSION(data.version);
           }
         }
       } catch (err) {

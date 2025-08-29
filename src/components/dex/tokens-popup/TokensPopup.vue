@@ -35,13 +35,14 @@
               @filter-selected="setActiveFilter"
           />
           <TokenFilterItem
-              v-if="GET_COMMUNITY_TOKENS_SETTING"
+              v-if="GET_COMMUNITY_TOKENS_SETTING && !limitedJettonLists?.length"
               :name="$t('interfaceTag.community')"
               value="community"
               :isActive="activeFilter.name === 'community'"
               @filter-selected="setActiveFilter"
           />
           <TokenFilterItem
+              v-if="!limitedJettonLists?.length"
               v-for="filter in getSortedTokenLabels"
               :key="filter.id"
               :name="getLabelName(filter)"

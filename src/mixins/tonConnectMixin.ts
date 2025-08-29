@@ -152,12 +152,12 @@ export default {
     },
     async getContractVersion(address) {
       try {
-        let wallet = this.GET_DEX_WALLET;
+        let wallet = this.dexStore.GET_DEX_WALLET;
         if (!wallet.version) {
           let res = await tonApiService.getWalletVersion(address);
           if (res?.data?.version > 0) {
             wallet.version = res?.data?.version;
-            this.DEX_WALLET(wallet);
+            this.dexStore.DEX_WALLET(wallet);
             this.dexStore.DEX_WALLET_VERSION(res?.data?.version);
           }
         }

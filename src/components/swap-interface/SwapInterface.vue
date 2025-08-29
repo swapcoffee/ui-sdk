@@ -127,7 +127,7 @@ export default {
     MevPlug
   },
   mixins: [computedMixins],
-  inject: ['tokenValues', 'addNewAsset', 'updateTokenValue', 'updateTokenModalVisible', 'updateTokenPositions', 'isUpdatingBalances'],
+  inject: ['tokenValues', 'addNewAsset', 'updateTokenValue', 'updateTokenModalVisible', 'updateTokenPositions', 'isUpdatingBalances', 'customFeeSettings'],
   provide() {
     return {
       tokenValues: this.tokenValues,
@@ -195,8 +195,10 @@ export default {
     assetButtonCondition() {
       return !(
           (this.dexStore.GET_DEX_WALLET_VERSION === 5 && this.dexStore.GET_SEND_MULTI_TOKENS?.size >= 20) ||
+          (this.customFeeSettings && this.dexStore.GET_DEX_WALLET_VERSION !== 5 && this.dexStore.GET_SEND_MULTI_TOKENS?.size >= 3) ||
           ((!this.dexStore.GET_DEX_WALLET || this.dexStore.GET_DEX_WALLET_VERSION === 4) &&
-              this.dexStore.GET_SEND_MULTI_TOKENS?.size >= 4)
+              this.dexStore.GET_SEND_MULTI_TOKENS?.size >= 4) ||
+          (this.dexStore.GET_SEND_MULTI_TOKENS?.size >= (this.dexStore.GET_TON_TOKENS?.length || 0) - 1)
       )
     },
     infoList() {
