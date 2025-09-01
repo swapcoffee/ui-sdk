@@ -62,10 +62,10 @@
         </div>
       <div
           class="deal__details"
-          v-if="withDcaLimitDetails.length && ((modalState as any).mode === 'limit' || (modalState as any).mode === 'dca')"
+          v-if="(showMore && getTransactionDetails) && ((modalState as any).mode === 'limit' || (modalState as any).mode === 'dca')"
       >
         <ConfirmItemDetail
-            v-for="(detail, index) in withDcaLimitDetails"
+            v-for="(detail, index) in getTransactionDetails"
             :key="index"
             :detail="detail"
         />
@@ -152,6 +152,13 @@ export default {
         },
         limitInfo() {
             return this.transactionStore.GET_LIMIT_TRANSACTION_INFO
+        },
+        getTransactionDetails() {
+            if (this.withDcaLimitDetails.length) {
+                return this.withDcaLimitDetails
+            }
+
+            return this.limitStore.GET_LIMIT_TRANSACTION_DETAILS
         },
         getFirstPosition() {
             if ((this.modalState as any).mode === 'swap' || (this.modalState as any).mode === 'multi' || (this.modalState as any).mode === 'limit' || (this.modalState as any).mode === 'dca') {

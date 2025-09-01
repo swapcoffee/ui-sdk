@@ -95,7 +95,7 @@ export default {
             cancelAction: () => {}
 		}
 	},
-	inject: ['updateWalletInfo', 'limitedJettonLists', 'enableCommunityTokens', 'tonConnectUi', 'customFeeSettings'],
+	inject: ['updateWalletInfo', 'limitedJettonLists', 'enableCommunityTokens', 'tonConnectUi', 'customFeeSettings', 'widgetReferral'],
     data() {
         return {
             modals: {
@@ -343,7 +343,8 @@ export default {
 			    tonConnectUi: this.tonConnectUi,
 			    trackingData: this.trackingData,
 			    mevProtection: false,
-			    customFeeSettings: this.customFeeSettings
+			    customFeeSettings: this.customFeeSettings,
+          widgetReferral: this.widgetReferral
 		    }
 
 			let total_usd = 0
@@ -468,7 +469,7 @@ export default {
         removeTokenAsset(key) {
             let map = this.setNewMap();
             map.delete(key);
-            delete this.tokenValues[key]; // Очищаем значение
+            delete this.tokenValues[key];
             this.dexStore.SAVE_SEND_MULTI_TOKENS(map);
         },
         swapTokenPositions(key) {

@@ -540,7 +540,7 @@ export default {
 
           this.confirmationModal.status = 'pending'
           this.confirmationModal.details = this.dcaDetails
-
+          this.limitStore.LIMIT_TRANSACTION_DETAILS(this.dcaDetails)
           this.confirmationModal.title = this.$t("earnModal.createOrderTitle", {mode: "DCA"})
           this.confirmationModal.mode = 'dca'
           this.confirmationModal.show = true

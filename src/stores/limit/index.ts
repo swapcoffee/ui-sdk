@@ -13,6 +13,7 @@ export const useLimitStore = defineStore('limit', {
         secondAmount: 0,
         tokenRate: 0,
         limitHistory: [],
+        transactionDetails: null,
     }),
     actions: {
         STRATEGIES_ELIGIBLE(value: boolean) {
@@ -45,6 +46,9 @@ export const useLimitStore = defineStore('limit', {
         LIMIT_HISTORY(value: any[]) {
             this.limitHistory = value;
         },
+        LIMIT_TRANSACTION_DETAILS(value: any) {
+            this.transactionDetails = value;
+        },
     },
     getters: {
         GET_STRATEGIES_ELIGIBLE: (state) => state.strategiesEligible,
@@ -57,5 +61,6 @@ export const useLimitStore = defineStore('limit', {
         GET_LIMIT_SECOND_AMOUNT: (state) => state.secondAmount,
         GET_LIMIT_TOKEN_RATE: (state) => state.tokenRate,
         GET_LIMIT_HISTORY: (state) => state.limitHistory,
+        GET_LIMIT_TRANSACTION_DETAILS: (state) => state.transactionDetails,
     }
 });

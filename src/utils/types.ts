@@ -36,6 +36,7 @@ export interface LimitState {
     secondAmount: number;
     tokenRate: number;
     limitHistory: any[];
+    transactionDetails: any | null;
 }
 
 export interface LimitSettingsState {

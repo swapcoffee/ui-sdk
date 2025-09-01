@@ -220,7 +220,8 @@ export async function multiTransaction({
 										   tonConnectUi,
 										   trackingData,
 										   mevProtection = false,
-										   customFeeSettings
+										   customFeeSettings,
+										   widgetReferral
 									   }: {
 	updateProcessing: UpdateProcessingFunction;
 	compareAsset: CompareAsset;
@@ -231,6 +232,7 @@ export async function multiTransaction({
 	trackingData: TrackingData;
 	mevProtection?: boolean;
 	customFeeSettings?: CustomFeeSettings;
+	widgetReferral?: string;
 }) {
 	try {
 		updateProcessing(true, 'multi');
@@ -240,7 +242,7 @@ export async function multiTransaction({
 			paths.push(...item.paths)
 		})
 
-		const trInfo = await prebuildTransaction(paths, wallet?.address, slippage, mevProtection, customFeeSettings)
+		const trInfo = await prebuildTransaction(paths, wallet?.address, slippage, mevProtection, customFeeSettings, widgetReferral)
 
 		const transactionDataToSave = {
 			...dealConditions,
@@ -276,10 +278,10 @@ export async function multiTransaction({
 	}
 }
 
-async function prebuildTransaction(paths: any[], walletAddress: string, slippage: number, mevProtection: boolean, customFeeSettings?: CustomFeeSettings) {
+async function prebuildTransaction(paths: any[], walletAddress: string, slippage: number, mevProtection: boolean, customFeeSettings?: CustomFeeSettings, widgetReferral: string) {
 	try {
 		const sender = Address.parseRaw(walletAddress).toString();
-		const referralName = JSON.parse(sessionStorage.getItem('referral_name') || 'null');
+		const referralName = widgetReferral;
 
 		const totalSlippage = typeof slippage === 'boolean'
 			? slippage

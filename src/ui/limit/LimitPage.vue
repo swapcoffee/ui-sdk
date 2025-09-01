@@ -578,6 +578,7 @@ const component: Record<string, any> = {
 
           this.confirmationModal.status = 'pending'
           this.confirmationModal.details = this.limitDetails
+          this.limitStore.LIMIT_TRANSACTION_DETAILS(this.limitDetails)
           this.confirmationModal.title = this.$t("earnModal.createOrderTitle", { mode: "limit" })
           this.confirmationModal.mode = 'limit'
           this.confirmationModal.show = true
