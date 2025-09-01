@@ -132,6 +132,10 @@ export default {
                     return "Multi Swap"
                 case "limit":
                     return "Limit"
+              case "dca":
+                  return "DCA"
+              case "DCA":
+                  return "DCA"
                 default:
                     return "Deposit liquidity"
             }

@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { DcaState } from "@/utils/types";
+import type { DcaState } from "@/utils/types";
 
 export const useDcaStore = defineStore('dca', {
     state: (): DcaState => ({

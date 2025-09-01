@@ -68,7 +68,7 @@
     </li>
 </template>
 
-<script>
+<script lang="ts">
 import HistoryArrowIcon from "@/assets/limit/HistoryArrowIcon.vue";
 import ShareIcon from "@/assets/earn/pool-page/ShareIcon.vue";
 import ChevronBottom from "@/assets/earn/transfer-liquidity/ChevronBottom.vue";

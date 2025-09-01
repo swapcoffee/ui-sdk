@@ -82,6 +82,7 @@ import LimitHistoryItem from "@/components/limit/LimitHistoryItem.vue";
 import SkeletonItem from "@/components/ui/SkeletonItem.vue";
 import TransactionStatusModal from "@/components/modals/TransactionStatusModal.vue";
 import TabItem from "@/components/ui/TabItem.vue";
+import {SwapActiveTab} from "@/utils/types.ts";
 
 export default {
     name: "LimitOrdersHistory",
@@ -108,18 +109,6 @@ export default {
             firstLoading: false,
             refreshInfo: false,
             currentTab: 'open',
-            tabs: [
-                {
-                    value: "open",
-                    text: this.$t('limitOrdersHistory.tabs[0]'),
-                    action: this.updateCurrentTab
-                },
-                {
-                    value: "history",
-                    text: this.$t('limitOrdersHistory.tabs[1]'),
-                    action: this.updateCurrentTab
-                }
-            ]
         }
     },
     computed: {
@@ -131,6 +120,24 @@ export default {
          },
         tabsIsDisable() {
             return !this.dexStore.GET_DEX_WALLET
+        },
+        tabs() {
+          return [
+            {
+              value: "open",
+              text: this.$t('limitOrdersHistory.tabs[0]'),
+              action: this.updateCurrentTab
+            },
+            {
+              value: "history",
+              text: this.$t('limitOrdersHistory.tabs[1]', {
+                historyType: this.dexStore.GET_SWAP_ACTIVE_TAB === SwapActiveTab.DCA
+                    ? this.$t('limitOrdersHistory.tabDca')
+                    : this.$t('limitOrdersHistory.tabLimit')
+              }),
+              action: this.updateCurrentTab
+            }
+          ]
         },
         actionsIsDisable() {
             return !this.dexStore.GET_DEX_WALLET || this.refreshInfo

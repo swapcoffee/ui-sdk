@@ -9,12 +9,12 @@
                 <p class="token__name">{{ token?.name }}</p>
             </div>
         </div>
-        <div class="token__column">
+        <div class="token__column" v-if="displayAmount">
             <p class="token__text">
                 {{ displayAmount }}
             </p>
             <p class="token__desc">
-                {{ "$" + Math.random(0, 10).toFixed(2) }}
+              {{ "$" + displayUsdValue }}
             </p>
         </div>
     </div>
@@ -71,24 +71,22 @@ export default {
             return `${additional} ${this.token?.symbol}`
         },
         getSymbol() {
-            if (this.modalState.mode === 'limit') {
+            if (this.modalState.mode === 'limit' || this.modalState.mode === 'dca') {
                 if (this.position === 'first') {
-                    return "~"
+                    return ""
                 } else if (this.position === 'second') {
-                    return '-'
+                    return '~'
                 }
             }
 
-            // Special logic for multi-swap mode
             if (this.modalState.mode === 'multi') {
                 if (this.position === 'first') {
-                    return '-'  // Input tokens should have minus
+                    return '-'
                 } else if (this.position === 'second') {
-                    return '+'  // Output token should have plus
+                    return '+'
                 }
             }
 
-            // Default logic for other modes
             if (this.position === 'first') {
                 return "+"
             } else if (this.position === 'second') {
@@ -96,12 +94,22 @@ export default {
             }
         },
         displayAmount() {
+            if (!this.amount) {
+                return null
+            }
             if (this.amount) {
                 return `${this.getSymbol}${this.prettyNumber(this.amount, 2)} ${this.token?.symbol}`
             } else {
                 return `${this.token?.symbol}`
             }
+        },
+      displayUsdValue() {
+        if (this.token?.price_usd && this.amount) {
+          const usdValue = this.token.price_usd * this.amount
+          return this.prettyNumber(usdValue, 2)
         }
+        return "0.00"
+      }
     }
 }
 </script>

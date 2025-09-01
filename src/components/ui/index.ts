@@ -5,6 +5,8 @@ import InterfaceTag from "@/components/ui/InterfaceTag.vue";
 import ModalWrapper from "@/components/ui/ModalWrapper.vue"
 import TabItem from "@/components/ui/TabItem.vue";
 import SkeletonItem from "@/components/ui/SkeletonItem.vue";
+import ConfirmItemDetail from "@/components/ui/ConfirmItemDetail.vue";
+
 export default [
     MainColor,
     SwitchToggle,
@@ -12,5 +14,6 @@ export default [
     InterfaceTag,
     ModalWrapper,
     TabItem,
-    SkeletonItem
+    SkeletonItem,
+    ConfirmItemDetail
 ]

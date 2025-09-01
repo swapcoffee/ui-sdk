@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 
-interface TransactionState {
+export interface TransactionState {
 	trInfo: any | null;
 	status: any | null;
 	limitInfo: any | null;

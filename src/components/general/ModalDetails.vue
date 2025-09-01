@@ -60,6 +60,16 @@
                 </template>
             </div>
         </div>
+      <div
+          class="deal__details"
+          v-if="withDcaLimitDetails.length && ((modalState as any).mode === 'limit' || (modalState as any).mode === 'dca')"
+      >
+        <ConfirmItemDetail
+            v-for="(detail, index) in withDcaLimitDetails"
+            :key="index"
+            :detail="detail"
+        />
+      </div>
     </div>
 </template>
 
@@ -72,6 +82,7 @@ import ModalStatusRouteInfo from "@/components/general/ModalStatusRouteInfo.vue"
 import {useDexStore} from "@/stores/dex";
 import {useLimitStore} from "@/stores/limit";
 import {useTransactionStore} from "@/stores/transaction";
+import ConfirmItemDetail from "@/components/ui/ConfirmItemDetail.vue";
 
 export default {
     name: "ModalDetails",
@@ -109,9 +120,16 @@ export default {
                 return ''
             },
             required: true
+        },
+        withDcaLimitDetails: {
+          type: Array,
+          default() {
+            return []
+          }
         }
     },
     components: {
+      ConfirmItemDetail,
         ModalStatusRouteInfo,
         ModalWithdrawMenu,
         BriefTokenInfo,
@@ -139,7 +157,7 @@ export default {
             if ((this.modalState as any).mode === 'swap' || (this.modalState as any).mode === 'multi' || (this.modalState as any).mode === 'limit' || (this.modalState as any).mode === 'dca') {
                 return 'first'
             }
-        },
+          },
         getSecondPosition() {
             if ((this.modalState as any).mode === 'swap' || (this.modalState as any).mode === 'multi' || (this.modalState as any).mode === 'limit' || (this.modalState as any).mode === 'dca') {
                 return 'second'
@@ -194,7 +212,11 @@ export default {
                     const swapInputAmount = this.dexStore.GET_DEAL_CONDITIONS?.input_amount || 0
                     return typeof swapInputAmount === 'string' ? parseFloat(swapInputAmount) : swapInputAmount
                 case "limit":
+                  return this.limitInfo?.secondAmount || 0
                 case "dca":
+                  if (this.withDcaLimitDetails.length > 0) {
+                    return null
+                  }
                     return this.limitInfo?.secondAmount || 0
             }
             return 0
@@ -311,5 +333,14 @@ export default {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.deal__details {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--iface-white6);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 </style>
