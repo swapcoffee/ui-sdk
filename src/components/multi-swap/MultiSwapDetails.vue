@@ -119,11 +119,13 @@ export default {
 
       if (!transactionAmount) return 0;
 
-      const percentageFee = (transactionAmount * feeSettings.percentage_fee) / 1_000_000;
+      const percentageFee = (transactionAmount * feeSettings.percentage_fee) / 1_000_000 * 1_000_000_000;
       const minFee = Number(feeSettings.min_percentage_fee_fixed);
       const maxFee = Number(feeSettings.max_percentage_fee_fixed);
 
       const result = Math.min(Math.max(percentageFee, minFee), maxFee);
+
+      this.dexStore.DEX_CALCULATED_PARTNER_FEE(Number(this.formatTon(result)));
 
       return this.formatTon(result);
     },

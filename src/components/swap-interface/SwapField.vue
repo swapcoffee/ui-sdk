@@ -151,7 +151,8 @@ export default {
         updateTokenModalVisible: { required: true },
         updateTokenValue: { required: true },
         tokenValues: { required: true },
-        isUpdatingBalances: { required: false, default: () => () => false }
+        isUpdatingBalances: { required: false, default: () => () => false },
+        customFeeSettings: { required: false },
     },
     mixins: [computedMixins, methodsMixins],
     props: {
@@ -515,6 +516,7 @@ export default {
                 let partnerFee = 0;
                 let recommendedGas = 0;
                 let mevFee = 0;
+                const calculatedPartnerFee = this.dexStore.GET_CALCULATED_PARTNER_FEE;
 
                 if (currentDeal) {
                     if (this.getRouteName === 'Dex') {
@@ -538,9 +540,9 @@ export default {
                 }
 
                 const fee = parseFloat((recommendedGas + 0.00001001).toFixed(8));
-                const totalFee = parseFloat((fee + partnerFee + mevFee).toFixed(8));
+                const totalFee = parseFloat((fee + partnerFee + mevFee + calculatedPartnerFee).toFixed(8));
 
-                if (this.token?.address === 'native' && this.token?.balance > 0) {
+              if (this.token?.address === 'native' && this.token?.balance > 0) {
                     if (balance + totalFee > this.token.balance) {
                         balance = parseFloat((balance - totalFee).toFixed(8));
                     }

@@ -58,6 +58,7 @@ export const useDexStore = defineStore('dex', {
 		lastTokenPage: 1,
 		lastCommunityPage: 1,
 		labelPage: 1,
+		calculatedPartnerFee: 0,
 	}),
 
 	actions: {
@@ -80,6 +81,9 @@ export const useDexStore = defineStore('dex', {
 		},
 		DEX_PROOF_VERIFICATION(item: any) {
 			this.proofVerification = item;
+		},
+		DEX_CALCULATED_PARTNER_FEE(item: number) {
+			this.calculatedPartnerFee = item;
 		},
 		DEX_PAYLOAD_ID(item: any) {
 			this.payloadId = item;
@@ -123,6 +127,7 @@ export const useDexStore = defineStore('dex', {
 			this.receiveMultiToken = null;
 			this.sendMultiValues = null;
 			this.receiveMultiValue = null;
+			this.calculatedPartnerFee = 0;
 		},
 		DEX_WALLET_VERSION(item: any) {
 			this.dexWalletVersion = item;
@@ -215,5 +220,6 @@ export const useDexStore = defineStore('dex', {
 		GET_LAST_TOKEN_PAGE: (state) => state.lastTokenPage,
 		GET_LAST_COMMUNITY_PAGE: (state) => state.lastCommunityPage,
 		GET_LABEL_PAGE: (state) => state.labelPage,
+		GET_CALCULATED_PARTNER_FEE: (state) => state.calculatedPartnerFee,
 	},
 });

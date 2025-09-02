@@ -123,6 +123,7 @@ export interface DexState {
     lastTokenPage: number;
     lastCommunityPage: number;
     labelPage: number;
+    calculatedPartnerFee: number;
 }
 
 export interface TokensByLabelPayload {
