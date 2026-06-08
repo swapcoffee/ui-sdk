@@ -8,6 +8,7 @@ import CoffeeIcon from '@/assets/contributors/coffee_icon.webp';
 import torchFinanceIcon from '@/assets/contributors/torch_icon.svg';
 import moonCxIcon from '@/assets/contributors/mooncx-icon.svg';
 import bidaskIcon from '@/assets/contributors/bidask-icon.svg';
+import tonRafflesIcon from '@/assets/contributors/tonraffles-icon.svg';
 
 export const DEXES = [
     {
@@ -30,6 +31,12 @@ export const DEXES = [
         id: 'dedust',
         name: 'DeDust',
         icon: dedustIcon
+    },
+    {
+        id: 'tonraffles',
+        name: 'Ton Raffles',
+        icon: tonRafflesIcon,
+        added_later: true
     },
     {
         id: 'tonco',

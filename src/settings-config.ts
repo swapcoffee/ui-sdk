@@ -24,6 +24,9 @@ export enum SWAP_WIDGET_LIQUIDITY_SOURCES {
     COFFEE = 'coffee',
     COLOSSUS = 'colossus',
     TORCH_FINANCE = 'torch_finance',
+    TONRAFFLES = 'tonraffles',
+    MOON = 'moon',
+    BIDASK = 'bidask',
 }
 
 export interface CustomFeeSettingsInterface {
