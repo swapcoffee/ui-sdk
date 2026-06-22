@@ -108,7 +108,7 @@ export default {
 				if (array.includes(item?.dex)) {
 					return
 				}
-				if (item?.dex === 'dedust') {
+				if (item?.dex === 'dedust' || item?.dex === 'dedust_v2') {
 					if (!array.includes('DeDust')) {
 						array.push('DeDust')
 					}

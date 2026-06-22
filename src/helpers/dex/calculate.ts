@@ -38,6 +38,11 @@ export function getDexSourceDataByName(name) {
                 name: 'DeDust',
                 imageUrl: 'https://dedust.io/favicon-32x32.png',
             };
+        case 'dedust_v2':
+            return {
+                name: 'DeDust V2',
+                imageUrl: 'https://dedust.io/favicon-32x32.png',
+            };
         case 'stonfi':
             return {
                 name: 'STONfi',

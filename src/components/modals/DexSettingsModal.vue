@@ -379,6 +379,10 @@ export default {
               enabled: true,
             },
             {
+              name: 'dedust_v2',
+              enabled: true,
+            },
+            {
               name: 'stonfi',
               enabled: true,
             },

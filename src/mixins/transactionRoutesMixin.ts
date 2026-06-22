@@ -60,6 +60,11 @@ export default {
             name: 'DeDust',
             imageUrl: dedustIcon,
           };
+        case 'dedust_v2':
+          return {
+            name: 'DeDust V2',
+            imageUrl: dedustIcon,
+          };
         case 'stonfi':
           return {
             name: 'STONfi',
