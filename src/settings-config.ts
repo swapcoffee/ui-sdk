@@ -19,6 +19,7 @@ export enum SWAP_WIDGET_LIQUIDITY_SOURCES {
     TONCO = 'tonco',
     TONSTAKERS = 'tonstakers',
     DEDUST = 'dedust',
+    DEDUST_V2 = 'dedust_v2',
     STONFI_V2 = 'stonfi_v2',
     STONFI = 'stonfi',
     COFFEE = 'coffee',

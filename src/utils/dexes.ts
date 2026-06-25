@@ -33,6 +33,13 @@ export const DEXES = [
         icon: dedustIcon
     },
     {
+        id: 'dedust_v2',
+        name: 'DeDust V2',
+        icon: dedustIcon,
+        added_later: false,
+        disabled_in_yield: true
+    },
+    {
         id: 'tonraffles',
         name: 'Ton Raffles',
         icon: tonRafflesIcon,
