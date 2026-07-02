@@ -1,16 +1,14 @@
 {
-  "name": "@swap-coffee/ui-sdk",
+  "name": "@swapcoffee/ui-sdk",
   "private": false,
-  "version": "1.4.03",
+  "version": "1.4.4",
   "type": "module",
   "description": "User Interface SDK of swap.coffee DEX aggregator for integration in web applications",
   "main": "dist/swap-sdk.cjs.js",
   "module": "dist/swap-sdk.esm.js",
   "license": "MIT",
   "homepage": "https://swap.coffee",
-  "author": {
-    "name": "swap.coffee"
-  },
+  "author": "swap.coffee",
   "exports": {
     ".": {
       "import": "./dist/swap-sdk.esm.js",
@@ -18,7 +16,7 @@
     }
   },
   "repository": {
-    "url": "https://github.com/swapcoffee/ui-sdk"
+    "url": "git+https://github.com/swapcoffee/ui-sdk.git"
   },
   "files": [
     "dist"
@@ -67,5 +65,8 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "4.34.6"
+  },
+  "bugs": {
+    "url": "https://github.com/swapcoffee/ui-sdk/issues"
   }
 }
